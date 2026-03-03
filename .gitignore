@@ -1,0 +1,14 @@
+# IDE / Editor
+.cursor/
+
+# OS
+desktop.ini
+*.lnk
+Thumbs.db
+
+# Personal folders (don't commit to website repo)
+Darktable/
+Sound Recordings/
+My Music/
+My Pictures/
+My Videos/

@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Services | River of Life Christian Church</title>
+    <meta
+      name="description"
+      content="Service details for River of Life Christian Church (ROLCC), including Sunday worship, mid-week cell fellowship, special worship evenings, and monthly communion services."
+    />
+    <meta
+      name="keywords"
+      content="ROLCC services, Sunday service, worship flow, cell groups, communion service, Bangalore church service times"
+    />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Services | River of Life Christian Church" />
+    <meta
+      property="og:description"
+      content="Explore the worship services, mid-week fellowships, and special gatherings at River of Life Christian Church (ROLCC), Bangalore."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://www.rolcc.in/services" />
+    <meta property="og:image" content="/images/og-image.jpg" />
+
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico" />
+
+    <!-- Sora font -->
+    <link
+      rel="preconnect"
+      href="https://fonts.googleapis.com"
+    />
+    <link
+      rel="preconnect"
+      href="https://fonts.gstatic.com"
+      crossorigin
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: "#ffffff",
+              primaryDark: "#f6f9fc",
+              accent: "#635bff",
+              accentSoft: "#818cf8",
+            },
+          },
+        },
+      };
+    </script>
+
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
+  <body class="bg-slate-50 text-slate-900">
+    <!-- Navbar -->
+    <header
+      class="sticky top-0 z-50 border-b border-slate-200 bg-white/80 nav-blur"
+    >
+      <nav
+        class="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8"
+      >
+        <a href="index.html" class="flex items-center gap-3">
+          <div
+            class="flex h-10 w-10 items-center justify-center rounded-full bg-accentSoft/10 ring-2 ring-accentSoft/60"
+          >
+            <span class="text-xl font-semibold text-accent">✝</span>
+          </div>
+          <div class="leading-tight">
+            <p class="text-sm font-semibold tracking-wide text-slate-900">
+              River of Life
+            </p>
+            <p class="text-xs text-slate-300">
+              Christian Church · Bangalore
+            </p>
+          </div>
+        </a>
+
+        <!-- Desktop Nav -->
+        <div class="hidden items-center gap-8 text-sm font-medium md:flex">
+          <a href="index.html" class="text-slate-600 hover:text-slate-900">Home</a>
+          <a href="about.html" class="text-slate-600 hover:text-slate-900">About Us</a>
+          <a href="services.html" class="text-slate-900">Services</a>
+          <a href="river-kids.html" class="text-slate-600 hover:text-slate-900">River Kids</a>
+          <a href="fellowship.html" class="text-slate-600 hover:text-slate-900">Fellowship</a>
+          <a href="giving.html" class="text-slate-600 hover:text-slate-900">Giving</a>
+          <a href="contact.html" class="text-slate-600 hover:text-slate-900">Contact Us</a>
+        </div>
+
+        <!-- CTA Desktop -->
+        <div class="hidden md:block">
+          <a
+            href="contact.html"
+            class="inline-flex items-center rounded-full bg-accent px-4 py-2 text-xs font-semibold text-white shadow-sm ring-1 ring-accent/70 transition hover:bg-accentSoft"
+          >
+            Plan Your Visit
+          </a>
+        </div>
+
+        <!-- Mobile Toggle -->
+        <button
+          id="nav-toggle"
+          class="inline-flex items-center rounded-md p-2 text-slate-100 ring-1 ring-slate-700 transition hover:bg-slate-800 md:hidden"
+          aria-label="Toggle navigation menu"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-5 w-5"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      </nav>
+
+      <!-- Mobile Menu -->
+      <div
+        id="nav-menu"
+        class="mx-auto hidden max-w-6xl space-y-2 px-4 pb-4 text-sm font-medium bg-white border-b border-slate-200 sm:px-6 lg:px-8 md:hidden"
+      >
+        <a href="index.html" class="block rounded-md px-3 py-2 text-slate-700 hover:bg-slate-100"
+          >Home</a
+        >
+        <a href="about.html" class="block rounded-md px-3 py-2 text-slate-700 hover:bg-slate-100"
+          >About Us</a
+        >
+        <a href="services.html" class="block rounded-md bg-slate-100 px-3 py-2 text-slate-900"
+          >Services</a
+        >
+        <a
+          href="river-kids.html"
+          class="block rounded-md px-3 py-2 text-slate-200 hover:bg-slate-800"
+          >River Kids</a
+        >
+        <a
+          href="fellowship.html"
+          class="block rounded-md px-3 py-2 text-slate-200 hover:bg-slate-800"
+          >Fellowship</a
+        >
+        <a href="giving.html" class="block rounded-md px-3 py-2 text-slate-200 hover:bg-slate-800"
+          >Giving</a
+        >
+        <a
+          href="contact.html"
+          class="block rounded-md px-3 py-2 text-slate-200 hover:bg-slate-800"
+          >Contact Us</a
+        >
+      </div>
+    </header>
+
+    <main>
+      <!-- Page Hero -->
+      <section
+        class="border-b border-slate-200 bg-gradient-to-b from-primaryDark via-white to-white"
+      >
+        <div
+          class="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-12 sm:px-6 md:flex-row md:items-end md:justify-between md:py-16 lg:px-8"
+        >
+          <div class="space-y-3">
+            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-accent">
+              Services
+            </p>
+            <h1
+              class="text-balance text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl"
+            >
+              Worship, Word &amp; Fellowship Each Week
+            </h1>
+            <p class="max-w-2xl text-sm text-slate-600 sm:text-base">
+              Our gatherings are centered on the presence of God, the preaching of His Word, and
+              meaningful community. Here&apos;s how a typical week at River of Life Christian Church
+              looks.
+            </p>
+          </div>
+          <div
+            class="rounded-2xl border border-slate-200 bg-white p-4 text-xs text-slate-600 sm:text-sm"
+          >
+            <p class="font-semibold text-slate-900">
+              Sunday Service · 10:00 AM – 11:30 AM
+            </p>
+            <p class="mt-1 text-slate-400">
+              3rd floor, AMR PLAZA, 49, 18th Main Rd, Sector 3, HSR Layout, Bengaluru.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Sunday Service Details & Worship Flow -->
+      <section class="border-b border-slate-200 bg-white">
+        <div
+          class="mx-auto grid max-w-6xl gap-10 px-4 py-12 sm:px-6 md:grid-cols-[3fr,2fr] md:py-16 lg:px-8"
+        >
+          <div class="space-y-4">
+            <h2 class="text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">
+              Sunday Worship Service
+            </h2>
+            <p class="text-sm text-slate-600 sm:text-base">
+              Our main Sunday worship service is a time of passionate praise, Spirit-led worship,
+              and Christ-centered preaching. All are welcome.
+            </p>
+            <ul class="space-y-2 text-sm text-slate-600">
+              <li>• Time: 10:00 AM – 11:30 AM</li>
+              <li>• Location: HSR Layout, Bengaluru (see Contact page for map)</li>
+              <li>• Language: Primarily English</li>
+              <li>• Children: River Kids ministry runs in parallel for children.</li>
+            </ul>
+
+            <div class="mt-4 space-y-3">
+              <h3 class="text-sm font-semibold text-slate-900 sm:text-base">
+                Worship Flow (Typical Order)
+              </h3>
+              <ol class="space-y-2 text-sm text-slate-600">
+                <li>1. Call to worship &amp; opening prayer</li>
+                <li>2. Praise &amp; worship (songs of exaltation, thanksgiving, and surrender)</li>
+                <li>3. Scripture reading &amp; exhortation</li>
+                <li>4. Message from the Word of God</li>
+                <li>5. Ministry time (prayer, response, and altar ministry as led)</li>
+                <li>6. Announcements, offering, and benediction</li>
+              </ol>
+            </div>
+          </div>
+
+          <div
+            class="space-y-4 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-sm text-slate-700"
+          >
+            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+              What to Expect
+            </p>
+            <ul class="space-y-2 text-sm text-slate-600">
+              <li>• Warm, welcoming atmosphere for individuals and families.</li>
+              <li>• Contemporary worship with a strong focus on exalting Jesus.</li>
+              <li>• Clear, Bible-based preaching with practical application.</li>
+              <li>• Opportunities for personal prayer and ministry.</li>
+            </ul>
+            <p class="text-xs text-slate-500">
+              “For where two or three gather in my name, there am I with them.” – Matthew 18:20
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Mid Week, Special Worship, Communion -->
+      <section class="border-b border-slate-200 bg-slate-50">
+        <div class="mx-auto max-w-6xl px-4 py-12 sm:px-6 md:py-16 lg:px-8">
+          <div class="mb-8 max-w-3xl">
+            <h2 class="text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">
+              Weekly &amp; Special Gatherings
+            </h2>
+            <p class="mt-2 text-sm text-slate-600 sm:text-base">
+              Beyond Sundays, we gather in smaller groups and in special services for deeper
+              fellowship, prayer, and worship.
+            </p>
+          </div>
+
+          <div class="grid gap-6 md:grid-cols-3">
+            <!-- Mid Week Cell Fellowship -->
+            <div
+              class="flex flex-col justify-between rounded-2xl border border-slate-200 bg-white p-5"
+            >
+              <div class="space-y-2">
+                <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+                  Mid-Week
+                </p>
+                <h3 class="text-sm font-semibold text-slate-900 sm:text-base">
+                  Cell Fellowship
+                </h3>
+                <p class="text-sm text-slate-600">
+                  Wednesdays · 8:00 PM – 10:00 PM
+                </p>
+                <p class="text-xs text-slate-500">
+                  Small groups that meet in homes and online across the city for Bible study, prayer
+                  support, and deeper relationships.
+                </p>
+              </div>
+              <a
+                href="fellowship.html"
+                class="mt-4 text-xs font-semibold text-accent hover:text-accentSoft"
+              >
+                Learn about cell groups →
+              </a>
+            </div>
+
+            <!-- Special Worship Evening -->
+            <div
+              class="flex flex-col justify-between rounded-2xl border border-slate-200 bg-white p-5"
+            >
+              <div class="space-y-2">
+                <p class="text-xs font-semibold uppercase tracking-[0.18em] text-accent">
+                  Special
+                </p>
+                <h3 class="text-sm font-semibold text-slate-900 sm:text-base">
+                  Special Worship Evenings
+                </h3>
+                <p class="text-sm text-slate-600">
+                  Periodic evenings of extended worship, prayer, and prophetic ministry.
+                </p>
+                <p class="text-xs text-slate-500">
+                  These gatherings are set apart to wait on the Lord, seek His face, and minister to
+                  Him in worship as a church family.
+                </p>
+              </div>
+              <p class="mt-4 text-xs text-slate-500">
+                Upcoming dates are announced during Sunday services and on our social channels.
+              </p>
+            </div>
+
+            <!-- Communion Service -->
+            <div
+              class="flex flex-col justify-between rounded-2xl border border-slate-200 bg-white p-5"
+            >
+              <div class="space-y-2">
+                <p class="text-xs font-semibold uppercase tracking-[0.18em] text-accent">
+                  Monthly
+                </p>
+                <h3 class="text-sm font-semibold text-slate-900 sm:text-base">
+                  Communion Service
+                </h3>
+                <p class="text-sm text-slate-600">
+                  1st Sunday of Every Month
+                </p>
+                <p class="text-xs text-slate-500">
+                  We partake in the Lord&apos;s Table together during the main Sunday service,
+                  remembering the finished work of Christ on the cross.
+                </p>
+              </div>
+              <p class="mt-4 text-xs text-slate-500">
+                “Do this in remembrance of Me.” – Luke 22:19
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Call to Action -->
+      <section class="border-b border-slate-200 bg-white">
+        <div
+          class="mx-auto max-w-6xl px-4 py-12 text-center sm:px-6 md:py-16 lg:px-8"
+        >
+          <p class="text-xs font-semibold uppercase tracking-[0.18em] text-accent">
+            Plan Your Visit
+          </p>
+          <h2
+            class="mt-3 text-balance text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl"
+          >
+            We would love to worship with you this Sunday
+          </h2>
+          <p class="mx-auto mt-3 max-w-2xl text-sm text-slate-600 sm:text-base">
+            Whether you are visiting Bangalore, exploring faith, or looking for a church home, you
+            are welcome at River of Life Christian Church.
+          </p>
+          <div class="mt-6 flex flex-wrap justify-center gap-4">
+            <a
+              href="contact.html"
+              class="inline-flex items-center rounded-full bg-accent px-6 py-2.5 text-sm font-semibold text-white shadow-sm ring-1 ring-accent/70 transition hover:bg-accentSoft"
+            >
+              Get Directions
+            </a>
+            <a
+              href="fellowship.html"
+              class="inline-flex items-center rounded-full border border-slate-700 px-6 py-2.5 text-sm font-semibold text-slate-100 transition hover:border-accent hover:text-accentSoft"
+            >
+              Explore Fellowships
+            </a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800 bg-slate-950">
+      <div
+        class="mx-auto flex max-w-6xl flex-col gap-8 px-4 py-10 text-sm text-slate-300 sm:px-6 md:flex-row md:justify-between lg:px-8"
+      >
+        <div class="space-y-3 max-w-sm">
+          <p class="text-sm font-semibold text-slate-50">
+            River of Life Christian Church
+          </p>
+          <p class="text-xs text-slate-400">
+            3rd floor, AMR PLAZA, 49, 18th Main Rd, Sector 3, HSR Layout, Bengaluru, Karnataka
+            560102
+          </p>
+          <p class="text-xs text-slate-400">
+            Sunday Service · 10:00 AM – 11:30 AM
+          </p>
+        </div>
+        <div class="space-y-2">
+          <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
+            Connect
+          </p>
+          <p class="text-xs text-slate-300">
+            Phone:
+            <a href="tel:8050045500" class="text-accentSoft hover:text-accent"
+              >+91 80500 45500</a
+            >
+            ·
+            <a href="tel:9036745258" class="text-accentSoft hover:text-accent"
+              >+91 90367 45258</a
+            >
+          </p>
+          <p class="text-xs text-slate-300">
+            Email:
+            <a
+              href="mailto:rolccbangalore@gmail.com"
+              class="text-accentSoft hover:text-accent"
+              >rolccbangalore@gmail.com</a
+            >
+          </p>
+          <div class="flex flex-wrap gap-3 pt-1 text-xs">
+            <a
+              href="https://www.facebook.com/rolccindia/"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-slate-300 hover:text-accentSoft"
+              >Facebook</a
+            >
+            <a
+              href="https://www.youtube.com/@rolccindia"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-slate-300 hover:text-accentSoft"
+              >YouTube</a
+            >
+            <a
+              href="https://www.instagram.com/rolccindia"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-slate-300 hover:text-accentSoft"
+              >Instagram</a
+            >
+          </div>
+        </div>
+        <div class="space-y-2">
+          <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
+            Visit
+          </p>
+          <a
+            href="https://maps.app.goo.gl/GqLm5JLzAjenLBE16"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center rounded-full border border-slate-700 px-4 py-2 text-xs font-semibold text-slate-100 transition hover:border-accent hover:text-accentSoft"
+          >
+            Open in Google Maps
+          </a>
+        </div>
+      </div>
+      <div class="border-t border-slate-800">
+        <div
+          class="mx-auto flex max-w-6xl flex-col items-center justify-between gap-2 px-4 py-4 text-[11px] text-slate-500 sm:flex-row sm:px-6 lg:px-8"
+        >
+          <p>© <span id="year"></span> River of Life Christian Church. All rights reserved.</p>
+          <p>“A Place to Encounter Jesus”</p>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Scroll to Top Button -->
+    <button
+      id="scroll-top-btn"
+      class="scroll-to-top hidden fixed bottom-5 right-4 z-40 rounded-full bg-slate-900/90 p-2 text-xs text-slate-100 shadow-lg ring-1 ring-slate-600 hover:bg-slate-800 sm:bottom-6 sm:right-6"
+      aria-label="Scroll to top"
+      type="button"
+    >
+      ↑
+    </button>
+
+    <script src="/js/main.js"></script>
+  </body>
+</html>
+

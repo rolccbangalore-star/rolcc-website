@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Giving | River of Life Christian Church</title>
+    <meta
+      name="description"
+      content="Partner with River of Life Christian Church (ROLCC), Bangalore through generous, Bible-based giving. Learn about UPI and bank transfer options."
+    />
+    <meta
+      name="keywords"
+      content="ROLCC giving, church offering, tithes, UPI giving, bank transfer, Christian generosity, Bangalore church"
+    />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Giving | River of Life Christian Church" />
+    <meta
+      property="og:description"
+      content="Support the ministry of River of Life Christian Church through joyful, Christ-centered giving."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://www.rolcc.in/giving" />
+    <meta property="og:image" content="/images/og-image.jpg" />
+
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico" />
+
+    <!-- Sora font -->
+    <link
+      rel="preconnect"
+      href="https://fonts.googleapis.com"
+    />
+    <link
+      rel="preconnect"
+      href="https://fonts.gstatic.com"
+      crossorigin
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: "#ffffff",
+              primaryDark: "#f6f9fc",
+              accent: "#635bff",
+              accentSoft: "#818cf8",
+            },
+          },
+        },
+      };
+    </script>
+
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
+  <body class="bg-slate-50 text-slate-900">
+    <!-- Navbar -->
+    <header
+      class="sticky top-0 z-50 border-b border-slate-200 bg-white/80 nav-blur"
+    >
+      <nav
+        class="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8"
+      >
+        <a href="index.html" class="flex items-center gap-3">
+          <div
+            class="flex h-10 w-10 items-center justify-center rounded-full bg-accentSoft/10 ring-2 ring-accentSoft/60"
+          >
+            <span class="text-xl font-semibold text-accent">✝</span>
+          </div>
+          <div class="leading-tight">
+            <p class="text-sm font-semibold tracking-wide text-slate-900">
+              River of Life
+            </p>
+            <p class="text-xs text-slate-300">
+              Christian Church · Bangalore
+            </p>
+          </div>
+        </a>
+
+        <!-- Desktop Nav -->
+        <div class="hidden items-center gap-8 text-sm font-medium md:flex">
+          <a href="index.html" class="text-slate-600 hover:text-slate-900">Home</a>
+          <a href="about.html" class="text-slate-600 hover:text-slate-900">About Us</a>
+          <a href="services.html" class="text-slate-600 hover:text-slate-900">Services</a>
+          <a href="river-kids.html" class="text-slate-600 hover:text-slate-900">River Kids</a>
+          <a href="fellowship.html" class="text-slate-600 hover:text-slate-900">Fellowship</a>
+          <a href="giving.html" class="text-slate-900">Giving</a>
+          <a href="contact.html" class="text-slate-600 hover:text-slate-900">Contact Us</a>
+        </div>
+
+        <!-- CTA Desktop -->
+        <div class="hidden md:block">
+          <a
+            href="#online-giving"
+            class="inline-flex items-center rounded-full bg-accent px-4 py-2 text-xs font-semibold text-white shadow-sm ring-1 ring-accent/70 transition hover:bg-accentSoft"
+          >
+            Give Online
+          </a>
+        </div>
+
+        <!-- Mobile Toggle -->
+        <button
+          id="nav-toggle"
+          class="inline-flex items-center rounded-md p-2 text-slate-100 ring-1 ring-slate-700 transition hover:bg-slate-800 md:hidden"
+          aria-label="Toggle navigation menu"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-5 w-5"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      </nav>
+
+      <!-- Mobile Menu -->
+      <div
+        id="nav-menu"
+        class="mx-auto hidden max-w-6xl space-y-2 px-4 pb-4 text-sm font-medium bg-white border-b border-slate-200 sm:px-6 lg:px-8 md:hidden"
+      >
+        <a href="index.html" class="block rounded-md px-3 py-2 text-slate-700 hover:bg-slate-100"
+          >Home</a
+        >
+        <a href="about.html" class="block rounded-md px-3 py-2 text-slate-700 hover:bg-slate-100"
+          >About Us</a
+        >
+        <a href="services.html" class="block rounded-md px-3 py-2 text-slate-700 hover:bg-slate-100"
+          >Services</a
+        >
+        <a
+          href="river-kids.html"
+          class="block rounded-md px-3 py-2 text-slate-700 hover:bg-slate-100"
+          >River Kids</a
+        >
+        <a
+          href="fellowship.html"
+          class="block rounded-md px-3 py-2 text-slate-700 hover:bg-slate-100"
+          >Fellowship</a
+        >
+        <a href="giving.html" class="block rounded-md bg-slate-100 px-3 py-2 text-slate-900"
+          >Giving</a
+        >
+        <a
+          href="contact.html"
+          class="block rounded-md px-3 py-2 text-slate-200 hover:bg-slate-800"
+          >Contact Us</a
+        >
+      </div>
+    </header>
+
+    <main>
+      <!-- Page Hero -->
+      <section
+        class="border-b border-slate-200 bg-gradient-to-b from-primaryDark via-white to-white"
+      >
+        <div
+          class="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-12 sm:px-6 md:flex-row md:items-end md:justify-between md:py-16 lg:px-8"
+        >
+          <div class="space-y-3">
+            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-accent">
+              Giving
+            </p>
+            <h1
+              class="text-balance text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl"
+            >
+              Worshiping God Through Generous Giving
+            </h1>
+            <p class="max-w-2xl text-sm text-slate-600 sm:text-base">
+              Giving is an act of worship and trust. As we give joyfully and generously, we partner
+              with what God is doing through River of Life Christian Church in Bangalore and beyond.
+            </p>
+          </div>
+          <div
+            class="rounded-2xl border border-slate-200 bg-white p-4 text-xs text-slate-700 sm:text-sm"
+          >
+            <p class="font-semibold text-slate-900">
+              “Each of you should give what you have decided in your heart to give, not reluctantly
+              or under compulsion, for God loves a cheerful giver.”
+            </p>
+            <p class="mt-1 text-slate-500">– 2 Corinthians 9:7</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Biblical Encouragement -->
+      <section class="border-b border-slate-200 bg-white">
+        <div
+          class="mx-auto max-w-6xl px-4 py-12 sm:px-6 md:py-16 lg:px-8"
+        >
+          <div class="grid gap-8 md:grid-cols-[3fr,2fr] md:items-start">
+            <div class="space-y-4">
+              <h2 class="text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">
+                Why We Give
+              </h2>
+              <p class="text-sm text-slate-600 sm:text-base">
+                We do not give to earn God&apos;s love – we give because we have already received
+                His amazing grace in Jesus Christ. Our finances are one way we honor God, serve
+                others, and advance the gospel.
+              </p>
+              <ul class="space-y-2 text-sm text-slate-600">
+                <li>• Giving is an act of worship and obedience to God.</li>
+                <li>• Giving reflects our trust that God is our Provider.</li>
+                <li>• Giving helps support ministry, missions, and mercy outreach.</li>
+              </ul>
+              <p class="text-xs text-slate-500">
+                Scriptures to meditate on: 2 Corinthians 9:6–11, Malachi 3:10, Proverbs 3:9–10.
+              </p>
+            </div>
+
+            <div
+              class="space-y-3 rounded-2xl border border-amber-400/40 bg-amber-50 p-5 text-sm text-slate-700"
+            >
+              <h3 class="text-sm font-semibold text-slate-900 sm:text-base">
+                A Heart Posture, Not Just a Transaction
+              </h3>
+              <p class="text-sm text-slate-700">
+                As a church, we encourage each person to give prayerfully, joyfully, and
+                intentionally — in line with God&apos;s leading and His Word.
+              </p>
+              <p class="text-xs text-slate-700">
+                If you are new or visiting, please feel no obligation to give. Your presence is a
+                gift to us.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Online Giving Options -->
+      <section
+        id="online-giving"
+        class="border-b border-slate-200 bg-slate-50"
+      >
+        <div class="mx-auto max-w-6xl px-4 py-12 sm:px-6 md:py-16 lg:px-8">
+          <div class="mb-8 max-w-3xl">
+            <h2 class="text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">
+              Online Giving Options
+            </h2>
+            <p class="mt-2 text-sm text-slate-600 sm:text-base">
+              You can give safely and conveniently using UPI or bank transfer. Details below are
+              placeholders — please replace them with your actual church account details before
+              publishing.
+            </p>
+          </div>
+
+          <div class="grid gap-6 md:grid-cols-2">
+            <!-- UPI Placeholder -->
+            <div
+              class="space-y-4 rounded-2xl border border-emerald-400/40 bg-emerald-50 p-5 text-sm text-slate-700"
+            >
+              <h3 class="text-sm font-semibold text-slate-900 sm:text-base">
+                UPI Giving (India)
+              </h3>
+              <p class="text-sm text-slate-700">
+                You can give using any UPI app (GPay, PhonePe, Paytm, BHIM, etc.) by scanning the
+                QR code or sending to the UPI ID below.
+              </p>
+              <div
+                class="flex aspect-square max-w-xs items-center justify-center rounded-2xl border border-dashed border-emerald-300 bg-emerald-50 text-xs text-slate-700"
+              >
+                UPI QR Code Placeholder
+              </div>
+              <div class="space-y-1 text-xs text-slate-700">
+                <p><span class="font-semibold">UPI ID (placeholder):</span> rolcc@upi</p>
+                <p><span class="font-semibold">Account Name (placeholder):</span> River of Life
+                  Christian Church</p>
+              </div>
+              <p class="text-[11px] text-slate-600">
+                Replace the UPI ID and account name with the actual details and QR code image
+                before going live.
+              </p>
+            </div>
+
+            <!-- Bank Transfer Placeholder -->
+            <div
+              class="space-y-4 rounded-2xl border border-slate-200 bg-white p-5 text-sm text-slate-700"
+            >
+              <h3 class="text-sm font-semibold text-slate-900 sm:text-base">
+                Bank Transfer (India)
+              </h3>
+              <p class="text-sm text-slate-600">
+                You can also give via bank transfer. The details below are placeholders and should
+                be replaced with actual church bank information.
+              </p>
+              <div class="space-y-2 rounded-xl border border-slate-200 bg-slate-50 p-4">
+                <p class="text-xs text-slate-700">
+                  <span class="font-semibold">Account Name (placeholder):</span> River of Life
+                  Christian Church
+                </p>
+                <p class="text-xs text-slate-700">
+                  <span class="font-semibold">Account Number (placeholder):</span> 000000000000
+                </p>
+                <p class="text-xs text-slate-700">
+                  <span class="font-semibold">IFSC Code (placeholder):</span> ABCD0123456
+                </p>
+                <p class="text-xs text-slate-700">
+                  <span class="font-semibold">Bank &amp; Branch (placeholder):</span> Bank Name,
+                  Branch, City
+                </p>
+              </div>
+              <p class="text-[11px] text-slate-500">
+                Please contact the church office for verified and updated bank details before
+                making a transfer.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Final Encouragement -->
+      <section class="border-b border-slate-200 bg-white">
+        <div
+          class="mx-auto max-w-6xl px-4 py-12 text-center sm:px-6 md:py-16 lg:px-8"
+        >
+          <p class="text-xs font-semibold uppercase tracking-[0.18em] text-accent">
+            Thank You
+          </p>
+          <h2
+            class="mt-3 text-balance text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl"
+          >
+            Your Generosity Makes a Difference
+          </h2>
+          <p class="mx-auto mt-3 max-w-2xl text-sm text-slate-600 sm:text-base">
+            Thank you for partnering with River of Life Christian Church. Together, we are able to
+            preach the gospel, disciple believers, serve families, and reach those in need.
+          </p>
+          <p class="mx-auto mt-3 max-w-2xl text-xs text-slate-500">
+            “And my God will supply every need of yours according to his riches in glory in Christ
+            Jesus.” – Philippians 4:19
+          </p>
+          <div class="mt-6 flex flex-wrap justify-center gap-4">
+            <a
+              href="#online-giving"
+              class="inline-flex items-center rounded-full bg-accent px-6 py-2.5 text-sm font-semibold text-white shadow-sm ring-1 ring-accent/70 transition hover:bg-accentSoft"
+            >
+              View Giving Options
+            </a>
+            <a
+              href="contact.html"
+              class="inline-flex items-center rounded-full border border-slate-700 px-6 py-2.5 text-sm font-semibold text-slate-100 transition hover:border-accent hover:text-accentSoft"
+            >
+              Contact Church Office
+            </a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800 bg-slate-950">
+      <div
+        class="mx-auto flex max-w-6xl flex-col gap-8 px-4 py-10 text-sm text-slate-300 sm:px-6 md:flex-row md:justify-between lg:px-8"
+      >
+        <div class="space-y-3 max-w-sm">
+          <p class="text-sm font-semibold text-slate-50">
+            River of Life Christian Church
+          </p>
+          <p class="text-xs text-slate-400">
+            3rd floor, AMR PLAZA, 49, 18th Main Rd, Sector 3, HSR Layout, Bengaluru, Karnataka
+            560102
+          </p>
+          <p class="text-xs text-slate-400">
+            Sunday Service · 10:00 AM – 11:30 AM
+          </p>
+        </div>
+        <div class="space-y-2">
+          <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
+            Connect
+          </p>
+          <p class="text-xs text-slate-300">
+            Phone:
+            <a href="tel:8050045500" class="text-accentSoft hover:text-accent"
+              >+91 80500 45500</a
+            >
+            ·
+            <a href="tel:9036745258" class="text-accentSoft hover:text-accent"
+              >+91 90367 45258</a
+            >
+          </p>
+          <p class="text-xs text-slate-300">
+            Email:
+            <a
+              href="mailto:rolccbangalore@gmail.com"
+              class="text-accentSoft hover:text-accent"
+              >rolccbangalore@gmail.com</a
+            >
+          </p>
+          <div class="flex flex-wrap gap-3 pt-1 text-xs">
+            <a
+              href="https://www.facebook.com/rolccindia/"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-slate-300 hover:text-accentSoft"
+              >Facebook</a
+            >
+            <a
+              href="https://www.youtube.com/@rolccindia"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-slate-300 hover:text-accentSoft"
+              >YouTube</a
+            >
+            <a
+              href="https://www.instagram.com/rolccindia"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-slate-300 hover:text-accentSoft"
+              >Instagram</a
+            >
+          </div>
+        </div>
+        <div class="space-y-2">
+          <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
+            Visit
+          </p>
+          <a
+            href="https://maps.app.goo.gl/GqLm5JLzAjenLBE16"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center rounded-full border border-slate-700 px-4 py-2 text-xs font-semibold text-slate-100 transition hover:border-accent hover:text-accentSoft"
+          >
+            Open in Google Maps
+          </a>
+        </div>
+      </div>
+      <div class="border-t border-slate-800">
+        <div
+          class="mx-auto flex max-w-6xl flex-col items-center justify-between gap-2 px-4 py-4 text-[11px] text-slate-500 sm:flex-row sm:px-6 lg:px-8"
+        >
+          <p>© <span id="year"></span> River of Life Christian Church. All rights reserved.</p>
+          <p>“A Place to Encounter Jesus”</p>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Scroll to Top Button -->
+    <button
+      id="scroll-top-btn"
+      class="scroll-to-top hidden fixed bottom-5 right-4 z-40 rounded-full bg-slate-900/90 p-2 text-xs text-slate-100 shadow-lg ring-1 ring-slate-600 hover:bg-slate-800 sm:bottom-6 sm:right-6"
+      aria-label="Scroll to top"
+      type="button"
+    >
+      ↑
+    </button>
+
+    <script src="/js/main.js"></script>
+  </body>
+</html>
+

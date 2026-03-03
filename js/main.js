@@ -1,0 +1,380 @@
+var ANNOUNCE_BANNER_KEY = "rolcc-announce-banner-hidden";
+
+document.addEventListener("DOMContentLoaded", function () {
+  const navToggle = document.getElementById("nav-toggle");
+  const navMenu = document.getElementById("nav-menu");
+  const scrollTopBtn = document.getElementById("scroll-top-btn");
+  const yearSpan = document.getElementById("year");
+  const announceBanner = document.getElementById("announce-banner");
+  const announceBannerClose = document.getElementById("announce-banner-close");
+
+  // Announcement banner: dismissible, persist in localStorage
+  if (announceBanner && announceBannerClose) {
+    if (localStorage.getItem(ANNOUNCE_BANNER_KEY) === "true") {
+      announceBanner.setAttribute("data-hidden", "true");
+    }
+    announceBannerClose.addEventListener("click", function () {
+      localStorage.setItem(ANNOUNCE_BANNER_KEY, "true");
+      announceBanner.setAttribute("data-hidden", "true");
+    });
+  }
+
+  function setMenuOpen(open) {
+    const expanded = !!open;
+    if (navToggle) navToggle.setAttribute("aria-expanded", expanded);
+    if (navMenu) {
+      navMenu.classList.toggle("is-open", expanded);
+      navMenu.classList.toggle("hidden", !expanded);
+      navMenu.setAttribute("aria-hidden", !expanded);
+    }
+  }
+
+  function closeMenu() {
+    setMenuOpen(false);
+  }
+
+  if (navToggle && navMenu) {
+    navToggle.addEventListener("click", () => {
+      setMenuOpen(!navMenu.classList.contains("is-open"));
+    });
+    navMenu.querySelectorAll("a").forEach((link) => {
+      link.addEventListener("click", closeMenu);
+    });
+  }
+
+  // Ministries dropdown: toggle on click, close on outside click
+  var ministriesTrigger = document.getElementById("ministries-trigger");
+  var ministriesMenu = document.getElementById("ministries-menu");
+  if (ministriesTrigger && ministriesMenu) {
+    ministriesTrigger.addEventListener("click", function (e) {
+      e.stopPropagation();
+      var open = ministriesMenu.classList.toggle("is-open");
+      ministriesTrigger.setAttribute("aria-expanded", open);
+    });
+    document.addEventListener("click", function () {
+      ministriesMenu.classList.remove("is-open");
+      ministriesTrigger.setAttribute("aria-expanded", "false");
+    });
+    ministriesMenu.addEventListener("click", function (e) {
+      e.stopPropagation();
+    });
+  }
+
+  // Header + announcement: same subtle bar when over hero; adaptive menu text; solid patch after scroll
+  var headerEl = document.getElementById("header");
+  var heroBannerEl = document.getElementById("hero-banner");
+  var announceEl = document.getElementById("announce-banner");
+  function updateHeaderScrolled() {
+    if (!headerEl) return;
+    headerEl.classList.remove("header-over-hero--light", "header-over-hero--dark");
+    if (announceEl) {
+      announceEl.classList.remove("announce-banner--over-dark", "announce-banner--over-light");
+    }
+    if (!heroBannerEl) {
+      headerEl.classList.add("header-scrolled");
+      return;
+    }
+    var heroRect = heroBannerEl.getBoundingClientRect();
+    var heroBottom = heroRect.bottom;
+    if (heroBottom < 0) {
+      headerEl.classList.add("header-scrolled");
+    } else {
+      headerEl.classList.remove("header-scrolled");
+      var isDarkHero = heroBannerEl.classList.contains("hero-theme-dark");
+      var isLightHero = heroBannerEl.classList.contains("hero-theme-light");
+      if (isDarkHero) {
+        headerEl.classList.add("header-over-hero--dark");
+        if (announceEl) announceEl.classList.add("announce-banner--over-dark");
+      } else if (isLightHero) {
+        headerEl.classList.add("header-over-hero--light");
+        if (announceEl) announceEl.classList.add("announce-banner--over-light");
+      } else {
+        headerEl.classList.add("header-over-hero--dark");
+        if (announceEl) announceEl.classList.add("announce-banner--over-dark");
+      }
+    }
+  }
+  window.addEventListener("scroll", updateHeaderScrolled, { passive: true });
+  window.addEventListener("resize", updateHeaderScrolled);
+  updateHeaderScrolled();
+  window.updateHeaderScrolled = updateHeaderScrolled;
+
+  // Set active nav link from current page (desktop + mobile + ministries dropdown)
+  var navLinks = document.querySelectorAll(".header-top__link[data-nav], .header-top__menu-link[data-nav], .header-top__dropdown-link[data-nav]");
+  var currentPage = (function () {
+    var path = window.location.pathname || "";
+    var name = path.split("/").pop() || "index.html";
+    return name.replace(/\.html$/, "") || "index";
+  })();
+  navLinks.forEach(function (link) {
+    var page = link.getAttribute("data-nav");
+    if (page === currentPage) link.classList.add("text-accent", "font-semibold");
+    else link.classList.remove("text-accent", "font-semibold");
+  });
+
+  // New Here: testimonial carousel
+  var newHereCarousel = document.querySelector(".new-here-carousel");
+  if (newHereCarousel) {
+    var newHereSlides = newHereCarousel.querySelectorAll(".new-here-carousel__slide");
+    var newHereDots = newHereCarousel.querySelectorAll(".new-here-carousel__dot");
+    var newHereIndex = 0;
+    var newHereTimer;
+    function setNewHereSlide(i) {
+      newHereIndex = (i + newHereSlides.length) % newHereSlides.length;
+      newHereSlides.forEach(function (s, idx) {
+        s.classList.toggle("active", idx === newHereIndex);
+      });
+      newHereDots.forEach(function (d, idx) {
+        d.classList.toggle("active", idx === newHereIndex);
+      });
+    }
+    newHereDots.forEach(function (btn, i) {
+      btn.addEventListener("click", function () {
+        setNewHereSlide(i);
+        clearInterval(newHereTimer);
+        newHereTimer = setInterval(function () {
+          setNewHereSlide(newHereIndex + 1);
+        }, 5000);
+      });
+    });
+    newHereTimer = setInterval(function () {
+      setNewHereSlide(newHereIndex + 1);
+    }, 5000);
+  }
+
+  // Scroll to top button logic
+  if (scrollTopBtn) {
+    window.addEventListener("scroll", () => {
+      if (window.scrollY > 200) {
+        scrollTopBtn.classList.remove("hidden");
+        scrollTopBtn.classList.add("visible");
+      } else {
+        scrollTopBtn.classList.remove("visible");
+        scrollTopBtn.classList.add("hidden");
+      }
+    });
+
+    scrollTopBtn.addEventListener("click", () => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  }
+
+  // Footer: fixed at bottom; Serve section unveils it on scroll (footer in BG, Serve scrolls up to reveal)
+
+  // New Here: big para darkens line-by-line on scroll (grey → dark)
+  var newHereSection = document.getElementById("new-here");
+  if (newHereSection) {
+    function updateNewHereReveal() {
+      var rect = newHereSection.getBoundingClientRect();
+      var viewHeight = window.innerHeight;
+      var range = viewHeight * 0.85;
+      var progress = 1 - rect.top / range;
+      progress = Math.max(0, Math.min(1, progress));
+      newHereSection.style.setProperty("--new-here-reveal", progress);
+    }
+    window.addEventListener("scroll", updateNewHereReveal, { passive: true });
+    window.addEventListener("resize", updateNewHereReveal);
+    updateNewHereReveal();
+  }
+
+  // Set current year in footer if element exists
+  if (yearSpan) {
+    yearSpan.textContent = new Date().getFullYear();
+  }
+
+  // Hero carousel + dynamic text theme from current slide background
+  var heroBanner = document.getElementById("hero-banner");
+  const carousel = document.querySelector(".hero-carousel");
+  if (carousel && heroBanner) {
+    const slides = carousel.querySelectorAll(".carousel-slide");
+    const dots = carousel.querySelectorAll(".carousel-dots button");
+    let current = 0;
+    let timer;
+
+    // Adaptive contrast: average image dark → white text; average image light → black text
+    function setHeroThemeFromImage(imageUrl) {
+      heroBanner.classList.remove("hero-theme-light", "hero-theme-dark");
+      if (!imageUrl) {
+        heroBanner.classList.add("hero-theme-dark");
+        if (window.updateHeaderScrolled) window.updateHeaderScrolled();
+        return;
+      }
+      var img = new Image();
+      // Do not set crossOrigin so same-origin (and file) loads don't taint the canvas
+      img.onload = function () {
+        try {
+          var canvas = document.createElement("canvas");
+          var ctx = canvas.getContext("2d");
+          var w = img.naturalWidth;
+          var h = img.naturalHeight;
+          if (!w || !h) {
+            heroBanner.classList.add("hero-theme-dark");
+            if (window.updateHeaderScrolled) window.updateHeaderScrolled();
+            return;
+          }
+          canvas.width = w;
+          canvas.height = h;
+          ctx.drawImage(img, 0, 0);
+          // Sample a large central area (60%) so bright accents don't dominate; dark overall → white text
+          var size = Math.max(20, Math.floor(Math.min(w, h) * 0.6) / 2);
+          var x0 = Math.max(0, Math.floor(w / 2) - size);
+          var y0 = Math.max(0, Math.floor(h / 2) - size);
+          var sw = Math.min(size * 2, w - x0);
+          var sh = Math.min(size * 2, h - y0);
+          var data = ctx.getImageData(x0, y0, sw, sh);
+          var pixels = data.data;
+          var r = 0, g = 0, b = 0, n = 0;
+          for (var i = 0; i < pixels.length; i += 4) {
+            r += pixels[i];
+            g += pixels[i + 1];
+            b += pixels[i + 2];
+            n++;
+          }
+          if (n) {
+            r /= n; g /= n; b /= n;
+            var luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+            // Threshold 0.45: mostly dark images (e.g. dark blue + gold accents) still get white text
+            heroBanner.classList.add(luminance > 0.45 ? "hero-theme-light" : "hero-theme-dark");
+          } else {
+            heroBanner.classList.add("hero-theme-dark");
+          }
+        } catch (e) {
+          heroBanner.classList.add("hero-theme-dark");
+        }
+        if (window.updateHeaderScrolled) window.updateHeaderScrolled();
+      };
+      img.onerror = function () {
+        heroBanner.classList.remove("hero-theme-light", "hero-theme-dark");
+        heroBanner.classList.add("hero-theme-dark");
+        if (window.updateHeaderScrolled) window.updateHeaderScrolled();
+      };
+      img.src = imageUrl;
+    }
+
+    function goToSlide(index) {
+      current = (index + slides.length) % slides.length;
+      slides.forEach((s, i) => s.classList.toggle("active", i === current));
+      dots.forEach((d, i) => d.classList.toggle("active", i === current));
+      var activeSlide = slides[current];
+      var bgImage = activeSlide ? activeSlide.getAttribute("data-bg-image") : null;
+      setHeroThemeFromImage(bgImage);
+    }
+
+    function next() {
+      goToSlide(current + 1);
+    }
+
+    dots.forEach((btn, i) => {
+      btn.addEventListener("click", () => {
+        goToSlide(i);
+        resetTimer();
+      });
+    });
+
+    function resetTimer() {
+      clearInterval(timer);
+      timer = setInterval(next, 6000);
+    }
+    timer = setInterval(next, 6000);
+
+    // Initial theme from first slide
+    var initialSlide = carousel.querySelector(".carousel-slide.active");
+    var initialBg = initialSlide ? initialSlide.getAttribute("data-bg-image") : null;
+    setHeroThemeFromImage(initialBg);
+  } else if (heroBanner) {
+    heroBanner.classList.add("hero-theme-light");
+    if (window.updateHeaderScrolled) window.updateHeaderScrolled();
+  }
+
+  // Latest Sermon carousel: seamless infinite – no gap; after 6th, 1st appears from the right
+  var latestSermonSection = document.getElementById("latest-sermon");
+  if (latestSermonSection) {
+    var track = latestSermonSection.querySelector(".latest-sermon-track");
+    var arrows = latestSermonSection.querySelectorAll(".latest-sermon-arrow");
+    var originalCards = latestSermonSection.querySelectorAll(".latest-sermon-card");
+    var totalOriginal = originalCards.length;
+
+    if (track && totalOriginal > 0) {
+      for (var i = 0; i < totalOriginal; i++) {
+        var clone = originalCards[i].cloneNode(true);
+        clone.setAttribute("aria-hidden", "true");
+        track.appendChild(clone);
+      }
+    }
+
+    var cards = latestSermonSection.querySelectorAll(".latest-sermon-card");
+    var total = cards.length;
+    var currentIndex = 0;
+    var transitionCss = "transform 0.3s ease-out";
+
+    function getStepPx() {
+      if (!cards[0]) return 360;
+      var w = cards[0].offsetWidth;
+      if (total < 2) return w + 20;
+      var gap = cards[1].offsetLeft - cards[0].offsetLeft - w;
+      return w + gap;
+    }
+
+    function updateTrack(instant) {
+      if (!track || total === 0) return;
+      var step = getStepPx();
+      var offset = -(currentIndex * step);
+      if (instant) {
+        track.style.transition = "none";
+        track.style.transform = "translate3d(" + offset + "px, 0, 0)";
+        void track.offsetHeight;
+        requestAnimationFrame(function () {
+          track.style.transition = transitionCss;
+        });
+      } else {
+        track.style.transition = transitionCss;
+        track.style.transform = "translate3d(" + offset + "px, 0, 0)";
+      }
+    }
+
+    function onTransitionEnd() {
+      if (currentIndex === total - 1) {
+        currentIndex = totalOriginal - 1;
+        updateTrack(true);
+      } else if (currentIndex === 0) {
+        currentIndex = totalOriginal;
+        updateTrack(true);
+      }
+    }
+
+    if (track) {
+      track.addEventListener("transitionend", function (e) {
+        if (e.target === track && e.propertyName === "transform") onTransitionEnd();
+      });
+    }
+
+    arrows.forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var dir = btn.getAttribute("data-direction");
+        if (dir === "next") {
+          if (currentIndex === total - 1) {
+            currentIndex = totalOriginal - 1;
+            updateTrack(true);
+          } else {
+            currentIndex++;
+            updateTrack(false);
+          }
+        } else {
+          if (currentIndex === 0) {
+            currentIndex = totalOriginal;
+            updateTrack(true);
+          } else {
+            currentIndex--;
+            updateTrack(false);
+          }
+        }
+      });
+    });
+
+    window.addEventListener("resize", function () {
+      updateTrack(false);
+    });
+    updateTrack(false);
+  }
+});
+

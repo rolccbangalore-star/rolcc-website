@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>River Kids | River of Life Christian Church</title>
+    <meta
+      name="description"
+      content="River Kids is the children’s ministry of River of Life Christian Church (ROLCC), Bangalore – a warm, joyful, and safe place for children to encounter Jesus and grow in God’s Word."
+    />
+    <meta
+      name="keywords"
+      content="River Kids, children ministry, kids church, ROLCC children, church for families, Bangalore kids ministry"
+    />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="River Kids | ROLCC Children’s Ministry" />
+    <meta
+      property="og:description"
+      content="A joyful, Christ-centered space where children encounter Jesus, grow in the Bible, and build godly friendships."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://www.rolcc.in/river-kids" />
+    <meta property="og:image" content="/images/og-image.jpg" />
+
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico" />
+
+    <!-- Sora font -->
+    <link
+      rel="preconnect"
+      href="https://fonts.googleapis.com"
+    />
+    <link
+      rel="preconnect"
+      href="https://fonts.gstatic.com"
+      crossorigin
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: "#ffffff",
+              primaryDark: "#f6f9fc",
+              accent: "#635bff",
+              accentSoft: "#818cf8",
+            },
+          },
+        },
+      };
+    </script>
+
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
+  <body class="bg-slate-50 text-slate-900">
+    <!-- Navbar -->
+    <header
+      class="sticky top-0 z-50 border-b border-slate-200 bg-white/80 nav-blur"
+    >
+      <nav
+        class="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8"
+      >
+        <a href="index.html" class="flex items-center gap-3">
+          <div
+            class="flex h-10 w-10 items-center justify-center rounded-full bg-accentSoft/10 ring-2 ring-accentSoft/60"
+          >
+            <span class="text-xl font-semibold text-accent">✝</span>
+          </div>
+          <div class="leading-tight">
+            <p class="text-sm font-semibold tracking-wide text-slate-900">
+              River of Life
+            </p>
+            <p class="text-xs text-slate-300">
+              Christian Church · Bangalore
+            </p>
+          </div>
+        </a>
+
+        <!-- Desktop Nav -->
+        <div class="hidden items-center gap-8 text-sm font-medium md:flex">
+          <a href="index.html" class="text-slate-600 hover:text-slate-900">Home</a>
+          <a href="about.html" class="text-slate-600 hover:text-slate-900">About Us</a>
+          <a href="services.html" class="text-slate-600 hover:text-slate-900">Services</a>
+          <a href="river-kids.html" class="text-slate-900">River Kids</a>
+          <a href="fellowship.html" class="text-slate-600 hover:text-slate-900">Fellowship</a>
+          <a href="giving.html" class="text-slate-600 hover:text-slate-900">Giving</a>
+          <a href="contact.html" class="text-slate-600 hover:text-slate-900">Contact Us</a>
+        </div>
+
+        <!-- CTA Desktop -->
+        <div class="hidden md:block">
+          <a
+            href="contact.html"
+            class="inline-flex items-center rounded-full bg-accent px-4 py-2 text-xs font-semibold text-white shadow-sm ring-1 ring-accent/70 transition hover:bg-accentSoft"
+          >
+            Plan a Family Visit
+          </a>
+        </div>
+
+        <!-- Mobile Toggle -->
+        <button
+          id="nav-toggle"
+          class="inline-flex items-center rounded-md p-2 text-slate-100 ring-1 ring-slate-700 transition hover:bg-slate-800 md:hidden"
+          aria-label="Toggle navigation menu"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-5 w-5"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      </nav>
+
+      <!-- Mobile Menu -->
+      <div
+        id="nav-menu"
+        class="mx-auto hidden max-w-6xl space-y-2 px-4 pb-4 text-sm font-medium bg-white border-b border-slate-200 sm:px-6 lg:px-8 md:hidden"
+      >
+        <a href="index.html" class="block rounded-md px-3 py-2 text-slate-700 hover:bg-slate-100"
+          >Home</a
+        >
+        <a href="about.html" class="block rounded-md px-3 py-2 text-slate-700 hover:bg-slate-100"
+          >About Us</a
+        >
+        <a href="services.html" class="block rounded-md px-3 py-2 text-slate-700 hover:bg-slate-100"
+          >Services</a
+        >
+        <a href="river-kids.html" class="block rounded-md bg-slate-100 px-3 py-2 text-slate-900"
+          >River Kids</a
+        >
+        <a
+          href="fellowship.html"
+          class="block rounded-md px-3 py-2 text-slate-200 hover:bg-slate-800"
+          >Fellowship</a
+        >
+        <a href="giving.html" class="block rounded-md px-3 py-2 text-slate-200 hover:bg-slate-800"
+          >Giving</a
+        >
+        <a
+          href="contact.html"
+          class="block rounded-md px-3 py-2 text-slate-200 hover:bg-slate-800"
+          >Contact Us</a
+        >
+      </div>
+    </header>
+
+    <main>
+      <!-- Page Hero -->
+      <section
+        class="border-b border-slate-200 bg-gradient-to-b from-primaryDark via-white to-white"
+      >
+        <div
+          class="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-12 sm:px-6 md:flex-row md:items-center md:justify-between md:py-16 lg:px-8"
+        >
+          <div class="space-y-3">
+            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-accent">
+              River Kids
+            </p>
+            <h1
+              class="text-balance text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl"
+            >
+              A Joyful Place for Children to Encounter Jesus
+            </h1>
+            <p class="max-w-2xl text-sm text-slate-600 sm:text-base">
+              River Kids is the children&apos;s ministry of River of Life Christian Church – a
+              vibrant, fun, and faith-filled space where kids discover God&apos;s love and grow in
+              His Word.
+            </p>
+          </div>
+          <div
+            class="rounded-2xl border border-emerald-400/40 bg-emerald-50 p-4 text-xs text-slate-700 sm:text-sm"
+          >
+            <p class="font-semibold text-emerald-700">
+              Children are a gift from the Lord.
+            </p>
+            <p class="mt-1 text-slate-700">
+              At River Kids, we partner with parents to disciple children in a safe and nurturing
+              environment.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Vision & Age Groups -->
+      <section class="border-b border-slate-200 bg-white">
+        <div
+          class="mx-auto grid max-w-6xl gap-10 px-4 py-12 sm:px-6 md:grid-cols-[3fr,2fr] md:py-16 lg:px-8"
+        >
+          <div class="space-y-4">
+            <h2 class="text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">
+              Our Vision for Children
+            </h2>
+            <p class="text-sm text-slate-600 sm:text-base">
+              We believe children are not the church of tomorrow – they are a vital part of the
+              church today. Our desire is to see every child:
+            </p>
+            <ul class="space-y-2 text-sm text-slate-600">
+              <li>• Encounter Jesus personally.</li>
+              <li>• Understand the Bible in a simple, age-appropriate way.</li>
+              <li>• Be filled with the Holy Spirit and learn to pray.</li>
+              <li>• Grow in godly character and Christlike kindness.</li>
+              <li>• Discover their gifts and use them for God&apos;s glory.</li>
+            </ul>
+            <p class="text-xs text-slate-500">
+              “Let the little children come to me and do not hinder them, for the kingdom of heaven
+              belongs to such as these.” – Matthew 19:14
+            </p>
+          </div>
+
+          <div
+            class="space-y-4 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-sm text-slate-700"
+          >
+            <h3 class="text-sm font-semibold text-slate-900 sm:text-base">
+              Age Groups
+            </h3>
+            <ul class="space-y-2 text-sm text-slate-600">
+              <li>
+                <span class="font-semibold text-emerald-300">River Tots</span> (Ages 3–5) – Short
+                Bible stories, songs, and simple crafts.
+              </li>
+              <li>
+                <span class="font-semibold text-emerald-300">River Explorers</span> (Ages 6–9) –
+                Engaging Bible lessons, memory verses, and group activities.
+              </li>
+              <li>
+                <span class="font-semibold text-emerald-300">River Champions</span> (Ages 10–12) –
+                Deeper Bible study, discussions, and leadership-focused activities.
+              </li>
+            </ul>
+            <p class="text-xs text-slate-500">
+              Age brackets may be adjusted slightly based on the number of children and specific
+              ministry needs.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Activities & Safety -->
+      <section class="border-b border-slate-200 bg-slate-50">
+        <div class="mx-auto max-w-6xl px-4 py-12 sm:px-6 md:py-16 lg:px-8">
+          <div class="grid gap-8 md:grid-cols-2">
+            <!-- Activities -->
+            <div class="space-y-4">
+              <h2 class="text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">
+                What Happens at River Kids?
+              </h2>
+              <p class="text-sm text-slate-600 sm:text-base">
+                River Kids combines fun, creativity, and solid Bible teaching to help children love
+                God and love people.
+              </p>
+              <ul class="space-y-2 text-sm text-slate-600">
+                <li>• Interactive Bible lessons and stories.</li>
+                <li>• Worship, action songs, and creative expression.</li>
+                <li>• Scripture memory and simple faith declarations.</li>
+                <li>• Games, crafts, and team-building activities.</li>
+                <li>• Prayer time and listening to God&apos;s voice.</li>
+              </ul>
+              <p class="text-xs text-slate-500">
+                Sessions typically run parallel to the main Sunday service.
+              </p>
+            </div>
+
+            <!-- Safety Commitment -->
+            <div
+              class="space-y-4 rounded-2xl border border-emerald-400/40 bg-emerald-50 p-5 text-sm text-slate-700"
+            >
+              <h2 class="text-2xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
+                Our Safety Commitment
+              </h2>
+              <p class="text-sm text-slate-700">
+                We take the safety and well-being of every child seriously.
+              </p>
+              <ul class="space-y-2 text-sm text-slate-700">
+                <li>• Children are always supervised by trusted teachers and volunteers.</li>
+                <li>• Check-in and check-out processes help ensure safe handover.</li>
+                <li>• Age-appropriate class sizes for better attention and care.</li>
+                <li>• Clean, child-friendly environments.</li>
+              </ul>
+              <p class="text-xs text-slate-700">
+                Parents are welcome to speak to our River Kids team before or after any service to
+                understand how we care for children.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Gallery Placeholder -->
+      <section class="border-b border-slate-200 bg-white">
+        <div class="mx-auto max-w-6xl px-4 py-12 sm:px-6 md:py-16 lg:px-8">
+          <div class="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div>
+              <h2 class="text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">
+                River Kids Moments
+              </h2>
+              <p class="mt-2 text-sm text-slate-600 sm:text-base">
+                A glimpse into the joy, worship, and learning that happens in our children&apos;s
+                ministry.
+              </p>
+            </div>
+            <p class="text-xs text-slate-400">
+              Photo gallery placeholders – you can replace these with actual images later.
+            </p>
+          </div>
+
+          <div class="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
+            <div
+              class="flex aspect-video items-center justify-center rounded-2xl border border-dashed border-emerald-400/50 bg-emerald-50 text-xs text-slate-600"
+            >
+              Gallery Image 1
+            </div>
+            <div
+              class="flex aspect-video items-center justify-center rounded-2xl border border-dashed border-emerald-400/50 bg-emerald-50 text-xs text-slate-600"
+            >
+              Gallery Image 2
+            </div>
+            <div
+              class="flex aspect-video items-center justify-center rounded-2xl border border-dashed border-emerald-400/50 bg-emerald-50 text-xs text-slate-600"
+            >
+              Gallery Image 3
+            </div>
+            <div
+              class="flex aspect-video items-center justify-center rounded-2xl border border-dashed border-emerald-400/50 bg-emerald-50 text-xs text-slate-600"
+            >
+              Gallery Image 4
+            </div>
+            <div
+              class="flex aspect-video items-center justify-center rounded-2xl border border-dashed border-emerald-400/50 bg-emerald-50 text-xs text-slate-600"
+            >
+              Gallery Image 5
+            </div>
+            <div
+              class="flex aspect-video items-center justify-center rounded-2xl border border-dashed border-emerald-400/50 bg-emerald-50 text-xs text-slate-600"
+            >
+              Gallery Image 6
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Parent CTA -->
+      <section class="border-b border-slate-200 bg-slate-50">
+        <div
+          class="mx-auto max-w-6xl px-4 py-12 text-center sm:px-6 md:py-16 lg:px-8"
+        >
+          <p class="text-xs font-semibold uppercase tracking-[0.18em] text-accent">
+            For Parents &amp; Families
+          </p>
+          <h2
+            class="mt-3 text-balance text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl"
+          >
+            Let&apos;s Partner Together to Disciple Your Children
+          </h2>
+          <p class="mx-auto mt-3 max-w-2xl text-sm text-slate-600 sm:text-base">
+            We believe discipleship begins at home. Our River Kids team is here to support you with
+            tools, prayer, and encouragement.
+          </p>
+          <div class="mt-6 flex flex-wrap justify-center gap-4">
+            <a
+              href="contact.html"
+              class="inline-flex items-center rounded-full bg-accent px-6 py-2.5 text-sm font-semibold text-white shadow-sm ring-1 ring-accent/70 transition hover:bg-accentSoft"
+            >
+              Talk to Our Kids Team
+            </a>
+            <a
+              href="services.html"
+              class="inline-flex items-center rounded-full border border-slate-700 px-6 py-2.5 text-sm font-semibold text-slate-100 transition hover:border-accent hover:text-accentSoft"
+            >
+              Service Timings
+            </a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800 bg-slate-950">
+      <div
+        class="mx-auto flex max-w-6xl flex-col gap-8 px-4 py-10 text-sm text-slate-300 sm:px-6 md:flex-row md:justify-between lg:px-8"
+      >
+        <div class="space-y-3 max-w-sm">
+          <p class="text-sm font-semibold text-slate-50">
+            River of Life Christian Church
+          </p>
+          <p class="text-xs text-slate-400">
+            3rd floor, AMR PLAZA, 49, 18th Main Rd, Sector 3, HSR Layout, Bengaluru, Karnataka
+            560102
+          </p>
+          <p class="text-xs text-slate-400">
+            Sunday Service · 10:00 AM – 11:30 AM
+          </p>
+        </div>
+        <div class="space-y-2">
+          <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
+            Connect
+          </p>
+          <p class="text-xs text-slate-300">
+            Phone:
+            <a href="tel:8050045500" class="text-accentSoft hover:text-accent"
+              >+91 80500 45500</a
+            >
+            ·
+            <a href="tel:9036745258" class="text-accentSoft hover:text-accent"
+              >+91 90367 45258</a
+            >
+          </p>
+          <p class="text-xs text-slate-300">
+            Email:
+            <a
+              href="mailto:rolccbangalore@gmail.com"
+              class="text-accentSoft hover:text-accent"
+              >rolccbangalore@gmail.com</a
+            >
+          </p>
+          <div class="flex flex-wrap gap-3 pt-1 text-xs">
+            <a
+              href="https://www.facebook.com/rolccindia/"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-slate-300 hover:text-accentSoft"
+              >Facebook</a
+            >
+            <a
+              href="https://www.youtube.com/@rolccindia"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-slate-300 hover:text-accentSoft"
+              >YouTube</a
+            >
+            <a
+              href="https://www.instagram.com/rolccindia"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-slate-300 hover:text-accentSoft"
+              >Instagram</a
+            >
+          </div>
+        </div>
+        <div class="space-y-2">
+          <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
+            Visit
+          </p>
+          <a
+            href="https://maps.app.goo.gl/GqLm5JLzAjenLBE16"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center rounded-full border border-slate-700 px-4 py-2 text-xs font-semibold text-slate-100 transition hover:border-accent hover:text-accentSoft"
+          >
+            Open in Google Maps
+          </a>
+        </div>
+      </div>
+      <div class="border-t border-slate-800">
+        <div
+          class="mx-auto flex max-w-6xl flex-col items-center justify-between gap-2 px-4 py-4 text-[11px] text-slate-500 sm:flex-row sm:px-6 lg:px-8"
+        >
+          <p>© <span id="year"></span> River of Life Christian Church. All rights reserved.</p>
+          <p>“A Place to Encounter Jesus”</p>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Scroll to Top Button -->
+    <button
+      id="scroll-top-btn"
+      class="scroll-to-top hidden fixed bottom-5 right-4 z-40 rounded-full bg-slate-900/90 p-2 text-xs text-slate-100 shadow-lg ring-1 ring-slate-600 hover:bg-slate-800 sm:bottom-6 sm:right-6"
+      aria-label="Scroll to top"
+      type="button"
+    >
+      ↑
+    </button>
+
+    <script src="/js/main.js"></script>
+  </body>
+</html>
+

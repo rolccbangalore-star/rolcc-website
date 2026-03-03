@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <title>River of Life Christian Church | Bangalore</title>
+    <meta
+      name="description"
+      content="River of Life Christian Church (ROLCC), Bangalore – A place to encounter Jesus through vibrant worship, powerful preaching, and life-giving fellowship."
+    />
+    <meta
+      name="keywords"
+      content="River of Life Christian Church, ROLCC, church in Bangalore, Spirit-filled church, Pentecostal church, worship, cell groups, River Kids"
+    />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="River of Life Christian Church | Bangalore" />
+    <meta
+      property="og:description"
+      content="Join us at River of Life Christian Church (ROLCC), Bangalore – A place to encounter Jesus and grow in the Word of God."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://www.rolcc.in/" />
+    <meta property="og:image" content="/images/og-image.jpg" />
+
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico" />
+
+    <!-- Sora font -->
+    <link
+      rel="preconnect"
+      href="https://fonts.googleapis.com"
+    />
+    <link
+      rel="preconnect"
+      href="https://fonts.gstatic.com"
+      crossorigin
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: "#ffffff",
+              primaryDark: "#f6f9fc",
+              accent: "#635bff",
+              accentSoft: "#818cf8",
+            },
+          },
+        },
+      };
+    </script>
+
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body class="bg-slate-50 text-slate-900">
+    <!-- Announcement: compact, centered, rounded pill -->
+    <div id="announce-banner" class="announce-banner" role="banner" aria-label="Announcement">
+      <div class="announce-banner__inner">
+        <p class="announce-banner__title">
+          Sunday 8:00 AM (Tamil) · 10:00 AM (English)
+          <a href="#" id="announce-watch-live" class="announce-banner__btn">Watch Live</a>
+        </p>
+        <button type="button" id="announce-banner-close" class="announce-banner__close" aria-label="Dismiss announcement">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Header: old-style nav on top; no patch over hero, patch after scroll -->
+    <header class="header-top" id="header">
+      <nav class="header-top__bar mx-auto max-w-6xl px-4 py-3 sm:px-6 lg:px-8 flex items-center justify-between">
+        <a href="index.html" class="header-top__brand flex items-center gap-3">
+          <img src="assets/logo.svg" alt="River of Life Christian Church" class="header-top__logo-img" width="36" height="44" />
+          <div class="leading-tight">
+            <p class="text-sm font-semibold tracking-wide">River of Life</p>
+            <p class="text-xs text-slate-500">Christian Church · Bangalore</p>
+          </div>
+        </a>
+
+        <!-- Desktop nav -->
+        <div class="hidden md:flex items-center gap-6 text-sm font-medium">
+          <a href="index.html" class="header-top__link" data-nav="index">Home</a>
+          <a href="about.html" class="header-top__link" data-nav="about">About Us</a>
+          <div class="header-top__dropdown relative" id="ministries-dropdown">
+            <button type="button" class="header-top__link flex items-center gap-0.5" aria-expanded="false" aria-haspopup="true" aria-controls="ministries-menu" id="ministries-trigger">Ministries <span class="text-[10px] ml-0.5" aria-hidden="true">▾</span></button>
+            <div class="header-top__dropdown-panel absolute top-full left-0 mt-1 py-2 min-w-[10rem] rounded-lg border border-slate-200 bg-white shadow-lg z-50 hidden" id="ministries-menu" role="menu">
+              <a href="services.html" class="header-top__dropdown-link block px-4 py-2 text-slate-700 hover:bg-slate-50 rounded-t-lg" role="menuitem" data-nav="services">Services</a>
+              <a href="river-kids.html" class="header-top__dropdown-link block px-4 py-2 text-slate-700 hover:bg-slate-50" role="menuitem" data-nav="river-kids">River Kids</a>
+              <a href="fellowship.html" class="header-top__dropdown-link block px-4 py-2 text-slate-700 hover:bg-slate-50 rounded-b-lg" role="menuitem" data-nav="fellowship">Fellowship</a>
+            </div>
+          </div>
+          <a href="giving.html" class="header-top__link" data-nav="giving">Giving</a>
+          <a href="contact.html" class="header-top__link" data-nav="contact">Contact Us</a>
+        </div>
+
+        <div class="hidden md:block">
+          <a href="contact.html" class="header-top__cta inline-flex items-center rounded-full bg-accent px-4 py-2 text-xs font-semibold text-white shadow-sm ring-1 ring-accent/70 hover:bg-accentSoft transition">Join Us This Sunday</a>
+        </div>
+
+        <button id="nav-toggle" type="button" class="header-top__hamburger md:hidden inline-flex items-center justify-center w-10 h-10 rounded-md border border-slate-300 text-slate-700 hover:bg-slate-100" aria-label="Open menu" aria-expanded="false" aria-controls="nav-menu">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+      </nav>
+
+      <!-- Mobile menu -->
+      <div id="nav-menu" class="header-top__menu hidden md:hidden border-t border-slate-200 bg-white" aria-hidden="true">
+        <div class="mx-auto max-w-6xl px-4 py-3 space-y-1 sm:px-6 lg:px-8">
+          <a href="index.html" class="header-top__menu-link block rounded-md px-3 py-2 text-slate-900 font-medium" data-nav="index">Home</a>
+          <a href="about.html" class="header-top__menu-link block rounded-md px-3 py-2 text-slate-700 hover:bg-slate-100" data-nav="about">About Us</a>
+          <p class="px-3 py-1.5 text-xs font-semibold uppercase tracking-wider text-slate-500 mt-2">Ministries</p>
+          <a href="services.html" class="header-top__menu-link block rounded-md px-3 py-2 pl-5 text-slate-700 hover:bg-slate-100" data-nav="services">Services</a>
+          <a href="river-kids.html" class="header-top__menu-link block rounded-md px-3 py-2 pl-5 text-slate-700 hover:bg-slate-100" data-nav="river-kids">River Kids</a>
+          <a href="fellowship.html" class="header-top__menu-link block rounded-md px-3 py-2 pl-5 text-slate-700 hover:bg-slate-100" data-nav="fellowship">Fellowship</a>
+          <a href="giving.html" class="header-top__menu-link block rounded-md px-3 py-2 text-slate-700 hover:bg-slate-100" data-nav="giving">Giving</a>
+          <a href="contact.html" class="header-top__menu-link block rounded-md px-3 py-2 text-slate-700 hover:bg-slate-100" data-nav="contact">Contact Us</a>
+          <a href="contact.html" class="header-top__menu-cta mt-3 inline-flex rounded-full bg-accent px-4 py-2 text-sm font-semibold text-white">Join Us This Sunday</a>
+        </div>
+      </div>
+    </header>
+
+    <main class="main-no-top-gap relative z-10">
+      <!-- Hero Carousel: banner image spans full width below header & announcement -->
+      <section class="hero-carousel hero-carousel--with-bg" id="hero-banner" data-bg-image="assets/carousel- banner-1.jpg">
+        <div class="carousel-track">
+          <!-- Slide 1: Join Us This Sunday -->
+          <div class="carousel-slide carousel-slide-bg-1 active flex flex-col justify-center items-center text-center" data-bg-image="assets/carousel- banner-1.jpg">
+            <div class="carousel-slide-inner mx-auto w-full max-w-6xl flex flex-col justify-center items-center px-4 py-12 sm:px-6 md:py-16 lg:px-8 text-center">
+              <p class="text-xs font-semibold uppercase tracking-[0.18em] text-accent">Join Us Live</p>
+              <h1 class="mt-2 text-balance text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl md:text-5xl">Join Us This Sunday</h1>
+              <p class="mt-4 max-w-xl text-sm leading-relaxed text-slate-600 sm:text-base">Spirit-filled worship. Biblical teaching. A welcoming church family.</p>
+              <p class="mt-4 text-sm font-medium text-slate-700">8:00 AM (Tamil) · 10:00 AM (English)</p>
+              <div class="mt-6 flex flex-wrap justify-center gap-3">
+                <a href="#" class="btn-primary inline-flex items-center rounded-full bg-accent px-5 py-2.5 text-sm font-semibold text-white shadow-sm ring-1 ring-accent/70 hover:bg-accentSoft">Watch Live</a>
+                <a href="contact.html" class="btn-outline inline-flex items-center rounded-full border border-slate-300 px-5 py-2.5 text-sm font-semibold text-slate-800 hover:border-accent hover:text-accentSoft">Plan Your Visit</a>
+              </div>
+            </div>
+          </div>
+          <!-- Slide 2: 2026 Theme -->
+          <div class="carousel-slide carousel-slide-bg-2 flex flex-col justify-center items-center text-center" data-bg-image="assets/carousel- banner-2.jpg">
+            <div class="carousel-slide-inner mx-auto w-full max-w-6xl flex flex-col justify-center items-center px-4 py-12 sm:px-6 md:py-16 lg:px-8 text-center">
+              <p class="text-xs font-semibold uppercase tracking-[0.18em] text-accent">2026</p>
+              <h1 class="mt-2 text-balance text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl md:text-5xl">Year of Transformation</h1>
+              <p class="mt-4 max-w-xl text-sm leading-relaxed text-slate-600 sm:text-base">A year of renewal, restored families, deeper faith, and visible spiritual growth through the power of the Holy Spirit.</p>
+              <div class="mt-6">
+                <a href="about.html" class="btn-primary inline-flex items-center rounded-full bg-accent px-5 py-2.5 text-sm font-semibold text-white shadow-sm ring-1 ring-accent/70 hover:bg-accentSoft">Discover the Vision</a>
+              </div>
+            </div>
+          </div>
+          <!-- Slide 3: Upcoming Event -->
+          <div class="carousel-slide carousel-slide-bg-3 flex flex-col justify-center items-center text-center" data-bg-image="assets/carousel- banner-3.png">
+            <div class="carousel-slide-inner mx-auto w-full max-w-6xl flex flex-col justify-center items-center px-4 py-12 sm:px-6 md:py-16 lg:px-8 text-center">
+              <p class="text-xs font-semibold uppercase tracking-[0.18em] text-accent">Upcoming Event</p>
+              <h1 class="mt-2 text-balance text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl md:text-5xl">Worship &amp; Renewal Night</h1>
+              <p class="mt-4 max-w-xl text-sm leading-relaxed text-slate-600 sm:text-base">An evening of extended worship, prayer, and spiritual refreshing.</p>
+              <p class="mt-3 text-sm text-slate-600">Date · Time · Location</p>
+              <div class="mt-6">
+                <a href="services.html" class="btn-primary inline-flex items-center rounded-full bg-accent px-5 py-2.5 text-sm font-semibold text-white shadow-sm ring-1 ring-accent/70 hover:bg-accentSoft">Learn More</a>
+              </div>
+            </div>
+          </div>
+          <!-- Slide 4: Giving -->
+          <div class="carousel-slide carousel-slide-bg-4 flex flex-col justify-center items-center text-center" data-bg-image="assets/carousel- banner-4.jpg">
+            <div class="carousel-slide-inner mx-auto w-full max-w-6xl flex flex-col justify-center items-center px-4 py-12 sm:px-6 md:py-16 lg:px-8 text-center">
+              <p class="text-xs font-semibold uppercase tracking-[0.18em] text-accent">Giving</p>
+              <h1 class="mt-2 text-balance text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl md:text-5xl">Partner With Us in Kingdom Impact</h1>
+              <p class="mt-4 max-w-xl text-sm leading-relaxed text-slate-600 sm:text-base">Your generosity supports ministry, discipleship, outreach, and the next generation.</p>
+              <div class="mt-6">
+                <a href="giving.html" class="btn-primary inline-flex items-center rounded-full bg-accent px-5 py-2.5 text-sm font-semibold text-white shadow-sm ring-1 ring-accent/70 hover:bg-accentSoft">Give Online</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="carousel-dots-wrapper">
+          <div class="carousel-dots mx-auto max-w-6xl px-4" aria-hidden="true">
+            <button type="button" class="active" aria-label="Slide 1"></button>
+            <button type="button" aria-label="Slide 2"></button>
+            <button type="button" aria-label="Slide 3"></button>
+            <button type="button" aria-label="Slide 4"></button>
+          </div>
+        </div>
+      </section>
+
+      <!-- New Here (Figma-aligned: layout, spacing grid, site palette) -->
+      <section class="new-here-section border-b border-slate-200 bg-white" id="new-here">
+        <div class="new-here-container">
+          <div class="new-here-grid">
+            <!-- Left: eyebrow + one big paragraph (no title/heading), grid-aligned -->
+            <div class="new-here-left">
+              <p class="new-here-eyebrow" aria-hidden="true">HEY, NEW HERE!</p>
+              <p class="new-here-intro">River of Life is a church focused on helping people live daily life with Christ at the centre—through worship, the Word, and the work of the Holy Spirit. We believe in renewal, authentic fellowship in cell groups, and making a difference in our communities and beyond. Whether you&apos;re exploring faith or looking for a church home, you&apos;re welcome here. Join us this Sunday or reach out; we&apos;d love to connect with you.</p>
+            </div>
+            <!-- Right: testimonial card -->
+            <div class="new-here-card new-here-carousel">
+              <div class="new-here-carousel__track">
+                <blockquote class="new-here-carousel__slide card-testimonial active">
+                  <footer class="new-here-testimonial-footer">
+                    <span class="new-here-avatar" aria-hidden="true"></span>
+                    <div>
+                      <cite class="new-here-testimonial-name not-italic">Name</cite>
+                      <p class="new-here-testimonial-role">Role &bull; Bangalore</p>
+                    </div>
+                  </footer>
+                  <p class="new-here-testimonial-quote">&ldquo;River of Life is a church focused on helping people live daily life with Christ at the centre. Through the worship and teaching here, my faith has grown stronger than ever. This has become a place where our family can grow together in the Word and in fellowship.&rdquo;</p>
+                </blockquote>
+                <blockquote class="new-here-carousel__slide card-testimonial">
+                  <footer class="new-here-testimonial-footer">
+                    <span class="new-here-avatar" aria-hidden="true"></span>
+                    <div>
+                      <cite class="new-here-testimonial-name not-italic">Name</cite>
+                      <p class="new-here-testimonial-role">Role &bull; Bangalore</p>
+                    </div>
+                  </footer>
+                  <p class="new-here-testimonial-quote">&ldquo;This church became our spiritual family during one of our most difficult seasons. The preaching, the cell groups, and the care we received made a lasting difference. We are grateful for the community and the way God is at work here.&rdquo;</p>
+                </blockquote>
+                <blockquote class="new-here-carousel__slide card-testimonial">
+                  <footer class="new-here-testimonial-footer">
+                    <span class="new-here-avatar" aria-hidden="true"></span>
+                    <div>
+                      <cite class="new-here-testimonial-name not-italic">Name</cite>
+                      <p class="new-here-testimonial-role">Role &bull; Bangalore</p>
+                    </div>
+                  </footer>
+                  <p class="new-here-testimonial-quote">&ldquo;Our children love River Kids and are growing in God&apos;s Word. The ministry here has helped us as parents to raise them in faith. We have found a home at River of Life and look forward to what God will do in the years ahead.&rdquo;</p>
+                </blockquote>
+                <blockquote class="new-here-carousel__slide card-testimonial">
+                  <footer class="new-here-testimonial-footer">
+                    <span class="new-here-avatar" aria-hidden="true"></span>
+                    <div>
+                      <cite class="new-here-testimonial-name not-italic">Name</cite>
+                      <p class="new-here-testimonial-role">Role &bull; Bangalore</p>
+                    </div>
+                  </footer>
+                  <p class="new-here-testimonial-quote">&ldquo;Placeholder testimonial four. You can replace this with your custom content.&rdquo;</p>
+                </blockquote>
+              </div>
+              <div class="new-here-carousel__dots" aria-hidden="true">
+                <button type="button" class="new-here-carousel__dot active" aria-label="Testimonial 1"></button>
+                <button type="button" class="new-here-carousel__dot" aria-label="Testimonial 2"></button>
+                <button type="button" class="new-here-carousel__dot" aria-label="Testimonial 3"></button>
+                <button type="button" class="new-here-carousel__dot" aria-label="Testimonial 4"></button>
+              </div>
+            </div>
+          </div>
+          <!-- Footer: service times + CTA -->
+          <div class="new-here-footer">
+            <div class="new-here-services">
+              <div class="new-here-service-block">
+                <p class="new-here-service-label">Tamil Service</p>
+                <p class="new-here-service-time">08AM – 9:45AM</p>
+              </div>
+              <span class="new-here-divider" aria-hidden="true"></span>
+              <div class="new-here-service-block">
+                <p class="new-here-service-label">English Service</p>
+                <p class="new-here-service-time">10AM – 11:45AM</p>
+              </div>
+            </div>
+            <a href="contact.html" class="new-here-cta btn-primary">Plan Your Visit</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Latest Sermon (carousel: 6 sermons, arrows, card hover = overlay + play) -->
+      <section id="latest-sermon" class="border-b border-slate-200 bg-white">
+        <div class="mx-auto max-w-6xl px-4 py-12 sm:px-6 md:py-16 lg:px-8">
+          <div class="latest-sermon-header flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <p class="latest-sermon-label text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-400">Latest Message</p>
+              <h2 class="latest-sermon-title mt-1.5 text-2xl font-bold leading-tight tracking-tight text-slate-800 sm:text-3xl">Be strengthened through the<br />Word of God.</h2>
+            </div>
+            <div class="latest-sermon-arrows flex items-center gap-2">
+              <button type="button" class="latest-sermon-arrow rounded-full border border-slate-200 bg-slate-100/80 p-2.5 text-slate-500 transition hover:bg-slate-200/80 hover:border-slate-300 hover:text-slate-800" data-direction="prev" aria-label="Previous sermon">
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+              </button>
+              <button type="button" class="latest-sermon-arrow rounded-full border border-slate-200 bg-slate-100/80 p-2.5 text-slate-500 transition hover:bg-slate-200/80 hover:border-slate-300 hover:text-slate-800" data-direction="next" aria-label="Next sermon">
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+              </button>
+            </div>
+          </div>
+          <div class="latest-sermon-carousel-wrap mt-10">
+            <div class="latest-sermon-viewport">
+              <div class="latest-sermon-track flex gap-5">
+              <a href="https://www.youtube.com/@rolccindia" target="_blank" rel="noopener noreferrer" class="latest-sermon-card flex-shrink-0 border border-slate-200/80 bg-white">
+                <div class="latest-sermon-card__thumb relative bg-slate-100">
+                  <img src="assets/Sermon-cover-1.png" alt="" class="latest-sermon-card__img h-full w-full object-cover" loading="lazy" />
+                  <span class="latest-sermon-card__overlay" aria-hidden="true"></span>
+                  <span class="latest-sermon-card__play" aria-hidden="true"></span>
+                </div>
+                <div class="latest-sermon-card__info bg-white px-4 py-4">
+                  <p class="text-[13px] text-slate-400">Pas. Benson K Sunny • 12 Mar 2026</p>
+                  <p class="mt-1 text-base font-bold leading-snug text-slate-800">From Dry Bones to Living Hope</p>
+                </div>
+              </a>
+              <a href="https://www.youtube.com/@rolccindia" target="_blank" rel="noopener noreferrer" class="latest-sermon-card flex-shrink-0 border border-slate-200/80 bg-white">
+                <div class="latest-sermon-card__thumb relative bg-slate-100">
+                  <img src="assets/Sermon-cover-2.png" alt="" class="latest-sermon-card__img h-full w-full object-cover" loading="lazy" />
+                  <span class="latest-sermon-card__overlay" aria-hidden="true"></span>
+                  <span class="latest-sermon-card__play" aria-hidden="true"></span>
+                </div>
+                <div class="latest-sermon-card__info bg-white px-4 py-4">
+                  <p class="text-[13px] text-slate-400">Pas. Benson K Sunny • 12 Mar 2026</p>
+                  <p class="mt-1 text-base font-bold leading-snug text-slate-800">When Pressure Produces Power</p>
+                </div>
+              </a>
+              <a href="https://www.youtube.com/@rolccindia" target="_blank" rel="noopener noreferrer" class="latest-sermon-card flex-shrink-0 border border-slate-200/80 bg-white">
+                <div class="latest-sermon-card__thumb relative bg-slate-100">
+                  <img src="assets/Sermon-cover-3.png" alt="" class="latest-sermon-card__img h-full w-full object-cover" loading="lazy" />
+                  <span class="latest-sermon-card__overlay" aria-hidden="true"></span>
+                  <span class="latest-sermon-card__play" aria-hidden="true"></span>
+                </div>
+                <div class="latest-sermon-card__info bg-white px-4 py-4">
+                  <p class="text-[13px] text-slate-400">Pas. Benson K Sunny • 12 Mar 2026</p>
+                  <p class="mt-1 text-base font-bold leading-snug text-slate-800">Strengthened in the Inner Man</p>
+                </div>
+              </a>
+              <a href="https://www.youtube.com/@rolccindia" target="_blank" rel="noopener noreferrer" class="latest-sermon-card flex-shrink-0 border border-slate-200/80 bg-white">
+                <div class="latest-sermon-card__thumb relative bg-slate-100">
+                  <img src="assets/Sermon-cover-4.png" alt="" class="latest-sermon-card__img h-full w-full object-cover" loading="lazy" />
+                  <span class="latest-sermon-card__overlay" aria-hidden="true"></span>
+                  <span class="latest-sermon-card__play" aria-hidden="true"></span>
+                </div>
+                <div class="latest-sermon-card__info bg-white px-4 py-4">
+                  <p class="text-[13px] text-slate-400">Pas. Benson K Sunny • 12 Mar 2026</p>
+                  <p class="mt-1 text-base font-bold leading-snug text-slate-800">Thy Will Be Done</p>
+                </div>
+              </a>
+              <a href="https://www.youtube.com/@rolccindia" target="_blank" rel="noopener noreferrer" class="latest-sermon-card flex-shrink-0 border border-slate-200/80 bg-white">
+                <div class="latest-sermon-card__thumb relative bg-slate-100">
+                  <img src="assets/Sermon-cover-5.png" alt="" class="latest-sermon-card__img h-full w-full object-cover" loading="lazy" />
+                  <span class="latest-sermon-card__overlay" aria-hidden="true"></span>
+                  <span class="latest-sermon-card__play" aria-hidden="true"></span>
+                </div>
+                <div class="latest-sermon-card__info bg-white px-4 py-4">
+                  <p class="text-[13px] text-slate-400">Pas. Benson K Sunny • 12 Mar 2026</p>
+                  <p class="mt-1 text-base font-bold leading-snug text-slate-800">Seek First the Kingdom</p>
+                </div>
+              </a>
+              <a href="https://www.youtube.com/@rolccindia" target="_blank" rel="noopener noreferrer" class="latest-sermon-card flex-shrink-0 border border-slate-200/80 bg-white">
+                <div class="latest-sermon-card__thumb relative bg-slate-100">
+                  <img src="assets/Sermon-cover-6.png" alt="" class="latest-sermon-card__img h-full w-full object-cover" loading="lazy" />
+                  <span class="latest-sermon-card__overlay" aria-hidden="true"></span>
+                  <span class="latest-sermon-card__play" aria-hidden="true"></span>
+                </div>
+                <div class="latest-sermon-card__info bg-white px-4 py-4">
+                  <p class="text-[13px] text-slate-400">Pas. Benson K Sunny • 12 Mar 2026</p>
+                  <p class="mt-1 text-base font-bold leading-snug text-slate-800">Walk With Jesus</p>
+                </div>
+              </a>
+            </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Our Leadership: Meet our Pastor -->
+      <section id="meet-pastor" class="border-b border-slate-200 bg-slate-50">
+        <div class="mx-auto max-w-6xl px-4 py-12 sm:px-6 md:py-16 lg:px-8">
+          <div class="grid gap-10 md:grid-cols-2 md:items-center">
+            <div>
+              <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-400">Our Leadership</p>
+              <h2 class="mt-2 text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">Meet our Pastor</h2>
+              <p class="mt-4 text-sm leading-relaxed text-slate-600 sm:text-[15px]">
+                Rev. Dr. Benson K. Sunny has served in ministry for over 15 years with a deep calling toward shepherding God&apos;s
+                people. With a pastor&apos;s heart, he is committed to nurturing spiritual growth, strengthening families, and
+                guiding believers into a deeper walk with Christ.
+              </p>
+              <p class="mt-3 text-sm leading-relaxed text-slate-600 sm:text-[15px]">
+                Passionate about identifying and mentoring emerging leaders, he invests intentionally in raising the next
+                generation for impactful ministry through faithful biblical teaching, prayer, and Spirit-led leadership.
+              </p>
+
+              <div class="mt-10 max-w-md rounded-3xl bg-white p-6 sm:p-7 shadow-sm ring-1 ring-slate-100">
+                <img
+                  src="assets/pastor-signature.png"
+                  alt="Signature of Rev. Benson K Sunny"
+                  class="h-12 w-auto"
+                  loading="lazy"
+                />
+                <p class="mt-3 text-[13px] font-semibold text-slate-900">Rev. Benson K Sunny</p>
+                <p class="mt-0.5 text-[12px] text-slate-500">Lead Pastor, River of Life Christian Church</p>
+                <p class="mt-4 text-[13px] leading-relaxed text-slate-600">
+                  It&apos;s a joy to welcome you. We truly believe God has a purpose for your life, and we would love to walk that
+                  journey with you.
+                </p>
+              </div>
+            </div>
+
+            <div class="flex justify-center md:justify-end">
+              <div class="relative overflow-hidden rounded-3xl">
+                <img
+                  src="assets/pastor-benson.png"
+                  alt="Rev. Dr. Benson K Sunny ministering"
+                  class="block h-auto max-h-[440px] w-auto object-contain"
+                  loading="lazy"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Our Core Pillars -->
+      <section class="border-b border-slate-200 bg-slate-50 py-16 sm:py-20 md:py-24">
+        <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+          <div class="text-center">
+            <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-400">Our Core Pillars</p>
+            <h2 class="mt-2 text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">
+              The Heart of Our Church
+            </h2>
+          </div>
+
+          <div class="pillars-frame mt-10 sm:mt-12 rounded-3xl border border-slate-200 bg-white/60 p-6 sm:p-8 lg:p-10">
+            <div class="grid gap-1 sm:gap-2 sm:grid-cols-2 lg:grid-cols-4 section-stagger">
+              <div class="card-pillar flex min-h-[340px] flex-col rounded-2xl bg-white overflow-hidden text-left">
+                <div class="pillars-card__content flex flex-1 flex-col px-6 pt-6">
+                  <div class="flex-shrink-0">
+                    <img src="assets/pillars-praiseandworship.png" alt="" class="h-[72px] w-full max-w-[105px] object-contain object-left" loading="lazy" />
+                  </div>
+                  <div class="mt-auto pt-6 pb-6">
+                    <p class="text-lg font-semibold text-slate-900">Praise &amp; Worship</p>
+                    <div class="pillars-divider mt-1 mb-3 h-px w-16 bg-slate-100"></div>
+                    <p class="text-sm text-slate-600 leading-relaxed">Passionate, Spirit-filled worship that leads people into God&apos;s presence.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card-pillar flex min-h-[340px] flex-col rounded-2xl bg-white overflow-hidden text-left">
+                <div class="pillars-card__content flex flex-1 flex-col px-6 pt-6">
+                  <div class="flex-shrink-0">
+                    <img src="assets/pillars-cellchurch.png" alt="" class="h-[72px] w-full max-w-[105px] object-contain object-left" loading="lazy" />
+                  </div>
+                  <div class="mt-auto pt-6 pb-6">
+                    <p class="text-lg font-semibold text-slate-900">Cell Church</p>
+                    <div class="pillars-divider mt-1 mb-3 h-px w-16 bg-slate-100"></div>
+                    <p class="text-sm text-slate-600 leading-relaxed">Authentic small-group community where faith is strengthened.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card-pillar flex min-h-[340px] flex-col rounded-2xl bg-white overflow-hidden text-left">
+                <div class="pillars-card__content flex flex-1 flex-col px-6 pt-6">
+                  <div class="flex-shrink-0">
+                    <img src="assets/pillars-holyspirit.png" alt="" class="h-[72px] w-full max-w-[105px] object-contain object-left" loading="lazy" />
+                  </div>
+                  <div class="mt-auto pt-6 pb-6">
+                    <p class="text-lg font-semibold text-slate-900">Holy Spirit Renewal</p>
+                    <div class="pillars-divider mt-1 mb-3 h-px w-16 bg-slate-100"></div>
+                    <p class="text-sm text-slate-600 leading-relaxed">Seeking revival, spiritual empowerment, and daily transformation.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card-pillar flex min-h-[340px] flex-col rounded-2xl bg-white overflow-hidden text-left">
+                <div class="pillars-card__content flex flex-1 flex-col px-6 pt-6">
+                  <div class="flex-shrink-0">
+                    <img src="assets/pillars-glocalimpact.png" alt="" class="h-[72px] w-full max-w-[105px] object-contain object-left" loading="lazy" />
+                  </div>
+                  <div class="mt-auto pt-6 pb-6">
+                    <p class="text-lg font-semibold text-slate-900">Glocal Impact</p>
+                    <div class="pillars-divider mt-1 mb-3 h-px w-16 bg-slate-100"></div>
+                    <p class="text-sm text-slate-600 leading-relaxed">Serving locally while supporting global missions and outreach.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Our Ministries (Superside-style: Tech enabled and made to work for you) -->
+      <section class="ministries-superside border-b border-slate-200 bg-white">
+        <div class="mx-auto max-w-6xl px-4 py-16 sm:px-6 md:py-24 lg:px-8">
+          <p class="ministries-superside__eyebrow text-xs font-semibold uppercase tracking-[0.2em] text-slate-500" aria-hidden="true">Growing together</p>
+          <h2 class="ministries-superside__title mt-3 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl md:text-[2.5rem] md:leading-tight">
+            Our ministries built to <em class="font-normal text-accent">work for you</em>
+          </h2>
+          <p class="mt-4 max-w-2xl text-base text-slate-600 sm:text-lg">
+            No matter where you are in life, there's a place for you to grow and serve.
+          </p>
+          <a href="services.html" class="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-slate-900 hover:text-accent transition-colors">
+            Explore ministries
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+
+          <div class="ministries-superside__grid mt-14">
+            <a href="river-kids.html" class="ministries-superside__card ministries-superside__card--1 group block">
+              <span class="ministries-superside__icon" aria-hidden="true">
+                <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10l9-7 9 7v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V10z"/><path d="M9 22V12h6v10"/></svg>
+              </span>
+              <h3 class="text-lg font-semibold text-slate-900 sm:text-xl">River Kids</h3>
+              <p class="mt-2 text-xs leading-relaxed text-slate-600 sm:text-sm">
+                Raising children in faith through engaging Bible teaching and worship.
+              </p>
+              <span class="ministries-superside__arrow mt-auto pt-4 inline-flex items-center gap-2 text-sm font-semibold text-white">Learn more <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+            </a>
+
+            <a href="fellowship.html" class="ministries-superside__card ministries-superside__card--2 group block">
+              <span class="ministries-superside__icon" aria-hidden="true">
+                <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/></svg>
+              </span>
+              <h3 class="text-lg font-semibold text-slate-900 sm:text-xl">Midweek Fellowship</h3>
+              <p class="mt-2 text-xs leading-relaxed text-slate-600 sm:text-sm">
+                A time of prayer, Word, and spiritual growth during the week.
+              </p>
+              <span class="ministries-superside__arrow mt-auto pt-4 inline-flex items-center gap-2 text-sm font-semibold text-white">Learn more <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+            </a>
+
+            <a href="contact.html" class="ministries-superside__card ministries-superside__card--3 group block">
+              <span class="ministries-superside__icon" aria-hidden="true">
+                <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-4.35-7-11a7 7 0 0 1 14 0c0 6.65-7 11-7 11z"/><path d="M12 11a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/></svg>
+              </span>
+              <h3 class="text-lg font-semibold text-slate-900 sm:text-xl">Counselling Ministry</h3>
+              <p class="mt-2 text-xs leading-relaxed text-slate-600 sm:text-sm">
+                Pre-marital, crisis, family, and spiritual counselling grounded in Scripture.
+              </p>
+              <span class="ministries-superside__arrow mt-auto pt-4 inline-flex items-center gap-2 text-sm font-semibold text-white">Get help <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+            </a>
+
+            <a href="services.html" class="ministries-superside__card ministries-superside__card--4 group block">
+              <span class="ministries-superside__icon" aria-hidden="true">
+                <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21c4.97-4.37 8-8.1 8-11a4.5 4.5 0 0 0-8-2.83A4.5 4.5 0 0 0 4 10c0 2.9 3.03 6.63 8 11z"/></svg>
+              </span>
+              <h3 class="text-lg font-semibold text-slate-900 sm:text-xl">Fasting Prayers</h3>
+              <p class="mt-2 text-xs leading-relaxed text-slate-600 sm:text-sm">
+                Seeking God together through prayer and consecration.
+              </p>
+              <span class="ministries-superside__arrow mt-auto pt-4 inline-flex items-center gap-2 text-sm font-semibold text-white">Learn more <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+            </a>
+
+            <a href="contact.html" class="ministries-superside__card ministries-superside__card--5 group block">
+              <span class="ministries-superside__icon" aria-hidden="true">
+                <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-4.35-7-11a7 7 0 0 1 14 0c0 6.65-7 11-7 11z"/><path d="M12 11a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/></svg>
+              </span>
+              <h3 class="text-lg font-semibold text-slate-900 sm:text-xl">Counselling as Ministry</h3>
+              <p class="mt-2 text-xs leading-relaxed text-slate-600 sm:text-sm">
+                Pre-marital, crisis, family, and spiritual counselling grounded in Scripture.
+              </p>
+              <span class="ministries-superside__arrow mt-auto pt-4 inline-flex items-center gap-2 text-sm font-semibold text-white">Get help <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+            </a>
+
+            <a href="services.html" class="ministries-superside__card ministries-superside__card--6 group block">
+              <span class="ministries-superside__icon" aria-hidden="true">
+                <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+              </span>
+              <h3 class="text-lg font-semibold text-slate-900 sm:text-xl">Pre Ministry Diploma (PMD)</h3>
+              <p class="mt-2 text-xs leading-relaxed text-slate-600 sm:text-sm">
+                Equipping and training for ministry through biblical study and practical preparation.
+              </p>
+              <span class="ministries-superside__arrow mt-auto pt-4 inline-flex items-center gap-2 text-sm font-semibold text-white">Learn more <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Testimonials -->
+      <section class="border-b border-slate-200 bg-slate-50">
+        <div class="mx-auto max-w-6xl px-4 py-12 sm:px-6 md:py-16 lg:px-8">
+          <h2 class="text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">Testimonials</h2>
+          <p class="mt-2 text-sm text-slate-600">Stories of Transformation</p>
+          <div class="mt-8 grid gap-6 md:grid-cols-3 section-stagger">
+            <blockquote class="card-testimonial rounded-2xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-md transition">
+              <div class="flex items-center gap-3">
+                <span class="inline-flex h-10 w-10 items-center justify-center rounded-full bg-indigo-50 text-indigo-700 ring-1 ring-indigo-100 text-sm font-semibold">J</span>
+                <div>
+                  <p class="text-sm font-semibold text-slate-900">Jason</p>
+                  <p class="text-[12px] text-slate-500">Bangalore</p>
+                </div>
+              </div>
+              <p class="mt-4 text-sm leading-relaxed text-slate-700">&ldquo;Through the worship and teaching here, my faith has grown stronger than ever.&rdquo;</p>
+            </blockquote>
+            <blockquote class="card-testimonial rounded-2xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-md transition">
+              <div class="flex items-center gap-3">
+                <span class="inline-flex h-10 w-10 items-center justify-center rounded-full bg-emerald-50 text-emerald-700 ring-1 ring-emerald-100 text-sm font-semibold">A</span>
+                <div>
+                  <p class="text-sm font-semibold text-slate-900">Anita</p>
+                  <p class="text-[12px] text-slate-500">HSR Layout</p>
+                </div>
+              </div>
+              <p class="mt-4 text-sm leading-relaxed text-slate-700">&ldquo;This church became our spiritual family during one of our most difficult seasons.&rdquo;</p>
+            </blockquote>
+            <blockquote class="card-testimonial rounded-2xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-md transition">
+              <div class="flex items-center gap-3">
+                <span class="inline-flex h-10 w-10 items-center justify-center rounded-full bg-amber-50 text-amber-700 ring-1 ring-amber-100 text-sm font-semibold">S</span>
+                <div>
+                  <p class="text-sm font-semibold text-slate-900">Samuel</p>
+                  <p class="text-[12px] text-slate-500">Bangalore</p>
+                </div>
+              </div>
+              <p class="mt-4 text-sm leading-relaxed text-slate-700">&ldquo;Our children love River Kids and are growing in God&apos;s Word.&rdquo;</p>
+            </blockquote>
+          </div>
+        </div>
+      </section>
+
+      <!-- Serve With Us: blue top+left frame; white extends to right and bottom; content aligns with above -->
+      <section class="serve-with-us bg-[#4338CA] pt-12 md:pt-16 pl-4 sm:pl-6 lg:pl-[max(0px,calc((100vw-72rem)/2-2rem))]">
+        <div class="serve-with-us__panel relative rounded-tl-2xl bg-white overflow-hidden py-12 md:py-16">
+          <img src="assets/serve-bg.png" alt="" class="serve-with-us__bg pointer-events-none absolute right-0 bottom-0 z-0 max-h-[70%] w-auto object-contain object-bottom" loading="lazy" />
+          <div class="relative z-10 mr-auto max-w-5xl pl-6 pr-4 sm:pl-8 sm:pr-6 lg:pl-16 lg:pr-8">
+            <div class="grid gap-10 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.6fr)] lg:gap-14">
+            <!-- Left: title, copy, quote, buttons (all in white) -->
+            <div class="flex max-w-xs flex-col justify-center">
+              <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-500">What can you expect</p>
+              <h2 class="mt-3 text-2xl font-semibold leading-tight tracking-tight text-slate-900 sm:text-3xl">
+                Serving at<br /><span class="text-accentSoft">River of Life</span>
+              </h2>
+              <p class="mt-4 text-sm leading-relaxed text-slate-600">
+                Be part of what God is doing. God has given each of us gifts to serve. Join a ministry team and make a difference.
+              </p>
+              <div class="mt-7 inline-flex max-w-xs flex-col rounded-2xl bg-amber-50 px-5 py-4 text-[11px] leading-relaxed text-slate-800 shadow-sm ring-1 ring-amber-100">
+                <span class="font-medium text-slate-800">&ldquo;As each one has received a gift, minister it to one another, as good stewards of the manifold grace of God.&rdquo;</span>
+                <span class="mt-1 text-[11px] text-slate-600">&mdash; 1 Peter 4:10</span>
+              </div>
+              <div class="mt-8 flex flex-wrap gap-4">
+                <a href="contact.html" class="btn-primary inline-flex rounded-full bg-accent px-6 py-2.5 text-sm font-semibold text-white shadow-sm ring-1 ring-accent/70 hover:bg-accentSoft">Join the Team</a>
+                <a href="contact.html" class="btn-outline inline-flex rounded-full border border-slate-300 px-6 py-2.5 text-sm font-semibold text-slate-800 hover:border-accent hover:text-accentSoft">Ask a question</a>
+              </div>
+            </div>
+            <!-- Right: 2x2 grid -->
+            <div class="serve-with-us__grid">
+              <div class="serve-grid-wrapper relative">
+                <div class="serve-grid grid sm:grid-cols-2">
+                <div class="flex flex-col gap-3 px-7 py-7">
+                  <div class="aspect-[5/4] h-28 shrink-0 overflow-hidden rounded-2xl sm:h-32">
+                    <img
+                      src="assets/serve-ushers.png"
+                      alt=""
+                      class="h-full w-full object-cover"
+                      loading="lazy"
+                    />
+                  </div>
+                  <div>
+                    <p class="text-sm font-semibold text-slate-900">Ushers &amp; Welcome</p>
+                    <p class="mt-1 text-xs text-slate-600">
+                      Help people feel seen, welcomed, and directed from the moment they arrive.
+                    </p>
+                  </div>
+                </div>
+
+                <div class="flex flex-col gap-3 px-7 py-7">
+                  <div class="aspect-[5/4] h-28 shrink-0 overflow-hidden rounded-2xl sm:h-32">
+                    <img
+                      src="assets/serve-worship.png"
+                      alt=""
+                      class="h-full w-full object-cover"
+                      loading="lazy"
+                    />
+                  </div>
+                  <div>
+                    <p class="text-sm font-semibold text-slate-900">Praise &amp; Worship</p>
+                    <p class="mt-1 text-xs text-slate-600">
+                      Lead the church in passionate, Spirit-filled worship and create room for God&apos;s presence.
+                    </p>
+                  </div>
+                </div>
+
+                <div class="flex flex-col gap-3 px-7 py-7">
+                  <div class="aspect-[5/4] h-28 shrink-0 overflow-hidden rounded-2xl sm:h-32">
+                    <img
+                      src="assets/serve-media.png"
+                      alt=""
+                      class="h-full w-full object-cover"
+                      loading="lazy"
+                    />
+                  </div>
+                  <div>
+                    <p class="text-sm font-semibold text-slate-900">Media &amp; Production</p>
+                    <p class="mt-1 text-xs text-slate-600">
+                      Serve behind the scenes with sound, visuals, livestream, and storytelling.
+                    </p>
+                  </div>
+                </div>
+
+                <div class="flex flex-col gap-3 px-7 py-7">
+                  <div class="aspect-[5/4] h-28 shrink-0 overflow-hidden rounded-2xl sm:h-32">
+                    <img
+                      src="assets/serve-kids.png"
+                      alt=""
+                      class="h-full w-full object-cover"
+                      loading="lazy"
+                    />
+                  </div>
+                  <div>
+                    <p class="text-sm font-semibold text-slate-900">River Kids &amp; Family</p>
+                    <p class="mt-1 text-xs text-slate-600">
+                      Invest in the next generation through teaching, creativity, and hospitality.
+                    </p>
+                  </div>
+                </div>
+                </div>
+              </div>
+            </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="serve-unveil-spacer min-h-screen" aria-hidden="true"></div>
+    </main>
+
+    <!-- Footer: fixed at bottom; Serve section unveils it on scroll -->
+    <footer id="footer-section" class="footer-superside fixed bottom-0 left-0 right-0 z-0 min-h-screen overflow-hidden">
+      <!-- Full-height river image -->
+      <img src="https://images.unsplash.com/photo-1439066615861-d1af74d74000?auto=format&fit=crop&w=1920&q=70" alt="" class="footer-bg absolute inset-0 h-full w-full object-cover" loading="lazy" />
+      <!-- Gradient overlay: blends image into dark at bottom -->
+      <div class="footer-overlay absolute inset-0 bg-gradient-to-b from-slate-900/40 via-slate-900/70 to-slate-950/95" aria-hidden="true"></div>
+
+      <div class="relative z-10 flex min-h-screen flex-col">
+        <!-- Hero: tagline + CTA -->
+        <section class="flex flex-1 flex-col items-center justify-center px-4 py-20 text-center sm:py-24">
+          <h2 class="text-3xl font-bold tracking-tight text-white sm:text-4xl md:text-5xl lg:text-6xl">
+            Your church family&apos;s<br /><em>church family</em>™
+          </h2>
+          <a href="contact.html" class="btn-primary mt-8 inline-flex rounded-full bg-accent px-8 py-3.5 text-base font-semibold text-white shadow-lg ring-1 ring-accent/70 hover:bg-accentSoft">Plan Your Visit</a>
+        </section>
+
+        <!-- Footer links: Services + Navigation -->
+        <div class="border-t border-white/10">
+        <div class="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
+          <div class="grid gap-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-12">
+            <div>
+              <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-400">Services</p>
+              <ul class="mt-4 space-y-2.5 text-sm text-slate-300">
+                <li><a href="services.html" class="footer-link inline-flex items-center gap-2 hover:text-white">Sunday Worship <span class="text-slate-500">→</span></a></li>
+                <li><a href="river-kids.html" class="footer-link inline-flex items-center gap-2 hover:text-white">River Kids <span class="text-slate-500">→</span></a></li>
+                <li><a href="fellowship.html" class="footer-link inline-flex items-center gap-2 hover:text-white">Cell Groups &amp; Fellowship <span class="text-slate-500">→</span></a></li>
+                <li><a href="services.html" class="footer-link inline-flex items-center gap-2 hover:text-white">Praise &amp; Worship <span class="text-slate-500">→</span></a></li>
+                <li><a href="giving.html" class="footer-link inline-flex items-center gap-2 hover:text-white">Giving <span class="text-slate-500">→</span></a></li>
+              </ul>
+            </div>
+            <div>
+              <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-400">Navigation</p>
+              <ul class="mt-4 space-y-2.5 text-sm text-slate-300">
+                <li><a href="index.html" class="footer-link hover:text-white">Main</a></li>
+                <li><a href="services.html" class="footer-link hover:text-white">Our Ministries</a></li>
+                <li><a href="about.html" class="footer-link hover:text-white">Our People</a></li>
+                <li><a href="about.html" class="footer-link hover:text-white">About Us</a></li>
+                <li><a href="contact.html" class="footer-link hover:text-white">Contact</a></li>
+              </ul>
+            </div>
+            <div>
+              <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-400">Connect</p>
+              <div class="mt-4 flex flex-wrap gap-3">
+                <a href="https://www.facebook.com/rolccindia/" target="_blank" rel="noopener noreferrer" class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/20 text-white transition hover:border-accent hover:bg-accent/20" aria-label="Facebook">
+                  <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                </a>
+                <a href="https://www.youtube.com/@rolccindia" target="_blank" rel="noopener noreferrer" class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/20 text-white transition hover:border-accent hover:bg-accent/20" aria-label="YouTube">
+                  <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                </a>
+                <a href="https://www.instagram.com/rolccindia" target="_blank" rel="noopener noreferrer" class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/20 text-white transition hover:border-accent hover:bg-accent/20" aria-label="Instagram">
+                  <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+                </a>
+              </div>
+            </div>
+            <div></div>
+          </div>
+        </div>
+        </div>
+        <div class="mt-auto border-t border-white/10">
+          <div class="mx-auto flex max-w-6xl flex-col items-center justify-between gap-2 px-4 py-4 text-[11px] text-slate-400 sm:flex-row sm:px-6 lg:px-8">
+          <p>© <span id="year"></span> River of Life Christian Church. All rights reserved.</p>
+          <p>“A Place to Encounter Jesus”</p>
+        </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Scroll to Top Button -->
+    <button
+      id="scroll-top-btn"
+      class="scroll-to-top hidden fixed bottom-5 right-4 z-40 rounded-full bg-slate-900/90 p-2 text-xs text-slate-100 shadow-lg ring-1 ring-slate-600 hover:bg-slate-800 sm:bottom-6 sm:right-6"
+      aria-label="Scroll to top"
+      type="button"
+    >
+      ↑
+    </button>
+
+    <script>
+      // Set current year in footer without additional JS file dependency
+      document.getElementById("year").textContent = new Date().getFullYear();
+    </script>
+    <script src="js/main.js"></script>
+  </body>
+</html>
+

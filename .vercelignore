@@ -1,0 +1,5 @@
+# Exclude non-website files from deployment
+Darktable/
+.cursor/
+*.log
+desktop.ini

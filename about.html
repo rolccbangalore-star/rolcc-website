@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>About Us | River of Life Christian Church</title>
+    <meta
+      name="description"
+      content="Learn about the story, vision, mission, statement of faith, pastors, and core values of River of Life Christian Church (ROLCC), Bangalore."
+    />
+    <meta
+      name="keywords"
+      content="River of Life Christian Church, about ROLCC, vision, mission, statement of faith, pastors, Bangalore church"
+    />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="About River of Life Christian Church" />
+    <meta
+      property="og:description"
+      content="Discover the story, vision, mission, statement of faith, and leadership of River of Life Christian Church (ROLCC), Bangalore."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://www.rolcc.in/about" />
+    <meta property="og:image" content="/images/og-image.jpg" />
+
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico" />
+
+    <!-- Sora font -->
+    <link
+      rel="preconnect"
+      href="https://fonts.googleapis.com"
+    />
+    <link
+      rel="preconnect"
+      href="https://fonts.gstatic.com"
+      crossorigin
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: "#ffffff",
+              primaryDark: "#f6f9fc",
+              accent: "#635bff",
+              accentSoft: "#818cf8",
+            },
+          },
+        },
+      };
+    </script>
+
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
+  <body class="bg-slate-50 text-slate-900">
+    <!-- Navbar -->
+    <header
+      class="sticky top-0 z-50 border-b border-slate-200 bg-white/80 nav-blur"
+    >
+      <nav
+        class="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8"
+      >
+        <a href="index.html" class="flex items-center gap-3">
+          <div
+            class="flex h-10 w-10 items-center justify-center rounded-full bg-accentSoft/10 ring-2 ring-accentSoft/60"
+          >
+            <span class="text-xl font-semibold text-accent">✝</span>
+          </div>
+          <div class="leading-tight">
+            <p class="text-sm font-semibold tracking-wide text-slate-900">
+              River of Life
+            </p>
+            <p class="text-xs text-slate-300">
+              Christian Church · Bangalore
+            </p>
+          </div>
+        </a>
+
+        <!-- Desktop Nav -->
+        <div class="hidden items-center gap-8 text-sm font-medium md:flex">
+          <a href="index.html" class="text-slate-600 hover:text-slate-900">Home</a>
+          <a href="about.html" class="text-slate-900">About Us</a>
+          <a href="services.html" class="text-slate-600 hover:text-slate-900">Services</a>
+          <a href="river-kids.html" class="text-slate-600 hover:text-slate-900">River Kids</a>
+          <a href="fellowship.html" class="text-slate-600 hover:text-slate-900">Fellowship</a>
+          <a href="giving.html" class="text-slate-600 hover:text-slate-900">Giving</a>
+          <a href="contact.html" class="text-slate-600 hover:text-slate-900">Contact Us</a>
+        </div>
+
+        <!-- CTA Desktop -->
+        <div class="hidden md:block">
+          <a
+            href="services.html"
+            class="inline-flex items-center rounded-full bg-accent px-4 py-2 text-xs font-semibold text-white shadow-sm ring-1 ring-accent/70 transition hover:bg-accentSoft"
+          >
+            View Service Times
+          </a>
+        </div>
+
+        <!-- Mobile Toggle -->
+        <button
+          id="nav-toggle"
+          class="inline-flex items-center rounded-md p-2 text-slate-100 ring-1 ring-slate-700 transition hover:bg-slate-800 md:hidden"
+          aria-label="Toggle navigation menu"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-5 w-5"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      </nav>
+
+      <!-- Mobile Menu -->
+      <div
+        id="nav-menu"
+        class="mx-auto hidden max-w-6xl space-y-2 px-4 pb-4 text-sm font-medium bg-white border-b border-slate-200 sm:px-6 lg:px-8 md:hidden"
+      >
+        <a href="index.html" class="block rounded-md px-3 py-2 text-slate-700 hover:bg-slate-100"
+          >Home</a
+        >
+        <a href="about.html" class="block rounded-md bg-slate-100 px-3 py-2 text-slate-900"
+          >About Us</a
+        >
+        <a href="services.html" class="block rounded-md px-3 py-2 text-slate-700 hover:bg-slate-100"
+          >Services</a
+        >
+        <a
+          href="river-kids.html"
+          class="block rounded-md px-3 py-2 text-slate-200 hover:bg-slate-800"
+          >River Kids</a
+        >
+        <a
+          href="fellowship.html"
+          class="block rounded-md px-3 py-2 text-slate-200 hover:bg-slate-800"
+          >Fellowship</a
+        >
+        <a href="giving.html" class="block rounded-md px-3 py-2 text-slate-200 hover:bg-slate-800"
+          >Giving</a
+        >
+        <a
+          href="contact.html"
+          class="block rounded-md px-3 py-2 text-slate-200 hover:bg-slate-800"
+          >Contact Us</a
+        >
+      </div>
+    </header>
+
+    <main>
+      <!-- Page Hero -->
+      <section
+          class="border-b border-slate-200 bg-gradient-to-b from-primaryDark via-white to-white"
+      >
+        <div
+          class="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-12 sm:px-6 md:flex-row md:items-end md:justify-between md:py-16 lg:px-8"
+        >
+          <div class="space-y-3">
+            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-accent">
+              About Us
+            </p>
+            <h1
+              class="text-balance text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl"
+            >
+              A River of Life in the Heart of Bengaluru
+            </h1>
+            <p class="max-w-2xl text-sm text-slate-600 sm:text-base">
+              River of Life Christian Church is a Spirit-filled, Bible-based church family in
+              Bengaluru. Our desire is to see people encounter Jesus, be rooted in God&apos;s Word,
+              and be released to live for His glory.
+            </p>
+          </div>
+          <div
+            class="rounded-2xl border border-slate-200 bg-white p-4 text-xs text-slate-600 sm:text-sm"
+          >
+            <p class="font-semibold text-slate-900">
+              “There is a river whose streams make glad the city of God.” – Psalm 46:4
+            </p>
+            <p class="mt-2 text-slate-400">
+              Our name reflects our call to be a life-giving river in our city and nation.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Our Story -->
+      <section class="border-b border-slate-200 bg-white">
+        <div
+          class="mx-auto grid max-w-6xl gap-10 px-4 py-12 sm:px-6 md:grid-cols-[3fr,2fr] md:py-16 lg:px-8"
+        >
+          <div class="space-y-4">
+            <h2 class="text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">
+              Our Story
+            </h2>
+            <p class="text-sm leading-relaxed text-slate-600 sm:text-base">
+              River of Life Christian Church began as a small gathering of believers hungry for the
+              presence of God and the pure teaching of His Word. Over the years, God has faithfully
+              grown this community into a vibrant church family in Bengaluru.
+            </p>
+            <p class="text-sm leading-relaxed text-slate-600 sm:text-base">
+              From the beginning, our heart has been to host the presence of God, make disciples of
+              Jesus, and send believers into every sphere of society as carriers of His life and
+              light. We are grateful for the many testimonies of salvation, healing, restoration,
+              and breakthrough that have come as people have encountered Jesus here.
+            </p>
+            <p class="text-sm leading-relaxed text-slate-600 sm:text-base">
+              Today, River of Life Christian Church continues to be a home for people from different
+              languages, backgrounds, and stories – united in Christ, rooted in Scripture, and led
+              by the Holy Spirit.
+            </p>
+          </div>
+          <div
+            class="space-y-4 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-sm text-slate-700"
+          >
+            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+              Vision &amp; Mission
+            </p>
+            <div class="space-y-2">
+              <h3 class="text-sm font-semibold text-slate-900">Our Vision</h3>
+              <p class="text-sm text-slate-600">
+                To be a Christ-centered, Spirit-filled church that brings the life of Jesus to
+                individuals, families, and nations.
+              </p>
+            </div>
+            <div class="space-y-2">
+              <h3 class="text-sm font-semibold text-slate-900">Our Mission</h3>
+              <ul class="space-y-1 text-sm text-slate-600">
+                <li>• Exalt Jesus through passionate worship and prayer.</li>
+                <li>• Equip believers through systematic, Bible-based teaching.</li>
+                <li>• Establish healthy families and Christ-centered community.</li>
+                <li>• Engage our city and nation with the gospel of grace.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Statement of Faith -->
+      <section class="border-b border-slate-200 bg-slate-50">
+        <div class="mx-auto max-w-6xl px-4 py-12 sm:px-6 md:py-16 lg:px-8">
+          <div class="max-w-3xl space-y-4">
+            <h2 class="text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">
+              Statement of Faith
+            </h2>
+            <p class="text-sm text-slate-600 sm:text-base">
+              River of Life Christian Church joyfully affirms historic, evangelical, Bible-believing
+              Christian doctrine.
+            </p>
+          </div>
+
+          <div class="mt-6 grid gap-6 md:grid-cols-2">
+            <div class="space-y-2 rounded-2xl border border-slate-200 bg-white p-5">
+              <h3 class="text-sm font-semibold text-slate-900">The Bible</h3>
+              <p class="text-sm text-slate-600">
+                We believe the Bible – both Old and New Testaments – is the inspired, infallible,
+                and authoritative Word of God, our final rule for faith and life.
+              </p>
+              <p class="text-xs text-slate-500">
+                2 Timothy 3:16–17 · 2 Peter 1:20–21
+              </p>
+            </div>
+
+            <div class="space-y-2 rounded-2xl border border-slate-200 bg-white p-5">
+              <h3 class="text-sm font-semibold text-slate-900">The Godhead</h3>
+              <p class="text-sm text-slate-600">
+                We believe in one God, eternally existent in three Persons: Father, Son, and Holy
+                Spirit – co-equal, co-eternal, and worthy of the same worship.
+              </p>
+              <p class="text-xs text-slate-500">
+                Deuteronomy 6:4 · Matthew 28:19
+              </p>
+            </div>
+
+            <div class="space-y-2 rounded-2xl border border-slate-200 bg-white p-5">
+              <h3 class="text-sm font-semibold text-slate-900">Jesus Christ</h3>
+              <p class="text-sm text-slate-600">
+                We believe Jesus Christ is fully God and fully Man, born of a virgin, sinless in His
+                life, who died on the cross as our substitute, rose bodily from the dead, and will
+                return in glory.
+              </p>
+              <p class="text-xs text-slate-500">
+                John 1:1–14 · 1 Corinthians 15:3–4
+              </p>
+            </div>
+
+            <div class="space-y-2 rounded-2xl border border-slate-200 bg-white p-5">
+              <h3 class="text-sm font-semibold text-slate-900">Salvation</h3>
+              <p class="text-sm text-slate-600">
+                We believe that all have sinned and are in need of salvation by grace through faith
+                in Jesus Christ alone, not by works, but as the gift of God.
+              </p>
+              <p class="text-xs text-slate-500">
+                Romans 3:23–24 · Ephesians 2:8–9
+              </p>
+            </div>
+
+            <div class="space-y-2 rounded-2xl border border-slate-200 bg-white p-5">
+              <h3 class="text-sm font-semibold text-slate-900">Holy Spirit</h3>
+              <p class="text-sm text-slate-600">
+                We believe in the present ministry of the Holy Spirit, who indwells believers,
+                empowers them for holy living, and distributes gifts for the building up of the
+                Church.
+              </p>
+              <p class="text-xs text-slate-500">
+                Acts 1:8 · 1 Corinthians 12
+              </p>
+            </div>
+
+            <div class="space-y-2 rounded-2xl border border-slate-200 bg-white p-5">
+              <h3 class="text-sm font-semibold text-slate-900">The Church &amp; Eternity</h3>
+              <p class="text-sm text-slate-600">
+                We believe in the one universal Church, the Body of Christ, and in the reality of
+                eternal life with God for believers and eternal separation from God for those who
+                reject Christ.
+              </p>
+              <p class="text-xs text-slate-500">
+                Matthew 16:18 · Revelation 20:11–15
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Meet Our Pastors -->
+      <section class="border-b border-slate-200 bg-white">
+        <div class="mx-auto max-w-6xl px-4 py-12 sm:px-6 md:py-16 lg:px-8">
+          <div class="mb-8 max-w-3xl space-y-3">
+            <h2 class="text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">
+              Meet Our Pastors
+            </h2>
+            <p class="text-sm text-slate-600 sm:text-base">
+              River of Life Christian Church is led by a team of pastors who love Jesus, value
+              integrity, and serve God&apos;s people with humility.
+            </p>
+          </div>
+
+          <div class="grid gap-6 md:grid-cols-2">
+            <div
+              class="flex flex-col justify-between rounded-2xl border border-slate-200 bg-white p-5"
+            >
+              <div class="space-y-3">
+                <div class="flex items-center gap-3">
+                  <div
+                    class="flex h-10 w-10 items-center justify-center rounded-full bg-accentSoft/10 text-accentSoft ring-1 ring-accentSoft/40"
+                  >
+                    <span class="text-base font-semibold">BK</span>
+                  </div>
+                  <div>
+                    <p class="text-sm font-semibold text-slate-900">
+                      Ps. Benson K Sunny
+                    </p>
+                    <p class="text-xs text-slate-500">
+                      Senior Pastor · National Director, River of Life India
+                    </p>
+                  </div>
+                </div>
+                <p class="text-sm text-slate-600">
+                  Ps. Benson is a passionate preacher, worshipper, and teacher of the Word with over
+                  16 years of ministry experience. He carries a vision to raise Spirit-filled,
+                  Word-rooted believers who impact every sphere of life.
+                </p>
+                <p class="text-xs text-slate-500">
+                  Founder of ROLS School of Music (RSM) and ROLS Fun Factory (RFF).
+                </p>
+              </div>
+            </div>
+
+            <div
+              class="flex flex-col justify-between rounded-2xl border border-slate-200 bg-white p-5"
+            >
+              <div class="space-y-3">
+                <div class="flex items-center gap-3">
+                  <div
+                    class="flex h-10 w-10 items-center justify-center rounded-full bg-sky-400/10 text-sky-300 ring-1 ring-sky-400/40"
+                  >
+                    <span class="text-base font-semibold">RB</span>
+                  </div>
+                  <div>
+                    <p class="text-sm font-semibold text-slate-900">
+                      Sis. Rajitha Benson
+                    </p>
+                    <p class="text-xs text-slate-500">
+                      Junior Church Pastor · Director of Administration
+                    </p>
+                  </div>
+                </div>
+                <p class="text-sm text-slate-600">
+                  Sis. Rajitha serves the church through prophetic and healing ministry, with a
+                  special grace to minister to children and families. She carries a heart to see
+                  young lives grounded in Scripture and filled with the Holy Spirit.
+                </p>
+                <p class="text-xs text-slate-500">
+                  Director of ROLS School of Music and Co-founder of ROLS Fun Factory (RFF).
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Core Values -->
+      <section class="border-b border-slate-200 bg-slate-50">
+        <div class="mx-auto max-w-6xl px-4 py-12 sm:px-6 md:py-16 lg:px-8">
+          <div class="mb-8 max-w-3xl space-y-3 text-center md:text-left">
+            <h2 class="text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">
+              Our Core Values
+            </h2>
+            <p class="text-sm text-slate-600 sm:text-base">
+              These values shape how we worship, serve, and do life together.
+            </p>
+          </div>
+
+          <div class="grid gap-6 md:grid-cols-3">
+            <div
+              class="space-y-3 rounded-2xl border border-slate-200 bg-white p-5 text-sm"
+            >
+              <div
+                class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-accentSoft/10 text-accentSoft ring-1 ring-accentSoft/40"
+              >
+                <span>🙏</span>
+              </div>
+              <h3 class="text-sm font-semibold text-slate-900">Presence of God</h3>
+              <p class="text-sm text-slate-600">
+                We value hosting the presence of God through worship, prayer, and a lifestyle of
+                holiness.
+              </p>
+            </div>
+
+            <div
+              class="space-y-3 rounded-2xl border border-slate-200 bg-white p-5 text-sm"
+            >
+              <div
+                class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-indigo-400/10 text-indigo-300 ring-1 ring-indigo-400/40"
+              >
+                <span>📖</span>
+              </div>
+              <h3 class="text-sm font-semibold text-slate-900">Authority of Scripture</h3>
+              <p class="text-sm text-slate-600">
+                We believe the Bible is God&apos;s inspired Word and our final authority for faith
+                and practice.
+              </p>
+            </div>
+
+            <div
+              class="space-y-3 rounded-2xl border border-slate-200 bg-white p-5 text-sm"
+            >
+              <div
+                class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-emerald-400/10 text-emerald-300 ring-1 ring-emerald-400/40"
+              >
+                <span>🤝</span>
+              </div>
+              <h3 class="text-sm font-semibold text-slate-900">Family &amp; Fellowship</h3>
+              <p class="text-sm text-slate-600">
+                We are a church family, not just a crowd – growing together in love, accountability,
+                and unity.
+              </p>
+            </div>
+
+            <div
+              class="space-y-3 rounded-2xl border border-slate-200 bg-white p-5 text-sm"
+            >
+              <div
+                class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-sky-400/10 text-sky-300 ring-1 ring-sky-400/40"
+              >
+                <span>🔥</span>
+              </div>
+              <h3 class="text-sm font-semibold text-slate-900">Spirit-filled Living</h3>
+              <p class="text-sm text-slate-600">
+                We depend on the Holy Spirit for power, guidance, and bold witness in everyday
+                life.
+              </p>
+            </div>
+
+            <div
+              class="space-y-3 rounded-2xl border border-slate-200 bg-white p-5 text-sm"
+            >
+              <div
+                class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-rose-400/10 text-rose-300 ring-1 ring-rose-400/40"
+              >
+                <span>❤️</span>
+              </div>
+              <h3 class="text-sm font-semibold text-slate-900">Compassion &amp; Mission</h3>
+              <p class="text-sm text-slate-600">
+                We carry God&apos;s heart for the lost, the broken, and the nations, serving with
+                generosity and compassion.
+              </p>
+            </div>
+
+            <div
+              class="space-y-3 rounded-2xl border border-slate-200 bg-white p-5 text-sm"
+            >
+              <div
+                class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-lime-400/10 text-lime-300 ring-1 ring-lime-400/40"
+              >
+                <span>🌱</span>
+              </div>
+              <h3 class="text-sm font-semibold text-slate-900">Growth &amp; Discipleship</h3>
+              <p class="text-sm text-slate-600">
+                We are committed to helping every believer grow in Christlike character and
+                fruitfulness.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer (same structure as index) -->
+    <footer class="border-t border-slate-800 bg-slate-950">
+      <div
+        class="mx-auto flex max-w-6xl flex-col gap-8 px-4 py-10 text-sm text-slate-300 sm:px-6 md:flex-row md:justify-between lg:px-8"
+      >
+        <div class="space-y-3 max-w-sm">
+          <p class="text-sm font-semibold text-slate-50">
+            River of Life Christian Church
+          </p>
+          <p class="text-xs text-slate-400">
+            3rd floor, AMR PLAZA, 49, 18th Main Rd, Sector 3, HSR Layout, Bengaluru, Karnataka
+            560102
+          </p>
+          <p class="text-xs text-slate-400">
+            Sunday Service · 10:00 AM – 11:30 AM
+          </p>
+        </div>
+        <div class="space-y-2">
+          <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
+            Connect
+          </p>
+          <p class="text-xs text-slate-300">
+            Phone:
+            <a href="tel:8050045500" class="text-accentSoft hover:text-accent"
+              >+91 80500 45500</a
+            >
+            ·
+            <a href="tel:9036745258" class="text-accentSoft hover:text-accent"
+              >+91 90367 45258</a
+            >
+          </p>
+          <p class="text-xs text-slate-300">
+            Email:
+            <a
+              href="mailto:rolccbangalore@gmail.com"
+              class="text-accentSoft hover:text-accent"
+              >rolccbangalore@gmail.com</a
+            >
+          </p>
+          <div class="flex flex-wrap gap-3 pt-1 text-xs">
+            <a
+              href="https://www.facebook.com/rolccindia/"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-slate-300 hover:text-accentSoft"
+              >Facebook</a
+            >
+            <a
+              href="https://www.youtube.com/@rolccindia"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-slate-300 hover:text-accentSoft"
+              >YouTube</a
+            >
+            <a
+              href="https://www.instagram.com/rolccindia"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-slate-300 hover:text-accentSoft"
+              >Instagram</a
+            >
+          </div>
+        </div>
+        <div class="space-y-2">
+          <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
+            Visit
+          </p>
+          <a
+            href="https://maps.app.goo.gl/GqLm5JLzAjenLBE16"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center rounded-full border border-slate-700 px-4 py-2 text-xs font-semibold text-slate-100 transition hover:border-accent hover:text-accentSoft"
+          >
+            Open in Google Maps
+          </a>
+        </div>
+      </div>
+      <div class="border-t border-slate-800">
+        <div
+          class="mx-auto flex max-w-6xl flex-col items-center justify-between gap-2 px-4 py-4 text-[11px] text-slate-500 sm:flex-row sm:px-6 lg:px-8"
+        >
+          <p>© <span id="year"></span> River of Life Christian Church. All rights reserved.</p>
+          <p>“A Place to Encounter Jesus”</p>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Scroll to Top Button -->
+    <button
+      id="scroll-top-btn"
+      class="scroll-to-top hidden fixed bottom-5 right-4 z-40 rounded-full bg-slate-900/90 p-2 text-xs text-slate-100 shadow-lg ring-1 ring-slate-600 hover:bg-slate-800 sm:bottom-6 sm:right-6"
+      aria-label="Scroll to top"
+      type="button"
+    >
+      ↑
+    </button>
+
+    <script src="/js/main.js"></script>
+  </body>
+</html>
+

@@ -326,13 +326,13 @@ body {
 @media (min-width: 768px) {
   .giving-hero__wave {
     bottom: 0 !important;
-    height: 28rem !important;
+    height: 30rem !important;
   }
   .giving-hero__white-fill {
-    height: 8rem !important;
+    height: 30rem !important;
   }
   .giving-impact-section {
-    margin-top: -4rem !important;
+    margin-top: -6rem !important;
   }
 }
 

@@ -310,7 +310,7 @@ body {
 .giving-hero__overlay {
   background: linear-gradient(to bottom, #231864 0%, rgba(99, 169, 239, 0) 100%);
 }
-/* Wave: edge-to-edge, no gap; QR card extends into wave (z-20 above wave z-10) */
+/* Wave: edge-to-edge; QR card extends into wave (z-20 above card z-10) */
 .giving-hero__wave {
   left: 0;
   right: 0;
@@ -320,6 +320,14 @@ body {
   display: block;
   object-fit: cover;
   object-position: top center;
+}
+
+/* Desktop only: wave overlaps QR card – taller wave, lower position */
+@media (min-width: 768px) {
+  .giving-hero__wave {
+    bottom: 0 !important;
+    height: 28rem !important;
+  }
 }
 
 /* QR card: 236px = 28+180+28 (device 360), QR 180x180, text-top 20px, text-to-QR 16px */

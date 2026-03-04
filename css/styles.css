@@ -299,6 +299,29 @@ body {
   max-width: 1200px;
 }
 
+/* Giving page hero: Figma design – full-bleed sky, purple gradient, QR card, wave */
+.giving-hero {
+  background-color: #0f172a;
+}
+/* Pull hero under header for transparent blur (same as homepage) */
+.giving-hero--under-header {
+  margin-top: -11rem;
+}
+.giving-hero__overlay {
+  background: linear-gradient(to bottom, #231864 0%, rgba(99, 169, 239, 0) 100%);
+}
+/* Wave: edge-to-edge, no gap; QR card extends into wave (z-20 above wave z-10) */
+.giving-hero__wave {
+  left: 0;
+  right: 0;
+  width: 100%;
+}
+.giving-hero__wave img {
+  display: block;
+  object-fit: cover;
+  object-position: top center;
+}
+
 /* Wider container at 1366–1440px viewports for better desktop experience */
 @media (min-width: 1366px) {
   .max-w-6xl {

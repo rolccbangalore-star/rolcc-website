@@ -63,6 +63,8 @@ document.addEventListener("DOMContentLoaded", function () {
   // Header + announcement: same subtle bar when over hero; adaptive menu text; solid patch after scroll
   var headerEl = document.getElementById("header");
   var heroBannerEl = document.getElementById("hero-banner");
+  var givingHeroEl = document.getElementById("giving-hero");
+  var heroEl = heroBannerEl || givingHeroEl;
   var announceEl = document.getElementById("announce-banner");
   function updateHeaderScrolled() {
     if (!headerEl) return;
@@ -70,19 +72,22 @@ document.addEventListener("DOMContentLoaded", function () {
     if (announceEl) {
       announceEl.classList.remove("announce-banner--over-dark", "announce-banner--over-light");
     }
-    if (!heroBannerEl) {
+    if (!heroEl) {
       headerEl.classList.add("header-scrolled");
       return;
     }
-    var heroRect = heroBannerEl.getBoundingClientRect();
+    var heroRect = heroEl.getBoundingClientRect();
     var heroBottom = heroRect.bottom;
     if (heroBottom < 0) {
       headerEl.classList.add("header-scrolled");
     } else {
       headerEl.classList.remove("header-scrolled");
-      var isDarkHero = heroBannerEl.classList.contains("hero-theme-dark");
-      var isLightHero = heroBannerEl.classList.contains("hero-theme-light");
-      if (isDarkHero) {
+      var isDarkHero = heroBannerEl && heroBannerEl.classList.contains("hero-theme-dark");
+      var isLightHero = heroBannerEl && heroBannerEl.classList.contains("hero-theme-light");
+      if (givingHeroEl && heroEl === givingHeroEl) {
+        headerEl.classList.add("header-over-hero--dark");
+        if (announceEl) announceEl.classList.add("announce-banner--over-dark");
+      } else if (isDarkHero) {
         headerEl.classList.add("header-over-hero--dark");
         if (announceEl) announceEl.classList.add("announce-banner--over-dark");
       } else if (isLightHero) {

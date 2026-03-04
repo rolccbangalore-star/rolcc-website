@@ -132,20 +132,20 @@
         <div class="giving-hero__overlay absolute inset-0"></div>
 
         <div class="giving-hero__content relative z-10 flex flex-col items-center text-center px-4 pt-52 pb-4 sm:pt-56 sm:pb-6 md:pt-60">
-          <span class="scroll-reveal text-[11px] font-semibold uppercase tracking-[0.22em] text-accentSoft">Give With Purpose</span>
+          <span class="scroll-reveal text-[11px] font-semibold uppercase tracking-[0.22em] text-accent">Give With Purpose</span>
           <h1 class="scroll-reveal scroll-reveal--delay-1 mt-2 text-balance text-3xl font-semibold tracking-tight text-white sm:text-4xl md:text-5xl">
             For God Loves a Cheerful Giver
           </h1>
           <p class="scroll-reveal scroll-reveal--delay-2 mt-4 max-w-xl text-sm leading-relaxed text-white/80 sm:text-base">
-            Your generosity fuels ministry, strengthens families, and advances the Gospel locally and globally.
+            We do not give to earn God&apos;s love – we give because we have already received His amazing grace in Jesus Christ. Our finances are one way we honor God, serve others, and advance the gospel.
           </p>
         </div>
 
-        <div class="giving-hero__card scroll-reveal scroll-reveal--delay-3 relative z-10 w-full max-w-[280px] sm:max-w-[320px] mx-auto mt-10 sm:mt-12 -mb-16 sm:-mb-20 md:-mb-24 px-4 sm:px-0">
-          <div class="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8 shadow-sm pb-8 sm:pb-10 md:pb-14">
-            <p class="text-center text-lg sm:text-xl font-semibold tracking-tight text-accent mb-4 sm:mb-5">Scan to Offer</p>
-            <div class="aspect-square w-full max-w-[220px] sm:max-w-[240px] mx-auto overflow-hidden rounded-xl bg-slate-50">
-              <img src="assets/giving-qrcode.png" alt="QR code for giving" class="h-full w-full object-contain" loading="eager" />
+        <div class="giving-hero__card scroll-reveal scroll-reveal--delay-3 relative z-10 w-full max-w-[360px] mx-auto mt-10 sm:mt-12 -mb-16 sm:-mb-20 md:-mb-24 px-4 sm:px-0">
+          <div class="giving-qr-card rounded-2xl border border-slate-200 bg-white shadow-sm transition-shadow duration-200 hover:shadow-md">
+            <p class="giving-qr-card__title text-center text-lg sm:text-xl font-semibold tracking-tight text-accent">Scan to Offer</p>
+            <div class="giving-qr-card__qr">
+              <img src="assets/giving-qrcode.png" alt="QR code for giving" class="h-full w-full object-contain" loading="eager" width="180" height="180" />
             </div>
           </div>
         </div>
@@ -156,115 +156,133 @@
         <div class="giving-hero__white-fill absolute bottom-0 left-0 right-0 h-16 sm:h-20 bg-white pointer-events-none z-10" aria-hidden="true"></div>
       </section>
 
-      <!-- Biblical Encouragement -->
-      <section class="border-b border-slate-200 bg-white -mt-24 sm:-mt-32 md:-mt-40 pt-24 sm:pt-32 md:pt-40">
-        <div class="mx-auto max-w-6xl px-4 py-12 sm:px-6 md:py-16 lg:px-8">
-          <div class="grid gap-8 md:grid-cols-[3fr,2fr] md:items-start">
-            <div class="space-y-4 scroll-reveal">
-              <h2 class="text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">
-                Why We Give
-              </h2>
-              <p class="text-sm text-slate-600 sm:text-base">
-                We do not give to earn God&apos;s love – we give because we have already received
-                His amazing grace in Jesus Christ. Our finances are one way we honor God, serve
-                others, and advance the gospel.
-              </p>
-              <ul class="space-y-2 text-sm text-slate-600">
-                <li>• Giving is an act of worship and obedience to God.</li>
-                <li>• Giving reflects our trust that God is our Provider.</li>
-                <li>• Giving helps support ministry, missions, and mercy outreach.</li>
-              </ul>
-              <p class="text-[11px] text-slate-500">
-                Scriptures to meditate on: 2 Corinthians 9:6–11, Malachi 3:10, Proverbs 3:9–10.
-              </p>
-            </div>
-
-            <div class="scroll-reveal scroll-reveal--delay-1 space-y-3 rounded-2xl border border-amber-200 bg-amber-50 p-5 text-sm text-slate-700 shadow-sm ring-1 ring-amber-100">
-              <h3 class="text-sm font-semibold text-slate-900 sm:text-base">
-                A Heart Posture, Not Just a Transaction
-              </h3>
-              <p class="text-sm text-slate-700">
-                As a church, we encourage each person to give prayerfully, joyfully, and
-                intentionally — in line with God&apos;s leading and His Word.
-              </p>
-              <p class="text-xs text-slate-700">
-                If you are new or visiting, please feel no obligation to give. Your presence is a
-                gift to us.
-              </p>
+      <!-- Our Impact -->
+      <section class="relative z-30 border-b border-slate-200 bg-white giving-impact-section">
+        <div class="mx-auto max-w-6xl px-4 pt-0 pb-12 sm:px-6 md:pb-16 lg:px-8">
+          <div class="text-center mb-10 md:mb-12 scroll-reveal">
+            <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-accent">Our Impact</p>
+            <h2 class="mt-2 text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl md:text-4xl">Advancing God&apos;s Work Together</h2>
+          </div>
+          <!-- Mobile: horizontal scroll carousel; Desktop: grid -->
+          <div class="impact-scroll-wrap overflow-x-auto overflow-y-hidden lg:overflow-visible">
+            <div id="impact-track" class="impact-track flex lg:grid lg:grid-cols-4 gap-6 lg:gap-0 scroll-reveal scroll-reveal--delay-1">
+              <div class="impact-stat impact-stat-item group flex-shrink-0 w-[min(85vw,320px)] lg:w-auto lg:border-r lg:border-slate-200 lg:pr-8 lg:pl-0">
+                <p class="impact-stat__number text-3xl sm:text-4xl font-bold text-slate-400 transition-colors duration-200 group-hover:text-accent">04+</p>
+                <p class="mt-2 text-sm text-slate-600 leading-relaxed">Church Ministries supported across India to strengthen local congregations and pastors.</p>
+              </div>
+              <div class="impact-stat impact-stat-item group flex-shrink-0 w-[min(85vw,320px)] lg:w-auto lg:border-r lg:border-slate-200 lg:px-8">
+                <p class="impact-stat__number text-3xl sm:text-4xl font-bold text-slate-400 transition-colors duration-200 group-hover:text-accent">12+</p>
+                <p class="mt-2 text-sm text-slate-600 leading-relaxed">Students receiving scholarship and academic support for a brighter future.</p>
+              </div>
+              <div class="impact-stat impact-stat-item group flex-shrink-0 w-[min(85vw,320px)] lg:w-auto lg:border-r lg:border-slate-200 lg:px-8">
+                <p class="impact-stat__number text-3xl sm:text-4xl font-bold text-slate-400 transition-colors duration-200 group-hover:text-accent">08+</p>
+                <p class="mt-2 text-sm text-slate-600 leading-relaxed">Leaders being mentored and equipped for ministry and Kingdom leadership.</p>
+              </div>
+              <div class="impact-stat impact-stat-item group flex-shrink-0 w-[min(85vw,320px)] lg:w-auto lg:pl-8">
+                <p class="impact-stat__number text-3xl sm:text-4xl font-bold text-slate-400 transition-colors duration-200 group-hover:text-accent">25+</p>
+                <p class="mt-2 text-sm text-slate-600 leading-relaxed">families supported with compassion and practical help.</p>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       <!-- Online Giving Options -->
-      <section id="online-giving" class="border-b border-slate-200 bg-slate-50">
-        <div class="mx-auto max-w-6xl px-4 py-12 sm:px-6 md:py-16 lg:px-8">
-          <div class="mb-8 max-w-3xl scroll-reveal">
-            <h2 class="text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">
+      <section id="online-giving" class="border-b border-slate-200 bg-slate-50/50">
+        <div class="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-14 md:py-20 lg:px-8">
+          <div class="mb-10 max-w-2xl scroll-reveal">
+            <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-accent">Give Securely</p>
+            <h2 class="mt-2 text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">
               Online Giving Options
             </h2>
-            <p class="mt-2 text-sm text-slate-600 sm:text-base">
-              You can give safely and conveniently using UPI or bank transfer. Details below are
-              placeholders — please replace them with your actual church account details before
-              publishing.
+            <p class="mt-3 text-sm text-slate-600 sm:text-base leading-relaxed">
+              Scan the QR code above to give via UPI, or use bank transfer below.
             </p>
           </div>
 
-          <div class="grid gap-6 md:grid-cols-2">
-            <!-- UPI Placeholder -->
-            <div class="card-pillar scroll-reveal scroll-reveal--delay-1 space-y-4 rounded-2xl border border-emerald-200 bg-emerald-50 p-5 text-sm text-slate-700 shadow-sm ring-1 ring-emerald-100">
-              <h3 class="text-sm font-semibold text-slate-900 sm:text-base">
-                UPI Giving (India)
-              </h3>
-              <p class="text-sm text-slate-700">
-                You can give using any UPI app (GPay, PhonePe, Paytm, BHIM, etc.) by scanning the
-                QR code or sending to the UPI ID below.
-              </p>
-              <div
-                class="flex aspect-square max-w-xs items-center justify-center rounded-2xl border border-dashed border-emerald-300 bg-emerald-50 text-xs text-slate-700"
-              >
-                UPI QR Code Placeholder
-              </div>
-              <div class="space-y-1 text-xs text-slate-700">
-                <p><span class="font-semibold">UPI ID (placeholder):</span> rolcc@upi</p>
-                <p><span class="font-semibold">Account Name (placeholder):</span> River of Life
-                  Christian Church</p>
-              </div>
-              <p class="text-[11px] text-slate-600">
-                Replace the UPI ID and account name with the actual details and QR code image
-                before going live.
-              </p>
-            </div>
-
-            <!-- Bank Transfer Placeholder -->
-            <div class="card-pillar scroll-reveal scroll-reveal--delay-2 space-y-4 rounded-2xl border border-slate-200 bg-white p-5 text-sm text-slate-700 shadow-sm">
-              <h3 class="text-sm font-semibold text-slate-900 sm:text-base">
+          <div class="grid gap-6 lg:grid-cols-[1.25fr,1fr] lg:gap-10">
+            <!-- Bank Transfer -->
+            <div class="card-pillar scroll-reveal scroll-reveal--delay-1 rounded-2xl border border-slate-200/60 bg-white p-4 sm:p-8 shadow-[0_1px_3px_rgba(15,23,42,0.04),0_4px_12px_rgba(15,23,42,0.06)] transition-all duration-200">
+              <h3 class="text-lg font-semibold tracking-tight text-slate-900">
                 Bank Transfer (India)
               </h3>
-              <p class="text-sm text-slate-600">
-                You can also give via bank transfer. The details below are placeholders and should
-                be replaced with actual church bank information.
+              <p class="mt-2 text-sm text-slate-600 leading-relaxed">
+                You may choose to give through direct bank transfer using the details below.
               </p>
-              <div class="space-y-2 rounded-xl border border-slate-200 bg-slate-50 p-4">
-                <p class="text-xs text-slate-700">
-                  <span class="font-semibold">Account Name (placeholder):</span> River of Life
-                  Christian Church
+              <div class="giving-bank-details mt-6 space-y-3 rounded-xl border border-slate-100 bg-slate-50/50 p-4 sm:p-6">
+                <div class="flex flex-col sm:flex-row sm:justify-between gap-1 sm:gap-4 text-sm">
+                  <span class="font-medium text-slate-500 shrink-0">Account Name</span>
+                  <span class="text-slate-800 sm:text-right">River of Life Christian Church</span>
+                </div>
+                <div class="flex flex-col sm:flex-row sm:justify-between gap-1 sm:gap-4 text-sm group/copy">
+                  <span class="font-medium text-slate-500 shrink-0">Account Number</span>
+                  <div class="flex items-center justify-between sm:justify-end gap-2 w-full sm:w-auto">
+                    <span class="font-mono text-slate-800 text-left order-1 sm:order-2">1769 0200 0049 26</span>
+                    <button type="button" class="copy-btn shrink-0 order-2 sm:order-1 rounded p-1 text-slate-400 opacity-100 sm:opacity-0 transition-opacity hover:bg-slate-200 hover:text-slate-600 group-hover/copy:opacity-100" data-copy="17690200004926" aria-label="Copy account number">
+                      <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                    </button>
+                  </div>
+                </div>
+                <div class="flex flex-col sm:flex-row sm:justify-between gap-1 sm:gap-4 text-sm group/copy">
+                  <span class="font-medium text-slate-500 shrink-0">IFSC Code</span>
+                  <div class="flex items-center justify-between sm:justify-end gap-2 w-full sm:w-auto">
+                    <span class="font-mono text-slate-800 text-left order-1 sm:order-2">FDRL0001769</span>
+                    <button type="button" class="copy-btn shrink-0 order-2 sm:order-1 rounded p-1 text-slate-400 opacity-100 sm:opacity-0 transition-opacity hover:bg-slate-200 hover:text-slate-600 group-hover/copy:opacity-100" data-copy="FDRL0001769" aria-label="Copy IFSC code">
+                      <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                    </button>
+                  </div>
+                </div>
+                <div class="flex flex-col sm:flex-row sm:justify-between gap-1 sm:gap-4 text-sm">
+                  <span class="font-medium text-slate-500 shrink-0">Bank &amp; Branch</span>
+                  <span class="text-slate-800 sm:text-right">Federal Bank, HSR Layout</span>
+                </div>
+                <div class="flex flex-col sm:flex-row sm:justify-between gap-1 sm:gap-4 text-sm group/copy">
+                  <span class="font-medium text-slate-500 shrink-0">MICR</span>
+                  <div class="flex items-center justify-between sm:justify-end gap-2 w-full sm:w-auto">
+                    <span class="font-mono text-slate-800 text-left order-1 sm:order-2">560049024</span>
+                    <button type="button" class="copy-btn shrink-0 order-2 sm:order-1 rounded p-1 text-slate-400 opacity-100 sm:opacity-0 transition-opacity hover:bg-slate-200 hover:text-slate-600 group-hover/copy:opacity-100" data-copy="560049024" aria-label="Copy MICR">
+                      <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                    </button>
+                  </div>
+                </div>
+                <div class="flex flex-col sm:flex-row sm:justify-between gap-1 sm:gap-4 text-sm group/copy">
+                  <span class="font-medium text-slate-500 shrink-0">UPI ID</span>
+                  <div class="flex items-center justify-between sm:justify-end gap-2 w-full sm:w-auto">
+                    <span class="font-mono text-slate-800 text-left order-1 sm:order-2">riveroflife@fbl</span>
+                    <button type="button" class="copy-btn shrink-0 order-2 sm:order-1 rounded p-1 text-slate-400 opacity-100 sm:opacity-0 transition-opacity hover:bg-slate-200 hover:text-slate-600 group-hover/copy:opacity-100" data-copy="riveroflife@fbl" aria-label="Copy UPI ID">
+                      <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div class="mt-6 pt-5 border-t border-slate-100">
+                <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-400">Offer via these UPI Apps</p>
+                <div class="mt-3 flex flex-wrap gap-2">
+                  <span class="inline-flex items-center px-2 py-1 transition opacity-80 hover:opacity-100" title="Paytm"><img src="assets/giving-paytm.svg" alt="Paytm" class="h-6 w-auto" /></span>
+                  <span class="inline-flex items-center px-2 py-1 transition opacity-80 hover:opacity-100" title="Google Pay"><img src="assets/giving-gpay.svg" alt="Google Pay" class="h-6 w-auto" /></span>
+                  <span class="inline-flex items-center px-2 py-1 transition opacity-80 hover:opacity-100" title="PhonePe"><img src="assets/giving-phonepe.svg" alt="PhonePe" class="h-6 w-auto" /></span>
+                  <span class="inline-flex items-center px-2 py-1 transition opacity-80 hover:opacity-100" title="BHIM"><img src="assets/giving-bhim.svg" alt="BHIM" class="h-6 w-auto" /></span>
+                  <span class="inline-flex items-center px-2 py-1 transition opacity-80 hover:opacity-100" title="Amazon Pay"><img src="assets/giving-amazonpay.svg" alt="Amazon Pay" class="h-6 w-auto" /></span>
+                  <span class="inline-flex items-center px-2 py-1 transition opacity-80 hover:opacity-100" title="WhatsApp Pay"><img src="assets/giving-whatsapppay.svg" alt="WhatsApp Pay" class="h-6 w-auto" /></span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Giving from the Heart -->
+            <div class="scroll-reveal scroll-reveal--delay-1 self-start">
+              <div class="giving-heart-card max-w-sm rounded-2xl border border-amber-200/50 p-6 sm:p-7 shadow-[0_1px_3px_rgba(15,23,42,0.04),0_4px_12px_rgba(15,23,42,0.06)] transition-all duration-200 hover:shadow-[0_4px_12px_rgba(15,23,42,0.08)]" style="background: linear-gradient(135deg, #FFFBF0 0%, #FFF8E7 100%);">
+                <h3 class="text-lg font-semibold tracking-tight text-slate-900">
+                  Giving from the Heart
+                </h3>
+                <p class="mt-4 text-sm text-slate-700 leading-relaxed">
+                  As a church, we encourage each person to give prayerfully, joyfully, and
+                  intentionally — in line with God&apos;s leading and His Word.
                 </p>
-                <p class="text-xs text-slate-700">
-                  <span class="font-semibold">Account Number (placeholder):</span> 000000000000
-                </p>
-                <p class="text-xs text-slate-700">
-                  <span class="font-semibold">IFSC Code (placeholder):</span> ABCD0123456
-                </p>
-                <p class="text-xs text-slate-700">
-                  <span class="font-semibold">Bank &amp; Branch (placeholder):</span> Bank Name,
-                  Branch, City
+                <p class="mt-3 text-sm text-slate-600 leading-relaxed">
+                  If you are new or visiting, please feel no obligation to give. Your presence is a
+                  gift to us.
                 </p>
               </div>
-              <p class="text-[11px] text-slate-500">
-                Please contact the church office for verified and updated bank details before
-                making a transfer.
-              </p>
             </div>
           </div>
         </div>
@@ -274,7 +292,7 @@
       <section class="border-b border-slate-200 bg-white">
         <div class="mx-auto max-w-6xl px-4 py-12 text-center sm:px-6 md:py-16 lg:px-8">
           <div class="scroll-reveal">
-          <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-accent">Thank You</p>
+          <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-400">Thank You</p>
           <h2 class="mt-3 text-balance text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">
             Your Generosity Makes a Difference
           </h2>
@@ -287,10 +305,10 @@
             Jesus.” – Philippians 4:19
           </p>
           <div class="mt-6 flex flex-wrap justify-center gap-4 scroll-reveal scroll-reveal--delay-1">
-            <a href="#online-giving" class="btn-primary inline-flex rounded-full bg-accent px-6 py-2.5 text-sm font-semibold text-white shadow-sm ring-1 ring-accent/70 hover:bg-accentSoft">
+            <a href="#online-giving" class="btn-primary inline-flex rounded-full bg-accent px-6 py-2.5 text-sm font-semibold text-white shadow-sm ring-1 ring-accent/70 transition hover:bg-accentSoft">
               View Giving Options
             </a>
-            <a href="contact.html" class="btn-outline inline-flex rounded-full border border-slate-300 px-6 py-2.5 text-sm font-semibold text-slate-800 hover:border-accent hover:text-accentSoft">
+            <a href="contact.html" class="btn-outline inline-flex rounded-full border border-slate-300 px-6 py-2.5 text-sm font-semibold text-slate-800 transition hover:border-accent hover:text-accentSoft">
               Contact Church Office
             </a>
           </div>
@@ -298,89 +316,63 @@
       </section>
     </main>
 
-    <!-- Footer -->
-    <footer class="border-t border-slate-800 bg-slate-950">
-      <div
-        class="mx-auto flex max-w-6xl flex-col gap-8 px-4 py-10 text-sm text-slate-300 sm:px-6 md:flex-row md:justify-between lg:px-8"
-      >
-        <div class="space-y-3 max-w-sm">
-          <p class="text-sm font-semibold text-slate-50">
-            River of Life Christian Church
-          </p>
-          <p class="text-xs text-slate-400">
-            3rd floor, AMR PLAZA, 49, 18th Main Rd, Sector 3, HSR Layout, Bengaluru, Karnataka
-            560102
-          </p>
-          <p class="text-xs text-slate-400">
-            Sunday Service · 10:00 AM – 11:30 AM
-          </p>
-        </div>
-        <div class="space-y-2">
-          <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
-            Connect
-          </p>
-          <p class="text-xs text-slate-300">
-            Phone:
-            <a href="tel:8050045500" class="text-accentSoft hover:text-accent"
-              >+91 80500 45500</a
-            >
-            ·
-            <a href="tel:9036745258" class="text-accentSoft hover:text-accent"
-              >+91 90367 45258</a
-            >
-          </p>
-          <p class="text-xs text-slate-300">
-            Email:
-            <a
-              href="mailto:rolccbangalore@gmail.com"
-              class="text-accentSoft hover:text-accent"
-              >rolccbangalore@gmail.com</a
-            >
-          </p>
-          <div class="flex flex-wrap gap-3 pt-1 text-xs">
-            <a
-              href="https://www.facebook.com/rolccindia/"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="text-slate-300 hover:text-accentSoft"
-              >Facebook</a
-            >
-            <a
-              href="https://www.youtube.com/@rolccindia"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="text-slate-300 hover:text-accentSoft"
-              >YouTube</a
-            >
-            <a
-              href="https://www.instagram.com/rolccindia"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="text-slate-300 hover:text-accentSoft"
-              >Instagram</a
-            >
+    <!-- Footer: same as homepage -->
+    <footer id="footer-section" class="footer-superside relative left-0 right-0 z-0 min-h-screen overflow-hidden">
+      <img src="https://images.unsplash.com/photo-1439066615861-d1af74d74000?auto=format&fit=crop&w=1920&q=70" alt="" class="footer-bg absolute inset-0 h-full w-full object-cover" loading="lazy" />
+      <div class="footer-overlay absolute inset-0 bg-gradient-to-b from-slate-900/40 via-slate-900/70 to-slate-950/95" aria-hidden="true"></div>
+      <div class="relative z-10 flex min-h-screen flex-col">
+        <section class="flex flex-1 flex-col items-center justify-center px-4 py-20 text-center sm:py-24">
+          <h2 class="text-3xl font-bold tracking-tight text-white sm:text-4xl md:text-5xl lg:text-6xl">
+            Your church family&apos;s<br /><em>church family</em>™
+          </h2>
+          <a href="contact.html" class="btn-primary mt-8 inline-flex rounded-full bg-accent px-8 py-3.5 text-base font-semibold text-white shadow-lg ring-1 ring-accent/70 transition hover:bg-accentSoft">Plan Your Visit</a>
+        </section>
+        <div class="border-t border-white/10">
+          <div class="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
+            <div class="grid gap-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-12">
+              <div>
+                <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-400">Services</p>
+                <ul class="mt-4 space-y-2.5 text-sm text-slate-300">
+                  <li><a href="services.html" class="footer-link inline-flex items-center gap-2 hover:text-white">Sunday Worship <span class="text-slate-500">→</span></a></li>
+                  <li><a href="river-kids.html" class="footer-link inline-flex items-center gap-2 hover:text-white">River Kids <span class="text-slate-500">→</span></a></li>
+                  <li><a href="fellowship.html" class="footer-link inline-flex items-center gap-2 hover:text-white">Cell Groups &amp; Fellowship <span class="text-slate-500">→</span></a></li>
+                  <li><a href="services.html" class="footer-link inline-flex items-center gap-2 hover:text-white">Praise &amp; Worship <span class="text-slate-500">→</span></a></li>
+                  <li><a href="giving.html" class="footer-link inline-flex items-center gap-2 hover:text-white">Giving <span class="text-slate-500">→</span></a></li>
+                </ul>
+              </div>
+              <div>
+                <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-400">Navigation</p>
+                <ul class="mt-4 space-y-2.5 text-sm text-slate-300">
+                  <li><a href="index.html" class="footer-link hover:text-white">Main</a></li>
+                  <li><a href="services.html" class="footer-link hover:text-white">Our Ministries</a></li>
+                  <li><a href="about.html" class="footer-link hover:text-white">Our People</a></li>
+                  <li><a href="about.html" class="footer-link hover:text-white">About Us</a></li>
+                  <li><a href="contact.html" class="footer-link hover:text-white">Contact</a></li>
+                </ul>
+              </div>
+              <div>
+                <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-400">Connect</p>
+                <div class="mt-4 flex flex-wrap gap-3">
+                  <a href="https://www.facebook.com/rolccindia/" target="_blank" rel="noopener noreferrer" class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/20 text-white transition hover:border-accent hover:bg-accent/20" aria-label="Facebook">
+                    <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                  </a>
+                  <a href="https://www.youtube.com/@rolccindia" target="_blank" rel="noopener noreferrer" class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/20 text-white transition hover:border-accent hover:bg-accent/20" aria-label="YouTube">
+                    <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                  </a>
+                  <a href="https://www.instagram.com/rolccindia" target="_blank" rel="noopener noreferrer" class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/20 text-white transition hover:border-accent hover:bg-accent/20" aria-label="Instagram">
+                    <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+                  </a>
+                </div>
+              </div>
+              <div></div>
+            </div>
           </div>
         </div>
-        <div class="space-y-2">
-          <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
-            Visit
-          </p>
-          <a
-            href="https://maps.app.goo.gl/GqLm5JLzAjenLBE16"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="inline-flex items-center rounded-full border border-slate-700 px-4 py-2 text-xs font-semibold text-slate-100 transition hover:border-accent hover:text-accentSoft"
-          >
-            Open in Google Maps
-          </a>
-        </div>
-      </div>
-      <div class="border-t border-slate-800">
-        <div
-          class="mx-auto flex max-w-6xl flex-col items-center justify-between gap-2 px-4 py-4 text-[11px] text-slate-500 sm:flex-row sm:px-6 lg:px-8"
-        >
-          <p>© <span id="year"></span> River of Life Christian Church. All rights reserved.</p>
-          <p>“A Place to Encounter Jesus”</p>
+        <div class="mt-auto border-t border-white/10">
+          <div class="mx-auto flex max-w-6xl flex-col items-center justify-between gap-2 px-4 py-4 text-[11px] text-slate-400 sm:flex-row sm:px-6 lg:px-8">
+            <p>© <span id="year"></span> River of Life Christian Church. All rights reserved.</p>
+            <p>&quot;A Place to Encounter Jesus&quot;</p>
+          </div>
         </div>
       </div>
     </footer>
@@ -396,6 +388,70 @@
     </button>
 
     <script src="js/main.js"></script>
+    <script>
+      (function() {
+        var wrap = document.querySelector('.impact-scroll-wrap');
+        var track = document.getElementById('impact-track');
+        if (!wrap || !track) return;
+        var mq = window.matchMedia('(min-width: 1024px)');
+        if (mq.matches) return;
+        var items = track.querySelectorAll('.impact-stat-item');
+        var itemW = items[0] ? items[0].offsetWidth + 24 : 320;
+        var dir = -1;
+        var speed = 0.6;
+        var rafId;
+        var running = true;
+        var maxScroll = Math.max(0, wrap.scrollWidth - wrap.clientWidth);
+        wrap.scrollLeft = maxScroll;
+        function tick() {
+          if (!running || mq.matches) return;
+          maxScroll = Math.max(0, wrap.scrollWidth - wrap.clientWidth);
+          if (maxScroll <= 0) { rafId = requestAnimationFrame(tick); return; }
+          wrap.scrollLeft += dir * speed;
+          if (wrap.scrollLeft <= 2) dir = 1;
+          else if (wrap.scrollLeft >= maxScroll - 2) dir = -1;
+          rafId = requestAnimationFrame(tick);
+        }
+        rafId = requestAnimationFrame(tick);
+        var touchStart = 0;
+        wrap.addEventListener('touchstart', function(e) {
+          touchStart = e.touches[0].clientX;
+          running = false;
+          cancelAnimationFrame(rafId);
+        }, { passive: true });
+        wrap.addEventListener('touchend', function(e) {
+          var touchEnd = e.changedTouches[0].clientX;
+          var diff = touchStart - touchEnd;
+          if (Math.abs(diff) > 40) {
+            var delta = diff > 0 ? itemW : -itemW;
+            var maxScroll = Math.max(0, wrap.scrollWidth - wrap.clientWidth);
+            wrap.scrollLeft = Math.max(0, Math.min(maxScroll, wrap.scrollLeft + delta));
+          }
+          running = true;
+          rafId = requestAnimationFrame(tick);
+        }, { passive: true });
+        wrap.addEventListener('mousedown', function() { running = false; cancelAnimationFrame(rafId); });
+        wrap.addEventListener('mouseup', function() { running = true; rafId = requestAnimationFrame(tick); });
+      })();
+      document.querySelectorAll('.copy-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          var text = this.getAttribute('data-copy');
+          if (!text) return;
+          navigator.clipboard.writeText(text).then(function() {
+            var svg = btn.querySelector('svg');
+            var orig = svg && svg.innerHTML;
+            if (svg) {
+              svg.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>';
+              btn.classList.add('!opacity-100', 'text-emerald-600');
+              setTimeout(function() {
+                if (orig) svg.innerHTML = orig;
+                btn.classList.remove('!opacity-100', 'text-emerald-600');
+              }, 1200);
+            }
+          });
+        });
+      });
+    </script>
   </body>
 </html>
 

@@ -328,6 +328,12 @@ body {
     bottom: 0 !important;
     height: 28rem !important;
   }
+  .giving-hero__white-fill {
+    height: 8rem !important;
+  }
+  .giving-impact-section {
+    margin-top: -4rem !important;
+  }
 }
 
 /* QR card: 236px = 28+180+28 (device 360), QR 180x180, text-top 20px, text-to-QR 16px */
@@ -408,11 +414,6 @@ body {
 @media (min-width: 640px) {
   .giving-impact-section {
     margin-top: -2.5rem;
-  }
-}
-@media (min-width: 768px) {
-  .giving-impact-section {
-    margin-top: -3rem;
   }
 }
 @media (max-width: 639px) {

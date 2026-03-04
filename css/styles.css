@@ -322,6 +322,45 @@ body {
   object-position: top center;
 }
 
+/* Mobile: optimize for QR visibility – more space, larger QR, less wave overlap */
+@media (max-width: 767px) {
+  .giving-hero__content {
+    padding-top: 11rem !important;
+    padding-bottom: 0.5rem !important;
+  }
+  .giving-hero__content h1 {
+    font-size: 1.5rem;
+    line-height: 1.3;
+  }
+  .giving-hero__content p {
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+  .giving-hero__card {
+    margin-top: 1rem !important;
+    margin-bottom: -1rem !important;
+    max-width: min(320px, calc(100vw - 2rem)) !important;
+  }
+  .giving-hero__card .rounded-2xl {
+    padding: 1rem !important;
+    padding-bottom: 1.25rem !important;
+  }
+  .giving-hero__card .aspect-square {
+    max-width: 220px !important;
+    width: 100% !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+  .giving-hero__wave {
+    bottom: 1rem !important;
+    height: 10rem !important;
+  }
+  .giving-hero__white-fill {
+    height: 1rem !important;
+  }
+}
+
 /* Wider container at 1366–1440px viewports for better desktop experience */
 @media (min-width: 1366px) {
   .max-w-6xl {

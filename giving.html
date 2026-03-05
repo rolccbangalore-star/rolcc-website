@@ -257,13 +257,14 @@
               </div>
               <div class="mt-6 pt-5 border-t border-slate-100">
                 <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-400">Offer via these UPI Apps</p>
-                <div class="mt-3 flex flex-wrap gap-2">
-                  <span class="inline-flex items-center px-2 py-1 transition opacity-80 hover:opacity-100" title="Paytm"><img src="assets/giving-paytm.svg" alt="Paytm" class="h-6 w-auto" /></span>
-                  <span class="inline-flex items-center px-2 py-1 transition opacity-80 hover:opacity-100" title="Google Pay"><img src="assets/giving-gpay.svg" alt="Google Pay" class="h-6 w-auto" /></span>
-                  <span class="inline-flex items-center px-2 py-1 transition opacity-80 hover:opacity-100" title="PhonePe"><img src="assets/giving-phonepe.svg" alt="PhonePe" class="h-6 w-auto" /></span>
-                  <span class="inline-flex items-center px-2 py-1 transition opacity-80 hover:opacity-100" title="BHIM"><img src="assets/giving-bhim.svg" alt="BHIM" class="h-6 w-auto" /></span>
-                  <span class="inline-flex items-center px-2 py-1 transition opacity-80 hover:opacity-100" title="Amazon Pay"><img src="assets/giving-amazonpay.svg" alt="Amazon Pay" class="h-6 w-auto" /></span>
-                  <span class="inline-flex items-center px-2 py-1 transition opacity-80 hover:opacity-100" title="WhatsApp Pay"><img src="assets/giving-whatsapppay.svg" alt="WhatsApp Pay" class="h-6 w-auto" /></span>
+                <p class="mt-1 text-xs text-slate-500">Tap an app to open it and send to riveroflife@fbl</p>
+                <div class="mt-3 flex flex-wrap gap-2" id="upi-app-icons">
+                  <a href="upi://pay?pa=riveroflife@fbl&amp;pn=River%20of%20Life%20Christian%20Church" class="upi-app-link inline-flex items-center px-2 py-1 rounded-lg transition opacity-80 hover:opacity-100 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2" data-upi-app="paytm" data-upi-scheme="paytmmp://pay?pa=riveroflife@fbl&amp;pn=River%20of%20Life%20Christian%20Church" title="Pay with Paytm" aria-label="Open Paytm to pay riveroflife@fbl"><img src="assets/giving-paytm.svg" alt="" class="h-6 w-auto" /></a>
+                  <a href="upi://pay?pa=riveroflife@fbl&amp;pn=River%20of%20Life%20Christian%20Church" class="upi-app-link inline-flex items-center px-2 py-1 rounded-lg transition opacity-80 hover:opacity-100 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2" data-upi-app="gpay" data-upi-scheme="gpay://upi/pay?pa=riveroflife@fbl&amp;pn=River%20of%20Life%20Christian%20Church" title="Pay with Google Pay" aria-label="Open Google Pay to pay riveroflife@fbl"><img src="assets/giving-gpay.svg" alt="" class="h-6 w-auto" /></a>
+                  <a href="upi://pay?pa=riveroflife@fbl&amp;pn=River%20of%20Life%20Christian%20Church" class="upi-app-link inline-flex items-center px-2 py-1 rounded-lg transition opacity-80 hover:opacity-100 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2" data-upi-app="phonepe" data-upi-scheme="phonepe://pay?pa=riveroflife@fbl&amp;pn=River%20of%20Life%20Christian%20Church" title="Pay with PhonePe" aria-label="Open PhonePe to pay riveroflife@fbl"><img src="assets/giving-phonepe.svg" alt="" class="h-6 w-auto" /></a>
+                  <a href="upi://pay?pa=riveroflife@fbl&amp;pn=River%20of%20Life%20Christian%20Church" class="upi-app-link inline-flex items-center px-2 py-1 rounded-lg transition opacity-80 hover:opacity-100 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2" data-upi-app="bhim" data-upi-scheme="bhim://pay?pa=riveroflife@fbl&amp;pn=River%20of%20Life%20Christian%20Church" title="Pay with BHIM" aria-label="Open BHIM to pay riveroflife@fbl"><img src="assets/giving-bhim.svg" alt="" class="h-6 w-auto" /></a>
+                  <a href="upi://pay?pa=riveroflife@fbl&amp;pn=River%20of%20Life%20Christian%20Church" class="upi-app-link inline-flex items-center px-2 py-1 rounded-lg transition opacity-80 hover:opacity-100 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2" data-upi-app="amazonpay" data-upi-scheme="amazonpay://pay?pa=riveroflife@fbl&amp;pn=River%20of%20Life%20Christian%20Church" title="Pay with Amazon Pay" aria-label="Open Amazon Pay to pay riveroflife@fbl"><img src="assets/giving-amazonpay.svg" alt="" class="h-6 w-auto" /></a>
+                  <a href="upi://pay?pa=riveroflife@fbl&amp;pn=River%20of%20Life%20Christian%20Church" class="upi-app-link inline-flex items-center px-2 py-1 rounded-lg transition opacity-80 hover:opacity-100 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2" title="Pay with WhatsApp Pay" aria-label="Open WhatsApp Pay to pay riveroflife@fbl"><img src="assets/giving-whatsapppay.svg" alt="" class="h-6 w-auto" /></a>
                 </div>
               </div>
             </div>
@@ -451,6 +452,35 @@
           });
         });
       });
+
+      (function() {
+        var fallbackDelay = 2200;
+        var upiLinks = document.querySelectorAll('.upi-app-link[data-upi-scheme]');
+        upiLinks.forEach(function(link) {
+          link.addEventListener('click', function(e) {
+            var scheme = link.getAttribute('data-upi-scheme');
+            var fallback = link.getAttribute('href');
+            if (!scheme || !fallback) return;
+            e.preventDefault();
+            var appUrl = scheme.replace(/&amp;/g, '&');
+            var fallbackUrl = fallback.replace(/&amp;/g, '&');
+            window.location.href = appUrl;
+            var done = false;
+            var t = setTimeout(function() {
+              if (done) return;
+              done = true;
+              window.location.href = fallbackUrl;
+            }, fallbackDelay);
+            document.addEventListener('visibilitychange', function onHide() {
+              if (document.visibilityState === 'hidden') {
+                done = true;
+                clearTimeout(t);
+                document.removeEventListener('visibilitychange', onHide);
+              }
+            });
+          });
+        });
+      })();
     </script>
   </body>
 </html>

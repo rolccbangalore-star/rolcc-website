@@ -517,6 +517,16 @@ body {
   /* no background */
 }
 
+/* Contact form box: transition for shadow (Giving-style card; hover via Tailwind) */
+.contact-form-box {
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+/* Contact timing items: time text hover color (reinforces Tailwind transition-colors) */
+.contact-timing-item .text-2xl {
+  transition: color 0.2s ease;
+}
+
 /* Contact: Topic dropdown – aligned chevron (no browser default misalignment) */
 .contact-topic-select {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23475569'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");

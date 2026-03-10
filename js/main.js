@@ -8,11 +8,45 @@ document.addEventListener("DOMContentLoaded", function () {
   const announceBanner = document.getElementById("announce-banner");
   const announceBannerClose = document.getElementById("announce-banner-close");
 
-  // Announcement banner: dismissible, persist in localStorage
+  // Announcement banner: only visible on Sunday before 12 noon or Friday 11 AM–1:30 PM (IST)
   if (announceBanner && announceBannerClose) {
-    if (localStorage.getItem(ANNOUNCE_BANNER_KEY) === "true") {
-      announceBanner.setAttribute("data-hidden", "true");
+    var now = new Date();
+    var istOffset = 5.5 * 60;
+    var utcMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
+    var istMinutes = utcMinutes + istOffset;
+    var istHour = Math.floor(istMinutes / 60) % 24;
+    var istMin = istMinutes % 60;
+    var istDay = new Date(now.getTime() + istOffset * 60000).getUTCDay();
+
+    var showBanner = false;
+    var liveLink = "#";
+    var bannerText = "Join with us Online";
+
+    if (istDay === 0 && istHour < 12) {
+      showBanner = true;
+      liveLink = "https://www.youtube.com/@rolccindia/live";
+      bannerText = "Join with us Online \u00B7 Sunday English Service";
+    } else if (istDay === 5 && (istHour > 11 || (istHour === 11 && istMin >= 0)) && (istHour < 13 || (istHour === 13 && istMin <= 30))) {
+      showBanner = true;
+      liveLink = "https://www.youtube.com/@riveroflifechristianchurch3694/streams";
+      bannerText = "Join with us Online \u00B7 Friday Tamil Service";
     }
+
+    if (!showBanner || localStorage.getItem(ANNOUNCE_BANNER_KEY) === "true") {
+      announceBanner.setAttribute("data-hidden", "true");
+    } else {
+      var watchLink = document.getElementById("announce-watch-live");
+      var bannerTitle = announceBanner.querySelector(".announce-banner__title");
+      if (watchLink) {
+        watchLink.href = liveLink;
+        watchLink.target = "_blank";
+        watchLink.rel = "noopener noreferrer";
+      }
+      if (bannerTitle) {
+        bannerTitle.firstChild.textContent = bannerText + " ";
+      }
+    }
+
     announceBannerClose.addEventListener("click", function () {
       localStorage.setItem(ANNOUNCE_BANNER_KEY, "true");
       announceBanner.setAttribute("data-hidden", "true");
@@ -64,11 +98,12 @@ document.addEventListener("DOMContentLoaded", function () {
   var headerEl = document.getElementById("header");
   var heroBannerEl = document.getElementById("hero-banner");
   var givingHeroEl = document.getElementById("giving-hero");
-  var heroEl = heroBannerEl || givingHeroEl;
+  var arcHeroEl = document.getElementById("arc-hero");
+  var heroEl = heroBannerEl || givingHeroEl || arcHeroEl;
   var announceEl = document.getElementById("announce-banner");
   function updateHeaderScrolled() {
     if (!headerEl) return;
-    headerEl.classList.remove("header-over-hero--light", "header-over-hero--dark");
+    headerEl.classList.remove("header-over-hero--light", "header-over-hero--dark", "header-over-hero--arc");
     if (announceEl) {
       announceEl.classList.remove("announce-banner--over-dark", "announce-banner--over-light");
     }
@@ -84,7 +119,10 @@ document.addEventListener("DOMContentLoaded", function () {
       headerEl.classList.remove("header-scrolled");
       var isDarkHero = heroBannerEl && heroBannerEl.classList.contains("hero-theme-dark");
       var isLightHero = heroBannerEl && heroBannerEl.classList.contains("hero-theme-light");
-      if (givingHeroEl && heroEl === givingHeroEl) {
+      if (arcHeroEl && heroEl === arcHeroEl) {
+        headerEl.classList.add("header-over-hero--arc");
+        if (announceEl) announceEl.classList.add("announce-banner--over-light");
+      } else if (givingHeroEl && heroEl === givingHeroEl) {
         headerEl.classList.add("header-over-hero--dark");
         if (announceEl) announceEl.classList.add("announce-banner--over-dark");
       } else if (isDarkHero) {
@@ -356,7 +394,7 @@ document.addEventListener("DOMContentLoaded", function () {
       else { radius = 460; cardSize = 115; }
 
       arcRing.innerHTML = "";
-      arcRing.style.height = (radius * 1.15) + "px";
+      arcRing.style.height = (radius * 1.4) + "px";
 
       var pivot = document.createElement("div");
       pivot.style.cssText = "position:absolute;left:50%;bottom:0;transform:translateX(-50%)";
@@ -605,6 +643,151 @@ document.addEventListener("DOMContentLoaded", function () {
       });
     }, { threshold: 0.3 });
     countupEls.forEach(function (el) { countObserver.observe(el); });
+  }
+
+  // Feature Steps auto-play (Core Pillars, About page)
+  var fsSection = document.querySelector(".feature-steps");
+  if (fsSection) {
+    var fsSteps = fsSection.querySelectorAll(".feature-step");
+    var fsImgWrap = fsSection.querySelector(".feature-steps__img-wrap");
+    var fsImages = [
+      "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=1000&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=1000&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1504052434569-70ad5836ab65?w=1000&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?w=1000&h=600&fit=crop"
+    ];
+    var fsGradient = fsImgWrap.querySelector(".feature-steps__gradient");
+    var fsCurrent = 0;
+    var fsInterval = 4000;
+    var fsProgress = 0;
+    var fsTick = 100;
+    var fsTimer = null;
+
+    function fsUpdateSteps(idx) {
+      fsSteps.forEach(function (step, i) {
+        step.classList.remove("active", "completed");
+        var dot = step.querySelector(".feature-step__dot span");
+        if (i === idx) {
+          step.classList.add("active");
+          dot.textContent = "\u2713";
+        } else if (i < idx) {
+          step.classList.add("completed");
+          dot.textContent = "\u2713";
+        } else {
+          dot.textContent = String(i + 1);
+        }
+      });
+
+      if (idx === fsCurrent && fsImgWrap.querySelector(".feature-steps__img")) return;
+
+      var oldImg = fsImgWrap.querySelector(".feature-steps__img:not(.exiting)");
+      if (oldImg) {
+        oldImg.classList.add("exiting");
+        oldImg.addEventListener("animationend", function () { oldImg.remove(); }, { once: true });
+      }
+
+      var newImg = document.createElement("img");
+      newImg.src = fsImages[idx];
+      newImg.alt = fsSteps[idx].querySelector("h3").textContent;
+      newImg.className = "feature-steps__img entering";
+      newImg.loading = "eager";
+      if (fsGradient) {
+        fsImgWrap.insertBefore(newImg, fsGradient);
+      } else {
+        fsImgWrap.appendChild(newImg);
+      }
+      newImg.addEventListener("animationend", function () { newImg.classList.remove("entering"); }, { once: true });
+
+      fsCurrent = idx;
+    }
+
+    function fsStartAutoPlay() {
+      fsProgress = 0;
+      clearInterval(fsTimer);
+      fsTimer = setInterval(function () {
+        fsProgress += fsTick;
+        if (fsProgress >= fsInterval) {
+          var next = (fsCurrent + 1) % fsSteps.length;
+          fsUpdateSteps(next);
+          fsProgress = 0;
+        }
+      }, fsTick);
+    }
+
+    fsSteps[0].classList.add("active");
+    fsSteps[0].querySelector(".feature-step__dot span").textContent = "\u2713";
+    fsStartAutoPlay();
+
+    fsSteps.forEach(function (step, i) {
+      step.addEventListener("click", function () {
+        fsUpdateSteps(i);
+        fsStartAutoPlay();
+      });
+    });
+
+    fsImages.forEach(function (src) {
+      var link = document.createElement("link");
+      link.rel = "prefetch";
+      link.href = src;
+      document.head.appendChild(link);
+    });
+  }
+
+  // Our Story read-more toggle (mobile only)
+  var storyToggle = document.getElementById("our-story-toggle");
+  if (storyToggle) {
+    var storyMore = document.getElementById("our-story-more");
+    var storyArrow = document.getElementById("our-story-arrow");
+    var storyOpen = false;
+    storyToggle.addEventListener("click", function () {
+      storyOpen = !storyOpen;
+      if (storyOpen) {
+        storyMore.classList.remove("hidden");
+      } else {
+        storyMore.classList.add("hidden");
+        storyMore.classList.add("md:block");
+      }
+      storyArrow.style.transform = storyOpen ? "rotate(180deg)" : "";
+      storyToggle.firstChild.textContent = storyOpen ? "Read less " : "Read more ";
+    });
+  }
+
+  // Ministry Gallery Slideshow (About page)
+  var msViewport = document.getElementById("ministry-slideshow");
+  if (msViewport) {
+    var msSlides = msViewport.querySelectorAll(".ministry-slideshow__slide");
+    var msPrev = document.getElementById("ms-prev");
+    var msNext = document.getElementById("ms-next");
+    var msCounter = document.getElementById("ms-counter");
+    var msCurrent = 0;
+    var msTotal = msSlides.length;
+    var msAutoTimer = null;
+    var msAutoDelay = 5000;
+
+    function msGo(idx) {
+      msSlides[msCurrent].classList.remove("active");
+      msCurrent = (idx + msTotal) % msTotal;
+      msSlides[msCurrent].classList.add("active");
+      msCounter.textContent =
+        String(msCurrent + 1).padStart(2, "0") + " / " + String(msTotal).padStart(2, "0");
+    }
+
+    function msStartAuto() {
+      clearInterval(msAutoTimer);
+      msAutoTimer = setInterval(function () { msGo(msCurrent + 1); }, msAutoDelay);
+    }
+
+    msPrev.addEventListener("click", function () { msGo(msCurrent - 1); msStartAuto(); });
+    msNext.addEventListener("click", function () { msGo(msCurrent + 1); msStartAuto(); });
+
+    var msTouch0 = 0;
+    msViewport.addEventListener("touchstart", function (e) { msTouch0 = e.changedTouches[0].clientX; }, { passive: true });
+    msViewport.addEventListener("touchend", function (e) {
+      var dx = e.changedTouches[0].clientX - msTouch0;
+      if (Math.abs(dx) > 40) { msGo(dx < 0 ? msCurrent + 1 : msCurrent - 1); msStartAuto(); }
+    }, { passive: true });
+
+    msStartAuto();
   }
 
   // Scroll reveal: animate elements as they enter viewport

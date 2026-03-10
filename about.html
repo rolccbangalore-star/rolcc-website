@@ -64,8 +64,8 @@
     <div id="announce-banner" class="announce-banner" role="banner" aria-label="Announcement">
       <div class="announce-banner__inner">
         <p class="announce-banner__title">
-          Sunday 8:00 AM (Tamil) · 10:00 AM (English)
-          <a href="#" id="announce-watch-live" class="announce-banner__btn" aria-label="Watch Live"><span class="announce-banner__btn-text">Watch Live</span></a>
+          Join with us Online
+          <a href="#" id="announce-watch-live" class="announce-banner__btn" aria-label="Watch Live"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 8-6 4 6 4V8Z"/><rect width="14" height="12" x="2" y="6" rx="2" ry="2"/></svg></a>
         </p>
         <button type="button" id="announce-banner-close" class="announce-banner__close" aria-label="Dismiss announcement">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
@@ -74,7 +74,7 @@
     </div>
 
     <!-- Header -->
-    <header class="header-top header-scrolled" id="header">
+    <header class="header-top" id="header">
       <nav class="header-top__bar mx-auto max-w-6xl px-4 py-3 sm:px-6 lg:px-8 flex items-center justify-between">
         <a href="index.html" class="header-top__brand flex items-center gap-3">
           <img src="assets/logo.svg" alt="River of Life Christian Church" class="header-top__logo-img" width="36" height="44" />
@@ -132,14 +132,84 @@
         <div class="arc-hero__content">
           <p class="text-xs font-semibold uppercase tracking-[0.18em] text-accent arc-hero__fade" style="animation-delay:0.8s">About Us</p>
           <h1 class="mt-3 text-balance text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl lg:text-5xl arc-hero__fade" style="animation-delay:0.95s">
-            A River of Life in the Heart of Bengaluru
+            A River of Life <br class="hidden lg:inline" />in the Heart of Bengaluru
           </h1>
           <p class="mt-4 max-w-2xl text-sm leading-relaxed text-slate-600 sm:text-base arc-hero__fade" style="animation-delay:1.1s">
             Spirit-filled worship. Biblical teaching. A welcoming church family in Bengaluru, united in Christ, rooted in Scripture, and led by the Holy Spirit.
           </p>
-          <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3 arc-hero__fade" style="animation-delay:1.25s">
-            <a href="#our-story" class="w-full sm:w-auto inline-flex items-center justify-center rounded-full bg-accent px-6 py-3 text-sm font-semibold text-white shadow-sm ring-1 ring-accent/70 hover:bg-accentSoft transition hover:-translate-y-0.5">Our Story</a>
-            <a href="contact.html" class="w-full sm:w-auto inline-flex items-center justify-center rounded-full border border-slate-300 px-6 py-3 text-sm font-semibold text-slate-700 hover:border-accent hover:text-accent transition hover:-translate-y-0.5">Plan Your Visit</a>
+          <div class="mt-8 flex flex-row items-center justify-center gap-3 arc-hero__fade" style="animation-delay:1.25s">
+            <a href="#our-story" class="inline-flex items-center justify-center rounded-full bg-accent px-5 py-2.5 sm:px-6 sm:py-3 text-sm font-semibold text-white shadow-sm ring-1 ring-accent/70 hover:bg-accentSoft transition hover:-translate-y-0.5">Our Story</a>
+            <a href="contact.html" class="inline-flex items-center justify-center rounded-full border border-slate-300 px-5 py-2.5 sm:px-6 sm:py-3 text-sm font-semibold text-slate-700 hover:border-accent hover:text-accent transition hover:-translate-y-0.5">Plan Your Visit</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Our Core Pillars — Feature Steps -->
+      <section class="feature-steps border-b border-slate-200 bg-slate-50 py-16 sm:py-20 md:py-24" id="core-pillars">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div class="text-center mb-10 scroll-reveal">
+            <p class="text-xs font-semibold uppercase tracking-[0.2em] text-accent mb-2">Our Vision</p>
+            <h2 class="text-2xl md:text-3xl lg:text-4xl font-bold tracking-tight text-slate-900">
+              Build a Glorious Church
+            </h2>
+          </div>
+
+          <div class="flex flex-col md:grid md:grid-cols-2 gap-6 md:gap-10">
+
+            <div class="order-2 md:order-1 space-y-6 sm:space-y-8" id="feature-steps-list">
+
+              <div class="feature-step flex items-start gap-5 md:gap-7 cursor-pointer scroll-reveal scroll-reveal--delay-1" data-step="0">
+                <div class="feature-step__dot">
+                  <span>1</span>
+                </div>
+                <div class="flex-1">
+                  <h3 class="text-lg md:text-xl font-semibold text-slate-900">Praise &amp; Worship</h3>
+                  <p class="text-sm md:text-base text-slate-500 mt-1 leading-relaxed">Passionate, Spirit-filled worship that leads people into God&apos;s presence and transforms hearts through praise.</p>
+                </div>
+              </div>
+
+              <div class="feature-step flex items-start gap-5 md:gap-7 cursor-pointer scroll-reveal scroll-reveal--delay-2" data-step="1">
+                <div class="feature-step__dot">
+                  <span>2</span>
+                </div>
+                <div class="flex-1">
+                  <h3 class="text-lg md:text-xl font-semibold text-slate-900">Cell Church</h3>
+                  <p class="text-sm md:text-base text-slate-500 mt-1 leading-relaxed">Authentic small-group community where lives connect, faith deepens, and no one walks alone.</p>
+                </div>
+              </div>
+
+              <div class="feature-step flex items-start gap-5 md:gap-7 cursor-pointer scroll-reveal scroll-reveal--delay-3" data-step="2">
+                <div class="feature-step__dot">
+                  <span>3</span>
+                </div>
+                <div class="flex-1">
+                  <h3 class="text-lg md:text-xl font-semibold text-slate-900">Holy Spirit Renewal</h3>
+                  <p class="text-sm md:text-base text-slate-500 mt-1 leading-relaxed">Seeking revival, spiritual empowerment, and daily transformation through the power of the Holy Spirit.</p>
+                </div>
+              </div>
+
+              <div class="feature-step flex items-start gap-5 md:gap-7 cursor-pointer scroll-reveal scroll-reveal--delay-4" data-step="3">
+                <div class="feature-step__dot">
+                  <span>4</span>
+                </div>
+                <div class="flex-1">
+                  <h3 class="text-lg md:text-xl font-semibold text-slate-900">Glocal Impact</h3>
+                  <p class="text-sm md:text-base text-slate-500 mt-1 leading-relaxed">Serving our neighbourhood while supporting global missions &mdash; bringing God&apos;s love near and far.</p>
+                </div>
+              </div>
+
+            </div>
+
+            <div class="order-1 md:order-2 relative h-[220px] sm:h-[280px] md:h-[320px] lg:h-[400px] overflow-hidden rounded-xl feature-steps__img-wrap" id="feature-steps-image">
+              <img
+                src="https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=1000&h=600&fit=crop"
+                alt="Praise &amp; Worship"
+                class="feature-steps__img"
+                loading="eager"
+              />
+              <div class="feature-steps__gradient"></div>
+            </div>
+
           </div>
         </div>
       </section>
@@ -149,7 +219,7 @@
         <div
           class="mx-auto grid max-w-6xl gap-10 px-4 py-12 sm:px-6 md:grid-cols-[3fr,2fr] md:py-16 lg:px-8"
         >
-          <div class="space-y-4">
+          <div class="space-y-4 scroll-reveal">
             <h2 class="text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">
               Our Story
             </h2>
@@ -158,135 +228,220 @@
               presence of God and the pure teaching of His Word. Over the years, God has faithfully
               grown this community into a vibrant church family in Bengaluru.
             </p>
-            <p class="text-sm leading-relaxed text-slate-600 sm:text-base">
-              From the beginning, our heart has been to host the presence of God, make disciples of
-              Jesus, and send believers into every sphere of society as carriers of His life and
-              light. We are grateful for the many testimonies of salvation, healing, restoration,
-              and breakthrough that have come as people have encountered Jesus here.
-            </p>
-            <p class="text-sm leading-relaxed text-slate-600 sm:text-base">
-              Today, River of Life Christian Church continues to be a home for people from different
-              languages, backgrounds, and stories – united in Christ, rooted in Scripture, and led
-              by the Holy Spirit.
-            </p>
-          </div>
-          <div
-            class="space-y-4 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-sm text-slate-700"
-            id="vision-mission"
-          >
-            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
-              Vision &amp; Mission
-            </p>
-            <div class="space-y-2">
-              <h3 class="text-sm font-semibold text-slate-900">Our Vision</h3>
-              <p class="text-sm text-slate-600">
-                To be a Christ-centered, Spirit-filled church that brings the life of Jesus to
-                individuals, families, and nations.
+            <div id="our-story-more" class="space-y-4 hidden md:block">
+              <p class="text-sm leading-relaxed text-slate-600 sm:text-base">
+                From the beginning, our heart has been to host the presence of God, make disciples of
+                Jesus, and send believers into every sphere of society as carriers of His life and
+                light. We are grateful for the many testimonies of salvation, healing, restoration,
+                and breakthrough that have come as people have encountered Jesus here.
+              </p>
+              <p class="text-sm leading-relaxed text-slate-600 sm:text-base">
+                Today, River of Life Christian Church continues to be a home for people from different
+                languages, backgrounds, and stories – united in Christ, rooted in Scripture, and led
+                by the Holy Spirit.
               </p>
             </div>
-            <div class="space-y-2">
-              <h3 class="text-sm font-semibold text-slate-900">Our Mission</h3>
-              <ul class="space-y-1 text-sm text-slate-600">
-                <li>• Exalt Jesus through passionate worship and prayer.</li>
-                <li>• Equip believers through systematic, Bible-based teaching.</li>
-                <li>• Establish healthy families and Christ-centered community.</li>
-                <li>• Engage our city and nation with the gospel of grace.</li>
-              </ul>
-            </div>
+            <button id="our-story-toggle" class="inline-flex items-center gap-1 text-sm font-medium text-accent hover:text-accentSoft transition-colors md:hidden" type="button">
+              Read more <svg class="w-4 h-4 transition-transform duration-300" id="our-story-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+          </div>
+          <div
+            class="flex flex-col justify-center rounded-2xl border border-slate-200 bg-slate-50 p-6 sm:p-8 text-sm text-slate-700 scroll-reveal scroll-reveal--delay-2"
+            id="theme-verse"
+          >
+            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-accent mb-4">Theme Verse</p>
+            <blockquote class="text-sm text-slate-600 leading-relaxed sm:text-base">
+              &ldquo;Then the angel showed me a river of the water of life, as clear as crystal, flowing out of the throne of God and of the Lamb, in the middle of the city streets. On one side of the river and on the other side of the river stood the tree of life, which bore twelve kinds of fruit; it yielded its fruit every month. And its leaf was for the healing of the nations.&rdquo;
+            </blockquote>
+            <cite class="mt-4 block text-xs font-semibold text-slate-500 not-italic">Revelation 22:1&ndash;2</cite>
           </div>
         </div>
       </section>
 
-      <!-- Statement of Faith -->
-      <section class="border-b border-slate-200 bg-slate-50">
-        <div class="mx-auto max-w-6xl px-4 py-12 sm:px-6 md:py-16 lg:px-8">
-          <div class="max-w-3xl space-y-4">
-            <h2 class="text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">
-              Statement of Faith
-            </h2>
-            <p class="text-sm text-slate-600 sm:text-base">
-              River of Life Christian Church joyfully affirms historic, evangelical, Bible-believing
-              Christian doctrine.
-            </p>
-          </div>
+      <!-- Ministry Gallery Slideshow -->
+      <section class="ministry-slideshow border-b border-slate-200 bg-slate-900" aria-label="Ministry photo gallery">
+        <div class="ministry-slideshow__viewport" id="ministry-slideshow">
 
-          <div class="mt-6 grid gap-6 md:grid-cols-2">
-            <div class="space-y-2 rounded-2xl border border-slate-200 bg-white p-5">
-              <h3 class="text-sm font-semibold text-slate-900">The Bible</h3>
-              <p class="text-sm text-slate-600">
-                We believe the Bible – both Old and New Testaments – is the inspired, infallible,
-                and authoritative Word of God, our final rule for faith and life.
-              </p>
-              <p class="text-xs text-slate-500">
-                2 Timothy 3:16–17 · 2 Peter 1:20–21
-              </p>
-            </div>
-
-            <div class="space-y-2 rounded-2xl border border-slate-200 bg-white p-5">
-              <h3 class="text-sm font-semibold text-slate-900">The Godhead</h3>
-              <p class="text-sm text-slate-600">
-                We believe in one God, eternally existent in three Persons: Father, Son, and Holy
-                Spirit – co-equal, co-eternal, and worthy of the same worship.
-              </p>
-              <p class="text-xs text-slate-500">
-                Deuteronomy 6:4 · Matthew 28:19
-              </p>
-            </div>
-
-            <div class="space-y-2 rounded-2xl border border-slate-200 bg-white p-5">
-              <h3 class="text-sm font-semibold text-slate-900">Jesus Christ</h3>
-              <p class="text-sm text-slate-600">
-                We believe Jesus Christ is fully God and fully Man, born of a virgin, sinless in His
-                life, who died on the cross as our substitute, rose bodily from the dead, and will
-                return in glory.
-              </p>
-              <p class="text-xs text-slate-500">
-                John 1:1–14 · 1 Corinthians 15:3–4
-              </p>
-            </div>
-
-            <div class="space-y-2 rounded-2xl border border-slate-200 bg-white p-5">
-              <h3 class="text-sm font-semibold text-slate-900">Salvation</h3>
-              <p class="text-sm text-slate-600">
-                We believe that all have sinned and are in need of salvation by grace through faith
-                in Jesus Christ alone, not by works, but as the gift of God.
-              </p>
-              <p class="text-xs text-slate-500">
-                Romans 3:23–24 · Ephesians 2:8–9
-              </p>
-            </div>
-
-            <div class="space-y-2 rounded-2xl border border-slate-200 bg-white p-5">
-              <h3 class="text-sm font-semibold text-slate-900">Holy Spirit</h3>
-              <p class="text-sm text-slate-600">
-                We believe in the present ministry of the Holy Spirit, who indwells believers,
-                empowers them for holy living, and distributes gifts for the building up of the
-                Church.
-              </p>
-              <p class="text-xs text-slate-500">
-                Acts 1:8 · 1 Corinthians 12
-              </p>
-            </div>
-
-            <div class="space-y-2 rounded-2xl border border-slate-200 bg-white p-5">
-              <h3 class="text-sm font-semibold text-slate-900">The Church &amp; Eternity</h3>
-              <p class="text-sm text-slate-600">
-                We believe in the one universal Church, the Body of Christ, and in the reality of
-                eternal life with God for believers and eternal separation from God for those who
-                reject Christ.
-              </p>
-              <p class="text-xs text-slate-500">
-                Matthew 16:18 · Revelation 20:11–15
-              </p>
+          <div class="ministry-slideshow__slide active" style="background-image:url('https://images.unsplash.com/photo-1510590337019-5ef8d3d32116?w=1400&h=800&fit=crop&q=80')">
+            <div class="ministry-slideshow__overlay"></div>
+            <div class="ministry-slideshow__text">
+              <span>Worship that</span>
+              <span>transforms</span>
             </div>
           </div>
+
+          <div class="ministry-slideshow__slide" style="background-image:url('https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=1400&h=800&fit=crop&q=80')">
+            <div class="ministry-slideshow__overlay"></div>
+            <div class="ministry-slideshow__text">
+              <span>Community</span>
+              <span>in action</span>
+            </div>
+          </div>
+
+          <div class="ministry-slideshow__slide" style="background-image:url('https://images.unsplash.com/photo-1504052434569-70ad5836ab65?w=1400&h=800&fit=crop&q=80')">
+            <div class="ministry-slideshow__overlay"></div>
+            <div class="ministry-slideshow__text">
+              <span>Rooted in</span>
+              <span>the Word</span>
+            </div>
+          </div>
+
+          <div class="ministry-slideshow__slide" style="background-image:url('https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?w=1400&h=800&fit=crop&q=80')">
+            <div class="ministry-slideshow__overlay"></div>
+            <div class="ministry-slideshow__text">
+              <span>Serving near</span>
+              <span>and far</span>
+            </div>
+          </div>
+
+          <div class="ministry-slideshow__slide" style="background-image:url('https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=1400&h=800&fit=crop&q=80')">
+            <div class="ministry-slideshow__overlay"></div>
+            <div class="ministry-slideshow__text">
+              <span>Families</span>
+              <span>growing together</span>
+            </div>
+          </div>
+
+          <button class="ministry-slideshow__nav ministry-slideshow__nav--prev" id="ms-prev" aria-label="Previous slide">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+          </button>
+          <button class="ministry-slideshow__nav ministry-slideshow__nav--next" id="ms-next" aria-label="Next slide">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </button>
+
+          <div class="ministry-slideshow__counter" id="ms-counter">01 / 05</div>
+        </div>
+      </section>
+
+      <!-- Core Values -->
+      <section class="core-values border-b border-slate-200 bg-gradient-to-b from-slate-50 to-white overflow-hidden relative" id="core-values">
+        <div class="core-values__bg-orb core-values__bg-orb--1"></div>
+        <div class="core-values__bg-orb core-values__bg-orb--2"></div>
+
+        <div class="mx-auto max-w-6xl px-4 py-16 sm:px-6 md:py-24 lg:px-8 relative z-10">
+
+          <div class="text-center mb-14 scroll-reveal">
+            <p class="text-xs font-semibold uppercase tracking-[0.2em] text-accent mb-2">The core values of River of Life</p>
+            <h2 class="text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl md:text-4xl">Core Values</h2>
+            <div class="mx-auto mt-4 h-[3px] w-16 rounded-full bg-accent"></div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-8 relative">
+
+            <!-- Left Column -->
+            <div class="space-y-12 md:space-y-14">
+
+              <div class="core-value-item group scroll-reveal scroll-reveal--delay-1" data-direction="left">
+                <div class="flex items-center gap-3 mb-2.5">
+                  <div class="core-value-item__icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20a6 6 0 0 0-12 0"/><circle cx="12" cy="10" r="4"/><circle cx="12" cy="12" r="10"/></svg>
+                  </div>
+                  <h3 class="text-lg font-semibold text-slate-900 group-hover:text-accent transition-colors duration-300">Christ-likeness</h3>
+                </div>
+                <blockquote class="mt-2 pl-[2.85rem] text-xs text-slate-400 leading-relaxed">
+                  &ldquo;For even the Son of Man did not come to be served, but to serve, and to give his life as a ransom for many.&rdquo;
+                  <cite class="block mt-1 not-italic font-medium text-slate-500">Mark 10:45</cite>
+                </blockquote>
+              </div>
+
+              <div class="core-value-item group scroll-reveal scroll-reveal--delay-2" data-direction="left">
+                <div class="flex items-center gap-3 mb-2.5">
+                  <div class="core-value-item__icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/></svg>
+                  </div>
+                  <h3 class="text-lg font-semibold text-slate-900 group-hover:text-accent transition-colors duration-300">Bold Faith</h3>
+                </div>
+                <blockquote class="mt-2 pl-[2.85rem] text-xs text-slate-400 leading-relaxed">
+                  &ldquo;For we live by faith, not by sight.&rdquo;
+                  <cite class="block mt-1 not-italic font-medium text-slate-500">2 Corinthians 5:7</cite>
+                </blockquote>
+              </div>
+
+              <div class="core-value-item group scroll-reveal scroll-reveal--delay-3" data-direction="left">
+                <div class="flex items-center gap-3 mb-2.5">
+                  <div class="core-value-item__icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>
+                  </div>
+                  <h3 class="text-lg font-semibold text-slate-900 group-hover:text-accent transition-colors duration-300">Empowerment of the Saints</h3>
+                </div>
+                <blockquote class="mt-2 pl-[2.85rem] text-xs text-slate-400 leading-relaxed">
+                  &ldquo;To equip his people for the works of service, so that the body of Christ may be built up.&rdquo;
+                  <cite class="block mt-1 not-italic font-medium text-slate-500">Ephesians 4:11&ndash;12</cite>
+                </blockquote>
+              </div>
+
+            </div>
+
+            <!-- Center Image -->
+            <div class="hidden md:flex justify-center items-center md:order-none mb-4 md:mb-0">
+              <div class="core-values__image-wrap relative w-full max-w-xs scroll-reveal">
+                <div class="rounded-xl overflow-hidden shadow-lg ring-1 ring-slate-200/60">
+                  <img
+                    src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=560&fit=crop&crop=face"
+                    alt="River of Life Christian Church"
+                    class="w-full aspect-[3/4] object-cover"
+                    loading="lazy"
+                  />
+                  <div class="absolute inset-0 bg-gradient-to-t from-slate-900/40 via-transparent to-transparent"></div>
+                </div>
+                <div class="core-values__image-border"></div>
+                <div class="core-values__float-dot core-values__float-dot--1"></div>
+                <div class="core-values__float-dot core-values__float-dot--2"></div>
+              </div>
+            </div>
+
+            <!-- Right Column -->
+            <div class="space-y-12 md:space-y-14">
+
+              <div class="core-value-item group scroll-reveal scroll-reveal--delay-1" data-direction="right">
+                <div class="flex items-center gap-3 mb-2.5">
+                  <div class="core-value-item__icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                  </div>
+                  <h3 class="text-lg font-semibold text-slate-900 group-hover:text-accent transition-colors duration-300">Partnership (Serving together)</h3>
+                </div>
+                <blockquote class="mt-2 pl-[2.85rem] text-xs text-slate-400 leading-relaxed">
+                  &ldquo;Now you are the body of Christ, and each one of you is a part of it.&rdquo;
+                  <cite class="block mt-1 not-italic font-medium text-slate-500">1 Corinthians 12:27</cite>
+                </blockquote>
+              </div>
+
+              <div class="core-value-item group scroll-reveal scroll-reveal--delay-2" data-direction="right">
+                <div class="flex items-center gap-3 mb-2.5">
+                  <div class="core-value-item__icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+                  </div>
+                  <h3 class="text-lg font-semibold text-slate-900 group-hover:text-accent transition-colors duration-300">Innovation</h3>
+                </div>
+                <blockquote class="mt-2 pl-[2.85rem] text-xs text-slate-400 leading-relaxed">
+                  &ldquo;Behold, I am doing a new thing; now it springs up, do you not know it? I am making a way in the wilderness and streams in the desert.&rdquo;
+                  <cite class="block mt-1 not-italic font-medium text-slate-500">Isaiah 43:18&ndash;19</cite>
+                </blockquote>
+              </div>
+
+              <div class="core-value-item group scroll-reveal scroll-reveal--delay-3" data-direction="right">
+                <div class="flex items-center gap-3 mb-2.5">
+                  <div class="core-value-item__icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/><path d="M12 13V7"/><path d="M9 10h6"/></svg>
+                  </div>
+                  <h3 class="text-lg font-semibold text-slate-900 group-hover:text-accent transition-colors duration-300">Generosity</h3>
+                </div>
+                <blockquote class="mt-2 pl-[2.85rem] text-xs text-slate-400 leading-relaxed">
+                  &ldquo;Give to others, and it will be given to you; a good measure, pressed down and shaken, running over, will be poured into your lap.&rdquo;
+                  <cite class="block mt-1 not-italic font-medium text-slate-500">Luke 6:38</cite>
+                </blockquote>
+              </div>
+
+            </div>
+          </div>
+
         </div>
       </section>
 
       <!-- Meet Our Leaders -->
       <section class="border-b border-slate-200 bg-white" id="meet-leaders">
         <div class="mx-auto max-w-6xl px-4 py-16 sm:px-6 md:py-24 lg:px-8">
-          <div class="mb-14 max-w-2xl mx-auto text-center space-y-3">
+          <div class="mb-14 max-w-2xl mx-auto text-center space-y-3 scroll-reveal">
             <h2 class="text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl md:text-4xl">
               Meet Our Leaders
             </h2>
@@ -298,7 +453,7 @@
           <div class="flex flex-col gap-16 md:gap-20">
 
             <!-- Leader 1: Ps. Benson K Sunny -->
-            <div class="leader-row grid gap-10 lg:grid-cols-3 xl:gap-16 items-center border-b border-slate-200 pb-12 md:pb-16">
+            <div class="leader-row grid gap-10 lg:grid-cols-3 xl:gap-16 items-center border-b border-slate-200 pb-12 md:pb-16 scroll-reveal">
               <div class="flex flex-col sm:flex-row gap-8 lg:col-span-2 lg:border-r lg:pr-12 xl:pr-16 border-slate-200">
                 <img
                   src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=500&fit=crop&crop=face"
@@ -315,21 +470,25 @@
                       Ps. Benson is a passionate preacher, worshipper, and teacher of the Word with over 16 years of ministry experience. He carries a vision to raise Spirit-filled, Word-rooted believers who impact every sphere of life. As the founder of ROLS School of Music (RSM) and ROLS Fun Factory (RFF), he has pioneered creative expressions of worship and discipleship across India.
                     </p>
                   </div>
-                  <div class="flex flex-col gap-1">
+                  <div class="flex flex-col gap-1.5">
                     <span class="text-sm font-semibold text-slate-900">Ps. Benson K Sunny</span>
                     <span class="text-xs text-slate-500">Sr. Pastor · National Director, ROLCC India</span>
+                    <div class="flex items-center gap-3 mt-1.5">
+                      <a href="#" aria-label="Facebook" class="text-slate-400 hover:text-accent transition-colors"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12S0 5.446 0 12.073c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></a>
+                      <a href="#" aria-label="YouTube" class="text-slate-400 hover:text-accent transition-colors"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></a>
+                    </div>
                   </div>
                 </div>
               </div>
-              <div class="grid grid-cols-1 gap-8">
-                <div class="flex flex-col gap-1.5 p-5">
+              <div class="flex flex-row lg:flex-col gap-6 lg:gap-8 -mt-4 lg:mt-0 pl-0 sm:pl-[calc(15rem+2rem)] lg:pl-0">
+                <div class="flex flex-col gap-1.5 py-2 lg:p-5">
                   <p class="text-2xl font-semibold text-slate-900 sm:text-4xl">
                     <span class="countup" data-end="16" data-suffix="+">0</span>
                   </p>
                   <p class="text-sm font-medium text-slate-900">Years of Ministry</p>
-                  <p class="text-xs text-slate-500">Preaching, worship, and church planting</p>
+                  <p class="text-xs text-slate-500 hidden sm:block">Preaching, worship, and church planting</p>
                 </div>
-                <div class="flex flex-col gap-1.5 p-5">
+                <div class="hidden sm:flex flex-col gap-1.5 py-2 lg:p-5">
                   <p class="text-2xl font-semibold text-slate-900 sm:text-4xl">
                     <span class="countup" data-end="500" data-suffix="+">0</span>
                   </p>
@@ -340,7 +499,7 @@
             </div>
 
             <!-- Leader 2: Pr. Selviraj (reversed layout) -->
-            <div class="leader-row grid gap-10 lg:grid-cols-3 xl:gap-16 items-center border-b border-slate-200 pb-12 md:pb-16">
+            <div class="leader-row grid gap-10 lg:grid-cols-3 xl:gap-16 items-center border-b border-slate-200 pb-12 md:pb-16 scroll-reveal scroll-reveal--delay-1">
               <div class="flex flex-col sm:flex-row gap-8 lg:col-span-2 lg:order-2 lg:border-l lg:pl-12 xl:pl-16 border-slate-200">
                 <img
                   src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&h=500&fit=crop&crop=face"
@@ -357,21 +516,25 @@
                       Pr. Selviraj leads the Tamil service at ROLCC with a deep love for God&apos;s Word and a heart for Tamil-speaking families in Bengaluru. His consistent teaching and pastoral care have helped many believers grow in faith and find a welcoming spiritual home. He is devoted to building strong, Christ-centered families through the ministry of the local church.
                     </p>
                   </div>
-                  <div class="flex flex-col gap-1">
+                  <div class="flex flex-col gap-1.5">
                     <span class="text-sm font-semibold text-slate-900">Pr. Selviraj</span>
                     <span class="text-xs text-slate-500">Pastor · Tamil Service, ROLCC Bengaluru</span>
+                    <div class="flex items-center gap-3 mt-1.5">
+                      <a href="#" aria-label="Instagram" class="text-slate-400 hover:text-accent transition-colors"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 1.17.054 1.97.24 2.43.403a4.088 4.088 0 0 1 1.523.99 4.088 4.088 0 0 1 .99 1.524c.163.46.349 1.26.403 2.43.058 1.265.07 1.645.07 4.849s-.012 3.584-.07 4.849c-.054 1.17-.24 1.97-.403 2.43a4.088 4.088 0 0 1-.99 1.524 4.088 4.088 0 0 1-1.524.99c-.46.163-1.26.349-2.43.403-1.265.058-1.645.07-4.849.07s-3.584-.012-4.849-.07c-1.17-.054-1.97-.24-2.43-.403a4.088 4.088 0 0 1-1.524-.99 4.088 4.088 0 0 1-.99-1.524c-.163-.46-.349-1.26-.403-2.43C2.175 15.584 2.163 15.204 2.163 12s.012-3.584.07-4.849c.054-1.17.24-1.97.403-2.43a4.088 4.088 0 0 1 .99-1.524A4.088 4.088 0 0 1 5.15 2.207c.46-.163 1.26-.349 2.43-.403C8.845 1.746 9.225 1.734 12 1.734zm0-1.571C8.741.163 8.333.175 7.053.234 5.775.293 4.905.5 4.14.81a5.876 5.876 0 0 0-2.126 1.384A5.876 5.876 0 0 0 .63 4.32C.32 5.086.113 5.956.054 7.234.006 8.514-.006 8.922-.006 12.181s.012 3.668.07 4.948c.059 1.278.266 2.148.576 2.914a5.876 5.876 0 0 0 1.384 2.126 5.876 5.876 0 0 0 2.126 1.384c.766.31 1.636.517 2.914.576 1.28.058 1.688.07 4.948.07s3.668-.012 4.948-.07c1.278-.059 2.148-.266 2.914-.576a5.876 5.876 0 0 0 2.126-1.384 5.876 5.876 0 0 0 1.384-2.126c.31-.766.517-1.636.576-2.914.058-1.28.07-1.688.07-4.948s-.012-3.668-.07-4.948c-.059-1.278-.266-2.148-.576-2.914a5.876 5.876 0 0 0-1.384-2.126A5.876 5.876 0 0 0 19.862.81c-.766-.31-1.636-.517-2.914-.576C15.668.175 15.26.163 12 .163zM12 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg></a>
+                      <a href="#" aria-label="YouTube" class="text-slate-400 hover:text-accent transition-colors"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></a>
+                    </div>
                   </div>
                 </div>
               </div>
-              <div class="grid grid-cols-1 gap-8 lg:order-1">
-                <div class="flex flex-col gap-1.5 p-5">
+              <div class="flex flex-row lg:flex-col gap-6 lg:gap-8 lg:order-1 -mt-4 lg:mt-0 pl-0 sm:pl-[calc(15rem+2rem)] lg:pl-0">
+                <div class="flex flex-col gap-1.5 py-2 lg:p-5">
                   <p class="text-2xl font-semibold text-slate-900 sm:text-4xl">
                     <span class="countup" data-end="10" data-suffix="+">0</span>
                   </p>
                   <p class="text-sm font-medium text-slate-900">Years of Pastoral Care</p>
-                  <p class="text-xs text-slate-500">Faithful teaching and community building</p>
+                  <p class="text-xs text-slate-500 hidden sm:block">Faithful teaching and community building</p>
                 </div>
-                <div class="flex flex-col gap-1.5 p-5">
+                <div class="hidden sm:flex flex-col gap-1.5 py-2 lg:p-5">
                   <p class="text-2xl font-semibold text-slate-900 sm:text-4xl">
                     <span class="countup" data-end="200" data-suffix="+">0</span>
                   </p>
@@ -382,7 +545,7 @@
             </div>
 
             <!-- Leader 3: Sis. Rajitha Benson -->
-            <div class="leader-row grid gap-10 lg:grid-cols-3 xl:gap-16 items-center pb-4">
+            <div class="leader-row grid gap-10 lg:grid-cols-3 xl:gap-16 items-center pb-4 scroll-reveal scroll-reveal--delay-2">
               <div class="flex flex-col sm:flex-row gap-8 lg:col-span-2 lg:border-r lg:pr-12 xl:pr-16 border-slate-200">
                 <img
                   src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=500&fit=crop&crop=face"
@@ -399,21 +562,25 @@
                       Sis. Rajitha serves the church through prophetic and healing ministry, with a special grace to minister to children and families. She carries a heart to see young lives grounded in Scripture and filled with the Holy Spirit. As Director of ROLS School of Music and Co-founder of ROLS Fun Factory (RFF), she has shaped the next generation of worshippers and Christ-followers.
                     </p>
                   </div>
-                  <div class="flex flex-col gap-1">
+                  <div class="flex flex-col gap-1.5">
                     <span class="text-sm font-semibold text-slate-900">Sis. Rajitha Benson</span>
                     <span class="text-xs text-slate-500">Jr. Church Pastor · Director of Administration</span>
+                    <div class="flex items-center gap-3 mt-1.5">
+                      <a href="#" aria-label="YouTube" class="text-slate-400 hover:text-accent transition-colors"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></a>
+                      <a href="#" aria-label="Instagram" class="text-slate-400 hover:text-accent transition-colors"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 1.17.054 1.97.24 2.43.403a4.088 4.088 0 0 1 1.523.99 4.088 4.088 0 0 1 .99 1.524c.163.46.349 1.26.403 2.43.058 1.265.07 1.645.07 4.849s-.012 3.584-.07 4.849c-.054 1.17-.24 1.97-.403 2.43a4.088 4.088 0 0 1-.99 1.524 4.088 4.088 0 0 1-1.524.99c-.46.163-1.26.349-2.43.403-1.265.058-1.645.07-4.849.07s-3.584-.012-4.849-.07c-1.17-.054-1.97-.24-2.43-.403a4.088 4.088 0 0 1-1.524-.99 4.088 4.088 0 0 1-.99-1.524c-.163-.46-.349-1.26-.403-2.43C2.175 15.584 2.163 15.204 2.163 12s.012-3.584.07-4.849c.054-1.17.24-1.97.403-2.43a4.088 4.088 0 0 1 .99-1.524A4.088 4.088 0 0 1 5.15 2.207c.46-.163 1.26-.349 2.43-.403C8.845 1.746 9.225 1.734 12 1.734zm0-1.571C8.741.163 8.333.175 7.053.234 5.775.293 4.905.5 4.14.81a5.876 5.876 0 0 0-2.126 1.384A5.876 5.876 0 0 0 .63 4.32C.32 5.086.113 5.956.054 7.234.006 8.514-.006 8.922-.006 12.181s.012 3.668.07 4.948c.059 1.278.266 2.148.576 2.914a5.876 5.876 0 0 0 1.384 2.126 5.876 5.876 0 0 0 2.126 1.384c.766.31 1.636.517 2.914.576 1.28.058 1.688.07 4.948.07s3.668-.012 4.948-.07c1.278-.059 2.148-.266 2.914-.576a5.876 5.876 0 0 0 2.126-1.384 5.876 5.876 0 0 0 1.384-2.126c.31-.766.517-1.636.576-2.914.058-1.28.07-1.688.07-4.948s-.012-3.668-.07-4.948c-.059-1.278-.266-2.148-.576-2.914a5.876 5.876 0 0 0-1.384-2.126A5.876 5.876 0 0 0 19.862.81c-.766-.31-1.636-.517-2.914-.576C15.668.175 15.26.163 12 .163zM12 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg></a>
+                    </div>
                   </div>
                 </div>
               </div>
-              <div class="grid grid-cols-1 gap-8">
-                <div class="flex flex-col gap-1.5 p-5">
+              <div class="flex flex-row lg:flex-col gap-6 lg:gap-8 -mt-4 lg:mt-0 pl-0 sm:pl-[calc(15rem+2rem)] lg:pl-0">
+                <div class="flex flex-col gap-1.5 py-2 lg:p-5">
                   <p class="text-2xl font-semibold text-slate-900 sm:text-4xl">
                     <span class="countup" data-end="12" data-suffix="+">0</span>
                   </p>
                   <p class="text-sm font-medium text-slate-900">Years in Children&apos;s Ministry</p>
-                  <p class="text-xs text-slate-500">Leading River Kids and youth discipleship</p>
+                  <p class="text-xs text-slate-500 hidden sm:block">Leading River Kids and youth discipleship</p>
                 </div>
-                <div class="flex flex-col gap-1.5 p-5">
+                <div class="hidden sm:flex flex-col gap-1.5 py-2 lg:p-5">
                   <p class="text-2xl font-semibold text-slate-900 sm:text-4xl">
                     <span class="countup" data-end="150" data-suffix="+">0</span>
                   </p>
@@ -427,111 +594,6 @@
         </div>
       </section>
 
-      <!-- Core Values -->
-      <section class="border-b border-slate-200 bg-slate-50">
-        <div class="mx-auto max-w-6xl px-4 py-12 sm:px-6 md:py-16 lg:px-8">
-          <div class="mb-8 max-w-3xl space-y-3 text-center md:text-left">
-            <h2 class="text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">
-              Our Core Values
-            </h2>
-            <p class="text-sm text-slate-600 sm:text-base">
-              These values shape how we worship, serve, and do life together.
-            </p>
-          </div>
-
-          <div class="grid gap-6 md:grid-cols-3">
-            <div
-              class="space-y-3 rounded-2xl border border-slate-200 bg-white p-5 text-sm"
-            >
-              <div
-                class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-accentSoft/10 text-accentSoft ring-1 ring-accentSoft/40"
-              >
-                <span>🙏</span>
-              </div>
-              <h3 class="text-sm font-semibold text-slate-900">Presence of God</h3>
-              <p class="text-sm text-slate-600">
-                We value hosting the presence of God through worship, prayer, and a lifestyle of
-                holiness.
-              </p>
-            </div>
-
-            <div
-              class="space-y-3 rounded-2xl border border-slate-200 bg-white p-5 text-sm"
-            >
-              <div
-                class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-indigo-400/10 text-indigo-300 ring-1 ring-indigo-400/40"
-              >
-                <span>📖</span>
-              </div>
-              <h3 class="text-sm font-semibold text-slate-900">Authority of Scripture</h3>
-              <p class="text-sm text-slate-600">
-                We believe the Bible is God&apos;s inspired Word and our final authority for faith
-                and practice.
-              </p>
-            </div>
-
-            <div
-              class="space-y-3 rounded-2xl border border-slate-200 bg-white p-5 text-sm"
-            >
-              <div
-                class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-emerald-400/10 text-emerald-300 ring-1 ring-emerald-400/40"
-              >
-                <span>🤝</span>
-              </div>
-              <h3 class="text-sm font-semibold text-slate-900">Family &amp; Fellowship</h3>
-              <p class="text-sm text-slate-600">
-                We are a church family, not just a crowd – growing together in love, accountability,
-                and unity.
-              </p>
-            </div>
-
-            <div
-              class="space-y-3 rounded-2xl border border-slate-200 bg-white p-5 text-sm"
-            >
-              <div
-                class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-sky-400/10 text-sky-300 ring-1 ring-sky-400/40"
-              >
-                <span>🔥</span>
-              </div>
-              <h3 class="text-sm font-semibold text-slate-900">Spirit-filled Living</h3>
-              <p class="text-sm text-slate-600">
-                We depend on the Holy Spirit for power, guidance, and bold witness in everyday
-                life.
-              </p>
-            </div>
-
-            <div
-              class="space-y-3 rounded-2xl border border-slate-200 bg-white p-5 text-sm"
-            >
-              <div
-                class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-rose-400/10 text-rose-300 ring-1 ring-rose-400/40"
-              >
-                <span>❤️</span>
-              </div>
-              <h3 class="text-sm font-semibold text-slate-900">Compassion &amp; Mission</h3>
-              <p class="text-sm text-slate-600">
-                We carry God&apos;s heart for the lost, the broken, and the nations, serving with
-                generosity and compassion.
-              </p>
-            </div>
-
-            <div
-              class="space-y-3 rounded-2xl border border-slate-200 bg-white p-5 text-sm"
-            >
-              <div
-                class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-lime-400/10 text-lime-300 ring-1 ring-lime-400/40"
-              >
-                <span>🌱</span>
-              </div>
-              <h3 class="text-sm font-semibold text-slate-900">Growth &amp; Discipleship</h3>
-              <p class="text-sm text-slate-600">
-                We are committed to helping every believer grow in Christlike character and
-                fruitfulness.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
     </main>
 
 

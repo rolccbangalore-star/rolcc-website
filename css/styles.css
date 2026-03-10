@@ -57,6 +57,11 @@ body {
   background: rgba(255, 255, 255, 0.35);
   border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 }
+.header-top:not(.header-scrolled).header-over-hero--arc {
+  background: transparent;
+  border-bottom: 1px solid transparent;
+  box-shadow: none;
+}
 .header-top:not(.header-scrolled) .header-top__bar {
   background: transparent;
 }
@@ -757,7 +762,9 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: linear-gradient(to bottom, #f6f9fc 0%, #ffffff 60%);
+  background:
+    linear-gradient(to bottom, rgba(246,249,252,0.82) 0%, rgba(255,255,255,0.7) 50%, rgba(255,255,255,0.92) 100%),
+    url('../assets/contact%20us%20BG.webp') center top / cover no-repeat;
 }
 .arc-hero__ring {
   position: relative;
@@ -801,10 +808,13 @@ body {
   margin-top: -2.5rem;
 }
 @media (min-width: 640px) {
-  .arc-hero__content { margin-top: -4rem; }
+  .arc-hero__content { margin-top: -8rem; }
 }
 @media (min-width: 1024px) {
-  .arc-hero__content { margin-top: -5rem; }
+  .arc-hero__content { margin-top: -22rem; }
+}
+@media (min-width: 1280px) {
+  .arc-hero__content { margin-top: -26rem; }
 }
 .arc-hero__fade {
   opacity: 0;
@@ -840,6 +850,288 @@ body {
 }
 .btn-outline:active {
   transform: translateY(0);
+}
+
+/* ========== Feature Steps (Core Pillars, About page) ========== */
+.feature-step {
+  opacity: 0.3;
+  transition: opacity 0.45s ease, transform 0.3s ease;
+}
+.feature-step.active {
+  opacity: 1;
+}
+.feature-step__dot {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #cbd5e1;
+  background: #e2e8f0;
+  color: #64748b;
+  flex-shrink: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  transition: all 0.35s ease;
+}
+@media (min-width: 768px) {
+  .feature-step__dot {
+    width: 2.75rem;
+    height: 2.75rem;
+    font-size: 1.05rem;
+  }
+}
+.feature-step.active .feature-step__dot {
+  background: #635bff;
+  border-color: #635bff;
+  color: #fff;
+  transform: scale(1.12);
+  box-shadow: 0 0 0 4px rgba(99, 91, 255, 0.15);
+}
+.feature-step.completed .feature-step__dot {
+  background: #635bff;
+  border-color: #635bff;
+  color: #fff;
+}
+
+.feature-steps__img-wrap {
+  perspective: 800px;
+}
+.feature-steps__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 0.75rem;
+}
+.feature-steps__img.entering {
+  animation: fs-slide-in 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+.feature-steps__img.exiting {
+  animation: fs-slide-out 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+@keyframes fs-slide-in {
+  from { transform: translateY(50px) rotateX(-10deg); opacity: 0; }
+  to   { transform: translateY(0) rotateX(0); opacity: 1; }
+}
+@keyframes fs-slide-out {
+  from { transform: translateY(0) rotateX(0); opacity: 1; }
+  to   { transform: translateY(-50px) rotateX(10deg); opacity: 0; }
+}
+.feature-steps__gradient {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: linear-gradient(to top, #f8fafc 0%, rgba(248,250,252,0.4) 50%, transparent 100%);
+  pointer-events: none;
+  z-index: 2;
+  border-radius: 0 0 0.75rem 0.75rem;
+}
+
+/* ========== Ministry Gallery Slideshow (About page) ========== */
+.ministry-slideshow__viewport {
+  position: relative;
+  width: 100%;
+  height: 75vh;
+  min-height: 425px;
+  max-height: 850px;
+  overflow: hidden;
+  background: #0f172a;
+}
+.ministry-slideshow__slide {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  transition: opacity 0.8s ease, transform 0.8s ease;
+  transform: scale(1.04);
+}
+.ministry-slideshow__slide.active {
+  opacity: 1;
+  transform: scale(1);
+  z-index: 1;
+}
+.ministry-slideshow__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(15, 23, 42, 0.75) 0%,
+    rgba(15, 23, 42, 0.2) 50%,
+    rgba(15, 23, 42, 0.35) 100%
+  );
+}
+.ministry-slideshow__text {
+  position: absolute;
+  bottom: 3rem;
+  left: 1rem;
+  right: 1rem;
+  z-index: 2;
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 0 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1em;
+  color: #fff;
+  font-size: clamp(1.05rem, 2.5vw, 1.5rem);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  line-height: 1.35;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
+}
+@media (min-width: 640px) {
+  .ministry-slideshow__text {
+    bottom: 3.5rem;
+    padding: 0 1.5rem;
+  }
+}
+@media (min-width: 1024px) {
+  .ministry-slideshow__text {
+    bottom: 4rem;
+    padding: 0 2rem;
+  }
+}
+.ministry-slideshow__nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 9999px;
+  border: 1.5px solid rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+.ministry-slideshow__nav:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.6);
+  transform: translateY(-50%) scale(1.08);
+}
+.ministry-slideshow__nav--prev { left: 1rem; }
+.ministry-slideshow__nav--next { right: 1rem; }
+@media (min-width: 640px) {
+  .ministry-slideshow__nav--prev { left: 1.5rem; }
+  .ministry-slideshow__nav--next { right: 1.5rem; }
+}
+.ministry-slideshow__counter {
+  position: absolute;
+  bottom: 1.5rem;
+  left: 1rem;
+  right: 1rem;
+  z-index: 5;
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 0 1rem;
+  text-align: right;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: rgba(255, 255, 255, 0.7);
+  font-variant-numeric: tabular-nums;
+}
+@media (min-width: 640px) {
+  .ministry-slideshow__counter {
+    bottom: 2rem;
+    padding: 0 1.5rem;
+  }
+}
+@media (min-width: 1024px) {
+  .ministry-slideshow__counter {
+    padding: 0 2rem;
+  }
+}
+
+/* ========== Core Values (About page) ========== */
+.core-values__bg-orb {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(80px);
+  pointer-events: none;
+  z-index: 0;
+}
+.core-values__bg-orb--1 {
+  width: 18rem;
+  height: 18rem;
+  top: 3rem;
+  left: 2rem;
+  background: rgba(99, 91, 255, 0.04);
+}
+.core-values__bg-orb--2 {
+  width: 22rem;
+  height: 22rem;
+  bottom: 3rem;
+  right: 2rem;
+  background: rgba(99, 91, 255, 0.03);
+}
+
+.core-value-item {
+  transition: transform 0.25s ease;
+}
+.core-value-item:hover {
+  transform: translateY(-3px);
+}
+.core-value-item__icon {
+  flex-shrink: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.6rem;
+  background: rgba(99, 91, 255, 0.08);
+  color: #635bff;
+  transition: background 0.3s ease;
+}
+.core-value-item:hover .core-value-item__icon {
+  background: rgba(99, 91, 255, 0.15);
+}
+
+.core-values__image-wrap {
+  max-width: 16rem;
+}
+.core-values__image-border {
+  position: absolute;
+  inset: -0.6rem;
+  border: 3px solid rgba(99, 91, 255, 0.12);
+  border-radius: 1rem;
+  z-index: -1;
+  transition: border-color 0.4s ease;
+}
+.core-values__image-wrap:hover .core-values__image-border {
+  border-color: rgba(99, 91, 255, 0.25);
+}
+.core-values__float-dot {
+  position: absolute;
+  border-radius: 9999px;
+  z-index: -1;
+}
+.core-values__float-dot--1 {
+  width: 3rem;
+  height: 3rem;
+  top: -1rem;
+  right: -1.5rem;
+  background: rgba(99, 91, 255, 0.07);
+}
+.core-values__float-dot--2 {
+  width: 4rem;
+  height: 4rem;
+  bottom: -1.5rem;
+  left: -2rem;
+  background: rgba(99, 91, 255, 0.05);
 }
 
 /* ========== Cards: pillars, ministries, testimonials ========== */

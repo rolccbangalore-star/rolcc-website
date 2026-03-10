@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -126,43 +126,85 @@
     </header>
 
     <main>
-      <!-- Page Hero -->
-      <section
-          class="border-b border-slate-200 bg-gradient-to-b from-primaryDark via-white to-white"
-      >
-        <div
-          class="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-12 sm:px-6 md:flex-row md:items-end md:justify-between md:py-16 lg:px-8"
-        >
-          <div class="space-y-3">
-            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-accent">
-              About Us
-            </p>
-            <h1
-              class="text-balance text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl"
-            >
-              A River of Life in the Heart of Bengaluru
-            </h1>
-            <p class="max-w-2xl text-sm text-slate-600 sm:text-base">
-              River of Life Christian Church is a Spirit-filled, Bible-based church family in
-              Bengaluru. Our desire is to see people encounter Jesus, be rooted in God&apos;s Word,
-              and be released to live for His glory.
-            </p>
+      <!-- About Page Carousel Banner -->
+      <section class="about-carousel border-b border-slate-200" id="about-carousel" aria-label="About us highlights">
+        <div class="about-carousel__track">
+          <!-- Slide 1: Vision -->
+          <div class="about-carousel__slide about-carousel__slide--1 active" data-slide="0">
+            <div class="about-carousel__inner mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
+              <p class="text-xs font-semibold uppercase tracking-[0.18em] text-accent">About Us</p>
+              <h1 class="mt-2 text-balance text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
+                A River of Life in the Heart of Bengaluru
+              </h1>
+              <p class="mt-4 max-w-2xl text-sm text-slate-600 sm:text-base">
+                River of Life Christian Church is a Spirit-filled, Bible-based church family. We desire to see people encounter Jesus, be rooted in God&apos;s Word, and released to live for His glory.
+              </p>
+              <p class="mt-4 text-sm font-medium text-slate-500 italic">&quot;There is a river whose streams make glad the city of God.&quot; — Psalm 46:4</p>
+              <div class="mt-6">
+                <a href="#our-story" class="about-carousel__btn inline-flex items-center rounded-full bg-accent px-5 py-2.5 text-sm font-semibold text-white shadow-sm ring-1 ring-accent/70 hover:bg-accentSoft transition">Our Story</a>
+              </div>
+            </div>
           </div>
-          <div
-            class="rounded-2xl border border-slate-200 bg-white p-4 text-xs text-slate-600 sm:text-sm"
-          >
-            <p class="font-semibold text-slate-900">
-              “There is a river whose streams make glad the city of God.” – Psalm 46:4
-            </p>
-            <p class="mt-2 text-slate-400">
-              Our name reflects our call to be a life-giving river in our city and nation.
-            </p>
+          <!-- Slide 2: Our Story -->
+          <div class="about-carousel__slide about-carousel__slide--2" data-slide="1">
+            <div class="about-carousel__inner mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
+              <p class="text-xs font-semibold uppercase tracking-[0.18em] text-accent">Our Story</p>
+              <h2 class="mt-2 text-balance text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">
+                From a Small Gathering to a Church Family
+              </h2>
+              <p class="mt-4 max-w-2xl text-sm text-slate-600 sm:text-base">
+                We began as believers hungry for God&apos;s presence and His Word. Today we are a vibrant, multi-language church in Bengaluru—united in Christ, rooted in Scripture, and led by the Holy Spirit.
+              </p>
+              <div class="mt-6">
+                <a href="#our-story" class="about-carousel__btn inline-flex items-center rounded-full bg-accent px-5 py-2.5 text-sm font-semibold text-white shadow-sm ring-1 ring-accent/70 hover:bg-accentSoft transition">Read Our Story</a>
+              </div>
+            </div>
+          </div>
+          <!-- Slide 3: Join Us / Service Times -->
+          <div class="about-carousel__slide about-carousel__slide--3" data-slide="2">
+            <div class="about-carousel__inner mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
+              <p class="text-xs font-semibold uppercase tracking-[0.18em] text-accent">Join Us</p>
+              <h2 class="mt-2 text-balance text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">
+                Worship With Us This Sunday
+              </h2>
+              <p class="mt-4 max-w-2xl text-sm text-slate-600 sm:text-base">
+                Spirit-filled worship, biblical teaching, and a welcoming church family. We meet every Sunday in Bengaluru.
+              </p>
+              <p class="mt-4 text-sm font-semibold text-slate-800">8:00 AM (Tamil) · 10:00 AM (English)</p>
+              <div class="mt-6 flex flex-wrap gap-3">
+                <a href="contact.html" class="about-carousel__btn inline-flex items-center rounded-full bg-accent px-5 py-2.5 text-sm font-semibold text-white shadow-sm ring-1 ring-accent/70 hover:bg-accentSoft transition">Plan Your Visit</a>
+                <a href="services.html" class="about-carousel__btn-outline inline-flex items-center rounded-full border border-slate-300 px-5 py-2.5 text-sm font-semibold text-slate-700 hover:border-accent hover:text-accent transition">Services</a>
+              </div>
+            </div>
+          </div>
+          <!-- Slide 4: Vision & Mission -->
+          <div class="about-carousel__slide about-carousel__slide--4" data-slide="3">
+            <div class="about-carousel__inner mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
+              <p class="text-xs font-semibold uppercase tracking-[0.18em] text-accent">Vision &amp; Mission</p>
+              <h2 class="mt-2 text-balance text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">
+                Christ-Centered, Spirit-Filled, Nation-Reaching
+              </h2>
+              <p class="mt-4 max-w-2xl text-sm text-slate-600 sm:text-base">
+                We exist to exalt Jesus through worship and prayer, equip believers through Bible-based teaching, establish healthy families and community, and engage our city and nation with the gospel of grace.
+              </p>
+              <div class="mt-6">
+                <a href="#vision-mission" class="about-carousel__btn inline-flex items-center rounded-full bg-accent px-5 py-2.5 text-sm font-semibold text-white shadow-sm ring-1 ring-accent/70 hover:bg-accentSoft transition">Our Vision &amp; Mission</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="about-carousel__dots-wrapper">
+          <div class="about-carousel__dots mx-auto max-w-6xl px-4" role="tablist" aria-label="Carousel slides">
+            <button type="button" class="about-carousel__dot active" role="tab" aria-selected="true" aria-label="Slide 1: Vision" data-index="0"></button>
+            <button type="button" class="about-carousel__dot" role="tab" aria-selected="false" aria-label="Slide 2: Our Story" data-index="1"></button>
+            <button type="button" class="about-carousel__dot" role="tab" aria-selected="false" aria-label="Slide 3: Join Us" data-index="2"></button>
+            <button type="button" class="about-carousel__dot" role="tab" aria-selected="false" aria-label="Slide 4: Vision & Mission" data-index="3"></button>
           </div>
         </div>
       </section>
 
       <!-- Our Story -->
-      <section class="border-b border-slate-200 bg-white">
+      <section class="border-b border-slate-200 bg-white" id="our-story">
         <div
           class="mx-auto grid max-w-6xl gap-10 px-4 py-12 sm:px-6 md:grid-cols-[3fr,2fr] md:py-16 lg:px-8"
         >
@@ -189,6 +231,7 @@
           </div>
           <div
             class="space-y-4 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-sm text-slate-700"
+            id="vision-mission"
           >
             <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
               Vision &amp; Mission
@@ -559,4 +602,3 @@
     <script src="js/main.js"></script>
   </body>
 </html>
-

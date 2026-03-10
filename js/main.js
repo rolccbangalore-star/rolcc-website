@@ -329,6 +329,61 @@ document.addEventListener("DOMContentLoaded", function () {
     if (window.updateHeaderScrolled) window.updateHeaderScrolled();
   }
 
+  // About page carousel banner
+  var aboutCarousel = document.getElementById("about-carousel");
+  if (aboutCarousel) {
+    var aboutSlides = aboutCarousel.querySelectorAll(".about-carousel__slide");
+    var aboutDots = aboutCarousel.querySelectorAll(".about-carousel__dot");
+    var aboutCurrent = 0;
+    var aboutTimer;
+
+    function aboutGoToSlide(index) {
+      aboutCurrent = (index + aboutSlides.length) % aboutSlides.length;
+      aboutSlides.forEach(function (s, i) {
+        s.classList.toggle("active", i === aboutCurrent);
+      });
+      aboutDots.forEach(function (d, i) {
+        d.classList.toggle("active", i === aboutCurrent);
+        d.setAttribute("aria-selected", i === aboutCurrent);
+      });
+    }
+
+    function aboutNext() {
+      aboutGoToSlide(aboutCurrent + 1);
+    }
+
+    function aboutResetTimer() {
+      clearInterval(aboutTimer);
+      aboutTimer = setInterval(aboutNext, 6000);
+    }
+
+    aboutDots.forEach(function (btn, i) {
+      btn.addEventListener("click", function () {
+        aboutGoToSlide(i);
+        aboutResetTimer();
+      });
+    });
+
+    aboutResetTimer();
+
+    var aboutTrack = aboutCarousel.querySelector(".about-carousel__track");
+    if (aboutTrack) {
+      var aboutTouchStartX = 0, aboutTouchEndX = 0;
+      aboutTrack.addEventListener("touchstart", function (e) {
+        aboutTouchStartX = e.changedTouches[0].screenX;
+      }, { passive: true });
+      aboutTrack.addEventListener("touchend", function (e) {
+        aboutTouchEndX = e.changedTouches[0].screenX;
+        var diff = aboutTouchStartX - aboutTouchEndX;
+        if (Math.abs(diff) > 50) {
+          if (diff > 0) aboutGoToSlide(aboutCurrent + 1);
+          else aboutGoToSlide(aboutCurrent - 1);
+          aboutResetTimer();
+        }
+      }, { passive: true });
+    }
+  }
+
   // Latest Sermon carousel: seamless infinite – no gap; after 6th, 1st appears from the right
   var latestSermonSection = document.getElementById("latest-sermon");
   if (latestSermonSection) {

@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
+        }
+      }
+    };
+  </script>
+  <style>
+    body { font-family: 'Inter', system-ui, sans-serif; transition: background 0.3s, color 0.3s; }
+
+    /* ── Light mode (default) ── */
+    :root {
+      --bg-page: #f0f1f5;
+      --bg-card: #ffffff;
+      --bg-card-alt: #f9fafb;
+      --border-card: #e5e7eb;
+      --text-primary: #1f2937;
+      --text-secondary: #374151;
+      --text-muted: #6b7280;
+      --text-faint: #9ca3af;
+      --border-subtle: #e5e7eb;
+      --grid-line: #f1f5f9;
+      --chart-line: #1f2937;
+      --chart-bar1: #1f2937;
+      --chart-bar2: #374151;
+      --chart-bar3: #6b7280;
+      --chart-target: #d1d5db;
+      --chart-fill-top: rgba(31,41,55,0.08);
+      --chart-fill-bottom: rgba(31,41,55,0);
+      --tooltip-bg: #1f2937;
+      --tooltip-text: #ffffff;
+      --tooltip-muted: #9ca3af;
+      --dot-revenue: #1f2937;
+      --gauge-stroke: #1f2937;
+      --heatmap-empty: #e5e7eb;
+      --heatmap-active: #374151;
+      --heatmap-mid: #6b7280;
+      --icon-color: #6b7280;
+      --dropdown-bg: #ffffff;
+      --dropdown-border: #e5e7eb;
+      --dropdown-text: #374151;
+      --product-bg-out: #fef2f2;
+      --product-bg-in: #f3f4f6;
+      --toggle-bg: #f3f4f6;
+      --toggle-hover: #e5e7eb;
+    }
+
+    /* ── Dark mode ── */
+    .dark {
+      --bg-page: #0f1117;
+      --bg-card: #1a1d27;
+      --bg-card-alt: #22252f;
+      --border-card: #2d3040;
+      --text-primary: #f1f5f9;
+      --text-secondary: #e2e8f0;
+      --text-muted: #94a3b8;
+      --text-faint: #64748b;
+      --border-subtle: #2d3040;
+      --grid-line: rgba(148,163,184,0.08);
+      --chart-line: #e2e8f0;
+      --chart-bar1: #e2e8f0;
+      --chart-bar2: #94a3b8;
+      --chart-bar3: #64748b;
+      --chart-target: #475569;
+      --chart-fill-top: rgba(226,232,240,0.06);
+      --chart-fill-bottom: rgba(226,232,240,0);
+      --tooltip-bg: #334155;
+      --tooltip-text: #f8fafc;
+      --tooltip-muted: #94a3b8;
+      --dot-revenue: #e2e8f0;
+      --gauge-stroke: #e2e8f0;
+      --heatmap-empty: #2d3040;
+      --heatmap-active: #e2e8f0;
+      --heatmap-mid: #64748b;
+      --icon-color: #94a3b8;
+      --dropdown-bg: #22252f;
+      --dropdown-border: #2d3040;
+      --dropdown-text: #cbd5e1;
+      --product-bg-out: rgba(239,68,68,0.1);
+      --product-bg-in: #22252f;
+      --toggle-bg: #22252f;
+      --toggle-hover: #2d3040;
+    }
+
+    body { background: var(--bg-page); color: var(--text-primary); }
+    .card {
+      background: var(--bg-card); border-radius: 16px; padding: 24px;
+      border: 1px solid var(--border-card); transition: background 0.3s, border-color 0.3s;
+    }
+    .badge-green { color: #16a34a; font-size: 13px; font-weight: 600; }
+    .badge-red { color: #ef4444; font-size: 13px; font-weight: 600; }
+    .dropdown {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 5px 12px; border: 1px solid var(--dropdown-border); border-radius: 8px;
+      font-size: 13px; color: var(--dropdown-text); background: var(--dropdown-bg);
+      cursor: pointer; transition: all 0.2s;
+    }
+    .section-title {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 12px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .section-title svg { stroke: var(--icon-color); }
+    .expand-btn {
+      width: 28px; height: 28px; border-radius: 8px; border: 1px solid var(--border-subtle);
+      display: inline-flex; align-items: center; justify-content: center; cursor: pointer;
+      background: var(--bg-card); color: var(--text-faint); transition: all 0.2s; flex-shrink: 0;
+    }
+    .expand-btn:hover { border-color: var(--text-muted); color: var(--text-muted); }
+    .heatmap-cell {
+      height: 30px; border-radius: 4px; display: flex;
+      align-items: center; justify-content: center; font-size: 11px; font-weight: 600;
+      transition: background 0.3s;
+    }
+    .hm-empty { background: var(--heatmap-empty); }
+    .hm-active { background: var(--heatmap-active); color: var(--bg-card); }
+    .hm-mid { background: var(--heatmap-mid); color: #fff; }
+    .top-row { min-height: 420px; }
+    .bottom-row { min-height: 340px; }
+    .t-primary { color: var(--text-primary); transition: color 0.3s; }
+    .t-secondary { color: var(--text-secondary); transition: color 0.3s; }
+    .t-muted { color: var(--text-muted); transition: color 0.3s; }
+    .t-faint { color: var(--text-faint); transition: color 0.3s; }
+    .border-sub { border-color: var(--border-subtle); }
+    .product-out { background: var(--product-bg-out); }
+    .product-in { background: var(--product-bg-in); }
+
+    /* Toggle button */
+    .theme-toggle {
+      position: fixed; top: 20px; right: 20px; z-index: 100;
+      width: 44px; height: 44px; border-radius: 12px;
+      background: var(--toggle-bg); border: 1px solid var(--border-subtle);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: all 0.3s; color: var(--text-muted);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    .theme-toggle:hover { background: var(--toggle-hover); color: var(--text-primary); transform: scale(1.05); }
+    .theme-toggle .icon-sun, .theme-toggle .icon-moon { transition: opacity 0.3s, transform 0.3s; position: absolute; }
+    .theme-toggle .icon-moon { opacity: 0; transform: rotate(-90deg) scale(0); }
+    .dark .theme-toggle .icon-sun { opacity: 0; transform: rotate(90deg) scale(0); }
+    .dark .theme-toggle .icon-moon { opacity: 1; transform: rotate(0deg) scale(1); }
+  </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-6">
+
+  <!-- Theme toggle button -->
+  <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+    <svg class="icon-sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+    <svg class="icon-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+  </button>
+
+  <div class="w-full max-w-[1200px]">
+
+    <!-- ═══════════ TOP ROW ═══════════ -->
+    <div class="grid grid-cols-12 gap-5 mb-5">
+
+      <!-- CHANNEL PERFORMANCE -->
+      <div class="card col-span-12 md:col-span-4 flex flex-col top-row">
+        <div class="flex items-center justify-between mb-5">
+          <div class="section-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+            Channel Performance
+          </div>
+          <div class="expand-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </div>
+
+        <div class="flex justify-center mb-6">
+          <svg width="200" height="120" viewBox="0 0 200 120">
+            <g transform="translate(100,110)" id="gauge-group">
+              <g id="gauge-arcs"></g>
+              <text x="0" y="-38" text-anchor="middle" font-size="26" font-weight="700" class="gauge-num" fill="var(--text-primary)">16,432</text>
+              <text x="0" y="-18" text-anchor="middle" font-size="11" fill="var(--text-faint)">Product Sales</text>
+            </g>
+          </svg>
+        </div>
+
+        <div class="space-y-4 mt-auto">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <span class="w-2 h-2 rounded-full flex-shrink-0" style="background:var(--chart-bar1)"></span>
+              <div>
+                <p class="text-sm font-medium t-primary">Website</p>
+                <p class="text-xs t-faint">5,762 Product Sold <span class="badge-green ml-1">+1.8%</span></p>
+              </div>
+            </div>
+            <p class="text-sm font-semibold t-primary flex-shrink-0 ml-3">$1,378,975</p>
+          </div>
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <span class="w-2 h-2 rounded-full flex-shrink-0" style="background:var(--chart-bar2)"></span>
+              <div>
+                <p class="text-sm font-medium t-primary">Marketplace</p>
+                <p class="text-xs t-faint">6,843 Products Sold <span class="badge-red ml-1">-2.8%</span></p>
+              </div>
+            </div>
+            <p class="text-sm font-semibold t-primary flex-shrink-0 ml-3">$778,975</p>
+          </div>
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <span class="w-2 h-2 rounded-full flex-shrink-0" style="background:var(--chart-bar3)"></span>
+              <div>
+                <p class="text-sm font-medium t-primary">Store</p>
+                <p class="text-xs t-faint">2,123 Products Sold <span class="badge-red ml-1">-2.8%</span></p>
+              </div>
+            </div>
+            <p class="text-sm font-semibold t-primary flex-shrink-0 ml-3">$778,975</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- AVERAGE SALES -->
+      <div class="card col-span-12 md:col-span-8 flex flex-col top-row">
+        <div class="flex items-center justify-between mb-1 flex-wrap gap-2">
+          <div class="section-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+            Average Sales
+          </div>
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="dropdown">All Product <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></span>
+            <span class="dropdown">All Categories <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></span>
+            <span class="dropdown">2025 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></span>
+            <div class="expand-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+          </div>
+        </div>
+
+        <div class="flex items-baseline gap-3 mb-3">
+          <span class="text-3xl font-bold t-primary">$1,389.652</span>
+          <span class="badge-green flex items-center gap-1">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5"><path d="M18 15l-6-6-6 6"/></svg>
+            1.8%
+          </span>
+        </div>
+
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-5 text-xs t-faint">
+            <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full" style="background:var(--chart-line)"></span> Revenue</span>
+            <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full" style="background:var(--chart-target)"></span> Target</span>
+          </div>
+          <div class="flex items-center gap-1.5 text-xs">
+            <span class="t-muted">Net Sales :</span>
+            <span class="font-semibold t-primary">$800.67</span>
+            <span class="w-2 h-2 rounded-full bg-green-500"></span>
+          </div>
+        </div>
+
+        <div class="flex-1 relative" style="min-height: 220px;">
+          <canvas id="lineChart" style="width: 100%; height: 100%;"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════ BOTTOM ROW ═══════════ -->
+    <div class="grid grid-cols-12 gap-5">
+
+      <!-- RECENT ACTIVITY -->
+      <div class="card col-span-12 md:col-span-4 flex flex-col bottom-row">
+        <div class="flex items-center justify-between mb-5">
+          <div class="section-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+            Recent Activity
+          </div>
+          <div class="expand-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </div>
+
+        <p class="text-xs t-faint font-medium mb-3">Outgoing Products</p>
+        <div class="flex items-center gap-3 mb-5 pb-5 border-b border-sub">
+          <div class="w-11 h-11 rounded-xl product-out flex items-center justify-center flex-shrink-0">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" stroke="#ef4444" stroke-width="1.5" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center justify-between">
+              <p class="text-sm font-semibold t-primary">Red Jacket</p>
+              <button class="t-faint hover:t-muted ml-2">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>
+              </button>
+            </div>
+            <div class="flex items-center gap-2 text-xs t-faint">
+              <span>Qty : 2</span>
+              <span class="text-blue-500">5 minutes ago</span>
+            </div>
+          </div>
+          <p class="text-sm font-semibold t-primary flex-shrink-0 ml-2">$1,500</p>
+        </div>
+
+        <p class="text-xs t-faint font-medium mb-3">Incoming Products</p>
+        <div class="flex items-center gap-3">
+          <div class="w-11 h-11 rounded-xl product-in flex items-center justify-center flex-shrink-0">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" stroke="var(--text-muted)" stroke-width="1.5" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center justify-between">
+              <p class="text-sm font-semibold t-primary">Black Jacket</p>
+              <button class="t-faint hover:t-muted ml-2">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>
+              </button>
+            </div>
+            <div class="flex items-center gap-2 text-xs t-faint">
+              <span>Qty : 2</span>
+              <span class="text-blue-500">5 minutes ago</span>
+            </div>
+          </div>
+          <p class="text-sm font-semibold t-primary flex-shrink-0 ml-2">$1,500</p>
+        </div>
+      </div>
+
+      <!-- TOP 3 PRODUCT -->
+      <div class="card col-span-12 md:col-span-4 flex flex-col bottom-row">
+        <div class="flex items-center justify-between mb-1">
+          <div class="section-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+            Top 3 Product
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="dropdown">Daily <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></span>
+            <div class="expand-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg></div>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 mb-4">
+          <span class="text-xs t-faint">Today's Total Sales :</span>
+          <span class="text-sm font-bold t-primary">318 units</span>
+        </div>
+
+        <div class="flex-1 relative" style="min-height: 200px;">
+          <canvas id="barChart" style="width: 100%; height: 100%;"></canvas>
+        </div>
+      </div>
+
+      <!-- TOTAL VISITOR -->
+      <div class="card col-span-12 md:col-span-4 flex flex-col bottom-row">
+        <div class="flex items-center justify-between mb-4">
+          <div class="section-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4-4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+            Total Visitor
+          </div>
+          <span class="dropdown">Daily <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></span>
+        </div>
+
+        <div class="flex items-baseline gap-3 mb-4">
+          <span class="text-3xl font-bold t-primary">3,247</span>
+          <span class="badge-green flex items-center gap-1">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5"><path d="M18 15l-6-6-6 6"/></svg>
+            1.8%
+          </span>
+          <span class="text-xs t-faint ml-1">Visitor</span>
+        </div>
+
+        <div class="space-y-2.5 mb-6">
+          <div class="flex items-center justify-between text-sm">
+            <span class="t-muted">Marketplace :</span>
+            <span class="flex items-center gap-2 font-medium t-secondary">300 people <span class="w-2 h-2 rounded-full bg-red-500 flex-shrink-0"></span></span>
+          </div>
+          <div class="flex items-center justify-between text-sm">
+            <span class="t-muted">Website :</span>
+            <span class="flex items-center gap-2 font-medium t-secondary">250 people <span class="w-2 h-2 rounded-full bg-green-500 flex-shrink-0"></span></span>
+          </div>
+          <div class="flex items-center justify-between text-sm">
+            <span class="t-muted">Store :</span>
+            <span class="flex items-center gap-2 font-medium t-secondary">400 people <span class="w-2 h-2 rounded-full bg-green-500 flex-shrink-0"></span></span>
+          </div>
+        </div>
+
+        <div class="mt-auto">
+          <div class="grid gap-1.5" style="grid-template-columns: 80px repeat(5, 1fr);">
+            <div></div>
+            <div class="text-center text-[11px] t-faint font-medium pb-1">Mon</div>
+            <div class="text-center text-[11px] t-faint font-medium pb-1">Tue</div>
+            <div class="text-center text-[11px] t-faint font-medium pb-1">Wed</div>
+            <div class="text-center text-[11px] t-faint font-medium pb-1">Thu</div>
+            <div class="text-center text-[11px] t-faint font-medium pb-1">Fri</div>
+
+            <div class="text-[10px] t-faint flex items-center whitespace-nowrap">09.00 - 12.00</div>
+            <div class="heatmap-cell hm-empty"></div>
+            <div class="heatmap-cell hm-empty"></div>
+            <div class="heatmap-cell hm-active">82</div>
+            <div class="heatmap-cell hm-empty"></div>
+            <div class="heatmap-cell hm-empty"></div>
+
+            <div class="text-[10px] t-faint flex items-center whitespace-nowrap">12.00 - 15.00</div>
+            <div class="heatmap-cell hm-empty"></div>
+            <div class="heatmap-cell hm-empty"></div>
+            <div class="heatmap-cell hm-empty"></div>
+            <div class="heatmap-cell hm-empty"></div>
+            <div class="heatmap-cell hm-empty"></div>
+
+            <div class="text-[10px] t-faint flex items-center whitespace-nowrap">15.00 - 18.00</div>
+            <div class="heatmap-cell hm-empty"></div>
+            <div class="heatmap-cell hm-empty"></div>
+            <div class="heatmap-cell hm-empty"></div>
+            <div class="heatmap-cell hm-mid">10</div>
+            <div class="heatmap-cell hm-empty"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    function getVar(name) {
+      return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    }
+
+    // ── Gauge arcs ──
+    function drawGauge() {
+      var g = document.getElementById('gauge-arcs');
+      while (g.firstChild) g.removeChild(g.firstChild);
+      var total = 20, startA = -170, endA = -10, r = 85;
+      var strokeColor = getVar('--gauge-stroke');
+      for (var i = 0; i < total; i++) {
+        var a = startA + ((endA - startA) / (total - 1)) * i;
+        var rad = (a * Math.PI) / 180;
+        var line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', Math.cos(rad) * (r - 28));
+        line.setAttribute('y1', Math.sin(rad) * (r - 28));
+        line.setAttribute('x2', Math.cos(rad) * r);
+        line.setAttribute('y2', Math.sin(rad) * r);
+        line.setAttribute('stroke', strokeColor);
+        line.setAttribute('stroke-width', '7');
+        line.setAttribute('stroke-linecap', 'round');
+        line.setAttribute('opacity', (0.12 + (i / total) * 0.88).toFixed(2));
+        g.appendChild(line);
+      }
+    }
+
+    // ── Line chart ──
+    function drawLineChart() {
+      var canvas = document.getElementById('lineChart');
+      var dpr = window.devicePixelRatio || 1;
+      var rect = canvas.parentElement.getBoundingClientRect();
+      var W = rect.width, H = rect.height;
+      canvas.width = W * dpr; canvas.height = H * dpr;
+      canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+      var ctx = canvas.getContext('2d');
+      ctx.scale(dpr, dpr);
+
+      var padL = 40, padR = 20, padT = 10, padB = 30;
+      var cW = W - padL - padR, cH = H - padT - padB;
+      var yLabels = ['$25k', '$20k', '$15k', '$10k'];
+      var xLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'];
+      var revenueY = [20, 18, 21.5, 16, 22, 21, 19.5];
+      var targetY = [22, 20, 23, 17, 21, 19, 18.5];
+      var yMin = 10, yMax = 25;
+
+      var gridColor = getVar('--grid-line');
+      var labelColor = getVar('--text-faint');
+      var lineColor = getVar('--chart-line');
+      var targetColor = getVar('--chart-target');
+      var fillTop = getVar('--chart-fill-top');
+      var fillBottom = getVar('--chart-fill-bottom');
+      var ttBg = getVar('--tooltip-bg');
+      var ttText = getVar('--tooltip-text');
+      var ttMuted = getVar('--tooltip-muted');
+      var dotColor = getVar('--dot-revenue');
+      var cardBg = getVar('--bg-card');
+
+      function toX(i) { return padL + (i / (xLabels.length - 1)) * cW; }
+      function toY(v) { return padT + (1 - (v - yMin) / (yMax - yMin)) * cH; }
+
+      ctx.strokeStyle = gridColor; ctx.lineWidth = 1;
+      for (var g = 0; g < yLabels.length; g++) {
+        var gy = padT + (g / (yLabels.length - 1)) * cH;
+        ctx.beginPath(); ctx.moveTo(padL, gy); ctx.lineTo(W - padR, gy); ctx.stroke();
+      }
+
+      ctx.fillStyle = labelColor; ctx.font = '11px Inter, sans-serif';
+      ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+      for (var y = 0; y < yLabels.length; y++) ctx.fillText(yLabels[y], padL - 8, padT + (y / (yLabels.length - 1)) * cH);
+      ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+      for (var x = 0; x < xLabels.length; x++) ctx.fillText(xLabels[x], toX(x), H - padB + 10);
+
+      ctx.beginPath(); ctx.moveTo(toX(0), toY(revenueY[0]));
+      for (var i = 1; i < revenueY.length; i++) { var xc = (toX(i-1)+toX(i))/2; ctx.bezierCurveTo(xc, toY(revenueY[i-1]), xc, toY(revenueY[i]), toX(i), toY(revenueY[i])); }
+      ctx.lineTo(toX(revenueY.length-1), padT+cH); ctx.lineTo(toX(0), padT+cH); ctx.closePath();
+      var grad = ctx.createLinearGradient(0, padT, 0, padT+cH);
+      grad.addColorStop(0, fillTop); grad.addColorStop(1, fillBottom);
+      ctx.fillStyle = grad; ctx.fill();
+
+      ctx.setLineDash([6,4]); ctx.strokeStyle = targetColor; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.moveTo(toX(0), toY(targetY[0]));
+      for (var i = 1; i < targetY.length; i++) { var xc = (toX(i-1)+toX(i))/2; ctx.bezierCurveTo(xc, toY(targetY[i-1]), xc, toY(targetY[i]), toX(i), toY(targetY[i])); }
+      ctx.stroke();
+
+      ctx.setLineDash([]); ctx.strokeStyle = lineColor; ctx.lineWidth = 2.5;
+      ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+      ctx.beginPath(); ctx.moveTo(toX(0), toY(revenueY[0]));
+      for (var i = 1; i < revenueY.length; i++) { var xc = (toX(i-1)+toX(i))/2; ctx.bezierCurveTo(xc, toY(revenueY[i-1]), xc, toY(revenueY[i]), toX(i), toY(revenueY[i])); }
+      ctx.stroke();
+
+      var tx = toX(2), ty = toY(revenueY[2]);
+      var tw = 155, th = 62;
+      var ttX = tx - tw/2, ttY = ty - th - 18;
+      ctx.fillStyle = ttBg; ctx.beginPath(); ctx.roundRect(ttX, ttY, tw, th, 8); ctx.fill();
+      ctx.beginPath(); ctx.moveTo(tx-6, ttY+th); ctx.lineTo(tx, ttY+th+7); ctx.lineTo(tx+6, ttY+th); ctx.fill();
+
+      ctx.fillStyle = ttText; ctx.font = '600 11px Inter, sans-serif'; ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+      ctx.fillText('Maret 2025', ttX+12, ttY+8);
+      ctx.beginPath(); ctx.arc(ttX+18, ttY+30, 4, 0, Math.PI*2); ctx.fillStyle = targetColor; ctx.fill();
+      ctx.strokeStyle = ttMuted; ctx.lineWidth = 1.5; ctx.stroke();
+      ctx.fillStyle = ttMuted; ctx.font = '10px Inter, sans-serif'; ctx.fillText('Target', ttX+28, ttY+25);
+      ctx.fillStyle = ttText; ctx.font = '600 11px Inter, sans-serif'; ctx.fillText('$22,000', ttX+100, ttY+25);
+      ctx.beginPath(); ctx.arc(ttX+18, ttY+47, 4, 0, Math.PI*2); ctx.fillStyle = '#3b82f6'; ctx.fill();
+      ctx.fillStyle = ttMuted; ctx.font = '10px Inter, sans-serif'; ctx.fillText('Revenue', ttX+28, ttY+42);
+      ctx.fillStyle = ttText; ctx.font = '600 11px Inter, sans-serif'; ctx.fillText('$20,000', ttX+100, ttY+42);
+
+      ctx.beginPath(); ctx.arc(tx, ty, 5, 0, Math.PI*2);
+      ctx.fillStyle = dotColor; ctx.fill(); ctx.strokeStyle = cardBg; ctx.lineWidth = 2; ctx.stroke();
+      ctx.beginPath(); ctx.arc(tx, toY(targetY[2]), 4, 0, Math.PI*2); ctx.fillStyle = '#ef4444'; ctx.fill();
+    }
+
+    // ── Bar chart ──
+    function drawBarChart() {
+      var canvas = document.getElementById('barChart');
+      var dpr = window.devicePixelRatio || 1;
+      var rect = canvas.parentElement.getBoundingClientRect();
+      var W = rect.width, H = rect.height;
+      canvas.width = W * dpr; canvas.height = H * dpr;
+      canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+      var ctx = canvas.getContext('2d');
+      ctx.scale(dpr, dpr);
+
+      var padL = 34, padR = 10, padT = 5, padB = 28;
+      var cW = W - padL - padR, cH = H - padT - padB;
+      var bars = [
+        { label: 'Shoes', value: 180, color: getVar('--chart-bar1') },
+        { label: 'Jacket', value: 87, color: getVar('--chart-bar2') },
+        { label: 'T-shirt', value: 56, color: getVar('--chart-bar3') }
+      ];
+      var yMax = 200, ySteps = [200,160,120,80,40,0];
+      var barW = Math.min(50, cW / bars.length * 0.55);
+      var gap = (cW - barW * bars.length) / (bars.length + 1);
+      var gridColor = getVar('--grid-line');
+      var labelColor = getVar('--text-faint');
+      var cardBg = getVar('--bg-card');
+
+      ctx.strokeStyle = gridColor; ctx.lineWidth = 1;
+      ctx.fillStyle = labelColor; ctx.font = '11px Inter, sans-serif'; ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+      for (var s = 0; s < ySteps.length; s++) {
+        var gy = padT + (1 - ySteps[s]/yMax) * cH;
+        ctx.beginPath(); ctx.moveTo(padL, gy); ctx.lineTo(W-padR, gy); ctx.stroke();
+        ctx.fillText(ySteps[s].toString(), padL-6, gy);
+      }
+
+      for (var b = 0; b < bars.length; b++) {
+        var x = padL + gap + b * (barW + gap);
+        var barH = (bars[b].value / yMax) * cH;
+        var y = padT + cH - barH;
+        ctx.beginPath();
+        ctx.moveTo(x, y+6); ctx.arcTo(x, y, x+6, y, 6); ctx.arcTo(x+barW, y, x+barW, y+6, 6);
+        ctx.lineTo(x+barW, padT+cH); ctx.lineTo(x, padT+cH); ctx.closePath();
+        ctx.fillStyle = bars[b].color; ctx.fill();
+
+        ctx.fillStyle = cardBg; ctx.font = '700 14px Inter, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
+        ctx.fillText(bars[b].value.toString(), x + barW/2, padT + cH - 6);
+        ctx.fillStyle = labelColor; ctx.font = '11px Inter, sans-serif'; ctx.textBaseline = 'top';
+        ctx.fillText(bars[b].label, x + barW/2, padT + cH + 8);
+      }
+    }
+
+    function drawAll() { drawGauge(); drawLineChart(); drawBarChart(); }
+    drawAll();
+
+    // ── Theme toggle ──
+    var toggle = document.getElementById('themeToggle');
+    var saved = localStorage.getItem('dashboard-theme');
+    if (saved === 'dark') document.documentElement.classList.add('dark');
+
+    toggle.addEventListener('click', function () {
+      document.documentElement.classList.toggle('dark');
+      var isDark = document.documentElement.classList.contains('dark');
+      localStorage.setItem('dashboard-theme', isDark ? 'dark' : 'light');
+      requestAnimationFrame(drawAll);
+    });
+  </script>
+</body>
+</html>

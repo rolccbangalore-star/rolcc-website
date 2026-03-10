@@ -750,139 +750,73 @@ body {
   transform: scale(1.2);
 }
 
-/* ========== About page carousel banner ========== */
-.about-carousel {
+/* ========== Arc Gallery Hero (About page) ========== */
+.arc-hero {
   position: relative;
   overflow: hidden;
-  height: 70vh;
-  min-height: 320px;
-  background: #0f172a;
-}
-.about-carousel__track {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  min-height: 100%;
-}
-.about-carousel__slide {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  min-height: 100%;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.5s ease;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+  background: linear-gradient(to bottom, #f6f9fc 0%, #ffffff 60%);
 }
-.about-carousel__slide::before {
-  content: "";
+.arc-hero__ring {
+  position: relative;
+  width: 100%;
+  margin: 0 auto;
+}
+.arc-hero__card {
   position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    to right,
-    rgba(15, 23, 42, 0.82) 0%,
-    rgba(15, 23, 42, 0.55) 50%,
-    rgba(15, 23, 42, 0.4) 100%
-  );
-  pointer-events: none;
+  opacity: 0;
+  animation: arc-fade-in-up 0.7s ease-out forwards;
 }
-.about-carousel__slide.active {
+.arc-hero__card-inner {
+  width: 100%;
+  height: 100%;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 10px 30px -8px rgba(15, 23, 42, 0.15), 0 4px 10px -4px rgba(15, 23, 42, 0.08);
+  border: 1px solid rgba(226, 232, 240, 0.7);
+  background: #fff;
+  transition: transform 0.3s ease;
+}
+.arc-hero__card-inner:hover {
+  transform: scale(1.06);
+}
+.arc-hero__card-inner img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.arc-hero__content {
   position: relative;
-  opacity: 1;
-  pointer-events: auto;
-}
-.about-carousel__slide--1 { background-image: url("../assets/carousel- banner-1.webp"); }
-.about-carousel__slide--2 { background-image: url("../assets/carousel- banner-2.webp"); }
-.about-carousel__slide--3 { background-image: url("../assets/carousel- banner-3.webp"); }
-.about-carousel__slide--4 { background-image: url("../assets/carousel- banner-4.webp"); }
-.about-carousel__inner {
-  position: relative;
-  z-index: 1;
-  color: rgba(255, 255, 255, 0.95);
-}
-.about-carousel__inner .text-accent {
-  color: rgba(199, 210, 254, 1);
-}
-.about-carousel__inner h1,
-.about-carousel__inner h2 {
-  color: #ffffff;
-}
-.about-carousel__inner p {
-  color: rgba(248, 250, 252, 0.9);
-}
-.about-carousel__inner .text-slate-500,
-.about-carousel__inner .text-slate-600,
-.about-carousel__inner .text-slate-700,
-.about-carousel__inner .text-slate-800 {
-  color: rgba(248, 250, 252, 0.85);
-}
-.about-carousel__inner .italic {
-  color: rgba(226, 232, 240, 0.9);
-}
-.about-carousel__btn {
-  background: rgba(255, 255, 255, 0.95);
-  color: #0f172a;
-  border-color: rgba(255, 255, 255, 0.9);
-}
-.about-carousel__btn:hover {
-  background: #ffffff;
-  color: #0f172a;
-}
-.about-carousel__btn-outline {
-  border-color: rgba(255, 255, 255, 0.6);
-  color: #ffffff;
-}
-.about-carousel__btn-outline:hover {
-  border-color: #ffffff;
-  color: #ffffff;
-  background: rgba(255, 255, 255, 0.12);
-}
-.about-carousel__btn {
-  text-decoration: none;
-  transition: background 0.2s ease, transform 0.2s ease;
-}
-.about-carousel__btn:hover {
-  transform: translateY(-1px);
-}
-.about-carousel__btn-outline {
-  text-decoration: none;
-  transition: border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
-}
-.about-carousel__btn-outline:hover {
-  transform: translateY(-1px);
-}
-.about-carousel__dots-wrapper {
-  position: relative;
-  z-index: 2;
-  padding-bottom: 1.25rem;
-}
-.about-carousel__dots {
+  z-index: 10;
+  flex: 1;
   display: flex;
-  gap: 0.5rem;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
-  margin-top: 1rem;
+  text-align: center;
+  padding: 0 1.5rem 3rem;
+  margin-top: -2.5rem;
 }
-.about-carousel__dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  border: none;
-  background: rgba(255, 255, 255, 0.4);
-  cursor: pointer;
-  transition: background 0.25s ease, transform 0.2s ease;
+@media (min-width: 640px) {
+  .arc-hero__content { margin-top: -4rem; }
 }
-.about-carousel__dot:hover {
-  background: rgba(255, 255, 255, 0.8);
-  transform: scale(1.2);
+@media (min-width: 1024px) {
+  .arc-hero__content { margin-top: -5rem; }
 }
-.about-carousel__dot.active {
-  background: #ffffff;
+.arc-hero__fade {
+  opacity: 0;
+  animation: arc-fade-in 0.7s ease-out forwards;
+}
+@keyframes arc-fade-in-up {
+  from { opacity: 0; transform: translate(-50%, 60%); }
+  to   { opacity: 1; transform: translate(-50%, 50%); }
+}
+@keyframes arc-fade-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 /* ========== UI polish: buttons ========== */

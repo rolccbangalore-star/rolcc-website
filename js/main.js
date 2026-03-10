@@ -329,59 +329,83 @@ document.addEventListener("DOMContentLoaded", function () {
     if (window.updateHeaderScrolled) window.updateHeaderScrolled();
   }
 
-  // About page carousel banner
-  var aboutCarousel = document.getElementById("about-carousel");
-  if (aboutCarousel) {
-    var aboutSlides = aboutCarousel.querySelectorAll(".about-carousel__slide");
-    var aboutDots = aboutCarousel.querySelectorAll(".about-carousel__dot");
-    var aboutCurrent = 0;
-    var aboutTimer;
+  // Arc Gallery Hero (About page)
+  var arcRing = document.getElementById("arc-ring");
+  if (arcRing) {
+    var arcImages = [
+      "https://images.unsplash.com/photo-1438232992991-995b7058bbb3?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1504052434569-70ad5836ab65?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1519834785169-98be25ec3f84?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1476234251651-f353703a034d?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1507692049790-de58290a4334?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1529070538774-1843cb3265df?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1473177104440-ffee2f376098?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1444703686981-a3abbc4d4fe3?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1470115636492-6d2b56f9b5c1?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=400&h=400&fit=crop"
+    ];
+    var arcStartAngle = 20, arcEndAngle = 160;
 
-    function aboutGoToSlide(index) {
-      aboutCurrent = (index + aboutSlides.length) % aboutSlides.length;
-      aboutSlides.forEach(function (s, i) {
-        s.classList.toggle("active", i === aboutCurrent);
-      });
-      aboutDots.forEach(function (d, i) {
-        d.classList.toggle("active", i === aboutCurrent);
-        d.setAttribute("aria-selected", i === aboutCurrent);
+    function arcBuild() {
+      var w = window.innerWidth;
+      var radius, cardSize;
+      if (w < 640) { radius = 240; cardSize = 70; }
+      else if (w < 1024) { radius = 340; cardSize = 95; }
+      else { radius = 460; cardSize = 115; }
+
+      arcRing.innerHTML = "";
+      arcRing.style.height = (radius * 1.15) + "px";
+
+      var pivot = document.createElement("div");
+      pivot.style.cssText = "position:absolute;left:50%;bottom:0;transform:translateX(-50%)";
+      arcRing.appendChild(pivot);
+
+      var count = Math.max(arcImages.length, 2);
+      var step = (arcEndAngle - arcStartAngle) / (count - 1);
+
+      arcImages.forEach(function (src, i) {
+        var angle = arcStartAngle + step * i;
+        var rad = (angle * Math.PI) / 180;
+        var x = Math.cos(rad) * radius;
+        var y = Math.sin(rad) * radius;
+
+        var card = document.createElement("div");
+        card.className = "arc-hero__card";
+        card.style.width = cardSize + "px";
+        card.style.height = cardSize + "px";
+        card.style.left = "calc(50% + " + x + "px)";
+        card.style.bottom = y + "px";
+        card.style.transform = "translate(-50%, 50%)";
+        card.style.animationDelay = (i * 80) + "ms";
+        card.style.zIndex = count - i;
+
+        var inner = document.createElement("div");
+        inner.className = "arc-hero__card-inner";
+        inner.style.transform = "rotate(" + (angle / 4) + "deg)";
+
+        var img = document.createElement("img");
+        img.src = src;
+        img.alt = "Church life " + (i + 1);
+        img.draggable = false;
+        img.loading = "eager";
+        img.onerror = function () {
+          this.src = "https://placehold.co/400x400/e2e8f0/94a3b8?text=ROLCC";
+        };
+
+        inner.appendChild(img);
+        card.appendChild(inner);
+        pivot.appendChild(card);
       });
     }
 
-    function aboutNext() {
-      aboutGoToSlide(aboutCurrent + 1);
-    }
-
-    function aboutResetTimer() {
-      clearInterval(aboutTimer);
-      aboutTimer = setInterval(aboutNext, 6000);
-    }
-
-    aboutDots.forEach(function (btn, i) {
-      btn.addEventListener("click", function () {
-        aboutGoToSlide(i);
-        aboutResetTimer();
-      });
+    arcBuild();
+    var arcResizeTimer;
+    window.addEventListener("resize", function () {
+      clearTimeout(arcResizeTimer);
+      arcResizeTimer = setTimeout(arcBuild, 200);
     });
-
-    aboutResetTimer();
-
-    var aboutTrack = aboutCarousel.querySelector(".about-carousel__track");
-    if (aboutTrack) {
-      var aboutTouchStartX = 0, aboutTouchEndX = 0;
-      aboutTrack.addEventListener("touchstart", function (e) {
-        aboutTouchStartX = e.changedTouches[0].screenX;
-      }, { passive: true });
-      aboutTrack.addEventListener("touchend", function (e) {
-        aboutTouchEndX = e.changedTouches[0].screenX;
-        var diff = aboutTouchStartX - aboutTouchEndX;
-        if (Math.abs(diff) > 50) {
-          if (diff > 0) aboutGoToSlide(aboutCurrent + 1);
-          else aboutGoToSlide(aboutCurrent - 1);
-          aboutResetTimer();
-        }
-      }, { passive: true });
-    }
   }
 
   // Latest Sermon carousel: seamless infinite – no gap; after 6th, 1st appears from the right

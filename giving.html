@@ -91,9 +91,12 @@
           <div class="header-top__dropdown relative" id="ministries-dropdown">
             <button type="button" class="header-top__link flex items-center gap-0.5" aria-expanded="false" aria-haspopup="true" aria-controls="ministries-menu" id="ministries-trigger">Ministries <span class="text-[10px] ml-0.5" aria-hidden="true">▾</span></button>
             <div class="header-top__dropdown-panel absolute top-full left-0 mt-1 py-2 min-w-[10rem] rounded-lg border border-slate-200 bg-white shadow-lg z-50 hidden" id="ministries-menu" role="menu">
-              <a href="services.html" class="header-top__dropdown-link block px-4 py-2 text-slate-700 hover:bg-slate-50 rounded-t-lg" role="menuitem" data-nav="services">Services</a>
+              <a href="services.html" class="header-top__dropdown-link block px-4 py-2 text-slate-700 hover:bg-slate-50 rounded-t-lg" role="menuitem" data-nav="services">Worship Services</a>
               <a href="river-kids.html" class="header-top__dropdown-link block px-4 py-2 text-slate-700 hover:bg-slate-50" role="menuitem" data-nav="river-kids">River Kids</a>
-              <a href="fellowship.html" class="header-top__dropdown-link block px-4 py-2 text-slate-700 hover:bg-slate-50 rounded-b-lg" role="menuitem" data-nav="fellowship">Fellowship</a>
+              <a href="fellowship.html" class="header-top__dropdown-link block px-4 py-2 text-slate-700 hover:bg-slate-50" role="menuitem" data-nav="fellowship">Cell Fellowship</a>
+              <a href="pmd.html" class="header-top__dropdown-link block px-4 py-2 text-slate-700 hover:bg-slate-50" role="menuitem" data-nav="pmd">PMD</a>
+              <a href="counselling.html" class="header-top__dropdown-link block px-4 py-2 text-slate-700 hover:bg-slate-50" role="menuitem" data-nav="counselling">Counselling</a>
+              <a href="rolf.html" class="header-top__dropdown-link block px-4 py-2 text-slate-700 hover:bg-slate-50 rounded-b-lg" role="menuitem" data-nav="rolf">ROLF</a>
             </div>
           </div>
           <a href="giving.html" class="header-top__link text-slate-900 font-semibold" data-nav="giving">Giving</a>
@@ -118,6 +121,11 @@
           <a href="services.html" class="header-top__menu-link block rounded-md px-3 py-2 pl-5 text-slate-700 hover:bg-slate-100" data-nav="services">Services</a>
           <a href="river-kids.html" class="header-top__menu-link block rounded-md px-3 py-2 pl-5 text-slate-700 hover:bg-slate-100" data-nav="river-kids">River Kids</a>
           <a href="fellowship.html" class="header-top__menu-link block rounded-md px-3 py-2 pl-5 text-slate-700 hover:bg-slate-100" data-nav="fellowship">Fellowship</a>
+          <a href="pmd.html" class="header-top__menu-link block rounded-md px-3 py-2 pl-5 text-slate-700 hover:bg-slate-100" data-nav="pmd">PMD</a>
+          <a href="counselling.html" class="header-top__menu-link block rounded-md px-3 py-2 pl-5 text-slate-700 hover:bg-slate-100" data-nav="counselling">Counselling</a>
+          <a href="rolf.html" class="header-top__menu-link block rounded-md px-3 py-2 pl-5 text-slate-700 hover:bg-slate-100" data-nav="rolf">ROLF</a>
+          <a href="events.html" class="header-top__menu-link block rounded-md px-3 py-2 pl-5 text-slate-700 hover:bg-slate-100" data-nav="events">Events</a>
+          <a href="membership.html" class="header-top__menu-link block rounded-md px-3 py-2 pl-5 text-slate-700 hover:bg-slate-100" data-nav="membership">Membership</a>
           <a href="giving.html" class="header-top__menu-link block rounded-md px-3 py-2 text-slate-900 font-medium bg-slate-100" data-nav="giving">Giving</a>
           <a href="contact.html" class="header-top__menu-link block rounded-md px-3 py-2 text-slate-700 hover:bg-slate-100" data-nav="contact">Contact Us</a>
           <a href="contact.html" class="header-top__menu-cta mt-3 inline-flex rounded-full bg-accent px-4 py-2 text-sm font-semibold text-white">Join Us This Sunday</a>
@@ -309,10 +317,11 @@
           </div>
         </div>
       </section>
+      <div class="serve-unveil-spacer min-h-screen" aria-hidden="true"></div>
     </main>
 
-    <!-- Footer: same as homepage -->
-    <footer id="footer-section" class="footer-superside relative left-0 right-0 z-0 min-h-screen overflow-hidden">
+    <!-- Footer: fixed at bottom; content unveils it on scroll -->
+    <footer id="footer-section" class="footer-reveal fixed bottom-0 left-0 right-0 z-0 min-h-screen overflow-hidden">
       <img src="https://images.unsplash.com/photo-1439066615861-d1af74d74000?auto=format&fit=crop&w=1920&q=70" alt="" class="footer-bg absolute inset-0 h-full w-full object-cover" loading="lazy" />
       <div class="footer-overlay absolute inset-0 bg-gradient-to-b from-slate-900/40 via-slate-900/70 to-slate-950/95" aria-hidden="true"></div>
       <div class="relative z-10 flex min-h-screen flex-col">
@@ -328,10 +337,12 @@
               <div>
                 <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-400">Services</p>
                 <ul class="mt-4 space-y-2.5 text-sm text-slate-300">
-                  <li><a href="services.html" class="footer-link inline-flex items-center gap-2 hover:text-white">Sunday Worship <span class="text-slate-500">→</span></a></li>
+                  <li><a href="services.html" class="footer-link inline-flex items-center gap-2 hover:text-white">Worship Services <span class="text-slate-500">→</span></a></li>
                   <li><a href="river-kids.html" class="footer-link inline-flex items-center gap-2 hover:text-white">River Kids <span class="text-slate-500">→</span></a></li>
-                  <li><a href="fellowship.html" class="footer-link inline-flex items-center gap-2 hover:text-white">Cell Groups &amp; Fellowship <span class="text-slate-500">→</span></a></li>
-                  <li><a href="services.html" class="footer-link inline-flex items-center gap-2 hover:text-white">Praise &amp; Worship <span class="text-slate-500">→</span></a></li>
+                  <li><a href="fellowship.html" class="footer-link inline-flex items-center gap-2 hover:text-white">Cell Fellowship <span class="text-slate-500">→</span></a></li>
+                  <li><a href="pmd.html" class="footer-link inline-flex items-center gap-2 hover:text-white">PMD <span class="text-slate-500">→</span></a></li>
+                  <li><a href="counselling.html" class="footer-link inline-flex items-center gap-2 hover:text-white">Counselling <span class="text-slate-500">→</span></a></li>
+                  <li><a href="rolf.html" class="footer-link inline-flex items-center gap-2 hover:text-white">ROLF <span class="text-slate-500">→</span></a></li>
                   <li><a href="giving.html" class="footer-link inline-flex items-center gap-2 hover:text-white">Giving <span class="text-slate-500">→</span></a></li>
                 </ul>
               </div>
@@ -340,7 +351,8 @@
                 <ul class="mt-4 space-y-2.5 text-sm text-slate-300">
                   <li><a href="index.html" class="footer-link hover:text-white">Main</a></li>
                   <li><a href="services.html" class="footer-link hover:text-white">Our Ministries</a></li>
-                  <li><a href="about.html" class="footer-link hover:text-white">Our People</a></li>
+                  <li><a href="events.html" class="footer-link hover:text-white">Events</a></li>
+                  <li><a href="membership.html" class="footer-link hover:text-white">Membership</a></li>
                   <li><a href="about.html" class="footer-link hover:text-white">About Us</a></li>
                   <li><a href="contact.html" class="footer-link hover:text-white">Contact</a></li>
                 </ul>

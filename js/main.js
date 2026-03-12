@@ -99,7 +99,8 @@ document.addEventListener("DOMContentLoaded", function () {
   var heroBannerEl = document.getElementById("hero-banner");
   var givingHeroEl = document.getElementById("giving-hero");
   var arcHeroEl = document.getElementById("arc-hero");
-  var heroEl = heroBannerEl || givingHeroEl || arcHeroEl;
+  var marqueeHeroEl = document.getElementById("marquee-hero");
+  var heroEl = heroBannerEl || givingHeroEl || arcHeroEl || marqueeHeroEl;
   var announceEl = document.getElementById("announce-banner");
   function updateHeaderScrolled() {
     if (!headerEl) return;
@@ -119,7 +120,10 @@ document.addEventListener("DOMContentLoaded", function () {
       headerEl.classList.remove("header-scrolled");
       var isDarkHero = heroBannerEl && heroBannerEl.classList.contains("hero-theme-dark");
       var isLightHero = heroBannerEl && heroBannerEl.classList.contains("hero-theme-light");
-      if (arcHeroEl && heroEl === arcHeroEl) {
+      if (marqueeHeroEl && heroEl === marqueeHeroEl) {
+        headerEl.classList.add("header-over-hero--arc");
+        if (announceEl) announceEl.classList.add("announce-banner--over-light");
+      } else if (arcHeroEl && heroEl === arcHeroEl) {
         headerEl.classList.add("header-over-hero--arc");
         if (announceEl) announceEl.classList.add("announce-banner--over-light");
       } else if (givingHeroEl && heroEl === givingHeroEl) {
@@ -222,7 +226,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // Footer: fixed at bottom; Serve section unveils it on scroll (footer in BG, Serve scrolls up to reveal)
+  // Footer: fixed at bottom; Serve section unveils it on scroll (footer-reveal in BG, Serve scrolls up to reveal)
 
   // New Here: big para darkens line-by-line on scroll (grey → dark)
   var newHereSection = document.getElementById("new-here");
@@ -789,6 +793,175 @@ document.addEventListener("DOMContentLoaded", function () {
 
     msStartAuto();
   }
+
+  // Testimonial carousel: crossfade with dots
+  (function () {
+    var wrap = document.getElementById("testi-carousel");
+    if (!wrap) return;
+    var cards = wrap.querySelectorAll(".testi-carousel__card");
+    var dotsWrap = document.getElementById("testi-dots");
+    if (cards.length < 2) return;
+    var idx = 0;
+    var dots = [];
+
+    cards.forEach(function (_, i) {
+      var dot = document.createElement("button");
+      dot.type = "button";
+      dot.className = "testi-carousel__dot" + (i === 0 ? " is-active" : "");
+      dot.setAttribute("aria-label", "Testimonial " + (i + 1));
+      dot.addEventListener("click", function () { goTo(i); resetAuto(); });
+      dotsWrap.appendChild(dot);
+      dots.push(dot);
+    });
+
+    function goTo(n) {
+      cards[idx].classList.remove("is-active");
+      dots[idx].classList.remove("is-active");
+      idx = n;
+      cards[idx].classList.add("is-active");
+      dots[idx].classList.add("is-active");
+    }
+
+    var timer = setInterval(function () { goTo((idx + 1) % cards.length); }, 5000);
+    function resetAuto() { clearInterval(timer); timer = setInterval(function () { goTo((idx + 1) % cards.length); }, 5000); }
+  })();
+
+  // Impact carousel: crossfade with arrows, counter, swipe, auto-play
+  (function () {
+    var wrap = document.getElementById("impact-carousel");
+    if (!wrap) return;
+    var slides = wrap.querySelectorAll(".impact-carousel__slide");
+    var prevBtn = document.getElementById("impact-prev");
+    var nextBtn = document.getElementById("impact-next");
+    var counter = document.getElementById("impact-counter");
+    if (slides.length < 2) return;
+    var idx = 0;
+    var total = slides.length;
+
+    function goTo(n) {
+      slides[idx].classList.remove("is-active");
+      idx = ((n % total) + total) % total;
+      slides[idx].classList.add("is-active");
+      if (counter) counter.textContent = (idx + 1) + " / " + total;
+    }
+    function resetAuto() {
+      clearInterval(autoTimer);
+      autoTimer = setInterval(function () { goTo(idx + 1); }, 5000);
+    }
+
+    if (prevBtn) prevBtn.addEventListener("click", function () { goTo(idx - 1); resetAuto(); });
+    if (nextBtn) nextBtn.addEventListener("click", function () { goTo(idx + 1); resetAuto(); });
+
+    var touchX = 0;
+    wrap.addEventListener("touchstart", function (e) { touchX = e.changedTouches[0].clientX; }, { passive: true });
+    wrap.addEventListener("touchend", function (e) {
+      var dx = e.changedTouches[0].clientX - touchX;
+      if (Math.abs(dx) > 40) { goTo(dx < 0 ? idx + 1 : idx - 1); resetAuto(); }
+    }, { passive: true });
+
+    var autoTimer = setInterval(function () { goTo(idx + 1); }, 5000);
+  })();
+
+  // Gallery Hover Carousel (GHC): drag + snap + nav buttons
+  (function () {
+    var viewport = document.getElementById("ghc-viewport");
+    var track = document.getElementById("ghc-track");
+    if (!viewport || !track) return;
+
+    var cards = track.querySelectorAll(".ghc__card");
+    var prevBtn = document.querySelector(".ghc__nav--prev");
+    var nextBtn = document.querySelector(".ghc__nav--next");
+    var scrollPos = 0;
+    var isDragging = false;
+    var startX = 0;
+    var startScroll = 0;
+
+    function maxScroll() {
+      return Math.max(0, track.scrollWidth - viewport.clientWidth);
+    }
+    function clamp(v) { return Math.max(0, Math.min(v, maxScroll())); }
+    function applyPos(animate) {
+      if (animate) track.classList.remove("is-dragging");
+      else track.classList.add("is-dragging");
+      track.style.transform = "translateX(" + (-scrollPos) + "px)";
+    }
+    function updateNav() {
+      if (prevBtn) prevBtn.disabled = scrollPos <= 0;
+      if (nextBtn) nextBtn.disabled = scrollPos >= maxScroll() - 1;
+    }
+
+    function stepSize() {
+      if (!cards.length) return viewport.clientWidth * 0.8;
+      var card = cards[0];
+      var gap = parseFloat(getComputedStyle(track).gap) || 24;
+      return card.offsetWidth + gap;
+    }
+
+    if (prevBtn) prevBtn.addEventListener("click", function () {
+      scrollPos = clamp(scrollPos - stepSize());
+      applyPos(true); updateNav();
+    });
+    if (nextBtn) nextBtn.addEventListener("click", function () {
+      scrollPos = clamp(scrollPos + stepSize());
+      applyPos(true); updateNav();
+    });
+
+    function pointerDown(x) {
+      isDragging = true; startX = x; startScroll = scrollPos;
+      track.classList.add("is-dragging");
+    }
+    function pointerMove(x) {
+      if (!isDragging) return;
+      scrollPos = clamp(startScroll - (x - startX));
+      applyPos(false);
+    }
+    function pointerUp() {
+      if (!isDragging) return;
+      isDragging = false;
+      track.classList.remove("is-dragging");
+      applyPos(true); updateNav();
+    }
+
+    track.addEventListener("mousedown", function (e) { e.preventDefault(); pointerDown(e.clientX); });
+    window.addEventListener("mousemove", function (e) { pointerMove(e.clientX); });
+    window.addEventListener("mouseup", pointerUp);
+    track.addEventListener("touchstart", function (e) { pointerDown(e.touches[0].clientX); }, { passive: true });
+    track.addEventListener("touchmove", function (e) { pointerMove(e.touches[0].clientX); }, { passive: true });
+    track.addEventListener("touchend", pointerUp);
+
+    track.addEventListener("click", function (e) {
+      if (Math.abs(scrollPos - startScroll) > 5) e.preventDefault();
+    }, true);
+
+    updateNav();
+    window.addEventListener("resize", function () { scrollPos = clamp(scrollPos); applyPos(true); updateNav(); });
+  })();
+
+  // Marquee hero: entrance animations + duplicate images for seamless loop
+  (function () {
+    var mh = document.getElementById("marquee-hero");
+    if (!mh) return;
+
+    var tagline = mh.querySelector(".marquee-hero__tagline");
+    var words = mh.querySelectorAll(".marquee-hero__word");
+    var desc = mh.querySelector(".marquee-hero__desc");
+    var cta = mh.querySelector(".marquee-hero__cta");
+    var track = mh.querySelector(".marquee-hero__track");
+
+    if (track) {
+      var clone = track.innerHTML;
+      track.innerHTML += clone;
+    }
+
+    var delay = 100;
+    if (tagline) setTimeout(function () { tagline.classList.add("is-visible"); }, delay);
+    words.forEach(function (w, i) {
+      setTimeout(function () { w.classList.add("is-visible"); }, delay + 200 + i * 90);
+    });
+    var wordsDone = delay + 200 + words.length * 90;
+    if (desc) setTimeout(function () { desc.classList.add("is-visible"); }, wordsDone + 100);
+    if (cta) setTimeout(function () { cta.classList.add("is-visible"); }, wordsDone + 250);
+  })();
 
   // Scroll reveal: animate elements as they enter viewport
   var revealEls = document.querySelectorAll(".scroll-reveal");

@@ -74,7 +74,7 @@
     </div>
 
     <!-- Header -->
-    <header class="header-top header-scrolled" id="header">
+    <header class="header-top" id="header">
       <nav class="header-top__bar mx-auto max-w-6xl px-4 py-3 sm:px-6 lg:px-8 flex items-center justify-between">
         <a href="index.html" class="header-top__brand flex items-center gap-3">
           <img src="assets/logo.svg" alt="River of Life Christian Church" class="header-top__logo-img" width="36" height="44" />
@@ -91,9 +91,12 @@
           <div class="header-top__dropdown relative" id="ministries-dropdown">
             <button type="button" class="header-top__link flex items-center gap-0.5 text-slate-900 font-semibold" aria-expanded="false" aria-haspopup="true" aria-controls="ministries-menu" id="ministries-trigger">Ministries <span class="text-[10px] ml-0.5" aria-hidden="true">▾</span></button>
             <div class="header-top__dropdown-panel absolute top-full left-0 mt-1 py-2 min-w-[10rem] rounded-lg border border-slate-200 bg-white shadow-lg z-50 hidden" id="ministries-menu" role="menu">
-              <a href="services.html" class="header-top__dropdown-link block px-4 py-2 text-slate-700 hover:bg-slate-50 rounded-t-lg" role="menuitem" data-nav="services">Services</a>
+              <a href="services.html" class="header-top__dropdown-link block px-4 py-2 text-slate-700 hover:bg-slate-50 rounded-t-lg" role="menuitem" data-nav="services">Worship Services</a>
               <a href="river-kids.html" class="header-top__dropdown-link block px-4 py-2 text-slate-700 hover:bg-slate-50" role="menuitem" data-nav="river-kids">River Kids</a>
-              <a href="fellowship.html" class="header-top__dropdown-link block px-4 py-2 text-slate-700 hover:bg-slate-50 rounded-b-lg font-medium" role="menuitem" data-nav="fellowship">Fellowship</a>
+              <a href="fellowship.html" class="header-top__dropdown-link block px-4 py-2 text-slate-700 hover:bg-slate-50 font-medium" role="menuitem" data-nav="fellowship">Cell Fellowship</a>
+              <a href="pmd.html" class="header-top__dropdown-link block px-4 py-2 text-slate-700 hover:bg-slate-50" role="menuitem" data-nav="pmd">PMD</a>
+              <a href="counselling.html" class="header-top__dropdown-link block px-4 py-2 text-slate-700 hover:bg-slate-50" role="menuitem" data-nav="counselling">Counselling</a>
+              <a href="rolf.html" class="header-top__dropdown-link block px-4 py-2 text-slate-700 hover:bg-slate-50 rounded-b-lg" role="menuitem" data-nav="rolf">ROLF</a>
             </div>
           </div>
           <a href="giving.html" class="header-top__link" data-nav="giving">Giving</a>
@@ -115,9 +118,14 @@
           <a href="index.html" class="header-top__menu-link block rounded-md px-3 py-2 text-slate-700 hover:bg-slate-100" data-nav="index">Home</a>
           <a href="about.html" class="header-top__menu-link block rounded-md px-3 py-2 text-slate-700 hover:bg-slate-100" data-nav="about">About Us</a>
           <p class="px-3 py-1.5 text-xs font-semibold uppercase tracking-wider text-slate-500 mt-2">Ministries</p>
-          <a href="services.html" class="header-top__menu-link block rounded-md px-3 py-2 pl-5 text-slate-700 hover:bg-slate-100" data-nav="services">Services</a>
+          <a href="services.html" class="header-top__menu-link block rounded-md px-3 py-2 pl-5 text-slate-700 hover:bg-slate-100" data-nav="services">Worship Services</a>
           <a href="river-kids.html" class="header-top__menu-link block rounded-md px-3 py-2 pl-5 text-slate-700 hover:bg-slate-100" data-nav="river-kids">River Kids</a>
-          <a href="fellowship.html" class="header-top__menu-link block rounded-md px-3 py-2 pl-5 text-slate-900 font-medium bg-slate-100" data-nav="fellowship">Fellowship</a>
+          <a href="fellowship.html" class="header-top__menu-link block rounded-md px-3 py-2 pl-5 text-slate-900 font-medium bg-slate-100" data-nav="fellowship">Cell Fellowship</a>
+          <a href="pmd.html" class="header-top__menu-link block rounded-md px-3 py-2 pl-5 text-slate-700 hover:bg-slate-100" data-nav="pmd">PMD</a>
+          <a href="counselling.html" class="header-top__menu-link block rounded-md px-3 py-2 pl-5 text-slate-700 hover:bg-slate-100" data-nav="counselling">Counselling</a>
+          <a href="rolf.html" class="header-top__menu-link block rounded-md px-3 py-2 pl-5 text-slate-700 hover:bg-slate-100" data-nav="rolf">ROLF</a>
+          <a href="events.html" class="header-top__menu-link block rounded-md px-3 py-2 pl-5 text-slate-700 hover:bg-slate-100" data-nav="events">Events</a>
+          <a href="membership.html" class="header-top__menu-link block rounded-md px-3 py-2 pl-5 text-slate-700 hover:bg-slate-100" data-nav="membership">Membership</a>
           <a href="giving.html" class="header-top__menu-link block rounded-md px-3 py-2 text-slate-700 hover:bg-slate-100" data-nav="giving">Giving</a>
           <a href="contact.html" class="header-top__menu-link block rounded-md px-3 py-2 text-slate-700 hover:bg-slate-100" data-nav="contact">Contact Us</a>
           <a href="contact.html" class="header-top__menu-cta mt-3 inline-flex rounded-full bg-accent px-4 py-2 text-sm font-semibold text-white">Join Us This Sunday</a>
@@ -125,32 +133,314 @@
       </div>
     </header>
 
-    <main>
-      <!-- Page Hero -->
-      <section
-        class="border-b border-slate-200 bg-gradient-to-b from-primaryDark via-white to-white"
-      >
-        <div
-          class="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-12 sm:px-6 md:flex-row md:items-end md:justify-between md:py-16 lg:px-8"
-        >
-          <div class="space-y-3">
-            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-accent">
-              Fellowship
-            </p>
-            <h1
-              class="text-balance text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl"
-            >
-              Doing Life Together as a Church Family
-            </h1>
-            <p class="max-w-2xl text-sm text-slate-600 sm:text-base">
-              Church is more than a Sunday service. Through cell groups and fellowships, we grow in
-              Christ, care for one another, and reach our city together.
-            </p>
+    <main class="main-no-top-gap relative z-10">
+      <!-- Marquee Hero -->
+      <section class="marquee-hero border-b border-slate-200" id="marquee-hero">
+        <div class="marquee-hero__content">
+          <span class="marquee-hero__tagline">Cell Fellowship</span>
+          <h1 class="marquee-hero__title">
+            <span class="marquee-hero__word">Doing Life</span>
+            <span class="marquee-hero__word">Together</span>
+            <br class="hidden sm:inline" />
+            <span class="marquee-hero__word">as a Church</span>
+            <span class="marquee-hero__word">Family</span>
+          </h1>
+          <p class="marquee-hero__desc">
+            Church is more than a Sunday service. Through cell groups and fellowships, we grow in Christ, care for one another, and reach our city together.
+          </p>
+          <a href="contact.html" class="marquee-hero__cta">Ask to Join a Cell</a>
+        </div>
+        <div class="marquee-hero__strip" aria-hidden="true">
+          <div class="marquee-hero__track" id="marquee-track">
+            <div class="marquee-hero__img" style="--rot:-2deg"><img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=400&h=530&fit=crop&q=75" alt="" loading="eager" /></div>
+            <div class="marquee-hero__img" style="--rot:4deg"><img src="https://images.unsplash.com/photo-1504052434569-70ad5836ab65?w=400&h=530&fit=crop&q=75" alt="" loading="eager" /></div>
+            <div class="marquee-hero__img" style="--rot:-3deg"><img src="https://images.unsplash.com/photo-1510590337019-5ef8d3d32116?w=400&h=530&fit=crop&q=75" alt="" loading="eager" /></div>
+            <div class="marquee-hero__img" style="--rot:5deg"><img src="https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?w=400&h=530&fit=crop&q=75" alt="" loading="eager" /></div>
+            <div class="marquee-hero__img" style="--rot:-1deg"><img src="https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=400&h=530&fit=crop&q=75" alt="" loading="eager" /></div>
+            <div class="marquee-hero__img" style="--rot:3deg"><img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=530&fit=crop&q=75" alt="" loading="eager" /></div>
+            <div class="marquee-hero__img" style="--rot:-4deg"><img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&h=530&fit=crop&q=75" alt="" loading="eager" /></div>
+            <div class="marquee-hero__img" style="--rot:2deg"><img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=530&fit=crop&q=75" alt="" loading="eager" /></div>
           </div>
-          <div
-            class="rounded-2xl border border-slate-200 bg-white p-4 text-xs text-slate-700 sm:text-sm"
-          >
-            <p class="font-semibold text-slate-900">
+        </div>
+      </section>
+
+      <!-- What We Do -->
+      <section class="ghc border-b border-slate-200 bg-white" id="ghc-section">
+        <div class="mx-auto max-w-6xl px-4 py-14 sm:px-6 md:py-20 lg:px-8">
+          <div class="wwd-top mb-10 md:mb-14">
+            <div class="wwd-top__left scroll-reveal">
+              <p class="text-xs font-semibold uppercase tracking-[0.18em] text-accent mb-4">What We Do</p>
+              <p class="wwd-intro">Cell groups are the heartbeat of fellowship at River of Life Christian Church. We meet to study the Word, pray together, and support one another in our walk with Christ.</p>
+              <ul class="wwd-bullets mt-6">
+                <li>Mid Week Fellowship — Wed 8PM–10PM</li>
+                <li>Online Cell (Eden Stream) — Sat 11AM</li>
+                <li>Fellowship over Food, Bible study, and prayer</li>
+                <li>Sermon discussion, team bonding, movie nights</li>
+                <li>Periodically combined fellowship and special events</li>
+              </ul>
+            </div>
+            <div class="wwd-top__right scroll-reveal scroll-reveal--delay-1">
+              <div class="testi-carousel" id="testi-carousel">
+                <div class="testi-carousel__track">
+                  <div class="testi-carousel__card is-active">
+                    <svg class="testi-carousel__quote" width="28" height="28" viewBox="0 0 24 24" fill="currentColor" opacity="0.12"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/></svg>
+                    <p class="testi-carousel__text">"The cell groups are amazing — it's where I found real friendship, prayer support, and accountability that helped me grow spiritually."</p>
+                    <div class="testi-carousel__author">
+                      <div class="testi-carousel__avatar">R</div>
+                      <div>
+                        <p class="testi-carousel__name">Rachel M.</p>
+                        <p class="testi-carousel__role">Cell group member</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="testi-carousel__card">
+                    <svg class="testi-carousel__quote" width="28" height="28" viewBox="0 0 24 24" fill="currentColor" opacity="0.12"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/></svg>
+                    <p class="testi-carousel__text">"River of Life truly became our family in Bengaluru. The warmth and genuine love we experienced from day one changed our lives."</p>
+                    <div class="testi-carousel__author">
+                      <div class="testi-carousel__avatar">S</div>
+                      <div>
+                        <p class="testi-carousel__name">Sanjay &amp; Priya</p>
+                        <p class="testi-carousel__role">Members since 2019</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="testi-carousel__card">
+                    <svg class="testi-carousel__quote" width="28" height="28" viewBox="0 0 24 24" fill="currentColor" opacity="0.12"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/></svg>
+                    <p class="testi-carousel__text">"Doing life together in a cell group has been transformative. We pray, study, and grow — and we're never alone."</p>
+                    <div class="testi-carousel__author">
+                      <div class="testi-carousel__avatar">D</div>
+                      <div>
+                        <p class="testi-carousel__name">David K.</p>
+                        <p class="testi-carousel__role">Cell group member</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="testi-carousel__dots" id="testi-dots"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="wwd-services mb-10 pb-8 border-b border-slate-200 scroll-reveal scroll-reveal--delay-1">
+            <div class="flex flex-wrap items-center gap-8 sm:gap-12">
+              <div>
+                <p class="text-base font-semibold text-slate-900 sm:text-lg">Mid Week Fellowship</p>
+                <p class="text-sm text-slate-500 mt-0.5">Wed 8PM–10PM</p>
+              </div>
+              <span class="hidden sm:block w-px h-8 bg-slate-200" aria-hidden="true"></span>
+              <div>
+                <p class="text-base font-semibold text-slate-900 sm:text-lg">Online Cell (Eden Stream)</p>
+                <p class="text-sm text-slate-500 mt-0.5">Sat 11AM</p>
+              </div>
+              <span class="hidden sm:block w-px h-8 bg-slate-200" aria-hidden="true"></span>
+              <div>
+                <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Weekly</p>
+                <p class="text-sm text-slate-500 mt-0.5">Across Bengaluru</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="ghc__viewport scroll-reveal scroll-reveal--delay-2" id="ghc-viewport">
+            <div class="ghc__track" id="ghc-track">
+              <a href="#" class="ghc__card group">
+                <div class="ghc__card-inner">
+                  <div class="ghc__card-img">
+                    <img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=500&h=400&fit=crop&q=75" alt="Mid Week Fellowship" loading="lazy" />
+                    <div class="ghc__card-fade"></div>
+                  </div>
+                  <div class="ghc__card-text">
+                    <h3 class="ghc__card-title">Mid Week Fellowship</h3>
+                    <p class="ghc__card-summary">Wednesday evenings for Bible study, prayer, and doing life together in homes across the city.</p>
+                  </div>
+                </div>
+              </a>
+              <a href="#" class="ghc__card group">
+                <div class="ghc__card-inner">
+                  <div class="ghc__card-img">
+                    <img src="https://images.unsplash.com/photo-1504052434569-70ad5836ab65?w=500&h=400&fit=crop&q=75" alt="Bible Study" loading="lazy" />
+                    <div class="ghc__card-fade"></div>
+                  </div>
+                  <div class="ghc__card-text">
+                    <h3 class="ghc__card-title">Bible Study</h3>
+                    <p class="ghc__card-summary">Special areas of Bible learning, sermon discussion, and recap — growing in the Word together.</p>
+                  </div>
+                </div>
+              </a>
+              <a href="#" class="ghc__card group">
+                <div class="ghc__card-inner">
+                  <div class="ghc__card-img">
+                    <img src="https://images.unsplash.com/photo-1510590337019-5ef8d3d32116?w=500&h=400&fit=crop&q=75" alt="Prayer" loading="lazy" />
+                    <div class="ghc__card-fade"></div>
+                  </div>
+                  <div class="ghc__card-text">
+                    <h3 class="ghc__card-title">Prayer</h3>
+                    <p class="ghc__card-summary">Praise, worship, and heartfelt prayer — drawing closer to God and supporting one another.</p>
+                  </div>
+                </div>
+              </a>
+              <a href="#" class="ghc__card group">
+                <div class="ghc__card-inner">
+                  <div class="ghc__card-img">
+                    <img src="https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=500&h=400&fit=crop&q=75" alt="Team Bonding" loading="lazy" />
+                    <div class="ghc__card-fade"></div>
+                  </div>
+                  <div class="ghc__card-text">
+                    <h3 class="ghc__card-title">Team Bonding</h3>
+                    <p class="ghc__card-summary">Fellowship over food, movie nights, Brisket Days, and combined gatherings that build lasting friendships.</p>
+                  </div>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Impact -->
+      <section class="impact-section border-b border-slate-200 bg-white" id="impact-section">
+        <div class="mx-auto max-w-6xl space-y-10 px-4 py-14 sm:px-6 md:py-20 lg:px-8">
+          <div class="grid items-center gap-4 md:grid-cols-2 md:gap-12 scroll-reveal">
+            <h2 class="text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">Life-changing fellowship, every week</h2>
+            <p class="max-w-sm text-sm text-slate-600 sm:ml-auto sm:text-base">From midweek gatherings to online cells, every fellowship is an opportunity to grow deeper, pray together, and do life as a church family.</p>
+          </div>
+          <div class="impact-carousel rounded-3xl group/impact scroll-reveal scroll-reveal--delay-1" id="impact-carousel">
+            <div class="impact-carousel__track">
+              <img class="impact-carousel__slide is-active" src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=1200&h=500&fit=crop&q=75" alt="Cell fellowship" loading="lazy" />
+              <img class="impact-carousel__slide" src="https://images.unsplash.com/photo-1504052434569-70ad5836ab65?w=1200&h=500&fit=crop&q=75" alt="Bible study" loading="lazy" />
+              <img class="impact-carousel__slide" src="https://images.unsplash.com/photo-1510590337019-5ef8d3d32116?w=1200&h=500&fit=crop&q=75" alt="Fellowship gathering" loading="lazy" />
+              <img class="impact-carousel__slide" src="https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?w=1200&h=500&fit=crop&q=75" alt="Community" loading="lazy" />
+            </div>
+            <div class="impact-carousel__fade"></div>
+            <button type="button" class="impact-carousel__arrow impact-carousel__arrow--prev" id="impact-prev" aria-label="Previous image">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+            </button>
+            <button type="button" class="impact-carousel__arrow impact-carousel__arrow--next" id="impact-next" aria-label="Next image">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+            </button>
+            <div class="impact-carousel__counter" id="impact-counter">1 / 4</div>
+          </div>
+          <div class="grid grid-cols-2 gap-x-3 gap-y-6 sm:gap-8 lg:grid-cols-4 scroll-reveal scroll-reveal--delay-2">
+            <div class="space-y-2">
+              <div class="flex items-center gap-2 text-slate-900">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                <h3 class="text-sm font-semibold">15+ Cell Groups</h3>
+              </div>
+              <p class="text-sm text-slate-500">Midweek home fellowships across Bengaluru for deeper connection and discipleship.</p>
+            </div>
+            <div class="space-y-2">
+              <div class="flex items-center gap-2 text-slate-900">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>
+                <h3 class="text-sm font-semibold">Wed &amp; Sat</h3>
+              </div>
+              <p class="text-sm text-slate-500">Mid Week Fellowship Wed 8PM; Online Cell Sat 11AM.</p>
+            </div>
+            <div class="space-y-2">
+              <div class="flex items-center gap-2 text-slate-900">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                <h3 class="text-sm font-semibold">Bible &amp; Prayer</h3>
+              </div>
+              <p class="text-sm text-slate-500">Study, discussion, worship, and prayer at the heart of every gathering.</p>
+            </div>
+            <div class="space-y-2">
+              <div class="flex items-center gap-2 text-slate-900">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="m9 12 2 2 4-4"/></svg>
+                <h3 class="text-sm font-semibold">Every Week</h3>
+              </div>
+              <p class="text-sm text-slate-500">Consistent fellowship, movie nights, and special events throughout the year.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CTA + Social -->
+      <section class="border-b border-slate-200 bg-white">
+        <div class="mx-auto max-w-6xl px-4 py-14 sm:px-6 md:py-20 lg:px-8">
+          <div class="cta-gradient rounded-3xl scroll-reveal" id="cta-gradient">
+            <div class="cta-gradient__bg rounded-3xl"></div>
+            <div class="cta-gradient__overlay rounded-3xl"></div>
+            <div class="relative z-10 px-6 py-12 sm:px-10 md:py-16 text-center">
+              <p class="text-xs font-semibold uppercase tracking-[0.18em] text-white/70">Be a part</p>
+              <h2 class="mt-3 text-2xl font-semibold tracking-tight text-white sm:text-3xl text-balance">
+                There&apos;s a Place for You at River of Life
+              </h2>
+              <p class="mx-auto mt-3 max-w-xl text-sm text-white/75 sm:text-base">
+                We would love to help you find a fellowship where you can grow, serve, and belong.
+              </p>
+              <div class="mt-6 flex flex-wrap justify-center gap-3">
+                <a href="contact.html" class="inline-flex items-center rounded-full bg-white px-6 py-2.5 text-sm font-semibold text-slate-900 shadow-sm transition hover:bg-white/90">Talk to Our Team</a>
+                <a href="services.html" class="inline-flex items-center rounded-full border border-white/30 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-white/10 hover:border-white/50">View Service Times</a>
+              </div>
+              <div class="mt-10 pt-8 border-t border-white/15">
+                <p class="text-sm text-white/55 mb-4">Follow us for updates, sermons, and community stories</p>
+                <div class="flex flex-wrap items-center justify-center gap-3">
+                  <a href="https://www.facebook.com/rolccindia/" target="_blank" rel="noopener noreferrer" class="social-pill social-pill--dark" aria-label="Facebook"><svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg> Facebook</a>
+                  <a href="https://www.youtube.com/@rolccindia" target="_blank" rel="noopener noreferrer" class="social-pill social-pill--dark" aria-label="YouTube"><svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg> YouTube</a>
+                  <a href="https://www.instagram.com/rolccindia" target="_blank" rel="noopener noreferrer" class="social-pill social-pill--dark" aria-label="Instagram"><svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg> Instagram</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Explore Other Ministries -->
+      <section class="border-b border-slate-200 bg-slate-50" id="explore-ministries">
+        <div class="mx-auto max-w-6xl px-4 py-14 sm:px-6 md:py-20 lg:px-8">
+          <div class="mb-8 text-center md:mb-12 scroll-reveal">
+            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-accent">Explore</p>
+            <h2 class="mt-2 text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">Explore Other Ministries</h2>
+            <p class="mx-auto mt-2 max-w-lg text-sm text-slate-600 sm:text-base">Discover where God might be calling you to grow, serve, and connect.</p>
+          </div>
+          <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 scroll-reveal scroll-reveal--delay-1">
+            <a href="fellowship.html" class="ministry-nav-card group">
+              <div class="ministry-nav-card__img">
+                <img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=600&h=400&fit=crop&q=75" alt="Fellowship and cell groups" loading="lazy" />
+              </div>
+              <div class="ministry-nav-card__body">
+                <p class="text-xs font-semibold uppercase tracking-[0.18em] text-accent">Community</p>
+                <h3 class="mt-1 text-lg font-semibold text-slate-900 group-hover:text-accent transition-colors">Cell Groups &amp; Fellowship</h3>
+                <p class="mt-1 text-sm text-slate-500">Midweek home gatherings for deeper connection, Bible study, prayer, and doing life together.</p>
+                <span class="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-accent">
+                  Learn more
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                </span>
+              </div>
+            </a>
+            <a href="river-kids.html" class="ministry-nav-card group">
+              <div class="ministry-nav-card__img">
+                <img src="https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=600&h=400&fit=crop&q=75" alt="River Kids ministry" loading="lazy" />
+              </div>
+              <div class="ministry-nav-card__body">
+                <p class="text-xs font-semibold uppercase tracking-[0.18em] text-accent">Children</p>
+                <h3 class="mt-1 text-lg font-semibold text-slate-900 group-hover:text-accent transition-colors">River Kids</h3>
+                <p class="mt-1 text-sm text-slate-500">A safe, fun, faith-filled environment where children learn about Jesus through creative teaching and worship.</p>
+                <span class="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-accent">
+                  Learn more
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                </span>
+              </div>
+            </a>
+            <a href="giving.html" class="ministry-nav-card group">
+              <div class="ministry-nav-card__img">
+                <img src="https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?w=600&h=400&fit=crop&q=75" alt="Giving and generosity" loading="lazy" />
+              </div>
+              <div class="ministry-nav-card__body">
+                <p class="text-xs font-semibold uppercase tracking-[0.18em] text-accent">Generosity</p>
+                <h3 class="mt-1 text-lg font-semibold text-slate-900 group-hover:text-accent transition-colors">Giving</h3>
+                <p class="mt-1 text-sm text-slate-500">Partner with us in kingdom impact through your tithes and offerings — every gift makes a difference.</p>
+                <span class="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-accent">
+                  Learn more
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                </span>
+              </div>
+            </a>
+          </div>
+        </div>
+      </section>
+      <div class="serve-unveil-spacer min-h-screen" aria-hidden="true"></div>
+    </main>
+
+
+    <!-- Footer: fixed at bottom; content unveils it on scroll -->
               “They devoted themselves to the apostles’ teaching and to fellowship, to the breaking
               of bread and to prayer.” – Acts 2:42
             </p>
@@ -164,179 +454,46 @@
           class="mx-auto max-w-6xl px-4 py-12 sm:px-6 md:py-16 lg:px-8"
         >
           <div class="grid gap-8 md:grid-cols-[3fr,2fr] md:items-start">
-            <div class="space-y-4">
+            <div class="space-y-4 scroll-reveal">
               <h2 class="text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">
                 Cell Groups
               </h2>
               <p class="text-sm text-slate-600 sm:text-base">
                 Cell groups are the heartbeat of fellowship at River of Life Christian Church.
-                These small groups meet across different parts of the city and online to study the
-                Word, pray together, and support one another.
+                We meet to study the Word, pray together, and support one another.
               </p>
               <ul class="space-y-2 text-sm text-slate-600">
-                <li>• Word-focused Bible study and discussion.</li>
-                <li>• Prayer for personal, family, and city needs.</li>
-                <li>• Fellowship over tea, snacks, and conversations.</li>
-                <li>• Opportunities to serve and grow in spiritual gifts.</li>
-              </ul>
-              <p class="text-xs text-slate-500">
-                Cell meetings typically run mid-week (see Services page). Exact locations and
-                timings can be confirmed with the church office.
-              </p>
-            </div>
-
-            <div
-              class="space-y-3 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-sm text-slate-700"
-            >
-              <h3 class="text-sm font-semibold text-slate-900 sm:text-base">
-                Find a Cell Group Near You
-              </h3>
-              <p class="text-sm text-slate-600">
-                We would love to help you connect to a cell based on your area, language, and stage
-                of life.
-              </p>
-              <ul class="space-y-1 text-xs text-slate-600">
-                <li>• HSR Layout &amp; nearby areas</li>
-                <li>• Other Bangalore neighborhoods</li>
-                <li>• Online-only groups (for those farther away)</li>
+                <li>• Mid Week Fellowship — Wed 8PM–10PM</li>
+                <li>• Fellowship over Food</li>
+                <li>• Special Area of Bible Learning</li>
+                <li>• Sermon Discussion and Recap</li>
+                <li>• Praise and Worship</li>
+                <li>• Team Bonding</li>
+                <li>• Prayer</li>
+                <li>• Bible Quiz</li>
+                <li>• Periodically combined Fellowship</li>
+                <li>• Online Cell — Meet Chat Sat 11AM–11:30AM</li>
+                <li>• Movie Nights</li>
+                <li>• Brisket Days (Thanksgiving)</li>
               </ul>
               <a
                 href="contact.html"
-                class="mt-2 inline-flex items-center rounded-full bg-accent px-4 py-2 text-xs font-semibold text-white shadow-sm ring-1 ring-accent/70 transition hover:bg-accentSoft"
+                class="inline-flex items-center rounded-full bg-accent px-4 py-2 text-xs font-semibold text-white shadow-sm ring-1 ring-accent/70 transition hover:bg-accentSoft"
               >
                 Ask to Join a Cell
               </a>
             </div>
-          </div>
-        </div>
-      </section>
 
-      <!-- Youth / Women / Men / Online -->
-      <section class="border-b border-slate-200 bg-slate-50">
-        <div class="mx-auto max-w-6xl px-4 py-12 sm:px-6 md:py-16 lg:px-8">
-          <div class="mb-8 max-w-3xl">
-            <h2 class="text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">
-              Fellowships for Every Season of Life
-            </h2>
-            <p class="mt-2 text-sm text-slate-600 sm:text-base">
-              In addition to cell groups, we have focused fellowships where people in similar life
-              stages can grow together.
-            </p>
-          </div>
-
-          <div class="grid gap-6 md:grid-cols-2">
-            <!-- Youth Fellowship -->
             <div
-              class="space-y-3 rounded-2xl border border-indigo-400/40 bg-indigo-50 p-5 text-sm text-slate-700"
+              class="space-y-3 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-sm text-slate-700 scroll-reveal scroll-reveal--delay-1"
             >
-              <div class="flex items-center gap-3">
-                <div
-                  class="flex h-9 w-9 items-center justify-center rounded-full bg-indigo-400/20 text-indigo-700"
-                >
-                  <span>⚡</span>
-                </div>
-                <div>
-                  <h3 class="text-sm font-semibold text-slate-900 sm:text-base">
-                    Youth Fellowship
-                  </h3>
-                  <p class="text-xs text-slate-700">
-                    Teens &amp; young adults
-                  </p>
-                </div>
-              </div>
-              <p class="text-sm text-slate-700">
-                A dynamic space for youth and young adults to encounter God, build strong
-                friendships, and be equipped to stand for Christ in schools, colleges, and the
-                workplace.
-              </p>
-              <p class="text-xs text-slate-700">
-                Sessions include worship, interactive teaching, testimonies, and practical life
-                discussions.
-              </p>
-            </div>
-
-            <!-- Women’s Fellowship -->
-            <div
-              class="space-y-3 rounded-2xl border border-rose-400/40 bg-rose-50 p-5 text-sm text-slate-700"
-            >
-              <div class="flex items-center gap-3">
-                <div
-                  class="flex h-9 w-9 items-center justify-center rounded-full bg-rose-400/20 text-rose-700"
-                >
-                  <span>🌸</span>
-                </div>
-                <div>
-                  <h3 class="text-sm font-semibold text-slate-900 sm:text-base">
-                    Women&apos;s Fellowship
-                  </h3>
-                  <p class="text-xs text-slate-700">
-                    Women of all ages
-                  </p>
-                </div>
-              </div>
-              <p class="text-sm text-slate-700">
-                A safe, faith-filled community where women encourage one another, study the Word,
-                and pray together for families, workplaces, and the nation.
-              </p>
-              <p class="text-xs text-slate-700">
-                Includes times of teaching, testimonies, and specific ministry for women.
-              </p>
-            </div>
-
-            <!-- Men’s Fellowship -->
-            <div
-              class="space-y-3 rounded-2xl border border-sky-400/40 bg-sky-50 p-5 text-sm text-slate-700"
-            >
-              <div class="flex items-center gap-3">
-                <div
-                  class="flex h-9 w-9 items-center justify-center rounded-full bg-sky-400/20 text-sky-700"
-                >
-                  <span>🛡️</span>
-                </div>
-                <div>
-                  <h3 class="text-sm font-semibold text-slate-900 sm:text-base">
-                    Men&apos;s Fellowship
-                  </h3>
-                  <p class="text-xs text-slate-700">
-                    Men, husbands, fathers
-                  </p>
-                </div>
-              </div>
-              <p class="text-sm text-slate-700">
-                A place for men to be strengthened in their walk with God, grow as Christ-like
-                leaders, and encourage one another in faith.
-              </p>
-              <p class="text-xs text-slate-700">
-                Focus on integrity, spiritual leadership, and practical discipleship.
-              </p>
-            </div>
-
-            <!-- Online Fellowship -->
-            <div
-              class="space-y-3 rounded-2xl border border-emerald-400/40 bg-emerald-50 p-5 text-sm text-slate-700"
-            >
-              <div class="flex items-center gap-3">
-                <div
-                  class="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-400/20 text-emerald-700"
-                >
-                  <span>🌐</span>
-                </div>
-                <div>
-                  <h3 class="text-sm font-semibold text-slate-900 sm:text-base">
-                    Online Fellowship
-                  </h3>
-                  <p class="text-xs text-slate-700">
-                    For those joining from a distance
-                  </p>
-                </div>
-              </div>
-              <p class="text-sm text-slate-700">
-                If you are unable to attend in person due to distance or special circumstances, we
-                have online fellowship options so you can still stay connected.
-              </p>
-              <p class="text-xs text-slate-700">
-                Includes online cell groups and selected ministry meetings over video platforms.
-              </p>
+              <h3 class="text-sm font-semibold text-slate-900 sm:text-base">
+                Schedule
+              </h3>
+              <ul class="space-y-2 text-sm text-slate-600">
+                <li><strong>Wed</strong> 8PM–10PM — Mid Week Fellowship</li>
+                <li><strong>Sat</strong> 11AM–11:30AM — Online Cell (Meet Chat)</li>
+              </ul>
             </div>
           </div>
         </div>
@@ -344,9 +501,7 @@
 
       <!-- Final CTA -->
       <section class="border-b border-slate-200 bg-white">
-        <div
-          class="mx-auto max-w-6xl px-4 py-12 text-center sm:px-6 md:py-16 lg:px-8"
-        >
+        <div class="mx-auto max-w-6xl px-4 py-12 text-center sm:px-6 md:py-16 lg:px-8 scroll-reveal">
           <p class="text-xs font-semibold uppercase tracking-[0.18em] text-accent">
             Get Connected
           </p>
@@ -374,11 +529,12 @@
           </div>
         </div>
       </section>
+      <div class="serve-unveil-spacer min-h-screen" aria-hidden="true"></div>
     </main>
 
 
-    <!-- Footer: same as homepage -->
-    <footer id="footer-section" class="footer-superside relative left-0 right-0 z-0 min-h-screen overflow-hidden">
+    <!-- Footer: fixed at bottom; content unveils it on scroll -->
+    <footer id="footer-section" class="footer-reveal fixed bottom-0 left-0 right-0 z-0 min-h-screen overflow-hidden">
       <img src="https://images.unsplash.com/photo-1439066615861-d1af74d74000?auto=format&fit=crop&w=1920&q=70" alt="" class="footer-bg absolute inset-0 h-full w-full object-cover" loading="lazy" />
       <div class="footer-overlay absolute inset-0 bg-gradient-to-b from-slate-900/40 via-slate-900/70 to-slate-950/95" aria-hidden="true"></div>
       <div class="relative z-10 flex min-h-screen flex-col">
@@ -394,10 +550,12 @@
               <div>
                 <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-400">Services</p>
                 <ul class="mt-4 space-y-2.5 text-sm text-slate-300">
-                  <li><a href="services.html" class="footer-link inline-flex items-center gap-2 hover:text-white">Sunday Worship <span class="text-slate-500">→</span></a></li>
+                  <li><a href="services.html" class="footer-link inline-flex items-center gap-2 hover:text-white">Worship Services <span class="text-slate-500">→</span></a></li>
                   <li><a href="river-kids.html" class="footer-link inline-flex items-center gap-2 hover:text-white">River Kids <span class="text-slate-500">→</span></a></li>
-                  <li><a href="fellowship.html" class="footer-link inline-flex items-center gap-2 hover:text-white">Cell Groups &amp; Fellowship <span class="text-slate-500">→</span></a></li>
-                  <li><a href="services.html" class="footer-link inline-flex items-center gap-2 hover:text-white">Praise &amp; Worship <span class="text-slate-500">→</span></a></li>
+                  <li><a href="fellowship.html" class="footer-link inline-flex items-center gap-2 hover:text-white">Cell Fellowship <span class="text-slate-500">→</span></a></li>
+                  <li><a href="pmd.html" class="footer-link inline-flex items-center gap-2 hover:text-white">PMD <span class="text-slate-500">→</span></a></li>
+                  <li><a href="counselling.html" class="footer-link inline-flex items-center gap-2 hover:text-white">Counselling <span class="text-slate-500">→</span></a></li>
+                  <li><a href="rolf.html" class="footer-link inline-flex items-center gap-2 hover:text-white">ROLF <span class="text-slate-500">→</span></a></li>
                   <li><a href="giving.html" class="footer-link inline-flex items-center gap-2 hover:text-white">Giving <span class="text-slate-500">→</span></a></li>
                 </ul>
               </div>
@@ -406,7 +564,8 @@
                 <ul class="mt-4 space-y-2.5 text-sm text-slate-300">
                   <li><a href="index.html" class="footer-link hover:text-white">Main</a></li>
                   <li><a href="services.html" class="footer-link hover:text-white">Our Ministries</a></li>
-                  <li><a href="about.html" class="footer-link hover:text-white">Our People</a></li>
+                  <li><a href="events.html" class="footer-link hover:text-white">Events</a></li>
+                  <li><a href="membership.html" class="footer-link hover:text-white">Membership</a></li>
                   <li><a href="about.html" class="footer-link hover:text-white">About Us</a></li>
                   <li><a href="contact.html" class="footer-link hover:text-white">Contact</a></li>
                 </ul>

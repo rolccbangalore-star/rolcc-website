@@ -1831,6 +1831,10 @@ body {
   min-height: 100vh;
   pointer-events: auto;
 }
+/* When scrolled to bottom: raise footer above main so nav links are clickable */
+body.footer-in-view .footer-reveal {
+  z-index: 20 !important;
+}
 .footer-reveal .footer-bg {
   object-fit: cover;
   object-position: center;

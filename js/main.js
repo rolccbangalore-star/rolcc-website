@@ -227,6 +227,19 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // Footer: fixed at bottom; Serve section unveils it on scroll (footer-reveal in BG, Serve scrolls up to reveal)
+  // When user scrolls to bottom, raise footer z-index so nav links are clickable (main otherwise covers footer)
+  (function footerInView() {
+    var footerSection = document.getElementById("footer-section");
+    if (!footerSection) return;
+    var threshold = 80;
+    function update() {
+      var nearBottom = window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - threshold;
+      document.body.classList.toggle("footer-in-view", nearBottom);
+    }
+    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    update();
+  })();
 
   // New Here: big para darkens line-by-line on scroll (grey → dark)
   var newHereSection = document.getElementById("new-here");

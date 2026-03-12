@@ -1174,7 +1174,7 @@ body {
     );
 }
 
-/* ========== Our Ministries (Superside-style: Tech enabled and made to work for you) ========== */
+/* ========== Our Ministries (ministries-grid card layout: tech-enabled and visitor-first) ========== */
 /* Row 1-2: Card 1 & 2 top, Card 3 spans 2 rows, Card 4 under 1 & 2 | Row 3: Card 5 & 6 (50% each) */
 .ministries-grid__eyebrow {
   letter-spacing: 0.2em;

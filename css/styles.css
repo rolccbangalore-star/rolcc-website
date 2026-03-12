@@ -563,7 +563,8 @@ body {
 
 /* Spacer above footer: let clicks pass through so footer links work when revealed */
 .serve-unveil-spacer {
-  pointer-events: none;
+  pointer-events: none !important;
+  user-select: none;
 }
 
 /* Hero carousel: 94% of viewport height; full-bleed under announcement + header */
@@ -1825,9 +1826,10 @@ body {
   padding-left: 0.5rem;
 }
 
-/* ========== Footer (Superside-style) ========== */
+/* ========== Footer (fixed reveal on scroll) ========== */
 .footer-reveal {
   min-height: 100vh;
+  pointer-events: auto;
 }
 .footer-reveal .footer-bg {
   object-fit: cover;

@@ -387,19 +387,20 @@ document.addEventListener("DOMContentLoaded", function () {
   // Arc Gallery Hero (About page)
   var arcRing = document.getElementById("arc-ring");
   if (arcRing) {
+    // About hero arc images (local ROLCC assets)
     var arcImages = [
-      "https://images.unsplash.com/photo-1438232992991-995b7058bbb3?w=400&h=400&fit=crop",
-      "https://images.unsplash.com/photo-1504052434569-70ad5836ab65?w=400&h=400&fit=crop",
-      "https://images.unsplash.com/photo-1519834785169-98be25ec3f84?w=400&h=400&fit=crop",
-      "https://images.unsplash.com/photo-1476234251651-f353703a034d?w=400&h=400&fit=crop",
-      "https://images.unsplash.com/photo-1507692049790-de58290a4334?w=400&h=400&fit=crop",
-      "https://images.unsplash.com/photo-1529070538774-1843cb3265df?w=400&h=400&fit=crop",
-      "https://images.unsplash.com/photo-1473177104440-ffee2f376098?w=400&h=400&fit=crop",
-      "https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=400&h=400&fit=crop",
-      "https://images.unsplash.com/photo-1444703686981-a3abbc4d4fe3?w=400&h=400&fit=crop",
-      "https://images.unsplash.com/photo-1470115636492-6d2b56f9b5c1?w=400&h=400&fit=crop",
-      "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?w=400&h=400&fit=crop",
-      "https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=400&h=400&fit=crop"
+      "assets/worship-leader-arc.webp",
+      "assets/group-photo-arc.webp",
+      "assets/prayer-arc.webp",
+      "assets/family-arc.webp",
+      "assets/youth-arc.webp",
+      "assets/riverkids-arc.webp",
+      "assets/riverkids-kids-arc.webp",
+      "assets/kid-arc.webp",
+      "assets/sports-day-river-kids-arc.webp",
+      "assets/pr-raj-arc.webp",
+      "assets/selviraj-prayer-arc.webp",
+      "assets/thunderstorm-arc.webp"
     ];
     var arcStartAngle = 20, arcEndAngle = 160;
 

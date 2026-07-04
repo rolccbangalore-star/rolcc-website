@@ -172,6 +172,8 @@ function readHeaderNavTemplate() {
     <meta property="og:url" content="{{CANONICAL}}" />
     <meta property="og:image" content="/images/og-image.jpg" />
     <link rel="icon" type="image/x-icon" href="/images/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png" />
+    <link rel="apple-touch-icon" href="/images/apple-touch-icon.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
@@ -512,7 +514,6 @@ function main() {
 
   injectRelatedFaqs(faqs);
   updateSitemap(totalPages);
-  addFaqNavLink();
 
   console.log(`Built ${faqs.length} approved FAQs across ${totalPages} pages and ${FAQ_CHIP_TOPICS.length} topic chips.`);
   FAQ_CHIP_TOPICS.forEach((chip) => {

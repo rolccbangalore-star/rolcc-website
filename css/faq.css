@@ -381,16 +381,11 @@
   overflow: hidden;
   max-height: 0;
   opacity: 0;
-  transition: max-height 0.35s ease, opacity 0.25s ease;
+  transition: max-height 0.38s ease, opacity 0.28s ease;
 }
 
 .faq-accordion__panel.is-open {
-  max-height: 1200px;
   opacity: 1;
-}
-
-.faq-accordion__panel[hidden]:not(.is-open) {
-  display: none;
 }
 
 .faq-accordion__answer {

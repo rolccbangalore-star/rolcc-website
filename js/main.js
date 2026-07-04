@@ -272,12 +272,20 @@ document.addEventListener("DOMContentLoaded", function () {
     const nextBtn = carousel.querySelector(".hero-carousel__arrow--next");
     const heroVideoSlide = carousel.querySelector(".carousel-slide--video");
     const heroVideo = heroVideoSlide ? heroVideoSlide.querySelector(".hero-carousel__video") : null;
-    const heroVideoPlayBtn = heroVideoSlide ? heroVideoSlide.querySelector(".hero-carousel__video-play") : null;
+    const heroVideoPlayBtn = carousel.querySelector(".hero-carousel__video-play");
     const HERO_VIDEO_TABLET_MAX = 1023;
     let current = 0;
 
     function isHeroVideoManualMode() {
       return window.matchMedia("(max-width: " + HERO_VIDEO_TABLET_MAX + "px)").matches;
+    }
+
+    function updateHeroVideoUi() {
+      var onVideoSlide = slides[current] && slides[current].classList.contains("carousel-slide--video");
+      var paused = heroVideoSlide && heroVideoSlide.classList.contains("is-video-paused");
+      heroBanner.classList.toggle("is-video-slide-active", !!onVideoSlide);
+      heroBanner.classList.toggle("is-video-paused", !!(onVideoSlide && paused));
+      if (heroVideoPlayBtn) heroVideoPlayBtn.hidden = !(onVideoSlide && paused);
     }
 
     function showHeroVideoPlayButton() {

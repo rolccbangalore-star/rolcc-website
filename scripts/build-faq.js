@@ -17,6 +17,7 @@ const {
 } = require("./faq-config");
 
 const ROOT = path.join(__dirname, "..");
+const TODAY = new Date().toISOString().slice(0, 10);
 const CSV_PATH = path.join(ROOT, "data", "faqs-source.csv");
 const DATA_DIR = path.join(ROOT, "data");
 
@@ -170,7 +171,7 @@ function readHeaderNavTemplate() {
     <meta property="og:description" content="{{DESCRIPTION}}" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="{{CANONICAL}}" />
-    <meta property="og:image" content="/images/og-image.jpg" />
+    <meta property="og:image" content="https://www.rolcc.in/images/og-image.jpg" />
     <link rel="icon" type="image/x-icon" href="/images/favicon.ico" />
     <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png" />
     <link rel="apple-touch-icon" href="/images/apple-touch-icon.png" />
@@ -193,45 +194,45 @@ function readHeaderNavTemplate() {
     </div>
     <header class="header-top" id="header">
       <nav class="header-top__bar mx-auto max-w-6xl px-4 py-3 sm:px-6 lg:px-8 flex items-center justify-between">
-        <a href="index.html" class="header-top__brand flex items-center gap-3">
+        <a href="/" class="header-top__brand flex items-center gap-3">
           <img src="assets/logo.svg" alt="River of Life Christian Church" class="header-top__logo-img" width="36" height="44" />
           <div class="leading-tight"><p class="text-sm font-semibold tracking-wide">River of Life</p><p class="text-[11px] text-slate-500">Christian Church · Bangalore</p></div>
         </a>
         <div class="hidden md:flex items-center gap-6 text-sm font-medium">
-          <a href="index.html" class="header-top__link" data-nav="index">Home</a>
-          <a href="about.html" class="header-top__link" data-nav="about">About Us</a>
+          <a href="/" class="header-top__link" data-nav="index">Home</a>
+          <a href="/about" class="header-top__link" data-nav="about">About Us</a>
           <div class="header-top__dropdown relative" id="ministries-dropdown">
             <button type="button" class="header-top__link flex items-center gap-0.5" aria-expanded="false" aria-haspopup="true" aria-controls="ministries-menu" id="ministries-trigger">Ministries <span class="text-[10px] ml-0.5" aria-hidden="true">▾</span></button>
             <div class="header-top__dropdown-panel absolute top-full left-0 mt-1 py-2 min-w-[10rem] rounded-lg border border-slate-200 bg-white shadow-lg z-50 hidden" id="ministries-menu" role="menu">
-              <a href="services.html" class="header-top__dropdown-link block px-4 py-2 text-slate-700 hover:bg-slate-50 rounded-t-lg" role="menuitem" data-nav="services">Worship Services</a>
-              <a href="river-kids.html" class="header-top__dropdown-link block px-4 py-2 text-slate-700 hover:bg-slate-50" role="menuitem" data-nav="river-kids">River Kids</a>
-              <a href="fellowship.html" class="header-top__dropdown-link block px-4 py-2 text-slate-700 hover:bg-slate-50" role="menuitem" data-nav="fellowship">Cell Fellowship</a>
-              <a href="pmd.html" class="header-top__dropdown-link block px-4 py-2 text-slate-700 hover:bg-slate-50" role="menuitem" data-nav="pmd">PMD</a>
-              <a href="counselling.html" class="header-top__dropdown-link block px-4 py-2 text-slate-700 hover:bg-slate-50" role="menuitem" data-nav="counselling">Counselling</a>
-              <a href="rolf.html" class="header-top__dropdown-link block px-4 py-2 text-slate-700 hover:bg-slate-50 rounded-b-lg" role="menuitem" data-nav="rolf">ROLF</a>
+              <a href="/services" class="header-top__dropdown-link block px-4 py-2 text-slate-700 hover:bg-slate-50 rounded-t-lg" role="menuitem" data-nav="services">Worship Services</a>
+              <a href="/river-kids" class="header-top__dropdown-link block px-4 py-2 text-slate-700 hover:bg-slate-50" role="menuitem" data-nav="river-kids">River Kids</a>
+              <a href="/fellowship" class="header-top__dropdown-link block px-4 py-2 text-slate-700 hover:bg-slate-50" role="menuitem" data-nav="fellowship">Cell Fellowship</a>
+              <a href="/pmd" class="header-top__dropdown-link block px-4 py-2 text-slate-700 hover:bg-slate-50" role="menuitem" data-nav="pmd">PMD</a>
+              <a href="/counselling" class="header-top__dropdown-link block px-4 py-2 text-slate-700 hover:bg-slate-50" role="menuitem" data-nav="counselling">Counselling</a>
+              <a href="/rolf" class="header-top__dropdown-link block px-4 py-2 text-slate-700 hover:bg-slate-50 rounded-b-lg" role="menuitem" data-nav="rolf">ROLF</a>
             </div>
           </div>
-          <a href="giving.html" class="header-top__link" data-nav="giving">Giving</a>
-          <a href="contact.html" class="header-top__link" data-nav="contact">Contact Us</a>
+          <a href="/giving" class="header-top__link" data-nav="giving">Giving</a>
+          <a href="/contact" class="header-top__link" data-nav="contact">Contact Us</a>
         </div>
         <div class="hidden md:block"><a href="contact.html#location" class="header-top__cta inline-flex items-center rounded-full bg-accent px-4 py-2 text-xs font-semibold text-white shadow-sm ring-1 ring-accent/70 hover:bg-accentSoft transition">Join Us This Sunday</a></div>
         <button id="nav-toggle" type="button" class="header-top__hamburger md:hidden inline-flex items-center justify-center w-10 h-10 rounded-md border border-slate-300 text-slate-700 hover:bg-slate-100" aria-label="Open menu" aria-expanded="false" aria-controls="nav-menu"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
       </nav>
       <div id="nav-menu" class="header-top__menu hidden md:hidden border-t border-slate-200 bg-white" aria-hidden="true">
         <div class="mx-auto max-w-6xl px-4 py-3 space-y-1 sm:px-6 lg:px-8">
-          <a href="index.html" class="header-top__menu-link block rounded-md px-3 py-2 text-slate-700 hover:bg-slate-100" data-nav="index">Home</a>
-          <a href="about.html" class="header-top__menu-link block rounded-md px-3 py-2 text-slate-700 hover:bg-slate-100" data-nav="about">About Us</a>
+          <a href="/" class="header-top__menu-link block rounded-md px-3 py-2 text-slate-700 hover:bg-slate-100" data-nav="index">Home</a>
+          <a href="/about" class="header-top__menu-link block rounded-md px-3 py-2 text-slate-700 hover:bg-slate-100" data-nav="about">About Us</a>
           <p class="px-3 py-1.5 text-xs font-semibold uppercase tracking-wider text-slate-500 mt-2">Ministries</p>
-          <a href="services.html" class="header-top__menu-link block rounded-md px-3 py-2 pl-5 text-slate-700 hover:bg-slate-100" data-nav="services">Worship Services</a>
-          <a href="river-kids.html" class="header-top__menu-link block rounded-md px-3 py-2 pl-5 text-slate-700 hover:bg-slate-100" data-nav="river-kids">River Kids</a>
-          <a href="fellowship.html" class="header-top__menu-link block rounded-md px-3 py-2 pl-5 text-slate-700 hover:bg-slate-100" data-nav="fellowship">Cell Fellowship</a>
-          <a href="pmd.html" class="header-top__menu-link block rounded-md px-3 py-2 pl-5 text-slate-700 hover:bg-slate-100" data-nav="pmd">PMD</a>
-          <a href="counselling.html" class="header-top__menu-link block rounded-md px-3 py-2 pl-5 text-slate-700 hover:bg-slate-100" data-nav="counselling">Counselling</a>
-          <a href="rolf.html" class="header-top__menu-link block rounded-md px-3 py-2 pl-5 text-slate-700 hover:bg-slate-100" data-nav="rolf">ROLF</a>
-          <a href="events.html" class="header-top__menu-link block rounded-md px-3 py-2 pl-5 text-slate-700 hover:bg-slate-100" data-nav="events">Events</a>
-          <a href="membership.html" class="header-top__menu-link block rounded-md px-3 py-2 pl-5 text-slate-700 hover:bg-slate-100" data-nav="membership">Membership</a>
-          <a href="giving.html" class="header-top__menu-link block rounded-md px-3 py-2 text-slate-700 hover:bg-slate-100" data-nav="giving">Giving</a>
-          <a href="contact.html" class="header-top__menu-link block rounded-md px-3 py-2 text-slate-700 hover:bg-slate-100" data-nav="contact">Contact Us</a>
+          <a href="/services" class="header-top__menu-link block rounded-md px-3 py-2 pl-5 text-slate-700 hover:bg-slate-100" data-nav="services">Worship Services</a>
+          <a href="/river-kids" class="header-top__menu-link block rounded-md px-3 py-2 pl-5 text-slate-700 hover:bg-slate-100" data-nav="river-kids">River Kids</a>
+          <a href="/fellowship" class="header-top__menu-link block rounded-md px-3 py-2 pl-5 text-slate-700 hover:bg-slate-100" data-nav="fellowship">Cell Fellowship</a>
+          <a href="/pmd" class="header-top__menu-link block rounded-md px-3 py-2 pl-5 text-slate-700 hover:bg-slate-100" data-nav="pmd">PMD</a>
+          <a href="/counselling" class="header-top__menu-link block rounded-md px-3 py-2 pl-5 text-slate-700 hover:bg-slate-100" data-nav="counselling">Counselling</a>
+          <a href="/rolf" class="header-top__menu-link block rounded-md px-3 py-2 pl-5 text-slate-700 hover:bg-slate-100" data-nav="rolf">ROLF</a>
+          <a href="/events" class="header-top__menu-link block rounded-md px-3 py-2 pl-5 text-slate-700 hover:bg-slate-100" data-nav="events">Events</a>
+          <a href="/membership" class="header-top__menu-link block rounded-md px-3 py-2 pl-5 text-slate-700 hover:bg-slate-100" data-nav="membership">Membership</a>
+          <a href="/giving" class="header-top__menu-link block rounded-md px-3 py-2 text-slate-700 hover:bg-slate-100" data-nav="giving">Giving</a>
+          <a href="/contact" class="header-top__menu-link block rounded-md px-3 py-2 text-slate-700 hover:bg-slate-100" data-nav="contact">Contact Us</a>
           <a href="contact.html#location" class="header-top__menu-cta mt-3 inline-flex rounded-full bg-accent px-4 py-2 text-sm font-semibold text-white">Join Us This Sunday</a>
         </div>
       </div>
@@ -247,7 +248,7 @@ function readFooterTemplate() {
         <section class="flex flex-1 flex-col items-center justify-center px-4 py-20 text-center sm:py-24">
           <h2 class="text-3xl font-bold tracking-tight text-white sm:text-4xl md:text-5xl">Still have questions?</h2>
           <p class="mt-4 max-w-lg text-sm text-slate-300 sm:text-base">We would love to help you find the right next step.</p>
-          <a href="contact.html" class="btn-primary mt-8 inline-flex rounded-full bg-accent px-8 py-3.5 text-base font-semibold text-white shadow-lg ring-1 ring-accent/70 hover:bg-accentSoft">Contact Us</a>
+          <a href="/contact" class="btn-primary mt-8 inline-flex rounded-full bg-accent px-8 py-3.5 text-base font-semibold text-white shadow-lg ring-1 ring-accent/70 hover:bg-accentSoft">Contact Us</a>
         </section>
         <div class="border-t border-white/10">
           <div class="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
@@ -255,24 +256,24 @@ function readFooterTemplate() {
               <div>
                 <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-400">Services</p>
                 <ul class="mt-4 space-y-2.5 text-sm text-slate-300">
-                  <li><a href="services.html" class="footer-link inline-flex items-center gap-2 hover:text-white">Worship Services <span class="text-slate-500">→</span></a></li>
-                  <li><a href="river-kids.html" class="footer-link inline-flex items-center gap-2 hover:text-white">River Kids <span class="text-slate-500">→</span></a></li>
-                  <li><a href="fellowship.html" class="footer-link inline-flex items-center gap-2 hover:text-white">Cell Fellowship <span class="text-slate-500">→</span></a></li>
-                  <li><a href="pmd.html" class="footer-link inline-flex items-center gap-2 hover:text-white">PMD <span class="text-slate-500">→</span></a></li>
-                  <li><a href="counselling.html" class="footer-link inline-flex items-center gap-2 hover:text-white">Counselling <span class="text-slate-500">→</span></a></li>
-                  <li><a href="rolf.html" class="footer-link inline-flex items-center gap-2 hover:text-white">ROLF <span class="text-slate-500">→</span></a></li>
-                  <li><a href="giving.html" class="footer-link inline-flex items-center gap-2 hover:text-white">Giving <span class="text-slate-500">→</span></a></li>
+                  <li><a href="/services" class="footer-link inline-flex items-center gap-2 hover:text-white">Worship Services <span class="text-slate-500">→</span></a></li>
+                  <li><a href="/river-kids" class="footer-link inline-flex items-center gap-2 hover:text-white">River Kids <span class="text-slate-500">→</span></a></li>
+                  <li><a href="/fellowship" class="footer-link inline-flex items-center gap-2 hover:text-white">Cell Fellowship <span class="text-slate-500">→</span></a></li>
+                  <li><a href="/pmd" class="footer-link inline-flex items-center gap-2 hover:text-white">PMD <span class="text-slate-500">→</span></a></li>
+                  <li><a href="/counselling" class="footer-link inline-flex items-center gap-2 hover:text-white">Counselling <span class="text-slate-500">→</span></a></li>
+                  <li><a href="/rolf" class="footer-link inline-flex items-center gap-2 hover:text-white">ROLF <span class="text-slate-500">→</span></a></li>
+                  <li><a href="/giving" class="footer-link inline-flex items-center gap-2 hover:text-white">Giving <span class="text-slate-500">→</span></a></li>
                 </ul>
               </div>
               <div>
                 <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-400">Navigation</p>
                 <ul class="mt-4 space-y-2.5 text-sm text-slate-300">
-                  <li><a href="index.html" class="footer-link hover:text-white">Main</a></li>
-                  <li><a href="services.html" class="footer-link hover:text-white">Our Ministries</a></li>
-                  <li><a href="events.html" class="footer-link hover:text-white">Events</a></li>
-                  <li><a href="membership.html" class="footer-link hover:text-white">Membership</a></li>
-                  <li><a href="about.html" class="footer-link hover:text-white">About Us</a></li>
-                  <li><a href="contact.html" class="footer-link hover:text-white">Contact</a></li>
+                  <li><a href="/" class="footer-link hover:text-white">Main</a></li>
+                  <li><a href="/services" class="footer-link hover:text-white">Our Ministries</a></li>
+                  <li><a href="/events" class="footer-link hover:text-white">Events</a></li>
+                  <li><a href="/membership" class="footer-link hover:text-white">Membership</a></li>
+                  <li><a href="/about" class="footer-link hover:text-white">About Us</a></li>
+                  <li><a href="/contact" class="footer-link hover:text-white">Contact</a></li>
                 </ul>
               </div>
               <div>
@@ -308,7 +309,7 @@ function renderPagination(pageNum, totalPages) {
   if (totalPages <= 1) return "";
 
   const mkLink = (num, label, current) => {
-    const href = num === 1 ? "faq.html" : `faq-${num}.html`;
+    const href = faqHref(num);
     if (num === current) {
       return `<span class="faq-pagination__page is-current" aria-current="page">${label}</span>`;
     }
@@ -320,8 +321,8 @@ function renderPagination(pageNum, totalPages) {
     pages += mkLink(i, String(i), pageNum);
   }
 
-  const prev = pageNum > 1 ? `<a class="faq-pagination__nav" href="${pageNum === 2 ? "faq.html" : `faq-${pageNum - 1}.html`}" rel="prev" data-faq-page="${pageNum - 1}">Previous</a>` : `<span class="faq-pagination__nav is-disabled">Previous</span>`;
-  const next = pageNum < totalPages ? `<a class="faq-pagination__nav" href="faq-${pageNum + 1}.html" rel="next" data-faq-page="${pageNum + 1}">Next</a>` : `<span class="faq-pagination__nav is-disabled">Next</span>`;
+  const prev = pageNum > 1 ? `<a class="faq-pagination__nav" href="${faqHref(pageNum - 1)}" rel="prev" data-faq-page="${pageNum - 1}">Previous</a>` : `<span class="faq-pagination__nav is-disabled">Previous</span>`;
+  const next = pageNum < totalPages ? `<a class="faq-pagination__nav" href="${faqHref(pageNum + 1)}" rel="next" data-faq-page="${pageNum + 1}">Next</a>` : `<span class="faq-pagination__nav is-disabled">Next</span>`;
 
   return `<nav class="faq-pagination" aria-label="FAQ pages" data-faq-pagination-static>${prev}<div class="faq-pagination__pages">${pages}</div>${next}</nav>`;
 }
@@ -346,24 +347,33 @@ function renderFilterChips() {
   </div>`;
 }
 
+function faqCanonicalUrl(pageNum) {
+  return pageNum === 1 ? "https://www.rolcc.in/faq" : `https://www.rolcc.in/faq/${pageNum}`;
+}
+function faqHref(pageNum) {
+  return pageNum === 1 ? "/faq" : `/faq/${pageNum}`;
+}
+
 function buildFaqPageHtml(faqs, pageNum, totalPages) {
   const start = (pageNum - 1) * PER_PAGE;
   const pageFaqs = faqs.slice(start, start + PER_PAGE);
   const isFirstPage = pageNum === 1;
   const fileName = isFirstPage ? "faq.html" : `faq-${pageNum}.html`;
-  const canonical = isFirstPage ? "https://www.rolcc.in/faq.html" : `https://www.rolcc.in/${fileName}`;
+  const canonical = faqCanonicalUrl(pageNum);
   const titleSuffix = isFirstPage ? "" : ` — Page ${pageNum}`;
+  const pageTitle = `FAQs${titleSuffix} | River of Life Christian Church`;
+  const pageDesc = isFirstPage ? "Answers about visiting ROLCC, finding community, faith questions, families and kids, serving, and prayer support in Bangalore." : `More ROLCC FAQs — page ${pageNum} of ${totalPages}.`;
 
   const headExtra = `<link rel="stylesheet" href="css/faq.css" />
     <link rel="canonical" href="${canonical}" />
-    ${pageNum > 1 ? `<link rel="prev" href="${pageNum === 2 ? "https://www.rolcc.in/faq.html" : `https://www.rolcc.in/faq-${pageNum - 1}.html`}" />` : ""}
-    ${pageNum < totalPages ? `<link rel="next" href="https://www.rolcc.in/faq-${pageNum + 1}.html" />` : ""}
+    ${pageNum > 1 ? `<link rel="prev" href="${faqCanonicalUrl(pageNum - 1)}" />` : ""}
+    ${pageNum < totalPages ? `<link rel="next" href="${faqCanonicalUrl(pageNum + 1)}" />` : ""}
     <script type="application/ld+json">${renderFaqPageSchema(pageFaqs, canonical)}</script>
     <script type="application/ld+json">${renderBreadcrumbSchema(pageNum, totalPages)}</script>`;
 
   const body = `${readHeaderNavTemplate()
-    .replace("{{TITLE}}", `FAQs${titleSuffix} | River of Life Christian Church`)
-    .replace("{{DESCRIPTION}}", "Answers about visiting ROLCC, finding community, faith questions, families and kids, serving, and prayer support in Bangalore.")
+    .replaceAll("{{TITLE}}", pageTitle)
+    .replaceAll("{{DESCRIPTION}}", pageDesc)
     .replace("{{CANONICAL}}", canonical)
     .replace("{{HEAD_EXTRA}}", headExtra)}
     <main class="main-no-top-gap relative z-10">
@@ -461,20 +471,20 @@ function injectRelatedFaqs(faqs) {
 }
 
 function updateSitemap(totalPages) {
-  const sitemapPath = path.join(ROOT, "sitemap.xml");
-  if (!fs.existsSync(sitemapPath)) return;
-  let xml = fs.readFileSync(sitemapPath, "utf8");
-
-  const faqEntries = [];
+  const staticPages = [
+    ["/", "weekly", "1.0"],["/about", "monthly", "0.9"],["/services", "monthly", "0.9"],["/contact", "monthly", "0.9"],
+    ["/giving", "monthly", "0.8"],["/events", "weekly", "0.8"],["/membership", "monthly", "0.8"],["/river-kids", "monthly", "0.8"],
+    ["/fellowship", "monthly", "0.8"],["/pmd", "monthly", "0.7"],["/counselling", "monthly", "0.7"],["/rolf", "monthly", "0.7"],
+  ];
+  const urls = staticPages.map(([loc, changefreq, priority]) =>
+    `  <url>\n    <loc>https://www.rolcc.in${loc === "/" ? "/" : loc}</loc>\n    <lastmod>${TODAY}</lastmod>\n    <changefreq>${changefreq}</changefreq>\n    <priority>${priority}</priority>\n  </url>`
+  );
   for (let i = 1; i <= totalPages; i++) {
-    const loc = i === 1 ? "https://www.rolcc.in/faq.html" : `https://www.rolcc.in/faq-${i}.html`;
-    if (xml.includes(loc)) continue;
-    faqEntries.push(`  <url>\n    <loc>${loc}</loc>\n    <changefreq>weekly</changefreq>\n    <priority>${i === 1 ? "0.8" : "0.6"}</priority>\n  </url>`);
+    const loc = i === 1 ? "/faq" : `/faq/${i}`;
+    urls.push(`  <url>\n    <loc>https://www.rolcc.in${loc}</loc>\n    <lastmod>${TODAY}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>${i === 1 ? "0.8" : "0.6"}</priority>\n  </url>`);
   }
-
-  if (!faqEntries.length) return;
-  xml = xml.replace("</urlset>", `${faqEntries.join("\n")}\n</urlset>`);
-  fs.writeFileSync(sitemapPath, xml, "utf8");
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.join("\n")}\n</urlset>\n`;
+  fs.writeFileSync(path.join(ROOT, "sitemap.xml"), xml, "utf8");
 }
 
 function addFaqNavLink() {
@@ -485,12 +495,12 @@ function addFaqNavLink() {
     if (html.includes('href="faq.html"')) return;
 
     html = html.replace(
-      '<a href="giving.html" class="header-top__link" data-nav="giving">Giving</a>',
-      '<a href="giving.html" class="header-top__link" data-nav="giving">Giving</a>\n          <a href="faq.html" class="header-top__link" data-nav="faq">FAQs</a>'
+      '<a href="/giving" class="header-top__link" data-nav="giving">Giving</a>',
+      '<a href="/giving" class="header-top__link" data-nav="giving">Giving</a>\n          <a href="faq.html" class="header-top__link" data-nav="faq">FAQs</a>'
     );
     html = html.replace(
-      '<a href="giving.html" class="header-top__menu-link block rounded-md px-3 py-2 text-slate-700 hover:bg-slate-100" data-nav="giving">Giving</a>',
-      '<a href="giving.html" class="header-top__menu-link block rounded-md px-3 py-2 text-slate-700 hover:bg-slate-100" data-nav="giving">Giving</a>\n          <a href="faq.html" class="header-top__menu-link block rounded-md px-3 py-2 text-slate-700 hover:bg-slate-100" data-nav="faq">FAQs</a>'
+      '<a href="/giving" class="header-top__menu-link block rounded-md px-3 py-2 text-slate-700 hover:bg-slate-100" data-nav="giving">Giving</a>',
+      '<a href="/giving" class="header-top__menu-link block rounded-md px-3 py-2 text-slate-700 hover:bg-slate-100" data-nav="giving">Giving</a>\n          <a href="faq.html" class="header-top__menu-link block rounded-md px-3 py-2 text-slate-700 hover:bg-slate-100" data-nav="faq">FAQs</a>'
     );
     fs.writeFileSync(filePath, html, "utf8");
   });

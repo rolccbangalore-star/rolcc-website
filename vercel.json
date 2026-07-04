@@ -1,3 +1,183 @@
 {
-  "framework": null
+  "framework": null,
+  "rewrites": [
+    {
+      "source": "/about",
+      "destination": "/about.html"
+    },
+    {
+      "source": "/services",
+      "destination": "/services.html"
+    },
+    {
+      "source": "/contact",
+      "destination": "/contact.html"
+    },
+    {
+      "source": "/giving",
+      "destination": "/giving.html"
+    },
+    {
+      "source": "/events",
+      "destination": "/events.html"
+    },
+    {
+      "source": "/membership",
+      "destination": "/membership.html"
+    },
+    {
+      "source": "/river-kids",
+      "destination": "/river-kids.html"
+    },
+    {
+      "source": "/fellowship",
+      "destination": "/fellowship.html"
+    },
+    {
+      "source": "/pmd",
+      "destination": "/pmd.html"
+    },
+    {
+      "source": "/counselling",
+      "destination": "/counselling.html"
+    },
+    {
+      "source": "/rolf",
+      "destination": "/rolf.html"
+    },
+    {
+      "source": "/faq",
+      "destination": "/faq.html"
+    },
+    {
+      "source": "/faq/2",
+      "destination": "/faq-2.html"
+    },
+    {
+      "source": "/faq/3",
+      "destination": "/faq-3.html"
+    },
+    {
+      "source": "/faq/4",
+      "destination": "/faq-4.html"
+    },
+    {
+      "source": "/faq/5",
+      "destination": "/faq-5.html"
+    },
+    {
+      "source": "/faq/6",
+      "destination": "/faq-6.html"
+    },
+    {
+      "source": "/faq/7",
+      "destination": "/faq-7.html"
+    },
+    {
+      "source": "/faq/8",
+      "destination": "/faq-8.html"
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/about.html",
+      "destination": "/about",
+      "permanent": true
+    },
+    {
+      "source": "/services.html",
+      "destination": "/services",
+      "permanent": true
+    },
+    {
+      "source": "/contact.html",
+      "destination": "/contact",
+      "permanent": true
+    },
+    {
+      "source": "/giving.html",
+      "destination": "/giving",
+      "permanent": true
+    },
+    {
+      "source": "/events.html",
+      "destination": "/events",
+      "permanent": true
+    },
+    {
+      "source": "/membership.html",
+      "destination": "/membership",
+      "permanent": true
+    },
+    {
+      "source": "/river-kids.html",
+      "destination": "/river-kids",
+      "permanent": true
+    },
+    {
+      "source": "/fellowship.html",
+      "destination": "/fellowship",
+      "permanent": true
+    },
+    {
+      "source": "/pmd.html",
+      "destination": "/pmd",
+      "permanent": true
+    },
+    {
+      "source": "/counselling.html",
+      "destination": "/counselling",
+      "permanent": true
+    },
+    {
+      "source": "/rolf.html",
+      "destination": "/rolf",
+      "permanent": true
+    },
+    {
+      "source": "/faq.html",
+      "destination": "/faq",
+      "permanent": true
+    },
+    {
+      "source": "/faq-2.html",
+      "destination": "/faq/2",
+      "permanent": true
+    },
+    {
+      "source": "/faq-3.html",
+      "destination": "/faq/3",
+      "permanent": true
+    },
+    {
+      "source": "/faq-4.html",
+      "destination": "/faq/4",
+      "permanent": true
+    },
+    {
+      "source": "/faq-5.html",
+      "destination": "/faq/5",
+      "permanent": true
+    },
+    {
+      "source": "/faq-6.html",
+      "destination": "/faq/6",
+      "permanent": true
+    },
+    {
+      "source": "/faq-7.html",
+      "destination": "/faq/7",
+      "permanent": true
+    },
+    {
+      "source": "/faq-8.html",
+      "destination": "/faq/8",
+      "permanent": true
+    },
+    {
+      "source": "/index.html",
+      "destination": "/",
+      "permanent": true
+    }
+  ]
 }

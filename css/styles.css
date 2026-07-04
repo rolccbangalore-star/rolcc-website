@@ -619,41 +619,42 @@ body {
 }
 .hero-carousel__video {
   position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
+  top: 0;
+  left: 50%;
+  width: auto;
+  height: auto;
+  min-width: 100%;
+  min-height: 100%;
+  max-width: none;
+  transform: translateX(-50%);
   object-fit: cover;
-  /* Anchor to top so letterboxing crop trims the bottom, not the top */
   object-position: top center;
+  -webkit-object-fit: cover;
+  -webkit-object-position: top center;
 }
 .hero-carousel__video-play {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  z-index: 2;
-  transform: translate(-50%, -50%);
-  display: flex;
+  position: relative;
+  z-index: 3;
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  width: 4rem;
-  height: 4rem;
+  gap: 0.35rem;
+  margin-bottom: 0.65rem;
+  padding: 0.15rem 0.35rem;
   border: none;
-  border-radius: 9999px;
-  background: rgba(255, 255, 255, 0.92);
-  color: #0f172a;
+  background: transparent;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.92);
   cursor: pointer;
-  box-shadow: 0 4px 24px rgba(15, 23, 42, 0.35);
-  backdrop-filter: blur(6px);
-  transition: transform 0.2s ease, background 0.2s ease;
+  text-shadow: 0 0 16px rgba(15, 23, 42, 0.9), 0 0 32px rgba(15, 23, 42, 0.75);
+  transition: color 0.2s ease, opacity 0.2s ease;
 }
-.hero-carousel__video-play:hover {
-  transform: translate(-50%, -50%) scale(1.06);
-  background: #fff;
-}
-.carousel-slide--video:not(.is-video-paused) .hero-carousel__video-play {
-  opacity: 0;
-  pointer-events: none;
-}
+.hero-carousel__video-play:hover { color: #fff; }
+.hero-carousel__video-play svg { flex-shrink: 0; }
+.hero-carousel:not(.is-video-slide-active) .hero-carousel__video-play,
+.hero-carousel:not(.is-video-paused) .hero-carousel__video-play { display: none; }
 .carousel-slide--video .carousel-slide-inner {
   position: relative;
   z-index: 2;
@@ -704,6 +705,10 @@ body {
 .hero-carousel__arrow:hover {
   background: #fff;
   transform: translateY(-50%) scale(1.05);
+}
+
+@media (max-width: 1023px) {
+  .hero-carousel__arrow { display: none !important; }
 }
 
 .carousel-slide-bg-2 { background-image: url("../assets/carousel- banner-2.webp"); }
@@ -848,6 +853,9 @@ body {
   right: 0;
   z-index: 2;
   padding-bottom: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 .carousel-dots {
   display: flex;

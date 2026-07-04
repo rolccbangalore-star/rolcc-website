@@ -1,0 +1,43 @@
+{
+  "generatedAt": "2026-07-04T11:07:28.326Z",
+  "sourceFile": "faqs-answered-simple - faqs-answered-simple.csv",
+  "importedAnswers": 82,
+  "canonicalFaqs": 200,
+  "answeredCanonical": 200,
+  "publishedFaqs": 182,
+  "demotedToAlt": 18,
+  "demotedIds": [
+    { "id": "Q0203", "keeper": "Q0217", "reason": "Pentecostal identity overlap" },
+    { "id": "Q0206", "keeper": "Q0217", "reason": "Bible-believing identity overlap" },
+    { "id": "Q0207", "keeper": "Q0217", "reason": "Church beliefs overlap" },
+    { "id": "Q0225", "keeper": "Q0223", "reason": "Language list duplicate" },
+    { "id": "Q0398", "keeper": "Q0396", "reason": "International short-stay welcome" },
+    { "id": "Q0405", "keeper": "Q0396", "reason": "Business visitor welcome" },
+    { "id": "Q0301", "keeper": "Q0016", "reason": "Non-believer welcome overlap" },
+    { "id": "Q0368", "keeper": "Q0362", "reason": "Serve while working overlap" },
+    { "id": "Q0369", "keeper": "Q0362", "reason": "Serve while working overlap" },
+    { "id": "Q0386", "keeper": "Q0362", "reason": "Career + ministry overlap" },
+    { "id": "Q0438", "keeper": "Q0362", "reason": "Professionals in ministry overlap" },
+    { "id": "Q0440", "keeper": "Q0362", "reason": "Business as ministry overlap" },
+    { "id": "Q0283", "keeper": "Q0122", "reason": "Own-pace / no-commitment overlap" },
+    { "id": "Q0285", "keeper": "Q0122", "reason": "One step at a time overlap" },
+    { "id": "Q0287", "keeper": "Q0122", "reason": "Not figured out overlap" },
+    { "id": "Q0284", "keeper": "Q0298", "reason": "Quiet / low-pressure visit overlap" },
+    { "id": "Q0293", "keeper": "Q0288", "reason": "Settling in Bangalore overlap" },
+    { "id": "Q0462", "keeper": "Q0288", "reason": "International relocate + settle overlap" }
+  ],
+  "questionEditsApplied": [
+    { "id": "Q0353", "no": 38, "question": "How can church support us in our marriage and family life?" },
+    { "id": "Q0290", "no": 81, "question": "My weekends feel empty. How can I find purpose?" }
+  ],
+  "keepersWithNewAlts": [
+    { "id": "Q0217", "altCount": 6 },
+    { "id": "Q0223", "altCount": 6 },
+    { "id": "Q0396", "altCount": 7 },
+    { "id": "Q0016", "altCount": 10 },
+    { "id": "Q0362", "altCount": 12 },
+    { "id": "Q0122", "altCount": 6 },
+    { "id": "Q0298", "altCount": 6 },
+    { "id": "Q0288", "altCount": 7 }
+  ]
+}

@@ -1,0 +1,463 @@
+ID,Question,CanonicalID,MergeGroup,IsCanonical,HasAnswer,Category,ProposedCategory
+Q0001,I'm new to Bangalore. How do I find a church?,Q0001,,Yes,Yes,Finding & Visiting Church,Finding & Visiting Church
+Q0002,I work weekends sometimes. Can I still be part of a church?,Q0002,,Yes,Yes,Finding & Visiting Church,Finding & Visiting Church
+Q0003,I'm an IT professional with an unpredictable schedule. How can I stay connected?,Q0002,work-schedule,No,Yes,General,
+Q0004,I've recently moved to HSR Layout. How do I find a church community?,Q0001,find-church-bangalore,No,Yes,Finding & Visiting Church,
+Q0005,Which church in Bangalore is good for international students?,Q0005,,Yes,Yes,Serving & Ministry,Serving & Ministry
+Q0006,How do I find a Bible-believing church in Bangalore?,Q0053,bible-church-bangalore,No,Yes,Finding & Visiting Church,
+Q0007,How do I know if a church is right for me?,Q0007,,Yes,Yes,Finding & Visiting Church,Finding & Visiting Church
+Q0008,What should I look for in a church?,Q0007,church-right-fit,No,Yes,Finding & Visiting Church,
+Q0009,How long should I attend before deciding to make it my church?,Q0100,how-long-decide,No,Yes,Finding & Visiting Church,
+Q0010,How can I become part of the church community?,Q0010,,Yes,Yes,Finding & Visiting Church,Finding & Visiting Church
+Q0011,What happens when I visit a church for the first time?,Q0011,,Yes,Yes,Finding & Visiting Church,Finding & Visiting Church
+Q0012,"Can I just walk in, or do I need to register?",Q0012,,Yes,Yes,General,General
+Q0013,What should I wear to church?,Q0013,,Yes,Yes,Finding & Visiting Church,Finding & Visiting Church
+Q0014,Will someone ask me to introduce myself?,Q0089,visitor-no-spotlight,No,Yes,General,
+Q0015,What if I don't know the songs or prayers?,Q0015,,Yes,Yes,Care & Hope,Care & Hope
+Q0016,Can I visit a Christian church if I'm not a Christian?,Q0016,,Yes,Yes,Finding & Visiting Church,Finding & Visiting Church
+Q0017,Can people from any religion attend a church service?,Q0016,non-christian-welcome,No,Yes,Finding & Visiting Church,
+Q0018,Will anyone try to convert me?,Q0018,,Yes,Yes,General,General
+Q0019,Is it okay if I just want to observe?,Q0016,non-christian-welcome,No,Yes,Serving & Ministry,
+Q0020,Can I ask questions about Christianity without feeling pressured?,Q0020,,Yes,Yes,Finding & Visiting Church,Finding & Visiting Church
+Q0021,Can I come to church even if I'm struggling?,Q0021,,Yes,Yes,Finding & Visiting Church,Finding & Visiting Church
+Q0022,Can I ask someone to pray for me?,Q0022,,Yes,Yes,Care & Hope,Care & Hope
+Q0023,Can I talk to a pastor privately?,Q0023,,Yes,Yes,Serving & Ministry,Serving & Ministry
+Q0024,Can the church help me if I'm going through a difficult time?,Q0024,,Yes,Yes,Finding & Visiting Church,Finding & Visiting Church
+Q0025,Do I have to attend regularly before asking for help?,Q0025,,Yes,Yes,Finding & Visiting Church,Finding & Visiting Church
+Q0026,Can I bring my children with me?,Q0026,,Yes,Yes,Families & Children,Families & Children
+Q0027,Is there a children's program during the service?,Q0027,,Yes,Yes,Families & Children,Families & Children
+Q0028,Will my child be safe?,Q0028,,Yes,Yes,Families & Children,Families & Children
+Q0029,What if my baby cries during the service?,Q0029,,Yes,Yes,Families & Children,Families & Children
+Q0030,Can children stay with their parents if they don't want to join the kids' program?,Q0030,,Yes,Yes,Families & Children,Families & Children
+Q0031,Can I come to church by myself?,Q0031,,Yes,Yes,Finding & Visiting Church,Finding & Visiting Church
+Q0032,Will I meet people my age?,Q0032,,Yes,Yes,General,General
+Q0033,How can I make friends in the church?,Q0033,,Yes,Yes,Finding & Visiting Church,Finding & Visiting Church
+Q0034,Are there activities during the week?,Q0034,,Yes,Yes,General,General
+Q0035,Can I get involved even if I have a busy work schedule?,Q0002,work-schedule,No,Yes,General,
+Q0036,What should I expect when I visit a Christian church?,Q0036,,Yes,Yes,Finding & Visiting Church,Finding & Visiting Church
+Q0037,Do I need to know anything before attending?,Q0037,,Yes,Yes,Finding & Visiting Church,Finding & Visiting Church
+Q0038,Is it okay if I don't understand what's happening?,Q0038,,Yes,Yes,General,General
+Q0039,Can I come even if I'm still exploring Christianity?,Q0016,non-christian-welcome,No,Yes,Finding & Visiting Church,
+Q0040,Is church only for Christians?,Q0088,visitor-no-membership,No,Yes,Finding & Visiting Church,
+Q0041,How can I become part of the church?,Q0041,,Yes,Yes,Finding & Visiting Church,Finding & Visiting Church
+Q0042,How can I serve at the church?,Q0042,,Yes,Yes,Serving & Ministry,Serving & Ministry
+Q0043,Do I need to become a member before volunteering?,Q0043,,Yes,Yes,Serving & Ministry,Serving & Ministry
+Q0044,How do I join a ministry?,Q0044,,Yes,Yes,Serving & Ministry,Serving & Ministry
+Q0045,Is there training for volunteers?,Q0045,,Yes,Yes,Serving & Ministry,Serving & Ministry
+Q0046,Where can I find hope?,Q0046,,Yes,Yes,Care & Hope,Care & Hope
+Q0047,I feel alone after moving to Bangalore.,Q0065,lonely-bangalore,No,Yes,General,
+Q0048,I need someone to pray for me.,Q0048,,Yes,Yes,Care & Hope,Care & Hope
+Q0049,How do I make meaningful friendships in Bangalore?,Q0066,friends-bangalore,No,Yes,General,
+Q0050,How do I find purpose in life?,Q0081,purpose-gifts,No,Yes,General,
+Q0051,I just moved to Bangalore and feel lonely.,Q0065,lonely-bangalore,No,Yes,Care & Hope,
+Q0052,I don't want to be alone anymore.,Q0110,need-community,No,Yes,General,
+Q0053,I recently moved to Bangalore for work. Can you recommend a Bible-believing church where I can grow spiritually?,Q0053,,Yes,Yes,Finding & Visiting Church,Finding & Visiting Church
+Q0054,I'm staying in HSR Layout. Which church has an active young adults community?,Q0054,,Yes,Yes,Finding & Visiting Church,Finding & Visiting Church
+Q0055,Which church in Bangalore has good children's ministry?,Q0055,,Yes,Yes,Families & Children,Families & Children
+Q0056,I'm looking for a church that believes in the gifts of the Holy Spirit.,Q0056,,Yes,Yes,Finding & Visiting Church,Finding & Visiting Church
+Q0057,Which church in Bangalore has a good children's ministry?,Q0055,kids-ministry,No,Yes,Families & Children,
+Q0058,Where can my child learn Christian songs?,Q0060,child-music,No,Yes,Families & Children,
+Q0059,Are there churches where children can sing in worship?,Q0059,,Yes,Yes,Families & Children,Families & Children
+Q0060,Can my child learn keyboard or guitar through church?,Q0060,,Yes,Yes,Families & Children,Families & Children
+Q0061,I'm looking for a church where my children can grow spiritually.,Q0126,child-faith,No,Yes,Families & Children,
+Q0062,Which church helps children build confidence?,Q0062,,Yes,Yes,Families & Children,Families & Children
+Q0063,Is there a church where my teenager can volunteer?,Q0063,,Yes,Yes,Families & Children,Families & Children
+Q0064,Can my child participate in Christmas programs?,Q0064,,Yes,Yes,Families & Children,Families & Children
+Q0065,I'm new to Bangalore and don't know anyone.,Q0065,,Yes,Yes,General,General
+Q0066,How do I make genuine friends in Bangalore?,Q0066,,Yes,Yes,General,General
+Q0067,I'm feeling lonely after moving for work.,Q0067,,Yes,Yes,Care & Hope,Care & Hope
+Q0068,I want to meet people outside my office.,Q0068,,Yes,Yes,General,General
+Q0069,Is there a church where young professionals hang out?,Q0054,young-professionals,No,Yes,Finding & Visiting Church,
+Q0070,How do I find community in Bangalore?,Q0066,friends-bangalore,No,Yes,General,
+Q0071,I play guitar. Can I volunteer at a church?,Q0072,worship-team,No,Yes,Serving & Ministry,
+Q0072,How do I join a worship team?,Q0072,,Yes,Yes,Serving & Ministry,Serving & Ministry
+Q0073,Can I teach children in church?,Q0073,,Yes,Yes,Families & Children,Families & Children
+Q0074,How do I start serving in ministry?,Q0082,where-serve,No,Yes,Serving & Ministry,
+Q0075,I'm a media professional. Can I volunteer at church?,Q0075,,Yes,Yes,Serving & Ministry,Serving & Ministry
+Q0076,I don't feel connected at church.,Q0149,disconnected-church,No,Yes,Finding & Visiting Church,
+Q0077,How do I make friends at church?,Q0111,friends-at-church,No,Yes,Finding & Visiting Church,
+Q0078,Why do I feel disconnected from God?,Q0147,disconnected-god,No,Yes,General,
+Q0079,How do I get more involved in church?,Q0079,,Yes,Yes,Finding & Visiting Church,Finding & Visiting Church
+Q0080,I've been attending church for years but don't feel like I belong.,Q0081,purpose-gifts,No,Yes,Finding & Visiting Church,
+Q0081,How do I find purpose in church?,Q0081,,Yes,Yes,Finding & Visiting Church,Finding & Visiting Church
+Q0082,I want to serve but don't know where to start.,Q0082,,Yes,Yes,Serving & Ministry,Serving & Ministry
+Q0083,I'm shy. Can I still volunteer?,Q0083,,Yes,Yes,Serving & Ministry,Serving & Ministry
+Q0084,Can I attend church without talking to anyone?,Q0084,,Yes,Yes,Finding & Visiting Church,Finding & Visiting Church
+Q0085,Can I quietly attend a church service?,Q0084,visitor-quiet,No,Yes,Finding & Visiting Church,
+Q0086,I don't want to join a church yet. Can I just visit?,Q0086,,Yes,Yes,Finding & Visiting Church,Finding & Visiting Church
+Q0087,Is it okay if I just sit and listen during church?,Q0084,visitor-quiet,No,Yes,Finding & Visiting Church,
+Q0088,Can I attend church without becoming a member?,Q0088,,Yes,Yes,Finding & Visiting Church,Finding & Visiting Church
+Q0089,Do churches force visitors to introduce themselves?,Q0089,,Yes,Yes,Finding & Visiting Church,Finding & Visiting Church
+Q0090,I don't like attention. Can I still attend church?,Q0089,visitor-no-spotlight,No,Yes,Finding & Visiting Church,
+Q0091,Can I leave after the service without being awkward?,Q0091,,Yes,Yes,Finding & Visiting Church,Finding & Visiting Church
+Q0092,Will people keep calling me if I visit once?,Q0092,,Yes,Yes,Serving & Ministry,Serving & Ministry
+Q0093,Can I just attend without joining anything?,Q0086,visitor-quiet,No,Yes,Finding & Visiting Church,
+Q0094,Is it okay if I come alone?,Q0094,,Yes,Yes,General,General
+Q0095,Can I come occasionally?,Q0095,,Yes,Yes,General,General
+Q0096,What if I'm not ready to get involved?,Q0122,explore-own-pace,No,Yes,General,
+Q0097,Is it okay if I just want to listen?,Q0084,visitor-quiet,No,Yes,General,
+Q0098,Can I leave right after the service?,Q0091,visitor-leave-after,No,Yes,Finding & Visiting Church,
+Q0099,Will I be contacted if I visit once?,Q0092,visitor-no-chase,No,Yes,Finding & Visiting Church,
+Q0100,Can I attend for a few weeks before deciding?,Q0100,,Yes,Yes,Finding & Visiting Church,Finding & Visiting Church
+Q0101,I just moved to Bangalore. How do I build a new community?,Q0101,,Yes,Yes,General,General
+Q0102,I don't know anyone here. Where do I start?,Q0102,,Yes,Yes,General,General
+Q0103,I'm homesick. How do I cope?,Q0103,,Yes,Yes,General,General
+Q0104,How do I find Christian friends in Bangalore?,Q0111,friends-at-church,No,Yes,Finding & Visiting Church,
+Q0105,How do I find a church that feels like home?,Q0105,,Yes,Yes,Finding & Visiting Church,Finding & Visiting Church
+Q0106,Can I come alone if I'm new to the city?,Q0106,,Yes,Yes,General,General
+Q0107,Are there people my age?,Q0107,,Yes,Yes,General,General
+Q0108,Is there anything happening during the week?,Q0108,,Yes,Yes,General,General
+Q0109,How do I settle into a new city?,Q0109,,Yes,Yes,General,General
+Q0110,Why do I feel lonely even though I'm surrounded by people?,Q0110,,Yes,Yes,Care & Hope,Care & Hope
+Q0111,How do I make meaningful friendships?,Q0111,,Yes,Yes,General,General
+Q0112,I'm tired of spending weekends alone.,Q0112,,Yes,Yes,General,General
+Q0113,I don't have anyone to talk to.,Q0113,,Yes,Yes,General,General
+Q0114,Can church help if I'm lonely?,Q0114,,Yes,Yes,Care & Hope,Care & Hope
+Q0115,Is it okay to ask someone to pray with me?,Q0115,,Yes,Yes,Care & Hope,Care & Hope
+Q0116,Where do adults make genuine friends anymore?,Q0116,,Yes,Yes,General,General
+Q0117,I miss having a community.,Q0110,need-community,No,Yes,General,
+Q0118,I've never been to church. Where do I start?,Q0118,,Yes,Yes,Finding & Visiting Church,Finding & Visiting Church
+Q0119,I'm curious about Christianity but don't know anyone Christian.,Q0119,,Yes,Yes,Finding & Visiting Church,Finding & Visiting Church
+Q0120,Can I ask questions without feeling judged?,Q0120,,Yes,Yes,General,General
+Q0121,Do I have to believe before I attend?,Q0016,non-christian-welcome,No,Yes,Finding & Visiting Church,
+Q0122,Can I explore Christianity at my own pace?,Q0122,,Yes,Yes,Finding & Visiting Church,Finding & Visiting Church
+Q0123,Is church only for religious people?,Q0123,,Yes,Yes,Finding & Visiting Church,Finding & Visiting Church
+Q0124,What if I disagree with some Christian beliefs?,Q0124,,Yes,Yes,Finding & Visiting Church,Finding & Visiting Church
+Q0125,Can I attend just to understand Christianity?,Q0125,,Yes,Yes,Finding & Visiting Church,Finding & Visiting Church
+Q0126,I want my child to grow up with good values. Is church a good place?,Q0126,,Yes,Yes,Families & Children,Families & Children
+Q0127,Can my child learn music at church?,Q0060,child-music,No,Yes,Families & Children,
+Q0128,Can my child join the worship team?,Q0128,,Yes,Yes,Families & Children,Families & Children
+Q0129,Will my child have opportunities to perform?,Q0129,,Yes,Yes,Families & Children,Families & Children
+Q0130,How can my child build confidence?,Q0130,,Yes,Yes,Families & Children,Families & Children
+Q0131,Are there activities beyond Sunday?,Q0131,,Yes,Yes,General,General
+Q0132,Can teenagers get involved in serving?,Q0132,,Yes,Yes,Families & Children,Families & Children
+Q0133,How do I help my child build Christian friendships?,Q0133,,Yes,Yes,Families & Children,Families & Children
+Q0134,Is there mentoring for young people?,Q0134,,Yes,Yes,Serving & Ministry,Serving & Ministry
+Q0135,Can my child discover their talents at church?,Q0135,,Yes,Yes,Families & Children,Families & Children
+Q0136,I know how to work. I don't know how to serve.,Q0082,where-serve,No,Yes,Serving & Ministry,
+Q0137,I feel like there's more to life than work.,Q0081,purpose-gifts,No,Yes,General,
+Q0138,How do I discover my purpose?,Q0138,,Yes,Yes,General,General
+Q0139,I have talents. Where can I use them?,Q0139,,Yes,Yes,General,General
+Q0140,I play guitar. Can I serve somewhere?,Q0072,worship-team,No,Yes,Serving & Ministry,
+Q0141,I'm a designer. Can I help at church?,Q0141,,Yes,Yes,Finding & Visiting Church,Finding & Visiting Church
+Q0142,I'm good with technology. Can I volunteer?,Q0142,,Yes,Yes,Serving & Ministry,Serving & Ministry
+Q0143,How do I know what God wants me to do?,Q0143,,Yes,Yes,General,General
+Q0144,I want my weekends to mean something.,Q0144,,Yes,Yes,General,General
+Q0145,Is it okay if church is the only place I feel peaceful?,Q0145,,Yes,Yes,Finding & Visiting Church,Finding & Visiting Church
+Q0146,I haven't prayed in years. Can I start again?,Q0146,,Yes,Yes,Care & Hope,Care & Hope
+Q0147,I feel disconnected from God. Where do I begin?,Q0147,,Yes,Yes,General,General
+Q0148,I don't know how to pray anymore.,Q0146,prayer-restart,No,Yes,Care & Hope,
+Q0149,I don't know anyone at church.,Q0149,,Yes,Yes,Finding & Visiting Church,Finding & Visiting Church
+Q0150,I feel invisible when I attend church.,Q0150,,Yes,Yes,Finding & Visiting Church,Finding & Visiting Church
+Q0151,"I don't think I'm ""good enough"" for church.",Q0021,struggling-welcome,No,Yes,Finding & Visiting Church,
+Q0152,Can I come back after making mistakes?,Q0146,prayer-restart,No,Yes,General,
+Q0153,What if I cry during church?,Q0021,struggling-welcome,No,Yes,Finding & Visiting Church,
+Q0154,Is it okay if I don't sing during worship?,Q0015,worship-participation,No,Yes,General,
+Q0155,What if I don't understand the sermon?,Q0010,community-path,No,Yes,General,
+Q0156,I don't know how to read the Bible.,Q0147,disconnected-god,No,Yes,General,
+Q0157,I'm afraid people will judge me.,Q0089,visitor-no-spotlight,No,Yes,General,
+Q0158,I'm looking for a church where I can truly belong.,Q0105,belonging-church,No,Yes,Finding & Visiting Church,
+Q0159,How do I move from simply attending church to becoming part of a community?,Q0010,community-path,No,Yes,Finding & Visiting Church,
+Q0160,Is it okay to take small steps in my faith journey?,Q0122,explore-own-pace,No,Yes,General,
+Q0161,How can I discover the gifts God has given me?,Q0139,gifts-discover,No,Yes,General,
+Q0162,How do I know where I can serve in church?,Q0082,where-serve,No,Yes,Serving & Ministry,
+Q0163,"What if I don't feel ""spiritual enough"" to get involved?",Q0082,where-serve,No,Yes,General,
+Q0164,Can I grow at my own pace?,Q0122,explore-own-pace,No,Yes,General,
+Q0165,How can church become more than just a Sunday routine?,Q0010,community-path,No,Yes,Finding & Visiting Church,
+Q0166,I'm an atheist. Can I attend church?,Q0016,non-christian-welcome,No,Yes,Finding & Visiting Church,
+Q0167,Can agnostics go to church?,Q0016,non-christian-welcome,No,Yes,Finding & Visiting Church,
+Q0168,I'm not a Christian. Will I feel out of place?,Q0016,non-christian-welcome,No,Yes,Finding & Visiting Church,
+Q0169,Can I attend church just to understand Christianity?,Q0119,explore-christianity,No,Yes,Finding & Visiting Church,
+Q0170,Is it okay to ask difficult questions in church?,Q0120,difficult-questions,No,Yes,Finding & Visiting Church,
+Q0171,Do I have to agree with everything to attend church?,Q0124,disagree-welcome,No,Yes,Serving & Ministry,
+Q0172,Do churches welcome skeptics?,Q0016,non-christian-welcome,No,Yes,Finding & Visiting Church,
+Q0173,Can I attend without praying or singing?,Q0084,visitor-quiet,No,Yes,Care & Hope,
+Q0174,Will people expect me to convert?,Q0018,no-convert-pressure,No,Yes,General,
+Q0175,Is church only for believers?,Q0018,no-convert-pressure,No,Yes,Finding & Visiting Church,
+Q0176,Is Christianity intellectually defensible?,Q0176,,Yes,Yes,Finding & Visiting Church,Faith & Exploring Christianity
+Q0177,Can science and Christianity coexist?,Q0177,,Yes,Yes,Finding & Visiting Church,Faith & Exploring Christianity
+Q0178,Why do intelligent people believe in God?,Q0178,,Yes,Yes,General,Faith & Exploring Christianity
+Q0179,Is faith the opposite of reason?,Q0179,,Yes,Yes,General,Faith & Exploring Christianity
+Q0180,Can I believe in evolution and still be a Christian?,Q0180,,Yes,Yes,Finding & Visiting Church,Faith & Exploring Christianity
+Q0181,What evidence is there for Jesus?,Q0181,,Yes,Yes,General,Faith & Exploring Christianity
+Q0182,How reliable is the Bible?,Q0182,,Yes,Yes,General,Faith & Exploring Christianity
+Q0183,Why does God allow suffering?,Q0183,,Yes,Yes,General,Faith & Exploring Christianity
+Q0184,Why are there so many denominations?,Q0184,,Yes,Yes,Finding & Visiting Church,About ROLCC
+Q0185,Why do Christians believe Jesus is God?,Q0185,,Yes,Yes,Finding & Visiting Church,Faith & Exploring Christianity
+Q0186,"I want to believe, but I can't.",Q0147,disconnected-god,No,Yes,General,
+Q0187,"I lost my faith in humanity, love, and compassion",Q0114,lost-hope,No,Yes,General,
+Q0188,I don't know what I believe anymore.,Q0147,disconnected-god,No,Yes,General,
+Q0189,I'm questioning Christianity.,Q0120,difficult-questions,No,Yes,Finding & Visiting Church,
+Q0190,I have doubts about God.,Q0147,disconnected-god,No,Yes,General,
+Q0191,Do churches offer money or gifts to convert people?,Q0018,no-convert-pressure,No,Yes,General,
+Q0192,Will Christians try to argue with me?,Q0020,questions-pressure,No,Yes,Finding & Visiting Church,
+Q0193,Can I simply listen?,Q0125,observe-listen,No,Yes,General,
+Q0194,Can I ask difficult questions?,Q0120,difficult-questions,No,Yes,General,
+Q0195,What if I don't agree with everything I hear at church?,Q0124,disagree-welcome,No,Yes,General,
+Q0196,Can I come with my Christian friend?,Q0196,,Yes,Yes,Finding & Visiting Church,Finding & Visiting Church
+Q0197,I'm curious about Christianity. Can I visit a church?,Q0119,explore-christianity,No,Yes,General,
+Q0198,Can I visit more than once before deciding what I believe?,Q0100,how-long-decide,No,Yes,Finding & Visiting Church,
+Q0199,How do I choose the right church?,Q0007,church-right-fit,No,Yes,Finding & Visiting Church,
+Q0200,How many times should I visit before deciding?,Q0100,how-long-decide,No,Yes,Finding & Visiting Church,
+Q0201,Can I attend different churches before choosing one?,Q0201,,Yes,No,Finding & Visiting Church,Finding & Visiting Church
+Q0202,What denomination is this church?,Q0217,rolcc-identity,No,No,Finding & Visiting Church,
+Q0203,Is this a Pentecostal church?,Q0217,rolcc-identity,No,No,Finding & Visiting Church,About ROLCC
+Q0204,Is this an Evangelical church?,Q0203,denomination-tradition,No,No,Finding & Visiting Church,
+Q0205,Is this a Charismatic church?,Q0203,denomination-tradition,No,No,Finding & Visiting Church,
+Q0206,Is this a Bible-believing church?,Q0217,rolcc-identity,No,No,Finding & Visiting Church,About ROLCC
+Q0207,What does this church believe?,Q0217,rolcc-identity,No,No,Finding & Visiting Church,About ROLCC
+Q0208,Is this church suitable for families?,Q0208,,Yes,No,Finding & Visiting Church,About ROLCC
+Q0209,Is this church suitable for young professionals?,Q0208,church-audience,No,No,Finding & Visiting Church,
+Q0210,Is this church suitable for college students?,Q0208,church-audience,No,No,Finding & Visiting Church,
+Q0211,What languages are spoken at the church?,Q0223,languages-services,No,No,Finding & Visiting Church,
+Q0212,Do you have English services?,Q0223,languages-services,No,No,Finding & Visiting Church,
+Q0213,Do you have Tamil services?,Q0223,languages-services,No,No,Finding & Visiting Church,
+Q0214,Can someone help me if I speak Hindi?,Q0225,language-culture,No,No,General,
+Q0215,Will I find people from my home state?,Q0225,language-culture,No,No,General,
+Q0216,I'm new to Bangalore. Can this church help me settle in?,Q0462,international-relocate,No,No,Finding & Visiting Church,
+Q0217,What kind of church is ROLCC?,Q0217,,Yes,No,Finding & Visiting Church,About ROLCC
+Q0218,What does ROLCC believe?,Q0207,church-beliefs,No,No,General,
+Q0219,What makes ROLCC different from other churches in Bangalore?,Q0217,rolcc-identity,No,No,Finding & Visiting Church,
+Q0220,Is ROLCC a Pentecostal church?,Q0203,denomination-tradition,No,No,Finding & Visiting Church,
+Q0221,Who usually attends ROLCC?,Q0217,rolcc-identity,No,No,Finding & Visiting Church,
+Q0222,Is ROLCC a family-friendly church?,Q0208,church-audience,No,No,Finding & Visiting Church,
+Q0223,What languages are spoken at ROLCC?,Q0223,,Yes,No,General,About ROLCC
+Q0224,Can I attend if I don't speak English or Tamil?,Q0223,languages-services,No,No,Finding & Visiting Church,
+Q0225,"Will I be able to connect with people who speak Hindi, Malayalam, Telugu, Nepali, Bengali, or other Indian languages?",Q0223,languages-services,No,No,General,Language & Culture
+Q0226,I'm new to Bangalore. Will I find people from my state or language background?,Q0225,language-culture,No,No,General,
+Q0227,Can I visit if I'm not a Christian?,Q0016,non-christian-welcome,No,Yes,Finding & Visiting Church,
+Q0228,Can I simply attend without becoming a member?,Q0228,,Yes,No,Finding & Visiting Church,Finding & Visiting Church
+Q0229,My spouse is a Christian but I'm not. Can we attend together?,Q0228,visit-no-member,No,No,Finding & Visiting Church,
+Q0230,We're looking for a church as a newly married couple.,Q0230,,Yes,No,Finding & Visiting Church,Young Families & Couples
+Q0231,We're moving to Bangalore after marriage. How do we find a church?,Q0230,young-couples-church,No,No,Finding & Visiting Church,
+Q0232,Can couples serve together?,Q0232,,Yes,No,Serving & Ministry,Young Families & Couples
+Q0233,I'm a college student. Is there a place for me?,Q0233,,Yes,No,General,Belonging & Loneliness
+Q0234,Can I attend church if I'm studying in Bangalore away from home?,Q0233,student-church,No,No,Finding & Visiting Church,
+Q0235,How do I make friends as a student?,Q0233,student-church,No,No,General,
+Q0236,I haven't been to church in years. Can I come back?,Q0344,returning-faith,No,No,Finding & Visiting Church,
+Q0237,Will I be judged if I return after a long time?,Q0344,returning-faith,No,No,General,
+Q0238,I want to reconnect with God. Where do I start?,Q0345,reconnect-god,No,No,General,
+Q0239,Is it okay if I don't know what to do during the service?,Q0239,,Yes,No,Finding & Visiting Church,Finding & Visiting Church
+Q0240,Are there activities for college students?,Q0233,student-church,No,No,General,
+Q0241,How can I help underprivileged children in Bangalore?,Q0246,child-sponsorship,No,No,Families & Children,
+Q0242,How can I volunteer on weekends in Bangalore?,Q0242,,Yes,No,Serving & Ministry,Volunteering & Skills
+Q0243,Where can I do meaningful charity work?,Q0243,,Yes,No,Giving & CSR,Giving & CSR
+Q0244,How can I give back to society?,Q0243,charity-meaningful,No,No,General,
+Q0245,Where can I volunteer with children?,Q0246,child-sponsorship,No,No,Families & Children,
+Q0246,How do I support education for underprivileged children?,Q0246,,Yes,No,Families & Children,Giving & CSR
+Q0247,Where can I sponsor a child's education?,Q0246,child-sponsorship,No,No,Families & Children,
+Q0248,How can I make a difference in my community?,Q0243,charity-meaningful,No,No,General,
+Q0249,Can our company partner with a local NGO?,Q0249,,Yes,No,Giving & CSR,Giving & CSR
+Q0250,Is my donation eligible for 80G?,Q0250,,Yes,No,Giving & CSR,Giving & CSR
+Q0251,How do I know where my donation is used?,Q0251,,Yes,No,Giving & CSR,Giving & CSR
+Q0252,Can I sponsor a specific child?,Q0246,child-sponsorship,No,No,Families & Children,
+Q0253,Can I sponsor music education?,Q0257,donate-in-kind,No,No,General,
+Q0254,Can I support a family in need?,Q0257,donate-in-kind,No,No,General,
+Q0255,Can I donate monthly?,Q0257,donate-in-kind,No,No,General,
+Q0256,Can I volunteer instead of donating?,Q0242,volunteer-weekend,No,No,Serving & Ministry,
+Q0257,Can I donate my skills instead of money?,Q0257,,Yes,No,General,Giving & CSR
+Q0258,"Can I donate books, clothes or instruments?",Q0257,donate-in-kind,No,No,General,
+Q0259,I'm a software engineer. How can I volunteer?,Q0259,,Yes,No,Serving & Ministry,Volunteering & Skills
+Q0260,I'm a designer. Can I contribute?,Q0259,volunteer-skills,No,No,General,
+Q0261,I'm a teacher. How can I help children?,Q0261,,Yes,No,Families & Children,Families & Children
+Q0262,I'm a doctor. Can I volunteer?,Q0259,volunteer-skills,No,No,Serving & Ministry,
+Q0263,I'm a musician. Can I teach children?,Q0263,,Yes,No,Families & Children,Families & Children
+Q0264,I'm a photographer. Can I serve?,Q0259,volunteer-skills,No,No,Serving & Ministry,
+Q0265,Can I mentor students?,Q0265,,Yes,No,Serving & Ministry,Serving & Ministry
+Q0266,Can I teach spoken English?,Q0259,volunteer-skills,No,No,General,
+Q0267,Can I teach computer skills?,Q0259,volunteer-skills,No,No,General,
+Q0268,Can I help with career guidance?,Q0259,volunteer-skills,No,No,General,
+Q0269,Can we volunteer together as a family?,Q0269,,Yes,No,Serving & Ministry,Volunteering & Skills
+Q0270,Can my children participate in charity activities?,Q0269,family-volunteer,No,No,Families & Children,
+Q0271,How do I teach my children compassion?,Q0271,,Yes,No,Families & Children,Families & Children
+Q0272,Are there family volunteering opportunities?,Q0269,family-volunteer,No,No,Serving & Ministry,
+Q0273,Can teenagers volunteer?,Q0269,family-volunteer,No,No,Families & Children,
+Q0274,Where can I volunteer during weekends?,Q0242,volunteer-weekend,No,No,Serving & Ministry,
+Q0275,Can volunteering help me grow personally?,Q0242,volunteer-weekend,No,No,Serving & Ministry,
+Q0276,Do you provide volunteer certificates?,Q0242,volunteer-weekend,No,No,Serving & Ministry,
+Q0277,Can I complete my social internship?,Q0242,volunteer-weekend,No,No,Serving & Ministry,
+Q0278,Can I join as a student volunteer?,Q0242,volunteer-weekend,No,No,Serving & Ministry,
+Q0279,Where do I belong?,Q0279,,Yes,No,General,Belonging & Loneliness
+Q0280,How do I find people who genuinely care?,Q0279,belonging-core,No,No,General,
+Q0281,I'm tired of feeling alone.,Q0279,belonging-core,No,No,General,
+Q0282,Can church become family?,Q0279,belonging-core,No,No,Finding & Visiting Church,
+Q0283,What if I'm not ready to commit?,Q0122,explore-own-pace,No,No,General,General
+Q0284,Is it okay to just come and breathe?,Q0298,quiet-visit,No,No,General,General
+Q0285,Can I take my faith journey one step at a time?,Q0122,explore-own-pace,No,No,General,General
+Q0286,Will someone notice if I'm struggling?,Q0286,,Yes,No,General,General
+Q0287,Can I come even if I don't have everything figured out?,Q0122,explore-own-pace,No,No,General,General
+Q0288,I'm relocating to Bangalore. How do I find community quickly?,Q0288,,Yes,No,General,Belonging & Loneliness
+Q0289,I only know my colleagues. How do I build a life outside work?,Q0288,settle-bangalore,No,No,General,
+Q0290,My weekends feel empty.,Q0290,,Yes,No,General,General
+Q0291,I've lived in Bangalore for years but still don't feel at home.,Q0288,settle-bangalore,No,No,General,
+Q0292,How do I meet people beyond my workplace?,Q0288,settle-bangalore,No,No,General,
+Q0293,Can church help me feel settled in Bangalore?,Q0288,settle-bangalore,No,No,Finding & Visiting Church,Finding & Visiting Church
+Q0294,I just need a peaceful place this Sunday.,Q0298,quiet-visit,No,No,General,
+Q0295,Can I attend without feeling pressured?,Q0295,,Yes,No,Finding & Visiting Church,Finding & Visiting Church
+Q0296,I'm socially exhausted.,Q0298,quiet-visit,No,No,General,
+Q0297,I don't want to meet lots of people today.,Q0298,quiet-visit,No,No,General,
+Q0298,Can I simply worship quietly?,Q0298,,Yes,No,General,Finding & Visiting Church
+Q0299,Is it okay if I don't stay after the service?,Q0298,quiet-visit,No,No,Finding & Visiting Church,
+Q0300,Can I take things at my own pace?,Q0298,quiet-visit,No,No,General,
+Q0301,Can I attend church even if I don't believe in God?,Q0016,non-christian-welcome,No,No,Finding & Visiting Church,Faith & Exploring Christianity
+Q0302,Can I attend without pretending to believe?,Q0301,faith-nonbeliever,No,No,Finding & Visiting Church,
+Q0303,Will people respect my questions?,Q0301,faith-nonbeliever,No,No,General,
+Q0304,Can I have conversations instead of debates?,Q0301,faith-nonbeliever,No,No,General,
+Q0305,What if I never become a Christian?,Q0301,faith-nonbeliever,No,No,Finding & Visiting Church,
+Q0306,How do adults make genuine friends anymore?,Q0306,,Yes,No,General,Belonging & Loneliness
+Q0307,I know many people but don't have close friends.,Q0306,adult-friendship,No,No,General,
+Q0308,I'm tired of superficial relationships.,Q0306,adult-friendship,No,No,General,
+Q0309,Can church become my second family?,Q0279,belonging-core,No,No,Finding & Visiting Church,
+Q0310,Where can I find mentors?,Q0310,,Yes,No,Serving & Ministry,Mentorship & Leadership
+Q0311,Can I find accountability in church?,Q0311,,Yes,No,Finding & Visiting Church,Finding & Visiting Church
+Q0312,How do I know God's purpose for my life?,Q0361,ministry-calling,No,No,General,
+Q0313,I know my profession. How do I discover my calling?,Q0361,ministry-calling,No,No,Serving & Ministry,
+Q0314,Can my career be part of God's purpose?,Q0361,ministry-calling,No,No,General,
+Q0315,How do I discover my spiritual gifts?,Q0361,ministry-calling,No,No,General,
+Q0316,How do I know where I should serve?,Q0361,ministry-calling,No,No,Serving & Ministry,
+Q0317,Does everyone have a calling?,Q0361,ministry-calling,No,No,Serving & Ministry,
+Q0318,Can ordinary people make a difference in church?,Q0318,,Yes,No,Finding & Visiting Church,Finding & Visiting Church
+Q0319,I want my life to matter beyond work.,Q0279,belonging-core,No,No,General,
+Q0320,Can adults learn music too?,Q0320,,Yes,No,General,Worship & Music
+Q0321,Can I join the worship team if I'm a beginner?,Q0325,worship-ministry,No,No,Serving & Ministry,
+Q0322,Do I need experience to serve in worship?,Q0325,worship-ministry,No,No,Serving & Ministry,
+Q0323,Can my child learn worship instruments?,Q0325,worship-ministry,No,No,Families & Children,
+Q0324,Can I volunteer in music before becoming a member?,Q0325,worship-ministry,No,No,Serving & Ministry,
+Q0325,How does someone become part of the worship ministry?,Q0325,,Yes,No,Serving & Ministry,Worship & Music
+Q0326,Can I use my musical gifts for God?,Q0325,worship-ministry,No,No,General,
+Q0327,Do you encourage children to participate in worship?,Q0325,worship-ministry,No,No,Families & Children,
+Q0328,Is there someone who speaks Malayalam?,Q0225,language-culture,No,No,General,
+Q0329,Can someone help me connect with Telugu families?,Q0225,language-culture,No,No,General,
+Q0330,Are there Nepali believers at ROLCC?,Q0225,language-culture,No,No,General,
+Q0331,Is there a Hindi-speaking pastor or volunteer?,Q0225,language-culture,No,No,Serving & Ministry,
+Q0332,Will I find people from North East India?,Q0225,language-culture,No,No,General,
+Q0333,Can I worship in English but still connect with people from my state?,Q0225,language-culture,No,No,General,
+Q0334,I don't speak Tamil. Will I feel included?,Q0225,language-culture,No,No,General,
+Q0335,I'm new to Bangalore and miss speaking my language.,Q0225,language-culture,No,No,General,
+Q0336,I feel emotionally exhausted all the time.,Q0339,burnout,No,No,General,
+Q0337,How do I find rest beyond taking a vacation?,Q0337,,Yes,No,General,Burnout & Mental Health
+Q0338,I feel successful but empty.,Q0337,rest-peace,No,No,General,
+Q0339,Can church help with burnout?,Q0339,,Yes,No,Care & Hope,Burnout & Mental Health
+Q0340,I don't enjoy anything anymore.,Q0343,anxiety-prayer,No,No,General,
+Q0341,Why do I feel disconnected from everyone?,Q0343,anxiety-prayer,No,No,General,
+Q0342,I'm constantly stressed. How do I find peace?,Q0339,burnout,No,No,General,
+Q0343,Can prayer really help with anxiety?,Q0343,,Yes,No,Care & Hope,Burnout & Mental Health
+Q0344,I grew up in church but drifted away. Can I come back?,Q0344,,Yes,No,Finding & Visiting Church,Returning to Faith
+Q0345,I haven't opened a Bible in years. Where do I start?,Q0345,,Yes,No,General,Returning to Faith
+Q0346,I don't feel close to God anymore.,Q0346,,Yes,No,General,Returning to Faith
+Q0347,Can I restart my faith journey?,Q0346,drifted-from-god,No,No,General,
+Q0348,Will people judge me for disappearing from church?,Q0344,returning-faith,No,No,Finding & Visiting Church,
+Q0349,I've made mistakes. Will God still accept me?,Q0349,,Yes,No,General,Returning to Faith
+Q0350,How do I reconnect with God after years away?,Q0345,reconnect-god,No,No,General,
+Q0351,Can church feel like home again?,Q0351,,Yes,No,Finding & Visiting Church,Finding & Visiting Church
+Q0352,We're both working. Is there a place for our family?,Q0354,young-families,No,No,General,
+Q0353,Can we serve together as a couple?,Q0353,,Yes,No,Serving & Ministry,Young Families & Couples
+Q0354,We have a toddler. Can we still attend church comfortably?,Q0354,,Yes,No,Finding & Visiting Church,Young Families & Couples
+Q0355,How do we raise our children with Christian values in today's world?,Q0355,,Yes,No,Families & Children,Families & Children
+Q0356,Can my spouse and I meet other young families?,Q0355,parenting-values,No,No,General,
+Q0357,We're expecting our first child. Does the church have support for young parents?,Q0354,young-families,No,No,Families & Children,
+Q0358,"How do we balance work, marriage and church?",Q0354,young-families,No,No,Finding & Visiting Church,
+Q0359,We moved to Bangalore for work. How do we build a family community?,Q0288,settle-bangalore,No,No,General,
+Q0360,I'm looking for ministry opportunities in Bangalore.,Q0360,,Yes,No,Serving & Ministry,Work & Calling
+Q0361,How do I know if God is calling me into ministry?,Q0361,,Yes,No,Serving & Ministry,Work & Calling
+Q0362,Can I serve God while working a full-time job?,Q0362,,Yes,No,Serving & Ministry,Work & Calling
+Q0363,Is full-time ministry only for pastors?,Q0361,ministry-calling,No,No,Serving & Ministry,
+Q0364,How do I prepare for ministry?,Q0364,,Yes,No,Serving & Ministry,Serving & Ministry
+Q0365,I'm moving to Bangalore for ministry. Which church should I join?,Q0365,,Yes,No,Serving & Ministry,Serving & Ministry
+Q0366,Can I intern at a church?,Q0366,,Yes,No,Serving & Ministry,Ministry Training & Internships
+Q0367,Are there churches that mentor future leaders?,Q0417,ministry-training,No,No,Serving & Ministry,
+Q0368,How do I grow in ministry while working professionally?,Q0362,serve-while-working,No,No,Serving & Ministry,Serving & Ministry
+Q0369,Can I serve in church without leaving my career?,Q0362,serve-while-working,No,No,Serving & Ministry,Serving & Ministry
+Q0370,How do I discover my ministry calling?,Q0361,ministry-calling,No,No,Serving & Ministry,
+Q0371,How do I balance work and ministry?,Q0362,serve-while-working,No,No,Serving & Ministry,
+Q0372,Can I volunteer in different ministries before deciding where I fit?,Q0372,,Yes,No,Serving & Ministry,Serving & Ministry
+Q0373,I feel called by God but don't know where to begin.,Q0361,ministry-calling,No,No,General,
+Q0374,Does your church mentor people who sense a call to ministry?,Q0417,ministry-training,No,No,Serving & Ministry,
+Q0375,I'm studying at a Bible college. Can I serve at your church?,Q0366,ministry-intern,No,No,Serving & Ministry,
+Q0376,I'm doing ministry training. Can I intern with your church?,Q0366,ministry-intern,No,No,Serving & Ministry,
+Q0377,Are there opportunities for ministry students?,Q0366,ministry-intern,No,No,Serving & Ministry,
+Q0378,Can I gain practical ministry experience?,Q0366,ministry-intern,No,No,Serving & Ministry,
+Q0379,Does your church mentor young pastors?,Q0417,ministry-training,No,No,Serving & Ministry,
+Q0380,Can I assist in children's ministry?,Q0380,,Yes,No,Families & Children,Families & Children
+Q0381,Can I shadow a pastor?,Q0366,ministry-intern,No,No,Serving & Ministry,
+Q0382,Can I serve while continuing my theological studies?,Q0366,ministry-intern,No,No,Serving & Ministry,
+Q0383,Are there opportunities to preach or teach?,Q0417,ministry-training,No,No,General,
+Q0384,Does your church help develop future ministry leaders?,Q0417,ministry-training,No,No,Serving & Ministry,
+Q0385,How do I serve God while working in IT?,Q0362,serve-while-working,No,No,Serving & Ministry,
+Q0386,Can I have a successful career and still serve God?,Q0362,serve-while-working,No,No,Serving & Ministry,Serving & Ministry
+Q0387,Is ministry only for pastors?,Q0361,ministry-calling,No,No,Serving & Ministry,
+Q0388,How do I honour God through my profession?,Q0388,,Yes,No,General,General
+Q0389,Can I volunteer on weekends?,Q0242,volunteer-weekend,No,No,Serving & Ministry,
+Q0390,How do I use my professional skills in church?,Q0390,,Yes,No,Finding & Visiting Church,Finding & Visiting Church
+Q0391,I'm a software engineer. How can I serve?,Q0259,volunteer-skills,No,No,Serving & Ministry,
+Q0392,I'm a doctor. How can I serve God?,Q0259,volunteer-skills,No,No,Serving & Ministry,
+Q0393,I'm an entrepreneur. How can I make an impact?,Q0259,volunteer-skills,No,No,General,
+Q0394,Can my career be part of God's calling?,Q0362,serve-while-working,No,No,Serving & Ministry,
+Q0395,'m new to Bangalore. Can I attend your church?,Q0462,international-relocate,No,No,Finding & Visiting Church,
+Q0396,Is your church welcoming to international visitors?,Q0396,,Yes,No,Serving & Ministry,International & Visitors
+Q0397,Is the service in English?,Q0223,languages-services,No,No,Finding & Visiting Church,
+Q0398,Can I attend while I'm in India for a few months?,Q0396,international-welcome,No,No,Finding & Visiting Church,International & Visitors
+Q0399,I'm an exchange student. Can I join?,Q0398,international-short-stay,No,No,General,
+Q0400,I'm working in Bangalore temporarily. Can I be part of your church?,Q0398,international-short-stay,No,No,Finding & Visiting Church,
+Q0401,Is there an international community at your church?,Q0396,international-welcome,No,No,Serving & Ministry,
+Q0402,Can I attend even if I'm only here for six months?,Q0398,international-short-stay,No,No,Finding & Visiting Church,
+Q0403,Do you have people from different countries?,Q0396,international-welcome,No,No,General,
+Q0404,Can I join a small group as an international student?,Q0404,,Yes,No,Serving & Ministry,Serving & Ministry
+Q0405,I'm travelling for business. Can I attend this Sunday?,Q0396,international-welcome,No,No,Finding & Visiting Church,International & Visitors
+Q0406,Is your church close to Electronic City / HSR / Koramangala?,Q0406,,Yes,No,Finding & Visiting Church,Finding & Visiting Church
+Q0407,Will I feel welcome if I'm visiting from another country?,Q0396,international-welcome,No,No,Finding & Visiting Church,
+Q0408,Does this church teach the Bible faithfully?,Q0206,bible-believing,No,No,Finding & Visiting Church,
+Q0409,Is there discipleship?,Q0409,,Yes,No,General,Faith & Exploring Christianity
+Q0410,Do you believe in the gifts of the Holy Spirit?,Q0409,faith-discipleship,No,No,General,
+Q0411,Do you have systematic Bible study?,Q0409,faith-discipleship,No,No,General,
+Q0412,Do you train leaders?,Q0310,mentorship,No,No,General,
+Q0413,Is there accountability?,Q0310,mentorship,No,No,General,
+Q0414,Is there mentoring?,Q0310,mentorship,No,No,Serving & Ministry,
+Q0415,Can I grow spiritually here?,Q0409,faith-discipleship,No,No,General,
+Q0416,Does the church equip believers for ministry?,Q0417,ministry-training,No,No,Serving & Ministry,
+Q0417,Is there ministry training?,Q0417,,Yes,No,Serving & Ministry,Ministry Training & Internships
+Q0418,We want our employees to volunteer.,Q0249,company-partnership,No,No,Serving & Ministry,
+Q0419,Can your organization partner with us?,Q0249,company-partnership,No,No,General,
+Q0420,Can our school collaborate with your children's initiatives?,Q0249,company-partnership,No,No,Families & Children,
+Q0421,Can our church partner with your ministry?,Q0249,company-partnership,No,No,Serving & Ministry,
+Q0422,Do you host ministry interns?,Q0366,ministry-intern,No,No,Serving & Ministry,
+Q0423,Can missionaries connect with your church?,Q0423,,Yes,No,Finding & Visiting Church,Serving & Ministry
+Q0424,Which churches accept Bible college interns?,Q0366,ministry-intern,No,No,Serving & Ministry,
+Q0425,Can I intern while studying theology?,Q0366,ministry-intern,No,No,Serving & Ministry,
+Q0426,Can I gain pastoral experience?,Q0366,ministry-intern,No,No,Serving & Ministry,
+Q0427,Can I shadow pastors?,Q0366,ministry-intern,No,No,Serving & Ministry,
+Q0428,I'm looking for a spiritual mentor.,Q0310,mentorship,No,No,Serving & Ministry,
+Q0429,Can someone disciple me?,Q0310,mentorship,No,No,General,
+Q0430,Who can guide me in my faith?,Q0310,mentorship,No,No,General,
+Q0431,I'm a young leader looking for mentorship.,Q0310,mentorship,No,No,Serving & Ministry,
+Q0432,Can I be mentored for ministry?,Q0310,mentorship,No,No,Serving & Ministry,
+Q0433,How do I grow as a Christian leader?,Q0310,mentorship,No,No,Finding & Visiting Church,
+Q0434,Does your church mentor young professionals?,Q0310,mentorship,No,No,Serving & Ministry,
+Q0435,Can married couples receive mentoring?,Q0310,mentorship,No,No,Serving & Ministry,
+Q0436,Is there leadership mentoring?,Q0310,mentorship,No,No,Serving & Ministry,
+Q0437,Can I serve God while working full time?,Q0362,serve-while-working,No,No,Serving & Ministry,
+Q0438,Can professionals be involved in ministry?,Q0362,serve-while-working,No,No,Serving & Ministry,Serving & Ministry
+Q0439,How do I balance career and calling?,Q0362,serve-while-working,No,No,Serving & Ministry,
+Q0440,Is business also ministry?,Q0362,serve-while-working,No,No,Serving & Ministry,Serving & Ministry
+Q0441,Can software engineers serve God?,Q0259,volunteer-skills,No,No,Serving & Ministry,
+Q0442,Can entrepreneurs serve in church?,Q0259,volunteer-skills,No,No,Serving & Ministry,
+Q0443,I don't want to leave my career but I want to serve God.,Q0259,volunteer-skills,No,No,Serving & Ministry,
+Q0444,How do I use my profession for God's Kingdom?,Q0259,volunteer-skills,No,No,General,
+Q0445,How do I work for a church?,Q0445,,Yes,No,Finding & Visiting Church,Serving & Ministry
+Q0446,What qualifications do churches look for?,Q0446,,Yes,No,Finding & Visiting Church,Serving & Ministry
+Q0447,Can I work in church administration?,Q0447,,Yes,No,Finding & Visiting Church,Serving & Ministry
+Q0448,How do I become a worship leader?,Q0325,worship-ministry,No,No,Serving & Ministry,
+Q0449,Can I receive worship ministry training?,Q0325,worship-ministry,No,No,Serving & Ministry,
+Q0450,Can I join a worship team without experience?,Q0325,worship-ministry,No,No,Serving & Ministry,
+Q0451,My spouse and I want to serve God together.,Q0232,couples-serve,No,No,Serving & Ministry,
+Q0452,Can couples lead together?,Q0232,couples-serve,No,No,General,
+Q0453,How do we discover God's calling as a couple?,Q0232,couples-serve,No,No,Serving & Ministry,
+Q0454,We both work full time. Can we still serve?,Q0362,serve-while-working,No,No,Serving & Ministry,
+Q0455,How do we balance family and ministry?,Q0362,serve-while-working,No,No,Serving & Ministry,
+Q0456,Can families volunteer together?,Q0269,family-volunteer,No,No,Serving & Ministry,
+Q0457,I'm visiting India. Can I attend church?,Q0405,international-business,No,No,Finding & Visiting Church,
+Q0458,I'm in Bangalore for business. Can I attend this Sunday?,Q0405,international-business,No,No,Finding & Visiting Church,
+Q0459,Can international students join the church?,Q0396,international-welcome,No,No,Serving & Ministry,
+Q0460,Is there an international fellowship?,Q0396,international-welcome,No,No,Serving & Ministry,
+Q0461,Can I volunteer while I'm in India?,Q0404,international-cell,No,No,Serving & Ministry,
+Q0462,I'm relocating to Bangalore from the US/UK/Africa. Which church should I attend?,Q0288,settle-bangalore,No,No,Finding & Visiting Church,International & Visitors

@@ -5,12 +5,13 @@ const {
   PER_PAGE,
   RELATED_COUNT,
   FAQ_CHIP_TOPICS,
-  PAGE_TOPIC_MAP,
   HTML_PAGE_SLUGS,
   faqNumber,
   isApprovedFaq,
   confidenceScore,
   assignTopic,
+  selectRelatedFaqs,
+  getPageFaqMeta,
   sortFaqsForDisplay,
   escapeHtml,
   formatAnswerHtml,
@@ -18,7 +19,7 @@ const {
 
 const ROOT = path.join(__dirname, "..");
 const TODAY = new Date().toISOString().slice(0, 10);
-const CSV_PATH = path.join(ROOT, "data", "faqs-source.csv");
+const CSV_PATH = path.join(ROOT, "data", "faqs-source-v2.csv");
 const DATA_DIR = path.join(ROOT, "data");
 
 function loadFaqs() {
@@ -73,44 +74,19 @@ function renderAccordionList(faqs, options = {}) {
   return `<div class="faq-accordion" data-faq-accordion${options.singleOpen === false ? ' data-single-open="false"' : ""}>${faqs.map((faq, i) => renderAccordionItem(faq, { open: options.openFirst && i === 0, prefix: options.prefix || "" })).join("\n")}</div>`;
 }
 
-function selectRelatedFaqs(faqs, pageSlug) {
-  const topics = PAGE_TOPIC_MAP[pageSlug] || ["visiting"];
-  const picked = [];
-  const used = new Set();
-
-  function takeFrom(list) {
-    for (const faq of list) {
-      if (picked.length >= RELATED_COUNT) break;
-      if (used.has(faq.id)) continue;
-      used.add(faq.id);
-      picked.push(faq);
-    }
-  }
-
-  topics.forEach((topic) => {
-    takeFrom(
-      faqs.filter((f) => f.topic === topic).sort((a, b) => b.priority - a.priority || a.sortOrder - b.sortOrder)
-    );
-  });
-
-  if (picked.length < RELATED_COUNT) {
-    takeFrom(faqs.sort((a, b) => b.priority - a.priority || a.sortOrder - b.sortOrder));
-  }
-
-  return picked.slice(0, RELATED_COUNT);
-}
-
 function renderRelatedSection(faqs, pageSlug) {
   const related = selectRelatedFaqs(faqs, pageSlug);
   if (!related.length) return "";
+
+  const meta = getPageFaqMeta(pageSlug);
 
   return `      <!-- Related FAQs (auto-generated) -->
       <section class="related-faqs border-b border-slate-200 bg-slate-50" aria-labelledby="related-faqs-heading-${pageSlug}">
         <div class="mx-auto max-w-6xl px-4 py-14 sm:px-6 md:py-16 lg:px-8">
           <div class="scroll-reveal max-w-2xl">
             <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-400">Questions &amp; Answers</p>
-            <h2 id="related-faqs-heading-${pageSlug}" class="mt-3 text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">Related FAQs</h2>
-            <p class="mt-3 text-sm text-slate-600 sm:text-base">Quick answers related to this part of our church life.</p>
+            <h2 id="related-faqs-heading-${pageSlug}" class="mt-3 text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">${escapeHtml(meta.heading)}</h2>
+            <p class="mt-3 text-sm text-slate-600 sm:text-base">${escapeHtml(meta.description)}</p>
           </div>
           <div class="mt-8 scroll-reveal scroll-reveal--delay-1">
             ${renderAccordionList(related, { prefix: `${pageSlug}-` })}
@@ -373,7 +349,7 @@ function buildFaqPageHtml(faqs, pageNum, totalPages) {
     pageDesc =
       "Answers about visiting ROLCC for the first time — Sunday services, finding community, faith questions, families, River Kids, serving, and prayer support in HSR Layout, Bangalore.";
   } else if (pageNum === 2) {
-    pageTitle = "Church FAQs | Faith & Church Life | Page 2 of 8 | River of Life Christian Church, Bangalore";
+    pageTitle = `Church FAQs | Faith & Church Life | Page 2 of ${totalPages} | River of Life Christian Church, Bangalore`;
     pageDesc =
       "More answers about faith, worship, and everyday church life at River of Life Christian Church — practical guidance for guests and members in Bangalore.";
   } else {

@@ -13,10 +13,12 @@ const CONFIDENCE_WEIGHT = {
 /** User-facing filter chips (SEO + search intent) */
 const FAQ_CHIP_TOPICS = [
   { id: "visiting", label: "Visiting & First Time" },
+  { id: "about-church", label: "About ROLCC" },
   { id: "belonging-community", label: "Belonging & Community" },
   { id: "faith-questions", label: "Faith & Questions" },
   { id: "families-kids", label: "Families & Kids" },
   { id: "serving-ministry", label: "Serving & Ministry" },
+  { id: "giving-generosity", label: "Giving & Generosity" },
   { id: "prayer-support", label: "Prayer & Support" },
   { id: "general", label: "General" },
 ];
@@ -44,14 +46,96 @@ const TOPIC_RULES = [
 ];
 
 const CATEGORY_DEFAULT_TOPIC = {
+  "About ROLCC": "about-church",
+  "International & Visitors": "visiting",
+  "Language & Culture": "about-church",
+  "Belonging & Loneliness": "belonging-community",
+  "Returning to Faith": "faith-questions",
+  "Faith & Exploring Christianity": "faith-questions",
+  "Burnout & Mental Health": "prayer-support",
+  "Young Families & Couples": "families-kids",
   "Families & Children": "families-kids",
+  "Volunteering & Skills": "serving-ministry",
+  "Giving & CSR": "giving-generosity",
+  "Work & Calling": "serving-ministry",
+  "Ministry Training & Internships": "serving-ministry",
+  "Mentorship & Leadership": "serving-ministry",
+  "Worship & Music": "serving-ministry",
   "Serving & Ministry": "serving-ministry",
   "Care & Hope": "prayer-support",
   "Finding & Visiting Church": "visiting",
   General: "general",
 };
 
-/** Maps site page slugs to FAQ topics for related FAQs */
+/** Curated FAQ IDs per page — contextual, SEO-aligned (order = display order) */
+const PAGE_FAQ_MAP = {
+  index: ["Q0011", "Q0012", "Q0013", "Q0016", "Q0239", "Q0295", "Q0001", "Q0406"],
+  about: ["Q0217", "Q0208", "Q0223", "Q0184", "Q0396", "Q0056", "Q0105", "Q0201"],
+  giving: ["Q0250", "Q0251", "Q0257", "Q0243", "Q0246", "Q0249"],
+  contact: ["Q0012", "Q0406", "Q0022", "Q0023", "Q0024", "Q0239", "Q0088", "Q0115"],
+  services: ["Q0011", "Q0013", "Q0015", "Q0239", "Q0298", "Q0038", "Q0086", "Q0016"],
+  "river-kids": ["Q0026", "Q0027", "Q0028", "Q0029", "Q0030", "Q0354", "Q0055", "Q0380"],
+  fellowship: ["Q0010", "Q0033", "Q0041", "Q0311", "Q0105", "Q0279", "Q0288", "Q0306"],
+  pmd: ["Q0361", "Q0362", "Q0417", "Q0310", "Q0366", "Q0360", "Q0388", "Q0138"],
+  counselling: ["Q0024", "Q0022", "Q0023", "Q0339", "Q0343", "Q0337", "Q0286", "Q0046"],
+  rolf: ["Q0243", "Q0246", "Q0249", "Q0257", "Q0250", "Q0251", "Q0261", "Q0271"],
+  events: ["Q0034", "Q0131", "Q0108", "Q0064", "Q0290", "Q0144", "Q0095", "Q0079"],
+  membership: ["Q0088", "Q0228", "Q0100", "Q0201", "Q0043", "Q0105", "Q0311", "Q0079"],
+};
+
+/** Section copy for page-specific FAQ blocks */
+const PAGE_FAQ_META = {
+  index: {
+    heading: "Common questions before your first visit",
+    description: "Practical answers if you're planning to visit ROLCC for the first time.",
+  },
+  about: {
+    heading: "About our church — what we believe and who we are",
+    description: "Learn what kind of church ROLCC is, who we welcome, and how we worship and grow together.",
+  },
+  giving: {
+    heading: "Questions about giving & generosity",
+    description: "Answers about donations, tax benefits, transparency, and partnering through ROLF.",
+  },
+  contact: {
+    heading: "Before you visit or reach out",
+    description: "Location, visiting, prayer requests, and how to connect with our pastors.",
+  },
+  services: {
+    heading: "Questions about Sunday worship",
+    description: "What to expect in our services — songs, participation, and visiting at your own pace.",
+  },
+  "river-kids": {
+    heading: "Families & River Kids",
+    description: "Bringing children, safety, programs, and how families worship together at ROLCC.",
+  },
+  fellowship: {
+    heading: "Community & Cell Fellowship",
+    description: "Building friendships, accountability, and belonging beyond Sunday mornings.",
+  },
+  pmd: {
+    heading: "Calling, training & everyday ministry",
+    description: "Growing in purpose, mentorship, and serving God while working or studying.",
+  },
+  counselling: {
+    heading: "Pastoral care, prayer & support",
+    description: "Help for difficult seasons, burnout, anxiety, and connecting with pastoral care.",
+  },
+  rolf: {
+    heading: "Giving, outreach & community impact",
+    description: "Charity, education, CSR partnerships, and serving through ROLF.",
+  },
+  events: {
+    heading: "Events, community & getting involved",
+    description: "Weekday gatherings, special programs, and finding purpose beyond Sunday.",
+  },
+  membership: {
+    heading: "Membership & next steps",
+    description: "Attending without pressure, deciding at your pace, and what membership means at ROLCC.",
+  },
+};
+
+/** Maps site page slugs to FAQ topics (fallback when PAGE_FAQ_MAP entry is missing) */
 const PAGE_TOPIC_MAP = {
   index: ["visiting", "belonging-community"],
   about: ["visiting", "faith-questions"],
@@ -60,8 +144,8 @@ const PAGE_TOPIC_MAP = {
   fellowship: ["belonging-community", "visiting"],
   pmd: ["serving-ministry", "faith-questions"],
   counselling: ["prayer-support"],
-  rolf: ["prayer-support", "serving-ministry"],
-  giving: ["serving-ministry", "faith-questions"],
+  rolf: ["giving-generosity", "serving-ministry"],
+  giving: ["giving-generosity", "serving-ministry"],
   events: ["belonging-community", "visiting"],
   membership: ["belonging-community", "visiting"],
   contact: ["visiting", "prayer-support"],
@@ -91,10 +175,16 @@ function faqNumber(id) {
 }
 
 function isApprovedFaq(record) {
+  const answer = (record.Answer || "").trim();
+  if (!answer) return false;
+
+  const publish = (record.Publish || "").trim();
+  if (publish === "Yes") return true;
+  if (publish === "No") return false;
+
   const status = (record.Status || "").trim().toLowerCase();
   if (status === "approved") return true;
-  const num = faqNumber(record.ID);
-  return num <= MAX_PUBLISHED_ID && (record.Answer || "").trim().length > 0;
+  return faqNumber(record.ID) <= MAX_PUBLISHED_ID;
 }
 
 function confidenceScore(record) {
@@ -132,9 +222,81 @@ function assignTopic(faq) {
       }
       if (/belong|friend|lonely|connect|community|member|invisible/i.test(q)) return "belonging-community";
       return "general";
+    case "About ROLCC":
+    case "Language & Culture":
+      return "about-church";
+    case "Belonging & Loneliness":
+      return "belonging-community";
+    case "Returning to Faith":
+    case "Faith & Exploring Christianity":
+      return "faith-questions";
+    case "Burnout & Mental Health":
+      return "prayer-support";
+    case "Young Families & Couples":
+      return "families-kids";
+    case "Giving & CSR":
+      return "giving-generosity";
+    case "International & Visitors":
+      return "visiting";
+    case "Volunteering & Skills":
+    case "Work & Calling":
+    case "Ministry Training & Internships":
+    case "Mentorship & Leadership":
+    case "Worship & Music":
+      return "serving-ministry";
     default:
       return CATEGORY_DEFAULT_TOPIC[category] || "general";
   }
+}
+
+function selectRelatedFaqs(faqs, pageSlug) {
+  const byId = Object.fromEntries(faqs.map((f) => [f.id, f]));
+  const curatedIds = PAGE_FAQ_MAP[pageSlug];
+  const picked = [];
+  const used = new Set();
+
+  if (curatedIds) {
+    curatedIds.forEach((id) => {
+      const faq = byId[id];
+      if (faq && !used.has(faq.id)) {
+        used.add(faq.id);
+        picked.push(faq);
+      }
+    });
+    if (picked.length) return picked.slice(0, RELATED_COUNT);
+  }
+
+  const topics = PAGE_TOPIC_MAP[pageSlug] || ["visiting"];
+
+  function takeFrom(list) {
+    for (const faq of list) {
+      if (picked.length >= RELATED_COUNT) break;
+      if (used.has(faq.id)) continue;
+      used.add(faq.id);
+      picked.push(faq);
+    }
+  }
+
+  topics.forEach((topic) => {
+    takeFrom(
+      faqs.filter((f) => f.topic === topic).sort((a, b) => b.priority - a.priority || a.sortOrder - b.sortOrder)
+    );
+  });
+
+  if (picked.length < RELATED_COUNT) {
+    takeFrom(faqs.sort((a, b) => b.priority - a.priority || a.sortOrder - b.sortOrder));
+  }
+
+  return picked.slice(0, RELATED_COUNT);
+}
+
+function getPageFaqMeta(pageSlug) {
+  return (
+    PAGE_FAQ_META[pageSlug] || {
+      heading: "Related FAQs",
+      description: "Quick answers related to this part of our church life.",
+    }
+  );
 }
 
 function normalizeQuestionText(question) {
@@ -244,7 +406,9 @@ function escapeHtml(value) {
 }
 
 function formatAnswerHtml(text) {
-  return escapeHtml(text)
+  const escaped = escapeHtml(text);
+  const withBold = escaped.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+  return withBold
     .split(/\n{2,}/)
     .map((p) => p.trim())
     .filter(Boolean)
@@ -256,6 +420,8 @@ module.exports = {
   PER_PAGE,
   RELATED_COUNT,
   FAQ_CHIP_TOPICS,
+  PAGE_FAQ_MAP,
+  PAGE_FAQ_META,
   PAGE_TOPIC_MAP,
   PAGE_CATEGORY_MAP,
   HTML_PAGE_SLUGS,
@@ -263,6 +429,8 @@ module.exports = {
   isApprovedFaq,
   confidenceScore,
   assignTopic,
+  selectRelatedFaqs,
+  getPageFaqMeta,
   sortFaqsForDisplay,
   escapeHtml,
   formatAnswerHtml,

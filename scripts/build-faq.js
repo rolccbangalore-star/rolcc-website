@@ -4,11 +4,14 @@ const { parseCsv } = require("./csv-parse");
 const {
   PER_PAGE,
   RELATED_COUNT,
-  PAGE_CATEGORY_MAP,
+  FAQ_CHIP_TOPICS,
+  PAGE_TOPIC_MAP,
   HTML_PAGE_SLUGS,
   faqNumber,
   isApprovedFaq,
   confidenceScore,
+  assignTopic,
+  sortFaqsForDisplay,
   escapeHtml,
   formatAnswerHtml,
 } = require("./faq-config");
@@ -20,40 +23,39 @@ const DATA_DIR = path.join(ROOT, "data");
 function loadFaqs() {
   const csv = fs.readFileSync(CSV_PATH, "utf8");
   const records = parseCsv(csv);
-  return records
+  const faqs = records
     .filter(isApprovedFaq)
-    .map((record, index) => ({
-      id: record.ID.trim(),
-      question: (record.Question || "").trim(),
-      answer: (record.Answer || "").trim(),
-      category: (record.Category || "General").trim(),
-      status: (record.Status || "").trim() || "Approved",
-      confidence: (record.Confidence || "").trim(),
-      scripture: (record.Scripture || "").trim(),
-      suggestedPage: (record["Suggested Page"] || "").trim(),
-      priority: confidenceScore(record),
-      sortOrder: faqNumber(record.ID),
-      slug: record.ID.trim().toLowerCase(),
-    }))
-    .filter((faq) => faq.question && faq.answer)
-    .sort((a, b) => a.sortOrder - b.sortOrder);
-}
+    .map((record) => {
+      const faq = {
+        id: record.ID.trim(),
+        question: (record.Question || "").trim(),
+        answer: (record.Answer || "").trim(),
+        category: (record.Category || "General").trim(),
+        status: (record.Status || "").trim() || "Approved",
+        confidence: (record.Confidence || "").trim(),
+        scripture: (record.Scripture || "").trim(),
+        suggestedPage: (record["Suggested Page"] || "").trim(),
+        priority: confidenceScore(record),
+        sortOrder: faqNumber(record.ID),
+        slug: record.ID.trim().toLowerCase(),
+      };
+      faq.topic = assignTopic(faq);
+      faq.topicLabel = FAQ_CHIP_TOPICS.find((chip) => chip.id === faq.topic)?.label || faq.topic;
+      return faq;
+    })
+    .filter((faq) => faq.question && faq.answer);
 
-function uniqueCategories(faqs) {
-  const counts = new Map();
-  faqs.forEach((faq) => {
-    counts.set(faq.category, (counts.get(faq.category) || 0) + 1);
-  });
-  return [...counts.entries()]
-    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
-    .map(([name]) => name);
+  return sortFaqsForDisplay(faqs).map((faq, index) => ({
+    ...faq,
+    sortOrder: index + 1,
+  }));
 }
 
 function renderAccordionItem(faq, options = {}) {
   const { open = false, prefix = "" } = options;
   const headingId = `${prefix}faq-q-${faq.slug}`;
   const panelId = `${prefix}faq-a-${faq.slug}`;
-  return `<article class="faq-accordion__item" data-faq-id="${escapeHtml(faq.id)}" data-faq-category="${escapeHtml(faq.category)}">
+  return `<article class="faq-accordion__item" data-faq-id="${escapeHtml(faq.id)}" data-faq-topic="${escapeHtml(faq.topic)}" data-faq-category="${escapeHtml(faq.category)}">
   <h3 class="faq-accordion__heading">
     <button type="button" class="faq-accordion__trigger${open ? " is-open" : ""}" id="${headingId}" aria-expanded="${open ? "true" : "false"}" aria-controls="${panelId}">
       <span class="faq-accordion__question">${escapeHtml(faq.question)}</span>
@@ -71,7 +73,7 @@ function renderAccordionList(faqs, options = {}) {
 }
 
 function selectRelatedFaqs(faqs, pageSlug) {
-  const categories = PAGE_CATEGORY_MAP[pageSlug] || ["General"];
+  const topics = PAGE_TOPIC_MAP[pageSlug] || ["visiting"];
   const picked = [];
   const used = new Set();
 
@@ -84,21 +86,11 @@ function selectRelatedFaqs(faqs, pageSlug) {
     }
   }
 
-  categories.forEach((category) => {
+  topics.forEach((topic) => {
     takeFrom(
-      faqs
-        .filter((f) => f.category === category)
-        .sort((a, b) => b.priority - a.priority || a.sortOrder - b.sortOrder)
+      faqs.filter((f) => f.topic === topic).sort((a, b) => b.priority - a.priority || a.sortOrder - b.sortOrder)
     );
   });
-
-  if (picked.length < RELATED_COUNT) {
-    takeFrom(
-      faqs
-        .filter((f) => categories.includes(f.category))
-        .sort((a, b) => b.priority - a.priority || a.sortOrder - b.sortOrder)
-    );
-  }
 
   if (picked.length < RELATED_COUNT) {
     takeFrom(faqs.sort((a, b) => b.priority - a.priority || a.sortOrder - b.sortOrder));
@@ -218,7 +210,6 @@ function readHeaderNavTemplate() {
             </div>
           </div>
           <a href="giving.html" class="header-top__link" data-nav="giving">Giving</a>
-          <a href="faq.html" class="header-top__link text-slate-900 font-semibold" data-nav="faq">FAQs</a>
           <a href="contact.html" class="header-top__link" data-nav="contact">Contact Us</a>
         </div>
         <div class="hidden md:block"><a href="contact.html#location" class="header-top__cta inline-flex items-center rounded-full bg-accent px-4 py-2 text-xs font-semibold text-white shadow-sm ring-1 ring-accent/70 hover:bg-accentSoft transition">Join Us This Sunday</a></div>
@@ -238,7 +229,6 @@ function readHeaderNavTemplate() {
           <a href="events.html" class="header-top__menu-link block rounded-md px-3 py-2 pl-5 text-slate-700 hover:bg-slate-100" data-nav="events">Events</a>
           <a href="membership.html" class="header-top__menu-link block rounded-md px-3 py-2 pl-5 text-slate-700 hover:bg-slate-100" data-nav="membership">Membership</a>
           <a href="giving.html" class="header-top__menu-link block rounded-md px-3 py-2 text-slate-700 hover:bg-slate-100" data-nav="giving">Giving</a>
-          <a href="faq.html" class="header-top__menu-link block rounded-md px-3 py-2 text-slate-900 font-medium bg-slate-100" data-nav="faq">FAQs</a>
           <a href="contact.html" class="header-top__menu-link block rounded-md px-3 py-2 text-slate-700 hover:bg-slate-100" data-nav="contact">Contact Us</a>
           <a href="contact.html#location" class="header-top__menu-cta mt-3 inline-flex rounded-full bg-accent px-4 py-2 text-sm font-semibold text-white">Join Us This Sunday</a>
         </div>
@@ -249,7 +239,7 @@ function readHeaderNavTemplate() {
 function readFooterTemplate() {
   return `
     <footer id="footer-section" class="footer-reveal fixed bottom-0 left-0 right-0 z-0 min-h-screen overflow-hidden">
-      <img src="https://images.unsplash.com/photo-1439066615861-d1af74d74000?auto=format&fit=crop&w=1920&q=70" alt="ROLCC Bangalore" class="footer-bg absolute inset-0 h-full w-full object-cover" loading="lazy" />
+      <img src="https://images.unsplash.com/photo-1439066615861-d1af74d74000?auto=format&fit=crop&w=1920&q=70" alt="River of Life Christian Church Bangalore" class="footer-bg absolute inset-0 h-full w-full object-cover" loading="lazy" />
       <div class="footer-overlay absolute inset-0 bg-gradient-to-b from-slate-900/40 via-slate-900/70 to-slate-950/95" aria-hidden="true"></div>
       <div class="relative z-10 flex min-h-screen flex-col">
         <section class="flex flex-1 flex-col items-center justify-center px-4 py-20 text-center sm:py-24">
@@ -266,17 +256,38 @@ function readFooterTemplate() {
                   <li><a href="services.html" class="footer-link inline-flex items-center gap-2 hover:text-white">Worship Services <span class="text-slate-500">→</span></a></li>
                   <li><a href="river-kids.html" class="footer-link inline-flex items-center gap-2 hover:text-white">River Kids <span class="text-slate-500">→</span></a></li>
                   <li><a href="fellowship.html" class="footer-link inline-flex items-center gap-2 hover:text-white">Cell Fellowship <span class="text-slate-500">→</span></a></li>
-                  <li><a href="faq.html" class="footer-link inline-flex items-center gap-2 hover:text-white">FAQs <span class="text-slate-500">→</span></a></li>
+                  <li><a href="pmd.html" class="footer-link inline-flex items-center gap-2 hover:text-white">PMD <span class="text-slate-500">→</span></a></li>
+                  <li><a href="counselling.html" class="footer-link inline-flex items-center gap-2 hover:text-white">Counselling <span class="text-slate-500">→</span></a></li>
+                  <li><a href="rolf.html" class="footer-link inline-flex items-center gap-2 hover:text-white">ROLF <span class="text-slate-500">→</span></a></li>
+                  <li><a href="giving.html" class="footer-link inline-flex items-center gap-2 hover:text-white">Giving <span class="text-slate-500">→</span></a></li>
                 </ul>
               </div>
               <div>
                 <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-400">Navigation</p>
                 <ul class="mt-4 space-y-2.5 text-sm text-slate-300">
                   <li><a href="index.html" class="footer-link hover:text-white">Main</a></li>
+                  <li><a href="services.html" class="footer-link hover:text-white">Our Ministries</a></li>
+                  <li><a href="events.html" class="footer-link hover:text-white">Events</a></li>
+                  <li><a href="membership.html" class="footer-link hover:text-white">Membership</a></li>
                   <li><a href="about.html" class="footer-link hover:text-white">About Us</a></li>
                   <li><a href="contact.html" class="footer-link hover:text-white">Contact</a></li>
                 </ul>
               </div>
+              <div>
+                <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-400">Connect</p>
+                <div class="mt-4 flex flex-wrap gap-3">
+                  <a href="https://www.facebook.com/rolccindia/" target="_blank" rel="noopener noreferrer" class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/20 text-white transition hover:border-accent hover:bg-accent/20" aria-label="Facebook">
+                    <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                  </a>
+                  <a href="https://www.youtube.com/@rolccindia" target="_blank" rel="noopener noreferrer" class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/20 text-white transition hover:border-accent hover:bg-accent/20" aria-label="YouTube">
+                    <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                  </a>
+                  <a href="https://www.instagram.com/rolccindia" target="_blank" rel="noopener noreferrer" class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/20 text-white transition hover:border-accent hover:bg-accent/20" aria-label="Instagram">
+                    <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+                  </a>
+                </div>
+              </div>
+              <div></div>
             </div>
           </div>
         </div>
@@ -313,15 +324,27 @@ function renderPagination(pageNum, totalPages) {
   return `<nav class="faq-pagination" aria-label="FAQ pages" data-faq-pagination-static>${prev}<div class="faq-pagination__pages">${pages}</div>${next}</nav>`;
 }
 
-function renderFilterChips(categories) {
+function renderFilterChips() {
   const chips = [`<button type="button" class="faq-chip is-active" data-faq-filter="all">All</button>`];
-  categories.forEach((cat) => {
-    chips.push(`<button type="button" class="faq-chip" data-faq-filter="${escapeHtml(cat)}">${escapeHtml(cat)}</button>`);
+  FAQ_CHIP_TOPICS.forEach((chip) => {
+    chips.push(
+      `<button type="button" class="faq-chip" data-faq-filter="${escapeHtml(chip.id)}">${escapeHtml(chip.label)}</button>`
+    );
   });
-  return `<div class="faq-chips" role="toolbar" aria-label="Filter FAQs by topic" data-faq-chips>${chips.join("")}</div>`;
+  return `<div class="faq-chips-wrap" data-faq-chips-wrap>
+    <button type="button" class="faq-chips-nav faq-chips-nav--prev" data-faq-chips-prev aria-label="Scroll categories left" disabled>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+    </button>
+    <div class="faq-chips-viewport">
+      <div class="faq-chips" role="toolbar" aria-label="Filter FAQs by topic" data-faq-chips>${chips.join("")}</div>
+    </div>
+    <button type="button" class="faq-chips-nav faq-chips-nav--next" data-faq-chips-next aria-label="Scroll categories right">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+    </button>
+  </div>`;
 }
 
-function buildFaqPageHtml(faqs, categories, pageNum, totalPages) {
+function buildFaqPageHtml(faqs, pageNum, totalPages) {
   const start = (pageNum - 1) * PER_PAGE;
   const pageFaqs = faqs.slice(start, start + PER_PAGE);
   const isFirstPage = pageNum === 1;
@@ -338,26 +361,30 @@ function buildFaqPageHtml(faqs, categories, pageNum, totalPages) {
 
   const body = `${readHeaderNavTemplate()
     .replace("{{TITLE}}", `FAQs${titleSuffix} | River of Life Christian Church`)
-    .replace("{{DESCRIPTION}}", "Browse answers about ROLCC — church, ministries, Bible College, events, giving, and more.")
+    .replace("{{DESCRIPTION}}", "Answers about visiting ROLCC, finding community, faith questions, families and kids, serving, and prayer support in Bangalore.")
     .replace("{{CANONICAL}}", canonical)
     .replace("{{HEAD_EXTRA}}", headExtra)}
     <main class="main-no-top-gap relative z-10">
-      <section class="faq-hero contact-hero contact-hero--bg-image relative overflow-hidden">
+      <section class="faq-hero contact-hero contact-hero--bg-image relative">
         <div class="contact-hero__curve" aria-hidden="true"></div>
         <div class="relative z-10 mx-auto max-w-6xl px-4 pt-6 pb-10 sm:px-6 sm:pt-24 sm:pb-12 md:pt-28 lg:px-8 lg:pt-32">
           <div class="max-w-3xl scroll-reveal">
             <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-accent">Help Center</p>
             <h1 class="mt-3 text-balance text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl md:text-4xl">Find the Answers You&apos;re Looking For</h1>
-            <p class="mt-5 text-sm text-slate-600 sm:text-base leading-relaxed">Browse answers to common questions about our church, ministries, Bible College, internships, events, and more. Search or explore by topic to quickly find what you&apos;re looking for.</p>
-            <div class="mt-8 scroll-reveal scroll-reveal--delay-1">
+            <p class="mt-5 text-sm text-slate-600 sm:text-base leading-relaxed">Answers about visiting for the first time, finding community, exploring faith, family programs, serving, getting support, and other general questions. Search or filter by topic to find what you need.</p>
+            <div class="faq-hero__tools mt-8 scroll-reveal scroll-reveal--delay-1">
               <label class="sr-only" for="faq-search">Search FAQs</label>
               <div class="faq-search" data-faq-search-wrap>
-                <svg class="faq-search__icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-                <input type="search" id="faq-search" class="faq-search__input" placeholder="Search questions and answers…" autocomplete="off" data-faq-search />
+                <div class="faq-search__field">
+                  <svg class="faq-search__icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                  <input type="text" id="faq-search" class="faq-search__input" placeholder=" " autocomplete="off" inputmode="search" enterkeyhint="search" role="searchbox" data-faq-search aria-autocomplete="list" aria-controls="faq-suggestions" aria-expanded="false" aria-label="Search FAQs. Try searching for kids ministry, serving at church, counselling, membership, or visiting." />
+                  <div class="faq-search__hint" data-faq-search-hint aria-hidden="true">Try searching for <span class="faq-search__hint-phrase" data-faq-search-hint-phrase>kids ministry</span></div>
+                </div>
                 <button type="button" class="faq-search__clear hidden" data-faq-search-clear aria-label="Clear search">×</button>
+                <div class="faq-suggestions hidden" id="faq-suggestions" data-faq-suggestions role="listbox" aria-label="Suggested questions"></div>
               </div>
+              <div class="faq-hero__chips scroll-reveal scroll-reveal--delay-2">${renderFilterChips()}</div>
             </div>
-            <div class="mt-5 scroll-reveal scroll-reveal--delay-2">${renderFilterChips(categories)}</div>
           </div>
         </div>
       </section>
@@ -367,7 +394,7 @@ function buildFaqPageHtml(faqs, categories, pageNum, totalPages) {
           <p class="faq-results-meta text-sm text-slate-500" data-faq-results-meta aria-live="polite">Showing ${start + 1}–${Math.min(start + PER_PAGE, faqs.length)} of ${faqs.length} questions</p>
           <div class="mt-6" data-faq-list-static>${renderAccordionList(pageFaqs)}</div>
           <div class="mt-6 hidden" data-faq-list-dynamic aria-live="polite"></div>
-          <p class="faq-empty hidden mt-8 text-center text-sm text-slate-500" data-faq-empty>No FAQs match your search. Try another keyword or category.</p>
+          <p class="faq-empty hidden mt-8 text-center text-sm text-slate-500" data-faq-empty>No FAQs match your search. Try another keyword or topic.</p>
           <div class="mt-10">${renderPagination(pageNum, totalPages)}</div>
           <nav class="faq-pagination hidden mt-10" aria-label="Filtered FAQ pages" data-faq-pagination-dynamic></nav>
         </div>
@@ -377,6 +404,8 @@ function buildFaqPageHtml(faqs, categories, pageNum, totalPages) {
     </main>
 ${readFooterTemplate()}
     <script src="js/main.js"></script>
+    <script id="faq-data" type="application/json">${JSON.stringify({ faqs, chips: FAQ_CHIP_TOPICS, total: faqs.length, perPage: PER_PAGE })}</script>
+    <script src="js/faq/search.js"></script>
     <script src="js/faq/core.js"></script>
     <script src="js/faq/accordion.js"></script>
     <script src="js/faq/page.js"></script>
@@ -395,18 +424,22 @@ function injectRelatedFaqs(faqs) {
     if (!fs.existsSync(filePath)) return;
 
     let html = fs.readFileSync(filePath, "utf8");
-    if (html.includes(`related-faqs-heading-${slug}`)) return;
-    const markerStart = "<!-- @related-faqs:start -->";
-    const markerEnd = "<!-- @related-faqs:end -->";
     const section = renderRelatedSection(faqs, slug);
+    const relatedPattern = /      <!-- Related FAQs \(auto-generated\) -->[\s\S]*?      <\/section>\r?\n/;
 
-    if (html.includes(markerStart)) {
-      html = html.replace(new RegExp(`${markerStart}[\\s\\S]*?${markerEnd}`), `${markerStart}\n${section}      ${markerEnd}`);
+    if (relatedPattern.test(html)) {
+      html = html.replace(relatedPattern, section);
     } else {
-      const footerIdx = html.lastIndexOf('<footer id="footer-section"');
-      const spacerIdx = html.lastIndexOf('<div class="serve-unveil-spacer min-h-screen" aria-hidden="true"></div>', footerIdx);
-      if (spacerIdx !== -1) {
-        html = html.slice(0, spacerIdx) + section + html.slice(spacerIdx);
+      const markerStart = "<!-- @related-faqs:start -->";
+      const markerEnd = "<!-- @related-faqs:end -->";
+      if (html.includes(markerStart)) {
+        html = html.replace(new RegExp(`${markerStart}[\\s\\S]*?${markerEnd}`), `${markerStart}\n${section}      ${markerEnd}`);
+      } else {
+        const footerIdx = html.lastIndexOf('<footer id="footer-section"');
+        const spacerIdx = html.lastIndexOf('<div class="serve-unveil-spacer min-h-screen" aria-hidden="true"></div>', footerIdx);
+        if (spacerIdx !== -1) {
+          html = html.slice(0, spacerIdx) + section + html.slice(spacerIdx);
+        }
       }
     }
 
@@ -463,14 +496,16 @@ function addFaqNavLink() {
 
 function main() {
   const faqs = loadFaqs();
-  const categories = uniqueCategories(faqs);
   const totalPages = Math.max(1, Math.ceil(faqs.length / PER_PAGE));
 
   fs.mkdirSync(DATA_DIR, { recursive: true });
-  fs.writeFileSync(path.join(DATA_DIR, "faqs.json"), JSON.stringify({ faqs, categories, total: faqs.length, perPage: PER_PAGE }, null, 0));
+  fs.writeFileSync(
+    path.join(DATA_DIR, "faqs.json"),
+    JSON.stringify({ faqs, chips: FAQ_CHIP_TOPICS, total: faqs.length, perPage: PER_PAGE }, null, 0)
+  );
 
   for (let page = 1; page <= totalPages; page++) {
-    const { fileName, html } = buildFaqPageHtml(faqs, categories, page, totalPages);
+    const { fileName, html } = buildFaqPageHtml(faqs, page, totalPages);
     fs.writeFileSync(path.join(ROOT, fileName), html, "utf8");
     console.log(`Wrote ${fileName} (${Math.min(PER_PAGE, faqs.length - (page - 1) * PER_PAGE)} FAQs)`);
   }
@@ -479,7 +514,11 @@ function main() {
   updateSitemap(totalPages);
   addFaqNavLink();
 
-  console.log(`Built ${faqs.length} approved FAQs across ${totalPages} pages and ${categories.length} categories.`);
+  console.log(`Built ${faqs.length} approved FAQs across ${totalPages} pages and ${FAQ_CHIP_TOPICS.length} topic chips.`);
+  FAQ_CHIP_TOPICS.forEach((chip) => {
+    const count = faqs.filter((f) => f.topic === chip.id).length;
+    console.log(`  ${chip.label}: ${count}`);
+  });
 }
 
 main();

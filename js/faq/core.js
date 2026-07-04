@@ -65,13 +65,23 @@
   }
 
   function filterFaqs(faqs, state) {
+    if (global.FAQSearch) {
+      return global.FAQSearch.searchFaqs(faqs, state);
+    }
+
     var q = (state.q || "").toLowerCase();
-    var category = state.category || "all";
+    var topic = state.category || "all";
     return faqs.filter(function (faq) {
-      if (category !== "all" && faq.category !== category) return false;
+      if (topic !== "all" && faq.topic !== topic) return false;
       if (!q) return true;
       return faq.question.toLowerCase().indexOf(q) !== -1 || faq.answer.toLowerCase().indexOf(q) !== -1;
     });
+  }
+
+  function highlightForSearch(text, query) {
+    if (!query) return escapeHtml(text);
+    if (global.FAQSearch) return global.FAQSearch.highlightSmart(text, query);
+    return highlightText(text, query);
   }
 
   function paginate(list, page, perPage) {
@@ -92,6 +102,7 @@
     PER_PAGE: PER_PAGE,
     escapeHtml: escapeHtml,
     highlightText: highlightText,
+    highlightForSearch: highlightForSearch,
     formatAnswerHtml: formatAnswerHtml,
     readQueryParams: readQueryParams,
     writeQueryParams: writeQueryParams,

@@ -153,7 +153,8 @@
               <a href="rolf.html" class="header-top__dropdown-link block px-4 py-2 text-slate-700 hover:bg-slate-50 rounded-b-lg" role="menuitem" data-nav="rolf">ROLF</a>
             </div>
           </div>
-          <a href="giving.html" class="header-top__link" data-nav="giving">Giving</a>
+          <a href="giving.html" class="header-top__link" data-nav="giving">Giving</a>
+
           <a href="contact.html" class="header-top__link" data-nav="contact">Contact Us</a>
         </div>
 
@@ -180,7 +181,8 @@
           <a href="rolf.html" class="header-top__menu-link block rounded-md px-3 py-2 pl-5 text-slate-700 hover:bg-slate-100" data-nav="rolf">ROLF</a>
           <a href="events.html" class="header-top__menu-link block rounded-md px-3 py-2 pl-5 text-slate-700 hover:bg-slate-100" data-nav="events">Events</a>
           <a href="membership.html" class="header-top__menu-link block rounded-md px-3 py-2 pl-5 text-slate-700 hover:bg-slate-100" data-nav="membership">Membership</a>
-          <a href="giving.html" class="header-top__menu-link block rounded-md px-3 py-2 text-slate-700 hover:bg-slate-100" data-nav="giving">Giving</a>
+          <a href="giving.html" class="header-top__menu-link block rounded-md px-3 py-2 text-slate-700 hover:bg-slate-100" data-nav="giving">Giving</a>
+
           <a href="contact.html" class="header-top__menu-link block rounded-md px-3 py-2 text-slate-700 hover:bg-slate-100" data-nav="contact">Contact Us</a>
           <a href="contact.html#location" class="header-top__menu-cta mt-3 inline-flex rounded-full bg-accent px-4 py-2 text-sm font-semibold text-white">Join Us This Sunday</a>
         </div>
@@ -191,8 +193,17 @@
       <!-- Hero Carousel: banner image spans full width below header & announcement -->
       <section class="hero-carousel hero-carousel--with-bg hero-theme-dark" id="hero-banner" data-bg-image="assets/carousel- banner-1.webp">
         <div class="carousel-track">
-          <!-- Slide 1: Join Us This Sunday -->
-          <div class="carousel-slide carousel-slide-bg-1 active flex flex-col justify-center items-center text-center" data-bg-image="assets/carousel- banner-1.webp">
+          <!-- Slide 1: Join Us This Sunday (ministry highlight video) -->
+          <div class="carousel-slide carousel-slide--video active flex flex-col justify-center items-center text-center" data-bg-image="assets/carousel- banner-1.webp">
+            <div class="hero-carousel__video-wrap">
+              <video class="hero-carousel__video" muted loop playsinline preload="metadata" poster="assets/carousel- banner-1.webp" aria-hidden="true">
+                <source src="assets/Website Hero.webm" type="video/webm" />
+                <source src="assets/Website Hero.mp4" type="video/mp4" />
+              </video>
+              <button type="button" class="hero-carousel__video-play" aria-label="Play ministry highlight video">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+              </button>
+            </div>
             <div class="carousel-slide-inner mx-auto w-full max-w-6xl flex flex-col justify-center items-center px-4 py-12 sm:px-6 md:py-16 lg:px-8 text-center">
               <p class="text-xs font-semibold uppercase tracking-[0.18em] text-accent">Join Us Live</p>
               <h1 class="mt-2 text-balance text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl md:text-5xl">Join Us This Sunday in Bangalore</h1>
@@ -239,6 +250,12 @@
             </div>
           </div>
         </div>
+        <button type="button" class="hero-carousel__arrow hero-carousel__arrow--prev" aria-label="Previous slide">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+        </button>
+        <button type="button" class="hero-carousel__arrow hero-carousel__arrow--next" aria-label="Next slide">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+        </button>
         <div class="carousel-dots-wrapper">
           <div class="carousel-dots mx-auto max-w-6xl px-4" aria-hidden="true">
             <button type="button" class="active" aria-label="Slide 1"></button>

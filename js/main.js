@@ -268,8 +268,87 @@ document.addEventListener("DOMContentLoaded", function () {
   if (carousel && heroBanner) {
     const slides = carousel.querySelectorAll(".carousel-slide");
     const dots = carousel.querySelectorAll(".carousel-dots button");
+    const prevBtn = carousel.querySelector(".hero-carousel__arrow--prev");
+    const nextBtn = carousel.querySelector(".hero-carousel__arrow--next");
+    const heroVideoSlide = carousel.querySelector(".carousel-slide--video");
+    const heroVideo = heroVideoSlide ? heroVideoSlide.querySelector(".hero-carousel__video") : null;
+    const heroVideoPlayBtn = heroVideoSlide ? heroVideoSlide.querySelector(".hero-carousel__video-play") : null;
+    const HERO_VIDEO_TABLET_MAX = 1023;
     let current = 0;
-    let timer;
+
+    function isHeroVideoManualMode() {
+      return window.matchMedia("(max-width: " + HERO_VIDEO_TABLET_MAX + "px)").matches;
+    }
+
+    function showHeroVideoPlayButton() {
+      if (!heroVideoSlide) return;
+      heroVideoSlide.classList.add("is-video-paused");
+    }
+
+    function hideHeroVideoPlayButton() {
+      if (!heroVideoSlide) return;
+      heroVideoSlide.classList.remove("is-video-paused");
+    }
+
+    function tryPlayHeroVideo() {
+      if (!heroVideo || !heroVideoSlide || !heroVideoSlide.classList.contains("active")) return;
+      heroVideo.play().then(function () {
+        hideHeroVideoPlayButton();
+      }).catch(function () {
+        showHeroVideoPlayButton();
+      });
+    }
+
+    function initHeroVideo() {
+      if (!heroVideo || !heroVideoSlide) return;
+
+      if (isHeroVideoManualMode()) {
+        heroVideo.preload = "none";
+        showHeroVideoPlayButton();
+        return;
+      }
+
+      heroVideo.preload = "auto";
+      tryPlayHeroVideo();
+
+      var loadTimeout = window.setTimeout(function () {
+        if (heroVideoSlide.classList.contains("is-video-paused")) return;
+        if (heroVideo.readyState < 2 || heroVideo.paused) {
+          showHeroVideoPlayButton();
+        }
+      }, 8000);
+
+      heroVideo.addEventListener("canplaythrough", function () {
+        window.clearTimeout(loadTimeout);
+      }, { once: true });
+
+      heroVideo.addEventListener("error", function () {
+        window.clearTimeout(loadTimeout);
+        showHeroVideoPlayButton();
+      });
+    }
+
+    if (heroVideoPlayBtn && heroVideo) {
+      heroVideoPlayBtn.addEventListener("click", function () {
+        heroVideo.preload = "auto";
+        if (heroVideo.readyState === 0) {
+          heroVideo.load();
+        }
+        tryPlayHeroVideo();
+      });
+    }
+
+    window.matchMedia("(max-width: " + HERO_VIDEO_TABLET_MAX + "px)").addEventListener("change", function () {
+      if (!heroVideo || !heroVideoSlide) return;
+      if (isHeroVideoManualMode()) {
+        heroVideo.pause();
+        heroVideo.preload = "none";
+        showHeroVideoPlayButton();
+      } else if (heroVideoSlide.classList.contains("active")) {
+        heroVideo.preload = "auto";
+        tryPlayHeroVideo();
+      }
+    });
 
     // Adaptive contrast: average image dark → white text; average image light → black text
     function setHeroThemeFromImage(imageUrl) {
@@ -331,13 +410,47 @@ document.addEventListener("DOMContentLoaded", function () {
       img.src = imageUrl;
     }
 
+    function syncHeroVideos() {
+      slides.forEach(function (s) {
+        var video = s.querySelector(".hero-carousel__video");
+        if (!video) return;
+        if (s.classList.contains("active")) {
+          if (s.classList.contains("is-video-paused")) return;
+          if (!isHeroVideoManualMode()) {
+            video.play().catch(function () {
+              showHeroVideoPlayButton();
+            });
+          }
+        } else {
+          video.pause();
+        }
+      });
+    }
+
+    function applyHeroThemeForSlide(activeSlide) {
+      if (activeSlide && activeSlide.classList.contains("carousel-slide--video")) {
+        heroBanner.classList.remove("hero-theme-light", "hero-theme-dark");
+        heroBanner.classList.add("hero-theme-dark");
+        if (window.updateHeaderScrolled) window.updateHeaderScrolled();
+        return;
+      }
+      var bgImage = activeSlide ? activeSlide.getAttribute("data-bg-image") : null;
+      setHeroThemeFromImage(bgImage);
+    }
+
     function goToSlide(index) {
       current = (index + slides.length) % slides.length;
       slides.forEach((s, i) => s.classList.toggle("active", i === current));
       dots.forEach((d, i) => d.classList.toggle("active", i === current));
-      var activeSlide = slides[current];
-      var bgImage = activeSlide ? activeSlide.getAttribute("data-bg-image") : null;
-      setHeroThemeFromImage(bgImage);
+      syncHeroVideos();
+      if (slides[current].classList.contains("carousel-slide--video") && heroVideo && heroVideo.paused) {
+        showHeroVideoPlayButton();
+      }
+      applyHeroThemeForSlide(slides[current]);
+    }
+
+    function prev() {
+      goToSlide(current - 1);
     }
 
     function next() {
@@ -347,15 +460,15 @@ document.addEventListener("DOMContentLoaded", function () {
     dots.forEach((btn, i) => {
       btn.addEventListener("click", () => {
         goToSlide(i);
-        resetTimer();
       });
     });
 
-    function resetTimer() {
-      clearInterval(timer);
-      timer = setInterval(next, 6000);
+    if (prevBtn) {
+      prevBtn.addEventListener("click", prev);
     }
-    timer = setInterval(next, 6000);
+    if (nextBtn) {
+      nextBtn.addEventListener("click", next);
+    }
 
     // Touch/swipe support for hero carousel
     var trackEl = carousel.querySelector(".carousel-track");
@@ -370,15 +483,15 @@ document.addEventListener("DOMContentLoaded", function () {
         if (Math.abs(diff) > 50) {
           if (diff > 0) goToSlide(current + 1);
           else goToSlide(current - 1);
-          resetTimer();
         }
       }, { passive: true });
     }
 
-    // Initial theme from first slide
+    // Initial theme, video, and navigation
+    initHeroVideo();
     var initialSlide = carousel.querySelector(".carousel-slide.active");
-    var initialBg = initialSlide ? initialSlide.getAttribute("data-bg-image") : null;
-    setHeroThemeFromImage(initialBg);
+    syncHeroVideos();
+    applyHeroThemeForSlide(initialSlide);
   } else if (heroBanner) {
     heroBanner.classList.add("hero-theme-light");
     if (window.updateHeaderScrolled) window.updateHeaderScrolled();

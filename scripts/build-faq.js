@@ -172,6 +172,10 @@ function readHeaderNavTemplate() {
     <meta property="og:type" content="website" />
     <meta property="og:url" content="{{CANONICAL}}" />
     <meta property="og:image" content="https://www.rolcc.in/images/og-image.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="{{TITLE}}" />
+    <meta name="twitter:description" content="{{DESCRIPTION}}" />
+    <meta name="twitter:image" content="https://www.rolcc.in/images/og-image.jpg" />
     <link rel="icon" type="image/x-icon" href="/images/favicon.ico" />
     <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png" />
     <link rel="apple-touch-icon" href="/images/apple-touch-icon.png" />
@@ -361,9 +365,20 @@ function buildFaqPageHtml(faqs, pageNum, totalPages) {
   const isFirstPage = pageNum === 1;
   const fileName = isFirstPage ? "faq.html" : `faq-${pageNum}.html`;
   const canonical = faqCanonicalUrl(pageNum);
-  const titleSuffix = isFirstPage ? "" : ` — Page ${pageNum}`;
-  const pageTitle = `FAQs${titleSuffix} | River of Life Christian Church`;
-  const pageDesc = isFirstPage ? "Answers about visiting ROLCC, finding community, faith questions, families and kids, serving, and prayer support in Bangalore." : `More ROLCC FAQs — page ${pageNum} of ${totalPages}.`;
+  let pageTitle;
+  let pageDesc;
+  if (isFirstPage) {
+    pageTitle = "Church FAQs | Visiting, Faith & Community | River of Life Christian Church, Bangalore";
+    pageDesc =
+      "Answers about visiting ROLCC for the first time — Sunday services, finding community, faith questions, families, River Kids, serving, and prayer support in HSR Layout, Bangalore.";
+  } else if (pageNum === 2) {
+    pageTitle = "Church FAQs | Faith & Church Life | Page 2 of 8 | River of Life Christian Church, Bangalore";
+    pageDesc =
+      "More answers about faith, worship, and everyday church life at River of Life Christian Church — practical guidance for guests and members in Bangalore.";
+  } else {
+    pageTitle = `Church FAQs | Page ${pageNum} of ${totalPages} | River of Life Christian Church, Bangalore`;
+    pageDesc = `Continue browsing ROLCC FAQs — page ${pageNum} of ${totalPages}. Helpful answers about visiting, community, ministry, and church life in HSR Layout, Bangalore.`;
+  }
 
   const headExtra = `<link rel="stylesheet" href="css/faq.css" />
     <link rel="canonical" href="${canonical}" />

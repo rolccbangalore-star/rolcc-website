@@ -176,8 +176,9 @@ function readHeaderNavTemplate() {
     <meta name="twitter:title" content="{{TITLE}}" />
     <meta name="twitter:description" content="{{DESCRIPTION}}" />
     <meta name="twitter:image" content="https://www.rolcc.in/images/og-image.jpg" />
-    <link rel="icon" type="image/x-icon" href="/images/favicon.ico" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png" />
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
+    <link rel="icon" type="image/png" sizes="48x48" href="/images/favicon-48x48.png" />
+    <link rel="icon" type="image/png" sizes="96x96" href="/images/favicon-96x96.png" />
     <link rel="apple-touch-icon" href="/images/apple-touch-icon.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

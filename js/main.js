@@ -291,11 +291,13 @@ document.addEventListener("DOMContentLoaded", function () {
     function showHeroVideoPlayButton() {
       if (!heroVideoSlide) return;
       heroVideoSlide.classList.add("is-video-paused");
+      updateHeroVideoUi();
     }
 
     function hideHeroVideoPlayButton() {
       if (!heroVideoSlide) return;
       heroVideoSlide.classList.remove("is-video-paused");
+      updateHeroVideoUi();
     }
 
     function tryPlayHeroVideo() {
@@ -334,6 +336,8 @@ document.addEventListener("DOMContentLoaded", function () {
         window.clearTimeout(loadTimeout);
         showHeroVideoPlayButton();
       });
+
+      updateHeroVideoUi();
     }
 
     if (heroVideoPlayBtn && heroVideo) {
@@ -453,6 +457,8 @@ document.addEventListener("DOMContentLoaded", function () {
       syncHeroVideos();
       if (slides[current].classList.contains("carousel-slide--video") && heroVideo && heroVideo.paused) {
         showHeroVideoPlayButton();
+      } else {
+        updateHeroVideoUi();
       }
       applyHeroThemeForSlide(slides[current]);
     }
@@ -499,6 +505,7 @@ document.addEventListener("DOMContentLoaded", function () {
     initHeroVideo();
     var initialSlide = carousel.querySelector(".carousel-slide.active");
     syncHeroVideos();
+    updateHeroVideoUi();
     applyHeroThemeForSlide(initialSlide);
   } else if (heroBanner) {
     heroBanner.classList.add("hero-theme-light");

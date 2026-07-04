@@ -653,8 +653,12 @@ body {
 }
 .hero-carousel__video-play:hover { color: #fff; }
 .hero-carousel__video-play svg { flex-shrink: 0; }
-.hero-carousel:not(.is-video-slide-active) .hero-carousel__video-play,
-.hero-carousel:not(.is-video-paused) .hero-carousel__video-play { display: none; }
+.hero-carousel.is-video-slide-active.is-video-paused .hero-carousel__video-play {
+  display: inline-flex;
+}
+.hero-carousel__video-play[hidden] {
+  display: none !important;
+}
 .carousel-slide--video .carousel-slide-inner {
   position: relative;
   z-index: 2;

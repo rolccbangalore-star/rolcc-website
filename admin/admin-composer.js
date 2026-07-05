@@ -10,6 +10,11 @@
     return /\/entries\/|\/new$/.test(hash);
   }
 
+  function isCollectionRoute() {
+    var hash = location.hash || "";
+    return hash.indexOf("/collections/") !== -1 && !isEditorRoute();
+  }
+
   function getControlLabel(control) {
     var label = control.querySelector("label");
     return normalize(label ? label.textContent : "");
@@ -21,10 +26,28 @@
     });
   }
 
+  function updateViewClass(root) {
+    root.classList.remove("admin-view--login", "admin-view--collection", "admin-view--editor");
+
+    if (root.querySelector('[class*="AuthenticationPage"], [class*="StyledAuthenticationPage"]')) {
+      root.classList.add("admin-view--login");
+      return;
+    }
+    if (isEditorRoute()) {
+      root.classList.add("admin-view--editor");
+      return;
+    }
+    if (isCollectionRoute()) {
+      root.classList.add("admin-view--collection");
+    }
+  }
+
   function tagEditorLayout(root) {
     if (!isEditorRoute()) return;
 
-    var pane = root.querySelector('[class*="EditorContainer"] [class*="ControlPane"], [class*="EditorContainer"] [class*="EditorControlPane"]');
+    var pane = root.querySelector(
+      '[class*="EditorContainer"] [class*="ControlPane"], [class*="EditorContainer"] [class*="EditorControlPane"]'
+    );
     if (!pane || pane.dataset.adminLayout === "done") return;
 
     var scroll = pane.querySelector('[class*="ScrollContainer"]') || pane;
@@ -48,8 +71,19 @@
     }
   }
 
+  function resetEditorLayout(root) {
+    root.querySelectorAll("[data-admin-layout]").forEach(function (el) {
+      delete el.dataset.adminLayout;
+      el.classList.remove("admin-editor-split");
+    });
+    root.querySelectorAll(".admin-field--meta, .admin-field--content").forEach(function (el) {
+      el.classList.remove("admin-field--meta", "admin-field--content");
+    });
+  }
+
   function enhance(root) {
     if (!root) return;
+    updateViewClass(root);
     tagEditorLayout(root);
   }
 
@@ -60,13 +94,7 @@
     enhance(root);
 
     window.addEventListener("hashchange", function () {
-      root.querySelectorAll("[data-admin-layout]").forEach(function (el) {
-        delete el.dataset.adminLayout;
-        el.classList.remove("admin-editor-split");
-      });
-      root.querySelectorAll(".admin-field--meta, .admin-field--content").forEach(function (el) {
-        el.classList.remove("admin-field--meta", "admin-field--content");
-      });
+      resetEditorLayout(root);
       enhance(root);
     });
 

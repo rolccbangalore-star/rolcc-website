@@ -255,7 +255,14 @@ function readFooterTemplate() {
                   <li><a href="/events" class="footer-link hover:text-white">Events</a></li>
                   <li><a href="/membership" class="footer-link hover:text-white">Membership</a></li>
                   <li><a href="/about" class="footer-link hover:text-white">About Us</a></li>
+                  <li><a href="/articles" class="footer-link hover:text-white">Articles</a></li>
                   <li><a href="/contact" class="footer-link hover:text-white">Contact</a></li>
+                </ul>
+              </div>
+              <div>
+                <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-400">Help &amp; FAQs</p>
+                <ul class="mt-4 space-y-2.5 text-sm text-slate-300">
+                  <li><a href="/faq" class="footer-link hover:text-white">Browse all FAQs</a></li>
                 </ul>
               </div>
               <div>
@@ -272,7 +279,6 @@ function readFooterTemplate() {
                   </a>
                 </div>
               </div>
-              <div></div>
             </div>
           </div>
         </div>
@@ -478,25 +484,6 @@ function updateSitemap(totalPages) {
   }
   const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.join("\n")}\n</urlset>\n`;
   fs.writeFileSync(path.join(ROOT, "sitemap.xml"), xml, "utf8");
-}
-
-function addFaqNavLink() {
-  const pages = fs.readdirSync(ROOT).filter((f) => f.endsWith(".html") && !f.startsWith("faq"));
-  pages.forEach((fileName) => {
-    const filePath = path.join(ROOT, fileName);
-    let html = fs.readFileSync(filePath, "utf8");
-    if (html.includes('href="faq.html"')) return;
-
-    html = html.replace(
-      '<a href="/giving" class="header-top__link" data-nav="giving">Giving</a>',
-      '<a href="/giving" class="header-top__link" data-nav="giving">Giving</a>\n          <a href="faq.html" class="header-top__link" data-nav="faq">FAQs</a>'
-    );
-    html = html.replace(
-      '<a href="/giving" class="header-top__menu-link block rounded-md px-3 py-2 text-slate-700 hover:bg-slate-100" data-nav="giving">Giving</a>',
-      '<a href="/giving" class="header-top__menu-link block rounded-md px-3 py-2 text-slate-700 hover:bg-slate-100" data-nav="giving">Giving</a>\n          <a href="faq.html" class="header-top__menu-link block rounded-md px-3 py-2 text-slate-700 hover:bg-slate-100" data-nav="faq">FAQs</a>'
-    );
-    fs.writeFileSync(filePath, html, "utf8");
-  });
 }
 
 function main() {

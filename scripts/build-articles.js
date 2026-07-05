@@ -226,7 +226,6 @@ function readHeaderNavTemplate(assetRoot) {
               <a href="/rolf" class="header-top__dropdown-link block px-4 py-2 text-slate-700 hover:bg-slate-50 rounded-b-lg" role="menuitem" data-nav="rolf">ROLF</a>
             </div>
           </div>
-          <a href="/faq" class="header-top__link" data-nav="faq">FAQs</a>
           <a href="/giving" class="header-top__link hidden xl:inline-flex" data-nav="giving">Giving</a>
           <a href="/contact" class="header-top__link" data-nav="contact">Contact Us</a>
         </div>
@@ -247,7 +246,6 @@ function readHeaderNavTemplate(assetRoot) {
           <a href="/rolf" class="header-top__menu-link block rounded-md px-3 py-2 pl-5 text-slate-700 hover:bg-slate-100" data-nav="rolf">ROLF</a>
           <a href="/events" class="header-top__menu-link block rounded-md px-3 py-2 pl-5 text-slate-700 hover:bg-slate-100" data-nav="events">Events</a>
           <a href="/membership" class="header-top__menu-link block rounded-md px-3 py-2 pl-5 text-slate-700 hover:bg-slate-100" data-nav="membership">Membership</a>
-          <a href="/faq" class="header-top__menu-link block rounded-md px-3 py-2 text-slate-700 hover:bg-slate-100" data-nav="faq">FAQs</a>
           <a href="/giving" class="header-top__menu-link block rounded-md px-3 py-2 text-slate-700 hover:bg-slate-100" data-nav="giving">Giving</a>
           <a href="/contact" class="header-top__menu-link block rounded-md px-3 py-2 text-slate-700 hover:bg-slate-100" data-nav="contact">Contact Us</a>
           <a href="/contact#location" class="header-top__menu-cta mt-3 inline-flex rounded-full bg-accent px-4 py-2 text-sm font-semibold text-white">Join Us This Sunday</a>
@@ -659,17 +657,57 @@ function getFaqTotalPages() {
   }
 }
 
+const FOOTER_FAQ_COLUMN = `              <div>
+                <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-400">Help &amp; FAQs</p>
+                <ul class="mt-4 space-y-2.5 text-sm text-slate-300">
+                  <li><a href="/faq" class="footer-link hover:text-white">Browse all FAQs</a></li>
+                </ul>
+              </div>`;
+
+function collectSiteHtmlFiles() {
+  const files = [];
+  fs.readdirSync(ROOT)
+    .filter((f) => f.endsWith(".html"))
+    .forEach((f) => files.push(path.join(ROOT, f)));
+
+  const articlesDir = path.join(ROOT, "articles");
+  if (!fs.existsSync(articlesDir)) return files;
+
+  function walk(dir) {
+    fs.readdirSync(dir, { withFileTypes: true }).forEach((entry) => {
+      const entryPath = path.join(dir, entry.name);
+      if (entry.isDirectory()) walk(entryPath);
+      else if (entry.name.endsWith(".html")) files.push(entryPath);
+    });
+  }
+  walk(articlesDir);
+  return files;
+}
+
 function syncSiteNav() {
+  const headerFaqPatterns = [
+    /\s*<a href="\/faq" class="header-top__link"[^>]*data-nav="faq"[^>]*>FAQs<\/a>/g,
+    /\s*<a href="faq\.html" class="header-top__link"[^>]*data-nav="faq"[^>]*>FAQs<\/a>/g,
+    /\s*<a href="\/faq" class="header-top__menu-link[^>]*data-nav="faq"[^>]*>FAQs<\/a>/g,
+    /\s*<a href="faq\.html" class="header-top__menu-link[^>]*data-nav="faq"[^>]*>FAQs<\/a>/g,
+  ];
   const headerArticlesDesktop =
     /\s*<a href="\/articles" class="header-top__link" data-nav="articles">Articles<\/a>\r?\n?/g;
   const headerArticlesMobile =
     /\s*<a href="\/articles" class="header-top__menu-link block rounded-md px-3 py-2 text-slate-700 hover:bg-slate-100" data-nav="articles">Articles<\/a>\r?\n?/g;
 
-  const pages = fs.readdirSync(ROOT).filter((f) => f.endsWith(".html") && !f.startsWith("articles"));
-  pages.forEach((fileName) => {
-    const filePath = path.join(ROOT, fileName);
+  collectSiteHtmlFiles().forEach((filePath) => {
+    if (filePath.includes(`${path.sep}admin${path.sep}`)) return;
+
     let html = fs.readFileSync(filePath, "utf8");
     let changed = false;
+
+    headerFaqPatterns.forEach((pattern) => {
+      if (pattern.test(html)) {
+        html = html.replace(pattern, "");
+        changed = true;
+      }
+    });
 
     if (headerArticlesDesktop.test(html) || headerArticlesMobile.test(html)) {
       html = html.replace(headerArticlesDesktop, "");
@@ -677,16 +715,13 @@ function syncSiteNav() {
       changed = true;
     }
 
-    if (!html.includes('data-nav="faq"')) {
-      html = html.replace(
-        '<a href="/giving" class="header-top__link hidden xl:inline-flex" data-nav="giving">Giving</a>',
-        '<a href="/faq" class="header-top__link" data-nav="faq">FAQs</a>\n          <a href="/giving" class="header-top__link hidden xl:inline-flex" data-nav="giving">Giving</a>'
-      );
-      html = html.replace(
-        '<a href="/giving" class="header-top__menu-link block rounded-md px-3 py-2 text-slate-700 hover:bg-slate-100" data-nav="giving">Giving</a>',
-        '<a href="/faq" class="header-top__menu-link block rounded-md px-3 py-2 text-slate-700 hover:bg-slate-100" data-nav="faq">FAQs</a>\n          <a href="/giving" class="header-top__menu-link block rounded-md px-3 py-2 text-slate-700 hover:bg-slate-100" data-nav="giving">Giving</a>'
-      );
-      changed = true;
+    if (!html.includes("Browse all FAQs")) {
+      const emptyFooterDiv =
+        /\n(\s*)<div><\/div>\n(\s*<\/div>\n\s*<\/div>\n\s*<\/div>\n\s*<div class="mt-auto border-t)/;
+      if (emptyFooterDiv.test(html)) {
+        html = html.replace(emptyFooterDiv, `\n$1${FOOTER_FAQ_COLUMN.trim()}\n$2`);
+        changed = true;
+      }
     }
 
     if (!html.includes('href="/articles" class="footer-link')) {

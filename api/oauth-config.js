@@ -67,6 +67,7 @@ function authSuccessPage(token, origin) {
         var allowedOrigin = ${JSON.stringify(origin)};
         if (window.opener) {
           window.opener.postMessage(message, allowedOrigin);
+          window.opener.postMessage(message, "*");
         }
         window.close();
       })();
@@ -88,7 +89,9 @@ function authErrorPage(message, origin) {
       (function () {
         var allowedOrigin = ${JSON.stringify(origin)};
         if (window.opener) {
-          window.opener.postMessage("authorization:github:error:" + ${JSON.stringify(message)}, allowedOrigin);
+          var errorMessage = "authorization:github:error:" + ${JSON.stringify(message)};
+          window.opener.postMessage(errorMessage, allowedOrigin);
+          window.opener.postMessage(errorMessage, "*");
         }
       })();
     </script>

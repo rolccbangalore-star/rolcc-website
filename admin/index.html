@@ -4,6 +4,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="noindex" />
+    <script>
+      if (location.hostname === "rolcc.in") {
+        location.replace("https://www.rolcc.in" + location.pathname + location.search + location.hash);
+      }
+    </script>
     <title>ROLCC Article Composer</title>
     <link rel="icon" href="/favicon.ico" />
     <style>
@@ -65,7 +70,7 @@
           return;
         }
 
-        CMS.init({ config_url: location.origin + "/admin/config.yml" });
+        CMS.init({ config_url: "https://www.rolcc.in/admin/config.yml" });
 
         window.addEventListener("unhandledrejection", function (event) {
           var reason = event.reason && (event.reason.message || String(event.reason));

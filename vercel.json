@@ -1,5 +1,8 @@
 {
   "framework": null,
+  "buildCommand": "npm run build",
+  "installCommand": "npm install",
+  "outputDirectory": ".",
   "rewrites": [
     {
       "source": "/about",
@@ -76,6 +79,38 @@
     {
       "source": "/faq/8",
       "destination": "/faq-8.html"
+    },
+    {
+      "source": "/faq/9",
+      "destination": "/faq-9.html"
+    },
+    {
+      "source": "/faq/10",
+      "destination": "/faq-10.html"
+    },
+    {
+      "source": "/articles",
+      "destination": "/articles.html"
+    },
+    {
+      "source": "/articles/:page(\\d+)",
+      "destination": "/articles-:page.html"
+    },
+    {
+      "source": "/articles/everyday-faith/:slug",
+      "destination": "/articles/everyday-faith/:slug.html"
+    },
+    {
+      "source": "/articles/back-to-bible/:slug",
+      "destination": "/articles/back-to-bible/:slug.html"
+    },
+    {
+      "source": "/admin",
+      "destination": "/admin/index.html"
+    },
+    {
+      "source": "/admin/config.yml",
+      "destination": "/admin/config.yml"
     }
   ],
   "redirects": [
@@ -172,6 +207,26 @@
     {
       "source": "/faq-8.html",
       "destination": "/faq/8",
+      "permanent": true
+    },
+    {
+      "source": "/faq-9.html",
+      "destination": "/faq/9",
+      "permanent": true
+    },
+    {
+      "source": "/faq-10.html",
+      "destination": "/faq/10",
+      "permanent": true
+    },
+    {
+      "source": "/articles.html",
+      "destination": "/articles",
+      "permanent": true
+    },
+    {
+      "source": "/articles-:page.html",
+      "destination": "/articles/:page",
       "permanent": true
     },
     {

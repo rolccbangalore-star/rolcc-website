@@ -1,0 +1,13 @@
+{
+  "name": "rolcc-website",
+  "private": true,
+  "scripts": {
+    "build": "node scripts/build-articles.js",
+    "build:articles": "node scripts/build-articles.js",
+    "preview": "node scripts/local-preview.js",
+    "start": "npm run build:articles && npm run preview"
+  },
+  "dependencies": {
+    "@vercel/kv": "^3.0.0"
+  }
+}

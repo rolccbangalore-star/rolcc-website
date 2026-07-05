@@ -1,0 +1,180 @@
+backend:
+  name: github
+  repo: rolccbangalore-star/rolcc-website
+  branch: main
+  base_url: https://www.rolcc.in
+  auth_endpoint: api/auth
+
+local_backend: false
+publish_mode: simple
+
+media_folder: assets/articles
+public_folder: /assets/articles
+
+site_url: https://www.rolcc.in
+display_url: https://www.rolcc.in
+logo_url: /assets/logo.svg
+
+collections:
+  - name: everyday-faith
+    label: Everyday Faith — Articles
+    folder: data/articles/everyday-faith
+    create: true
+    slug: "{{slug}}"
+    extension: json
+    format: json
+    summary: "{{title}} · {{category}}"
+    fields:
+      - { label: Title, name: title, widget: string, hint: "The headline shown on the article page." }
+      - { label: SEO description, name: description, widget: text, hint: "Used for search engines and social previews (1–2 sentences)." }
+      - { label: Summary, name: summary, widget: text, hint: "Short summary shown at the top of the article for readers." }
+      - { label: Author, name: author, widget: string, default: "ROLCC Pastoral Team" }
+      - label: Category
+        name: category
+        widget: select
+        options: ["Faith & Peace", "Work & Calling", "Relationships", "Prayer", "Family", "General"]
+      - { label: Date, name: date, widget: datetime, date_format: YYYY-MM-DD, time_format: false }
+      - { label: Hero image, name: thumbnail, widget: image, default: "/images/og-image.jpg", hint: "Main image at the top of the article." }
+      - { label: Featured on articles hub, name: featured, widget: boolean, default: false }
+      - { label: Sermon series, name: sermonSeries, widget: string, required: false }
+      - { label: Scripture reference, name: scripture, widget: string, required: false, hint: "e.g. Matthew 11:28-30" }
+      - { label: Publish, name: publish, widget: boolean, default: true }
+
+      - label: Key takeaways
+        name: keyTakeaways
+        widget: list
+        required: false
+        hint: "Bullet summary shown after the article body. Read time is calculated automatically at build."
+        field: { label: Takeaway, name: item, widget: string }
+
+      - label: Article content
+        name: blocks
+        widget: list
+        types:
+          - label: Paragraph
+            name: paragraph
+            widget: object
+            summary: "{{fields.text}}"
+            fields:
+              - { label: Text, name: text, widget: text }
+          - label: Heading
+            name: heading
+            widget: object
+            summary: "{{fields.text}}"
+            fields:
+              - { label: Level, name: level, widget: select, options: ["2", "3"], default: "2" }
+              - { label: Heading text, name: text, widget: string }
+          - label: Quote
+            name: quote
+            widget: object
+            summary: "{{fields.text}}"
+            fields:
+              - { label: Quote text, name: text, widget: text }
+              - { label: Attribution, name: attribution, widget: string, required: false, hint: "e.g. 2 Chronicles 20:15" }
+          - label: Image
+            name: image
+            widget: object
+            summary: "{{fields.alt}}"
+            fields:
+              - { label: Image, name: src, widget: image }
+              - { label: Alt text, name: alt, widget: string }
+              - { label: Caption, name: caption, widget: string, required: false }
+          - label: Bullet list
+            name: list
+            widget: object
+            summary: "Bullet list"
+            fields:
+              - label: Items
+                name: items
+                widget: list
+                field: { label: Item, name: item, widget: string }
+          - label: FAQ section
+            name: faq
+            widget: object
+            summary: "FAQ block"
+            fields:
+              - label: Questions
+                name: items
+                widget: list
+                fields:
+                  - { label: Question, name: question, widget: string }
+                  - { label: Answer, name: answer, widget: text }
+          - label: Scripture callout
+            name: scripture
+            widget: object
+            summary: "{{fields.reference}}"
+            fields:
+              - { label: Reference, name: reference, widget: string, hint: "e.g. Matthew 11:28-30" }
+              - { label: Verse text, name: text, widget: text }
+          - label: Call to action
+            name: cta
+            widget: object
+            summary: "{{fields.label}}"
+            fields:
+              - { label: Button label, name: label, widget: string, default: "Learn more" }
+              - { label: Link URL, name: url, widget: string, hint: "Use /contact, /fellowship, or a full https:// link" }
+              - { label: Supporting text, name: text, widget: text, required: false }
+              - label: Style
+                name: style
+                widget: select
+                options: ["primary", "secondary"]
+                default: "primary"
+          - label: Video embed
+            name: video
+            widget: object
+            summary: "{{fields.title}}"
+            fields:
+              - { label: YouTube URL, name: url, widget: string, hint: "Paste a youtube.com or youtu.be link" }
+              - { label: Title (accessibility), name: title, widget: string, required: false }
+              - { label: Caption, name: caption, widget: string, required: false }
+
+  - name: back-to-bible
+    label: Back to the Bible — Studies
+    folder: data/articles/back-to-bible
+    create: true
+    slug: "{{slug}}"
+    extension: json
+    format: json
+    fields:
+      - { label: Title, name: title, widget: string }
+      - { label: Description, name: description, widget: text }
+      - { label: Passage, name: passage, widget: string }
+      - { label: Author, name: author, widget: string, default: "ROLCC Fellowship Team" }
+      - { label: Category, name: category, widget: string, default: "Bible Study" }
+      - { label: Date, name: date, widget: datetime, date_format: YYYY-MM-DD, time_format: false }
+      - { label: Thumbnail, name: thumbnail, widget: image, default: "/images/og-image.jpg" }
+      - { label: Featured, name: featured, widget: boolean, default: false }
+      - label: Sections
+        name: sections
+        widget: list
+        fields:
+          - { label: Heading, name: heading, widget: string }
+          - { label: Body, name: body, widget: text }
+      - label: Discussion questions
+        name: discussionQuestions
+        widget: list
+        field: { label: Question, name: question, widget: string }
+      - label: Activities
+        name: activities
+        widget: list
+        required: false
+        fields:
+          - { label: Title, name: title, widget: string }
+          - { label: Body, name: body, widget: text }
+      - { label: Include quiz?, name: includeQuiz, widget: boolean, default: false }
+      - label: Quiz
+        name: quiz
+        widget: list
+        required: false
+        condition:
+          field: includeQuiz
+          value: true
+        fields:
+          - { label: Question, name: question, widget: string }
+          - label: Options
+            name: options
+            widget: list
+            field: { label: Option, name: option, widget: string }
+          - { label: Correct option index (0-based), name: correctIndex, widget: number, value_type: int, min: 0 }
+          - { label: Explanation, name: explanation, widget: text, required: false }
+      - { label: Publish, name: publish, widget: boolean, default: true }

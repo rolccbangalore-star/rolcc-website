@@ -1,0 +1,72 @@
+{
+  "title": "Finding rest when work never stops",
+  "description": "Three practical steps from Sunday's message for bringing God's rest into everyday work and family life.",
+  "summary": "Jesus invites the weary to come as they are. Rest is not escape from responsibility — it is a sustainable rhythm of Sabbath, Scripture, and community.",
+  "author": "ROLCC Pastoral Team",
+  "category": "Work & Calling",
+  "date": "2026-06-15",
+  "thumbnail": "/images/og-image.jpg",
+  "featured": true,
+  "sermonSeries": "Everyday Faith",
+  "scripture": "Matthew 11:28-30",
+  "publish": true,
+  "keyTakeaways": [
+    "Come to God honestly — you do not need to have everything together first.",
+    "Build a sustainable rhythm: Sabbath moments, prayer, Scripture, and community.",
+    "Share the load through Cell Fellowship and church family."
+  ],
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "Work in Bangalore can feel unending—deadlines, traffic, notifications, and the pressure to always be available. Jesus' invitation in Matthew 11 is not an escape from responsibility, but a deeper rest for your soul."
+    },
+    {
+      "type": "heading",
+      "level": "2",
+      "text": "Come honestly"
+    },
+    {
+      "type": "paragraph",
+      "text": "You do not need to have everything together before you come to God. Bring your tiredness, your questions, and your unfinished to-do list. He welcomes you as you are."
+    },
+    {
+      "type": "heading",
+      "level": "2",
+      "text": "Learn a sustainable rhythm"
+    },
+    {
+      "type": "paragraph",
+      "text": "Rest is more than a vacation. It includes Sabbath moments, prayer, Scripture, and community. Start with one small step you can repeat this week—a ten-minute pause with the Bible, or an honest conversation with someone you trust."
+    },
+    {
+      "type": "heading",
+      "level": "2",
+      "text": "Share the load"
+    },
+    {
+      "type": "paragraph",
+      "text": "God designed us for community. Cell Fellowship, church family, and serving alongside others help us carry burdens we were never meant to bear alone."
+    },
+    {
+      "type": "quote",
+      "text": "Come to me, all you who are weary and burdened, and I will give you rest.",
+      "attribution": "Matthew 11:28"
+    },
+    {
+      "type": "scripture",
+      "reference": "Matthew 11:28-30",
+      "text": "Come to me, all you who are weary and burdened, and I will give you rest. Take my yoke upon you and learn from me, for I am gentle and humble in heart, and you will find rest for your souls."
+    },
+    {
+      "type": "cta",
+      "label": "Join Cell Fellowship",
+      "url": "/fellowship",
+      "text": "Rest grows in community. Find a Cell Fellowship group near you.",
+      "style": "primary"
+    },
+    {
+      "type": "paragraph",
+      "text": "If you are weary today, you are welcome at ROLCC—no performance required. Come as you are, and take your next step at your own pace."
+    }
+  ]
+}

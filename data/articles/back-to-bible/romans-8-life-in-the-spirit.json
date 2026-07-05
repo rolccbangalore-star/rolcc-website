@@ -1,0 +1,57 @@
+{
+  "title": "Romans 8:1-11 — Life in the Spirit",
+  "description": "A Back to the Bible cell fellowship study on freedom in Christ and life by the Spirit, with reflection questions and a short quiz.",
+  "passage": "Romans 8:1-11",
+  "author": "ROLCC Fellowship Team",
+  "category": "Bible Study",
+  "date": "2026-06-20",
+  "thumbnail": "/images/og-image.jpg",
+  "featured": true,
+  "sections": [
+    {
+      "heading": "Observe",
+      "body": "Read Romans 8:1-11 slowly. Notice the contrasts Paul draws: condemnation vs no condemnation, flesh vs Spirit, death vs life and peace."
+    },
+    {
+      "heading": "Interpret",
+      "body": "Paul teaches that those in Christ are set free from condemnation. The mind set on the Spirit brings life and peace."
+    },
+    {
+      "heading": "Apply",
+      "body": "Where do you feel condemnation or pressure this week? How might setting your mind on the Spirit change how you respond?"
+    }
+  ],
+  "discussionQuestions": [
+    "What does 'no condemnation' mean for believers in Christ?",
+    "How does Paul describe the difference between the flesh and the Spirit?",
+    "What is one practical way to 'set the mind on the Spirit' this week?"
+  ],
+  "activities": [
+    {
+      "title": "Scripture meditation",
+      "body": "Rewrite Romans 8:1-2 in your own words and share one sentence with your group."
+    }
+  ],
+  "includeQuiz": true,
+  "quiz": [
+    {
+      "question": "According to Romans 8:1, there is now no condemnation for those who are…",
+      "options": ["In Christ Jesus", "Perfect in obedience", "Members of a church", "Free from all struggle"],
+      "correctIndex": 0,
+      "explanation": "Paul grounds freedom from condemnation in union with Christ."
+    },
+    {
+      "question": "The mind set on the Spirit is life and…",
+      "options": ["Success", "Peace", "Wealth", "Recognition"],
+      "correctIndex": 1,
+      "explanation": "Romans 8:6 contrasts death with life and peace."
+    },
+    {
+      "question": "Walking according to the Spirit means…",
+      "options": ["Ignoring daily responsibilities", "Living by the Spirit's leading", "Never feeling weak", "Avoiding community"],
+      "correctIndex": 1,
+      "explanation": "Paul calls believers to a Spirit-led way of life."
+    }
+  ],
+  "publish": true
+}

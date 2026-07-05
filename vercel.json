@@ -3,6 +3,12 @@
   "buildCommand": "npm run build",
   "installCommand": "npm install",
   "outputDirectory": ".",
+  "headers": [
+    {
+      "source": "/admin/config.yml",
+      "headers": [{ "key": "Content-Type", "value": "text/yaml; charset=utf-8" }]
+    }
+  ],
   "rewrites": [
     {
       "source": "/about",
@@ -114,6 +120,12 @@
     }
   ],
   "redirects": [
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "rolcc.in" }],
+      "destination": "https://www.rolcc.in/:path*",
+      "permanent": true
+    },
     {
       "source": "/about.html",
       "destination": "/about",

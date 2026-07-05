@@ -190,12 +190,20 @@ function normalizeStringList(items) {
     .filter(Boolean);
 }
 
+function blockType(block) {
+  if (!block?.type) return "";
+  if (block.type === "list") return "bulletList";
+  if (block.type === "scripture" && (block.reference || block.text)) return "scriptureCallout";
+  return block.type;
+}
+
 function collectBlockText(blocks) {
   const parts = [];
   (blocks || []).forEach((raw) => {
     const block = normalizeBlock(raw);
     if (!block) return;
-    switch (block.type) {
+    const type = blockType(block);
+    switch (type) {
       case "paragraph":
       case "quote":
         parts.push(block.text);
@@ -203,7 +211,7 @@ function collectBlockText(blocks) {
       case "heading":
         parts.push(block.text);
         break;
-      case "list":
+      case "bulletList":
         parts.push(...normalizeStringList(block.items));
         break;
       case "faq":
@@ -215,7 +223,7 @@ function collectBlockText(blocks) {
       case "image":
         parts.push(block.alt, block.caption);
         break;
-      case "scripture":
+      case "scriptureCallout":
         parts.push(block.reference, block.text);
         break;
       case "cta":
@@ -236,8 +244,9 @@ function renderBlocks(blocks) {
   (blocks || []).forEach((raw) => {
     const block = normalizeBlock(raw);
     if (!block?.type) return;
+    const type = blockType(block);
 
-    switch (block.type) {
+    switch (type) {
       case "paragraph":
         out.push(`<p>${inlineMarkdown(block.text)}</p>`);
         break;
@@ -258,7 +267,7 @@ function renderBlocks(blocks) {
           ${block.caption ? `<figcaption class="article-figure__caption">${escapeHtml(block.caption)}</figcaption>` : ""}
         </figure>`);
         break;
-      case "list":
+      case "bulletList":
         out.push(
           `<ul class="article-prose__list">${normalizeStringList(block.items)
             .map((item) => `<li>${inlineMarkdown(item)}</li>`)
@@ -284,7 +293,7 @@ function renderBlocks(blocks) {
         </div>`);
         break;
       }
-      case "scripture":
+      case "scriptureCallout":
         out.push(`<aside class="article-scripture" aria-label="Scripture">
           ${block.reference ? `<p class="article-scripture__ref">${escapeHtml(block.reference)}</p>` : ""}
           <p class="article-scripture__text">${inlineMarkdown(block.text)}</p>

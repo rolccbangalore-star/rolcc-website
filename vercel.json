@@ -111,11 +111,11 @@
       "destination": "/articles/back-to-bible/:slug.html"
     },
     {
-      "source": "/admin",
-      "destination": "/admin/index.html"
+      "source": "/admin/config.yml",
+      "destination": "/admin/config.yml"
     },
     {
-      "source": "/admin/config.yml",
+      "source": "/config.yml",
       "destination": "/admin/config.yml"
     }
   ],
@@ -125,6 +125,11 @@
       "has": [{ "type": "host", "value": "rolcc.in" }],
       "destination": "https://www.rolcc.in/:path*",
       "permanent": true
+    },
+    {
+      "source": "/admin",
+      "destination": "/admin/index.html",
+      "permanent": false
     },
     {
       "source": "/about.html",

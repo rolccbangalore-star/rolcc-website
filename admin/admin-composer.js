@@ -1,5 +1,6 @@
 (function () {
   var CONTENT_LABELS = ["article content", "sections"];
+  var SITE_URL = "https://www.rolcc.in";
 
   function normalize(text) {
     return (text || "").replace(/\s+/g, " ").trim().toLowerCase();
@@ -40,6 +41,50 @@
     if (isCollectionRoute()) {
       root.classList.add("admin-view--collection");
     }
+  }
+
+  function enhanceHeader(root) {
+    root.querySelectorAll('[class*="AppHeader"] a, header[class*="AppBar"] a').forEach(function (link) {
+      if (link.classList.contains("admin-back-to-site")) return;
+      var href = link.getAttribute("href") || "";
+      if (href.indexOf("rolcc.in") === -1 || href.indexOf("/admin") !== -1) return;
+      link.textContent = "Back to Site";
+      link.classList.add("admin-back-to-site");
+      link.setAttribute("href", SITE_URL + "/");
+      link.setAttribute("target", "_blank");
+      link.setAttribute("rel", "noopener noreferrer");
+    });
+
+    root.querySelectorAll('[class*="AppHeader"] button, header[class*="AppBar"] button').forEach(function (btn) {
+      if (/^New /i.test((btn.textContent || "").trim())) {
+        btn.textContent = "Create Article";
+        btn.classList.add("admin-create-article");
+      }
+    });
+
+    root.querySelectorAll('[class*="CollectionTop"] button, [class*="CollectionHeader"] button, [class*="Toolbar"] button').forEach(function (btn) {
+      var text = (btn.textContent || "").trim();
+      if (/^New /i.test(text)) {
+        btn.textContent = "Create Article";
+        btn.classList.add("admin-create-article");
+      }
+    });
+
+    var profile = root.querySelector('[class*="AppHeader"] [class*="Dropdown"], [class*="UserMenu"], [class*="Profile"]');
+    if (profile) profile.classList.add("admin-user-menu");
+  }
+
+  function enhanceCollectionLayout(root) {
+    if (!isCollectionRoute()) return;
+
+    var head = root.querySelector('[class*="CollectionTop"], [class*="CollectionHeader"]');
+    if (head) head.classList.add("admin-collection-head");
+
+    var controls = root.querySelector('[class*="CollectionControls"], [class*="CollectionTop"] [class*="Controls"]');
+    if (controls) controls.classList.add("admin-collection-toolbar");
+
+    var sidebar = root.querySelector('[class*="SidebarContainer"], aside[class*="Sidebar"]');
+    if (sidebar) sidebar.classList.add("admin-sidebar");
   }
 
   function tagEditorLayout(root) {
@@ -84,6 +129,8 @@
   function enhance(root) {
     if (!root) return;
     updateViewClass(root);
+    enhanceHeader(root);
+    enhanceCollectionLayout(root);
     tagEditorLayout(root);
   }
 

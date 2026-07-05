@@ -28,7 +28,7 @@ collections:
     slug: "{{slug}}"
     extension: json
     format: json
-    summary: "{{title}} · {{category}}"
+    summary: "{{author}} · {{category}} · {{date}}"
     fields:
       - { label: Title, name: title, widget: string }
       - { label: Summary, name: summary, widget: text, hint: "Shown at the top of the article." }
@@ -140,6 +140,7 @@ collections:
     slug: "{{slug}}"
     extension: json
     format: json
+    summary: "{{passage}} · {{author}} · {{date}}"
     fields:
       - { label: Title, name: title, widget: string }
       - { label: Description, name: description, widget: text }

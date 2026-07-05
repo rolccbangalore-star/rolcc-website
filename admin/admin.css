@@ -1,0 +1,419 @@
+/* ROLCC Article Composer — full-bleed app shell (Gmail-style) */
+
+:root {
+  --admin-accent: #635bff;
+  --admin-accent-soft: #818cf8;
+  --admin-border: #e2e8f0;
+  --admin-bg: #f8fafc;
+  --admin-muted: #64748b;
+  --admin-text: #0f172a;
+  --admin-sidebar: #f1f5f9;
+  --admin-meta-width: 300px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+.admin-page {
+  height: 100%;
+  overflow: hidden;
+  font-family: "Sora", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: var(--admin-text);
+  background: #fff;
+}
+
+.admin-error {
+  position: fixed;
+  left: 50%;
+  bottom: 1rem;
+  transform: translateX(-50%);
+  z-index: 9999;
+  max-width: 28rem;
+  margin: 0;
+  padding: 0.75rem 1rem;
+  border: 1px solid #fecaca;
+  border-radius: 0.75rem;
+  background: #fef2f2;
+  color: #991b1b;
+  font-size: 0.875rem;
+}
+
+#nc-root {
+  height: 100%;
+  min-height: 100vh;
+  font-family: inherit;
+}
+
+#nc-root > div {
+  height: 100%;
+}
+
+#nc-root [class*="AppMainContainer"],
+#nc-root [class*="MainContainer"] {
+  height: 100% !important;
+  max-width: none !important;
+}
+
+/* ——— Login ——— */
+#nc-root section {
+  min-height: 100vh !important;
+  height: auto !important;
+  padding: 2rem 1rem !important;
+  gap: 1.25rem !important;
+  background: var(--admin-bg) !important;
+}
+
+#nc-root [class*="CustomIconWrapper"] {
+  width: auto !important;
+  max-width: 5rem !important;
+}
+
+#nc-root button[class*="LoginButton"] {
+  min-height: 2.75rem !important;
+  padding: 0 1.5rem !important;
+  border: 0 !important;
+  border-radius: 9999px !important;
+  background: var(--admin-accent) !important;
+  color: #fff !important;
+  font-weight: 600 !important;
+}
+
+#nc-root [class*="NetlifyCreditIcon"],
+#nc-root [class*="DecapLogoIcon"] {
+  display: none !important;
+}
+
+/* ——— App chrome ——— */
+#nc-root [class*="AppHeader"],
+#nc-root header[class*="AppBar"] {
+  background: #fff !important;
+  border-bottom: 1px solid var(--admin-border) !important;
+  box-shadow: none !important;
+  min-height: 3.25rem !important;
+}
+
+#nc-root [class*="SidebarContainer"],
+#nc-root aside[class*="Sidebar"] {
+  width: 15rem !important;
+  min-width: 15rem !important;
+  background: var(--admin-sidebar) !important;
+  border-right: 1px solid var(--admin-border) !important;
+}
+
+#nc-root [class*="SidebarHeading"] {
+  color: var(--admin-muted) !important;
+  font-size: 0.6875rem !important;
+  letter-spacing: 0.1em !important;
+  text-transform: uppercase !important;
+  font-weight: 600 !important;
+}
+
+#nc-root [class*="SidebarNavLink"] {
+  margin: 0 0.5rem !important;
+  border-radius: 0.5rem !important;
+  font-size: 0.8125rem !important;
+}
+
+#nc-root [class*="SidebarNavLink"][class*="SidebarNavLinkActive"] {
+  background: rgba(99, 91, 255, 0.12) !important;
+  color: var(--admin-accent) !important;
+  font-weight: 600 !important;
+}
+
+/* ——— Collection list (Gmail-style grid) ——— */
+.admin-collection-main,
+#nc-root [class*="CollectionContainer"],
+#nc-root [class*="CollectionPage"] {
+  width: 100% !important;
+  max-width: none !important;
+}
+
+#nc-root [class*="CollectionTop"],
+#nc-root [class*="CollectionHeader"] {
+  padding: 1rem 1.5rem !important;
+  border-bottom: 1px solid var(--admin-border) !important;
+}
+
+#nc-root [class*="CollectionTop"] h1,
+#nc-root [class*="CollectionHeader"] h1 {
+  font-size: 1.125rem !important;
+  font-weight: 600 !important;
+}
+
+#nc-root [class*="EntriesCollection"],
+#nc-root [class*="GridContainer"] {
+  padding: 1rem 1.5rem 2rem !important;
+}
+
+#nc-root [class*="GridCard"],
+#nc-root [class*="EntryListingCard"] {
+  border-radius: 0.75rem !important;
+  border: 1px solid var(--admin-border) !important;
+  overflow: hidden !important;
+  transition: box-shadow 0.15s ease, border-color 0.15s ease !important;
+}
+
+#nc-root [class*="GridCard"]:hover,
+#nc-root [class*="EntryListingCard"]:hover {
+  border-color: #cbd5e1 !important;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08) !important;
+}
+
+#nc-root button[class*="ToolbarButtonPrimary"],
+#nc-root button[class*="PublishButton"],
+#nc-root [class*="ToolbarPublish"] button {
+  background: var(--admin-accent) !important;
+  border-color: var(--admin-accent) !important;
+  color: #fff !important;
+  border-radius: 9999px !important;
+}
+
+/* ——— Editor shell ——— */
+#nc-root [class*="EditorContainer"],
+#nc-root [class*="Editor"] {
+  height: calc(100vh - 3.25rem) !important;
+}
+
+#nc-root [class*="SplitPane"] {
+  height: 100% !important;
+}
+
+#nc-root [class*="ControlPane"],
+#nc-root [class*="EditorControlPane"] {
+  height: 100% !important;
+  overflow: auto !important;
+  padding: 0 !important;
+  background: #fff !important;
+}
+
+/* Hide live preview — Medium-style focus on writing */
+#nc-root [class*="PreviewPane"],
+#nc-root [class*="PreviewPaneContainer"],
+#nc-root [class*="PreviewToolbar"] {
+  display: none !important;
+}
+
+#nc-root [class*="ControlPane"],
+#nc-root [class*="EditorControlPane"] {
+  flex: 1 1 100% !important;
+  max-width: none !important;
+  width: 100% !important;
+}
+
+/* ——— Medium-style split: meta left, content right ——— */
+.admin-editor-split {
+  display: grid !important;
+  grid-template-columns: var(--admin-meta-width) minmax(0, 1fr) !important;
+  align-items: stretch !important;
+  min-height: 100% !important;
+}
+
+.admin-field--meta {
+  grid-column: 1 !important;
+  padding: 1rem 1rem 1.25rem !important;
+  border-right: 1px solid var(--admin-border) !important;
+  background: var(--admin-bg) !important;
+  margin: 0 !important;
+}
+
+.admin-field--meta + .admin-field--meta {
+  border-top: 1px solid var(--admin-border) !important;
+  padding-top: 1rem !important;
+}
+
+.admin-field--content {
+  grid-column: 2 !important;
+  grid-row: 1 / span 999 !important;
+  margin: 0 !important;
+  padding: 2rem clamp(1.5rem, 4vw, 4rem) 3rem !important;
+  background: #fff !important;
+  min-height: 100% !important;
+}
+
+.admin-field--content [class*="ListControlTopBar"] {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 2 !important;
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(8px) !important;
+  padding: 0.75rem 0 1rem !important;
+  margin-bottom: 0.5rem !important;
+  border-bottom: 1px solid var(--admin-border) !important;
+}
+
+.admin-field--content [class*="ListControlTopBar"] h3,
+.admin-field--content [class*="ListControlTopBar"] [class*="Heading"] {
+  font-size: 0.8125rem !important;
+  font-weight: 600 !important;
+  color: var(--admin-muted) !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.08em !important;
+}
+
+/* Meta fields — compact sidebar */
+.admin-field--meta label,
+.admin-field--meta [class*="FieldLabel"] {
+  font-size: 0.6875rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.06em !important;
+  text-transform: uppercase !important;
+  color: var(--admin-muted) !important;
+  margin-bottom: 0.35rem !important;
+}
+
+.admin-field--meta input,
+.admin-field--meta textarea,
+.admin-field--meta select {
+  font-size: 0.8125rem !important;
+  border-radius: 0.5rem !important;
+  border-color: #cbd5e1 !important;
+  background: #fff !important;
+}
+
+.admin-field--meta textarea {
+  min-height: 4.5rem !important;
+}
+
+.admin-field--meta [class*="FieldHint"] {
+  font-size: 0.6875rem !important;
+  line-height: 1.4 !important;
+  margin-top: 0.25rem !important;
+}
+
+.admin-field--meta [class*="Control"] {
+  margin-bottom: 0.875rem !important;
+}
+
+/* Content blocks — Medium writing feel */
+.admin-field--content label,
+.admin-field--content [class*="FieldLabel"] {
+  font-size: 0.75rem !important;
+  font-weight: 500 !important;
+  color: #94a3b8 !important;
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+}
+
+.admin-field--content textarea {
+  min-height: 7rem !important;
+  padding: 0.75rem 0 !important;
+  border: none !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  font-size: 1.0625rem !important;
+  line-height: 1.75 !important;
+  color: #1e293b !important;
+  box-shadow: none !important;
+  resize: vertical !important;
+}
+
+.admin-field--content textarea:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.admin-field--content input[type="text"],
+.admin-field--content input:not([type]) {
+  font-size: 1rem !important;
+  padding: 0.5rem 0 !important;
+  border: none !important;
+  border-bottom: 1px solid var(--admin-border) !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+}
+
+.admin-field--content [class*="NestedObjectContainer"],
+.admin-field--content [class*="ListItem"],
+.admin-field--content [class*="ObjectItem"] {
+  border: none !important;
+  border-bottom: 1px solid var(--admin-border) !important;
+  border-radius: 0 !important;
+  padding: 1.25rem 0 !important;
+  margin: 0 !important;
+  background: transparent !important;
+}
+
+.admin-field--content [class*="ListItemHeader"],
+.admin-field--content [class*="ObjectHeader"] {
+  margin-bottom: 0.75rem !important;
+}
+
+.admin-field--content [class*="ListItemHeader"] button,
+.admin-field--content [class*="ObjectHeader"] button {
+  opacity: 0.5 !important;
+}
+
+.admin-field--content [class*="ListItem"]:last-child,
+.admin-field--content [class*="ObjectItem"]:last-child {
+  border-bottom: none !important;
+}
+
+/* General controls */
+#nc-root input:focus,
+#nc-root textarea:focus,
+#nc-root select:focus {
+  border-color: var(--admin-accent) !important;
+  box-shadow: 0 0 0 1px rgba(99, 91, 255, 0.25) !important;
+  outline: none !important;
+}
+
+#nc-root [class*="DropdownList"] {
+  border-radius: 0.5rem !important;
+}
+
+/* Editor top bar */
+#nc-root [class*="EditorToolbar"],
+#nc-root [class*="ToolbarContainer"] {
+  border-bottom: 1px solid var(--admin-border) !important;
+  background: #fff !important;
+}
+
+#nc-root [class*="BackButton"] {
+  color: var(--admin-muted) !important;
+  font-size: 0.8125rem !important;
+}
+
+/* Mobile */
+@media (max-width: 900px) {
+  :root {
+    --admin-meta-width: 100%;
+  }
+
+  .admin-editor-split {
+    grid-template-columns: 1fr !important;
+  }
+
+  .admin-field--meta {
+    border-right: 0 !important;
+    border-bottom: 1px solid var(--admin-border) !important;
+  }
+
+  .admin-field--content {
+    grid-column: 1 !important;
+    grid-row: auto !important;
+    padding: 1.25rem 1rem 2rem !important;
+  }
+
+  #nc-root [class*="SidebarContainer"],
+  #nc-root aside[class*="Sidebar"] {
+    width: 12rem !important;
+    min-width: 12rem !important;
+  }
+}
+
+@media (max-width: 640px) {
+  #nc-root [class*="SidebarContainer"],
+  #nc-root aside[class*="Sidebar"] {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+}

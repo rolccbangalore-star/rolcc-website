@@ -9,50 +9,30 @@
         location.replace("https://www.rolcc.in" + location.pathname + location.search + location.hash);
       }
     </script>
-    <title>ROLCC Article Composer</title>
+    <title>Article Composer | River of Life Christian Church</title>
     <link rel="icon" href="/favicon.ico" />
-    <style>
-      #cms-loading {
-        font-family: system-ui, sans-serif;
-        max-width: 28rem;
-        margin: 4rem auto;
-        padding: 0 1rem;
-        color: #334155;
-        text-align: center;
-      }
-      #cms-error {
-        display: none;
-        font-family: system-ui, sans-serif;
-        max-width: 32rem;
-        margin: 4rem auto;
-        padding: 1.25rem;
-        border: 1px solid #fecaca;
-        border-radius: 0.75rem;
-        background: #fef2f2;
-        color: #991b1b;
-      }
-    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/admin/admin.css" />
     <script>window.CMS_MANUAL_INIT = true;</script>
-    <script src="https://unpkg.com/decap-cms@3.3.0/dist/decap-cms.js"></script>
+    <script defer src="https://unpkg.com/decap-cms@3.3.0/dist/decap-cms.js"></script>
   </head>
-  <body>
-    <div id="cms-loading">
-      <p>Loading ROLCC Article Composer…</p>
-      <p style="font-size: 0.875rem; color: #64748b">Use <strong>www.rolcc.in/admin</strong> if login fails.</p>
-    </div>
-    <div id="cms-error" role="alert"></div>
-    <noscript>Enable JavaScript to use the ROLCC article composer.</noscript>
-    <script>
+  <body class="admin-page">
+    <div id="nc-root"></div>
+    <p id="cms-error" class="admin-error" role="alert" hidden></p>
+    <noscript>
+      <p class="admin-error">Enable JavaScript to use the article composer.</p>
+    </noscript>
+    <script defer src="/admin/admin-composer.js"></script>
+    <script defer>
       (function () {
-        var loading = document.getElementById("cms-loading");
         var errorBox = document.getElementById("cms-error");
 
         function showError(message) {
-          if (loading) loading.style.display = "none";
-          if (errorBox) {
-            errorBox.style.display = "block";
-            errorBox.textContent = message;
-          }
+          if (!errorBox) return;
+          errorBox.hidden = false;
+          errorBox.textContent = message;
         }
 
         if (location.pathname === "/admin" || location.pathname === "/admin/") {
@@ -60,22 +40,25 @@
           return;
         }
 
-        if (location.hostname === "rolcc.in") {
-          location.replace("https://www.rolcc.in" + location.pathname + location.search + location.hash);
-          return;
+        function initCms() {
+          if (typeof CMS === "undefined") {
+            showError("Could not load the composer. Check your connection and refresh.");
+            return;
+          }
+
+          CMS.init({ config_url: "https://www.rolcc.in/admin/config.yml" });
+
+          window.addEventListener("unhandledrejection", function (event) {
+            var reason = event.reason && (event.reason.message || String(event.reason));
+            if (reason) showError(reason);
+          });
         }
 
-        if (typeof CMS === "undefined") {
-          showError("Could not load Decap CMS. Check your network connection and try again.");
-          return;
+        if (document.readyState === "loading") {
+          document.addEventListener("DOMContentLoaded", initCms);
+        } else {
+          initCms();
         }
-
-        CMS.init({ config_url: "https://www.rolcc.in/admin/config.yml" });
-
-        window.addEventListener("unhandledrejection", function (event) {
-          var reason = event.reason && (event.reason.message || String(event.reason));
-          if (reason) showError("Composer failed to start: " + reason);
-        });
       })();
     </script>
   </body>

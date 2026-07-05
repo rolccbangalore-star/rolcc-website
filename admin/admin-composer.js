@@ -5,6 +5,11 @@
     return (text || "").replace(/\s+/g, " ").trim().toLowerCase();
   }
 
+  function isEditorRoute() {
+    var hash = location.hash || "";
+    return /\/entries\/|\/new$/.test(hash);
+  }
+
   function getControlLabel(control) {
     var label = control.querySelector("label");
     return normalize(label ? label.textContent : "");
@@ -17,20 +22,19 @@
   }
 
   function tagEditorLayout(root) {
-    var pane = root.querySelector('[class*="ControlPane"], [class*="EditorControlPane"]');
+    if (!isEditorRoute()) return;
+
+    var pane = root.querySelector('[class*="EditorContainer"] [class*="ControlPane"], [class*="EditorContainer"] [class*="EditorControlPane"]');
     if (!pane || pane.dataset.adminLayout === "done") return;
 
     var scroll = pane.querySelector('[class*="ScrollContainer"]') || pane;
     var controls = scroll.querySelectorAll(':scope > [class*="Control"]');
-    if (!controls.length) {
-      controls = pane.children;
-    }
-    var tagged = false;
+    if (!controls.length) controls = pane.children;
 
+    var tagged = false;
     Array.prototype.forEach.call(controls, function (control) {
       if (!control.querySelector("label")) return;
-      var label = getControlLabel(control);
-      if (isContentField(label)) {
+      if (isContentField(getControlLabel(control))) {
         control.classList.add("admin-field--content");
         tagged = true;
       } else {
@@ -44,15 +48,9 @@
     }
   }
 
-  function enhanceCollectionGrid(root) {
-    var main = root.querySelector('[class*="CollectionMain"], [class*="MainContainer"]');
-    if (main) main.classList.add("admin-collection-main");
-  }
-
   function enhance(root) {
     if (!root) return;
     tagEditorLayout(root);
-    enhanceCollectionGrid(root);
   }
 
   function watch() {
@@ -61,10 +59,20 @@
 
     enhance(root);
 
-    var observer = new MutationObserver(function () {
+    window.addEventListener("hashchange", function () {
+      root.querySelectorAll("[data-admin-layout]").forEach(function (el) {
+        delete el.dataset.adminLayout;
+        el.classList.remove("admin-editor-split");
+      });
+      root.querySelectorAll(".admin-field--meta, .admin-field--content").forEach(function (el) {
+        el.classList.remove("admin-field--meta", "admin-field--content");
+      });
       enhance(root);
     });
 
+    var observer = new MutationObserver(function () {
+      enhance(root);
+    });
     observer.observe(root, { childList: true, subtree: true });
   }
 

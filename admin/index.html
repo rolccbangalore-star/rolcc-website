@@ -15,8 +15,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="/admin/admin.css" />
-    <script>window.CMS_MANUAL_INIT = true;</script>
-    <script defer src="https://unpkg.com/decap-cms@3.3.0/dist/decap-cms.js"></script>
   </head>
   <body class="admin-page">
     <div id="nc-root"></div>
@@ -24,8 +22,10 @@
     <noscript>
       <p class="admin-error">Enable JavaScript to use the article composer.</p>
     </noscript>
-    <script defer src="/admin/admin-composer.js"></script>
-    <script defer>
+    <script>window.CMS_MANUAL_INIT = true;</script>
+    <script src="https://unpkg.com/decap-cms@3.3.0/dist/decap-cms.js"></script>
+    <script src="/admin/admin-composer.js"></script>
+    <script>
       (function () {
         var errorBox = document.getElementById("cms-error");
 
@@ -40,25 +40,22 @@
           return;
         }
 
-        function initCms() {
-          if (typeof CMS === "undefined") {
-            showError("Could not load the composer. Check your connection and refresh.");
-            return;
-          }
-
-          CMS.init({ config_url: "https://www.rolcc.in/admin/config.yml" });
-
-          window.addEventListener("unhandledrejection", function (event) {
-            var reason = event.reason && (event.reason.message || String(event.reason));
-            if (reason) showError(reason);
-          });
+        if (location.hostname === "rolcc.in") {
+          location.replace("https://www.rolcc.in" + location.pathname + location.search + location.hash);
+          return;
         }
 
-        if (document.readyState === "loading") {
-          document.addEventListener("DOMContentLoaded", initCms);
-        } else {
-          initCms();
+        if (typeof CMS === "undefined") {
+          showError("Could not load the composer. Check your connection and refresh.");
+          return;
         }
+
+        CMS.init({ config_url: location.origin + "/admin/config.yml" });
+
+        window.addEventListener("unhandledrejection", function (event) {
+          var reason = event.reason && (event.reason.message || String(event.reason));
+          if (reason) showError(reason);
+        });
       })();
     </script>
   </body>

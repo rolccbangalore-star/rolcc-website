@@ -777,14 +777,15 @@ body {
 }
 
 /* ——— Article cards (custom manifest grid — Decap list hidden) ——— */
-#nc-root main > .admin-decap-hidden {
+#nc-root.admin-view--collection main > :not(.admin-collection-header):not(.admin-custom-entries) {
   display: none !important;
-  visibility: hidden !important;
-  height: 0 !important;
-  overflow: hidden !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  pointer-events: none !important;
+}
+
+#nc-root .admin-custom-entries {
+  display: block !important;
+  visibility: visible !important;
+  height: auto !important;
+  overflow: visible !important;
 }
 
 #nc-root main .admin-decap-entries {

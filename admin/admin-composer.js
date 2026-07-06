@@ -376,30 +376,49 @@
     return !!btn.querySelector("svg") || text.length === 0;
   }
 
+  function isValidToolbar(node, main, h1, headerWrap) {
+    if (!node || !main || !main.contains(node)) return false;
+    if (node.classList.contains("admin-custom-entries")) return false;
+    if (h1 && node.contains(h1)) return false;
+    if (headerWrap && node.contains(headerWrap)) return false;
+    return true;
+  }
+
+  function safeAppend(parent, child) {
+    if (!parent || !child || parent === child) return;
+    if (child.contains(parent)) return;
+    if (parent.contains(child)) return;
+    parent.appendChild(child);
+  }
+
   function findControls(main) {
     if (!main) return null;
 
     var h1 = main.querySelector("h1");
+    var headerWrap = main.querySelector(".admin-collection-header");
+    var existing = main.querySelector(".admin-collection-toolbar");
+    if (existing && isValidToolbar(existing, main, h1, headerWrap)) return existing;
+
     if (h1) {
       var topBlock = h1.closest("div");
       if (topBlock && topBlock.nextElementSibling && topBlock.nextElementSibling.querySelector("button")) {
-        return topBlock.nextElementSibling;
+        var sibling = topBlock.nextElementSibling;
+        if (isValidToolbar(sibling, main, h1, headerWrap)) return sibling;
       }
     }
 
     var buttons = main.querySelectorAll("button");
     for (var i = 0; i < buttons.length; i++) {
       var label = normalize(buttons[i].textContent);
-      if (label.indexOf("sort by") !== -1) {
-        var wrap = buttons[i].closest("div");
-        if (wrap && main.contains(wrap)) return wrap;
-      }
+      if (label.indexOf("sort by") === -1) continue;
+      var wrap = buttons[i].closest("div");
+      if (isValidToolbar(wrap, main, h1, headerWrap)) return wrap;
     }
 
     var selects = main.querySelectorAll("select");
     for (var j = 0; j < selects.length; j++) {
       var selectWrap = selects[j].closest("div");
-      if (selectWrap && main.contains(selectWrap)) return selectWrap;
+      if (isValidToolbar(selectWrap, main, h1, headerWrap)) return selectWrap;
     }
 
     return null;
@@ -447,6 +466,7 @@
     var h1 = main.querySelector("h1");
     if (!h1) return;
 
+    try {
     var topBlock = h1.parentElement;
     while (topBlock && topBlock.parentElement !== main && topBlock !== main) {
       if (topBlock.parentElement && topBlock.parentElement.tagName === "DIV" && topBlock.parentElement.parentElement === main) {
@@ -457,6 +477,7 @@
     }
     if (!topBlock || topBlock === main) topBlock = h1.parentElement;
 
+    var headerWrap = main.querySelector(".admin-collection-header");
     var controls = findControls(main);
     topBlock.classList.add("admin-collection-head");
 
@@ -467,26 +488,24 @@
     if (controls) {
       controls.classList.add("admin-collection-toolbar");
       styleViewToggleButtons(controls);
-      if (controls.parentElement !== topBlock) {
-        topBlock.appendChild(controls);
-      }
+      safeAppend(topBlock, controls);
     }
 
-    var headerWrap = main.querySelector(".admin-collection-header");
     if (!headerWrap) {
       headerWrap = document.createElement("div");
       headerWrap.className = "admin-collection-header";
       main.insertBefore(headerWrap, topBlock);
     }
-    if (topBlock.parentElement !== headerWrap) {
-      headerWrap.appendChild(topBlock);
-    }
+    safeAppend(headerWrap, topBlock);
     if (headerWrap !== main.firstElementChild) {
       main.insertBefore(headerWrap, main.firstElementChild);
     }
 
     var staleRow = main.querySelector(".admin-collection-toolbar-row");
     if (staleRow) staleRow.remove();
+    } catch (err) {
+      /* layout enhancement only — never block cards */
+    }
   }
 
   function ensureSortWrapChrome(sortWrap, anchor, options) {
@@ -974,16 +993,12 @@
     if (!collection) return;
 
     function run() {
-      restructureCollectionHeader(root);
-
       if (!root.dataset.adminViewMode) {
         setViewMode(root, "grid");
       }
 
       var listView = isListView(root);
       syncCollectionViewMode(root);
-      bindViewModeButtons(root);
-      hideDecapEntryLists(main);
 
       var entries = cardManifest && cardManifest[collection];
       if (!entries) return;
@@ -999,52 +1014,57 @@
       }
       placeCustomEntries(main, container);
 
-      if (container.dataset.adminSignature === signature) return;
-      container.dataset.adminSignature = signature;
-      container.textContent = "";
+      if (container.dataset.adminSignature !== signature) {
+        container.dataset.adminSignature = signature;
+        container.textContent = "";
 
-      if (listView) {
-        var listHeader = document.createElement("div");
-        listHeader.className = "admin-list-header";
-        listHeader.innerHTML =
-          '<span class="admin-list-header__cell admin-list-header__name">Title</span>' +
-          '<span class="admin-list-header__cell admin-list-header__collection">Collection</span>' +
-          '<span class="admin-list-header__cell admin-list-header__author">Author</span>' +
-          '<span class="admin-list-header__cell admin-list-header__date">Date</span>' +
-          '<span class="admin-list-header__cell admin-list-header__status">Status</span>';
-        container.appendChild(listHeader);
+        if (listView) {
+          var listHeader = document.createElement("div");
+          listHeader.className = "admin-list-header";
+          listHeader.innerHTML =
+            '<span class="admin-list-header__cell admin-list-header__name">Title</span>' +
+            '<span class="admin-list-header__cell admin-list-header__collection">Collection</span>' +
+            '<span class="admin-list-header__cell admin-list-header__author">Author</span>' +
+            '<span class="admin-list-header__cell admin-list-header__date">Date</span>' +
+            '<span class="admin-list-header__cell admin-list-header__status">Status</span>';
+          container.appendChild(listHeader);
 
-        var list = document.createElement("ul");
-        list.className = "admin-custom-list";
-        slugs.forEach(function (slug) {
-          var data = entries[slug];
-          if (!matchesSearch(data, collection, query)) return;
-          var li = document.createElement("li");
-          li.className = "admin-list-item admin-grid-card";
-          var link = document.createElement("a");
-          link.href = "#/collections/" + collection + "/entries/" + encodeURIComponent(slug);
-          renderListRow(link, data, collection);
-          li.appendChild(link);
-          list.appendChild(li);
-        });
-        container.appendChild(list);
-        return;
+          var list = document.createElement("ul");
+          list.className = "admin-custom-list";
+          slugs.forEach(function (slug) {
+            var data = entries[slug];
+            if (!matchesSearch(data, collection, query)) return;
+            var li = document.createElement("li");
+            li.className = "admin-list-item admin-grid-card";
+            var link = document.createElement("a");
+            link.href = "#/collections/" + collection + "/entries/" + encodeURIComponent(slug);
+            renderListRow(link, data, collection);
+            li.appendChild(link);
+            list.appendChild(li);
+          });
+          container.appendChild(list);
+        } else {
+          var grid = document.createElement("ul");
+          grid.className = "admin-custom-grid";
+          slugs.forEach(function (slug) {
+            var data = entries[slug];
+            if (!matchesSearch(data, collection, query)) return;
+            var li = document.createElement("li");
+            li.className = "admin-grid-card";
+            var link = document.createElement("a");
+            link.href = "#/collections/" + collection + "/entries/" + encodeURIComponent(slug);
+            renderGridCard(link, data, collection, null);
+            li.appendChild(link);
+            grid.appendChild(li);
+          });
+          container.appendChild(grid);
+        }
       }
 
-      var grid = document.createElement("ul");
-      grid.className = "admin-custom-grid";
-      slugs.forEach(function (slug) {
-        var data = entries[slug];
-        if (!matchesSearch(data, collection, query)) return;
-        var li = document.createElement("li");
-        li.className = "admin-grid-card";
-        var link = document.createElement("a");
-        link.href = "#/collections/" + collection + "/entries/" + encodeURIComponent(slug);
-        renderGridCard(link, data, collection, null);
-        li.appendChild(link);
-        grid.appendChild(li);
-      });
-      container.appendChild(grid);
+      container.hidden = false;
+      hideDecapEntryLists(main);
+      restructureCollectionHeader(root);
+      bindViewModeButtons(root);
     }
 
     loadCardManifest().then(run);

@@ -777,6 +777,7 @@ body {
 }
 
 /* ——— Article cards ——— */
+#nc-root.admin-view--grid main ul,
 #nc-root.admin-view--grid .admin-main ul {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
@@ -787,6 +788,23 @@ body {
   margin: 0 !important;
   list-style: none;
   box-sizing: border-box;
+}
+
+#nc-root.admin-view--grid main ul > li,
+#nc-root.admin-view--grid .admin-main ul > li {
+  margin-left: 0 !important;
+  flex: initial !important;
+  width: auto !important;
+  height: auto !important;
+}
+
+#nc-root.admin-view--grid .admin-grid-card > a:not(:has(.admin-card-body)) > * {
+  display: none !important;
+}
+
+#nc-root.admin-view--grid .admin-grid-card > a:not(:has(.admin-card-body)) {
+  display: block;
+  min-height: 18rem;
 }
 
 #nc-root .admin-grid-card {
@@ -913,6 +931,7 @@ body {
   min-width: 0;
 }
 
+#nc-root.admin-view--list main ul,
 #nc-root.admin-view--list .admin-main ul {
   display: flex;
   flex-direction: column;

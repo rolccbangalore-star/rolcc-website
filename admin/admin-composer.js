@@ -119,7 +119,7 @@
     if (enhanceTimer) window.clearTimeout(enhanceTimer);
     enhanceTimer = window.setTimeout(function () {
       fn(root);
-    }, 60);
+    }, 16);
   }
 
   function getHeaderTabs(root) {
@@ -635,17 +635,77 @@
   }
 
   function parseEntryPath(href) {
-    var match = normalizePath(href).match(/collections\/([^/]+)\/entries\/([^/?#]+)/);
+    var match = normalizePath(href).match(/collections\/([^/]+)\/entries\/([^/?#]+)/i);
     if (match) return { collection: match[1], slug: decodeURIComponent(match[2]) };
 
-    var hashMatch = getHash().match(/\/collections\/([^/]+)\/entries\/([^/?#]+)/);
-    return hashMatch ? { collection: hashMatch[1], slug: decodeURIComponent(hashMatch[2]) } : null;
+    var entryMatch = String(href || "").match(/entries\/([^/?#]+)/i);
+    var collection = getActiveCollection();
+    if (entryMatch && collection) {
+      return { collection: collection, slug: decodeURIComponent(entryMatch[1]) };
+    }
+
+    return null;
+  }
+
+  function slugFromTitle(title) {
+    return normalize(title)
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "");
+  }
+
+  function parseEntryFromLink(link) {
+    if (!link) return null;
+
+    var href = link.getAttribute("href") || link.getAttribute("to") || link.href || "";
+    var parsed = parseEntryPath(href);
+    if (parsed) return parsed;
+
+    var collection = getActiveCollection();
+    if (!collection) return null;
+
+    var heading = link.querySelector("h2, h3");
+    var title = heading ? heading.textContent.trim() : link.textContent.trim();
+    if (!title) return null;
+
+    if (cardManifest && cardManifest[collection]) {
+      var slugs = Object.keys(cardManifest[collection]);
+      var normalizedTitle = normalize(title);
+      for (var i = 0; i < slugs.length; i++) {
+        var entry = cardManifest[collection][slugs[i]];
+        if (normalize(entry.title) === normalizedTitle) {
+          return { collection: collection, slug: slugs[i] };
+        }
+      }
+
+      var guessedSlug = slugFromTitle(title);
+      if (guessedSlug && cardManifest[collection][guessedSlug]) {
+        return { collection: collection, slug: guessedSlug };
+      }
+    }
+
+    if (href) {
+      var slugMatch = href.match(/\/([^/?#]+)\/?$/);
+      if (slugMatch) {
+        return { collection: collection, slug: decodeURIComponent(slugMatch[1]) };
+      }
+    }
+
+    return null;
   }
 
   function cardNeedsPaint(link, listView) {
-    if (link.dataset.adminCard !== "done") return true;
-    if (link.dataset.adminCardView !== (listView ? "list" : "grid")) return true;
-    return listView ? !link.classList.contains("admin-list-row__link") : !link.querySelector(".admin-card-body");
+    if (listView) return !link.classList.contains("admin-list-row__link");
+    return !link.querySelector(".admin-card-body");
+  }
+
+  function detectDecapGridView(main) {
+    var card = main && main.querySelector("ul li a");
+    if (!card) return false;
+    var blocks = card.querySelectorAll(":scope > div");
+    for (var i = 0; i < blocks.length; i++) {
+      if (blocks[i].getBoundingClientRect().height >= 120) return true;
+    }
+    return false;
   }
 
   function fetchEntry(collection, slug) {
@@ -710,8 +770,9 @@
       pair.grid.classList.toggle("admin-view-btn--active", gridActive);
       if (listActive) return true;
       if (gridActive) return false;
-      return true;
     }
+
+    if (main && detectDecapGridView(main)) return false;
 
     var listBtn = root.querySelector(".admin-view-btn--list");
     if (listBtn && isDecapButtonActive(listBtn)) return true;
@@ -818,44 +879,48 @@
     link.appendChild(body);
   }
 
+  function paintCard(link, card, data, collection, listView, imageEl) {
+    if (listView) {
+      renderListRow(link, data, collection);
+    } else {
+      renderGridCard(link, data, collection, imageEl);
+    }
+    link.dataset.adminCard = "done";
+    link.dataset.adminCardView = listView ? "list" : "grid";
+    card.classList.add("admin-grid-card");
+    card.classList.toggle("admin-list-item", listView);
+  }
+
   function enhanceGridCards(root) {
     if (!isCollectionRoute()) return;
 
     var main = root.querySelector("main");
     if (!main) return;
 
-    loadCardManifest().then(function () {
+    function run() {
       var listView = isListView(root);
       syncCollectionViewMode(root);
       ensureListHeader(main, listView);
       bindViewModeButtons(root);
 
       main.querySelectorAll("ul li").forEach(function (card) {
-        card.classList.add("admin-grid-card");
-        card.classList.toggle("admin-list-item", listView);
         var link = card.querySelector("a");
         if (!link) return;
 
-        var parsed = parseEntryPath(link.getAttribute("href") || "");
+        var parsed = parseEntryFromLink(link);
         if (!parsed) return;
 
-        var imageEl = link.querySelector(".admin-card-image") || link.children[1];
-        if (imageEl) imageEl.classList.add("admin-card-image");
-
         if (!cardNeedsPaint(link, listView)) return;
+
+        var imageEl = link.querySelector(".admin-card-image") || link.querySelector(":scope > div");
+        if (imageEl) imageEl.classList.add("admin-card-image");
 
         var cacheKey = parsed.collection + "/" + parsed.slug;
         var manifestData = getManifestEntry(parsed.collection, parsed.slug);
 
         function paint(data) {
-          if (isListView(root)) {
-            renderListRow(link, data, parsed.collection);
-          } else {
-            renderGridCard(link, data, parsed.collection, imageEl);
-          }
-          link.dataset.adminCard = "done";
-          link.dataset.adminCardView = isListView(root) ? "list" : "grid";
-          entryCache[cacheKey] = data;
+          if (!data) return;
+          paintCard(link, card, data, parsed.collection, isListView(root), imageEl);
         }
 
         if (manifestData) {
@@ -865,11 +930,22 @@
 
         paint(buildFallbackCardData(link, parsed.collection, parsed.slug));
 
-        fetchEntry(parsed.collection, parsed.slug).then(function (data) {
-          if (data) paint(data);
-        });
+        var cached = entryCache[cacheKey];
+        if (cached && typeof cached.then === "function") {
+          cached.then(paint);
+          return;
+        }
+        if (cached && typeof cached === "object") {
+          paint(cached);
+          return;
+        }
+
+        fetchEntry(parsed.collection, parsed.slug).then(paint);
       });
-    });
+    }
+
+    loadCardManifest().then(run);
+    if (cardManifest) run();
   }
 
   function tagEditorLayout(root) {

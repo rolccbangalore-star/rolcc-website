@@ -1,0 +1,239 @@
+{
+  "sermonSeries": "Everyday Faith",
+  "blocks": [
+    {
+      "type": "quote",
+      "text": "Look and see, there is no one at my right hand; no one cares for my life.",
+      "attribution": "Psalm 142:4"
+    },
+    {
+      "type": "paragraph",
+      "text": "Major crises remind us how limited human strength can be. God invites us to anchor our hope in Him while acting with wisdom and compassion."
+    },
+    {
+      "type": "heading",
+      "level": "2",
+      "text": "Faith Requires Wise Action"
+    },
+    {
+      "type": "paragraph",
+      "text": "The Passover account teaches that trusting God includes obedient, practical action. Biblical faith is never separated from wisdom."
+    },
+    {
+      "type": "scriptureCallout",
+      "reference": "Psalm 142:4",
+      "text": "God remains our refuge even when we feel alone."
+    },
+    {
+      "type": "heading",
+      "level": "2",
+      "text": "Responding with Wisdom"
+    },
+    {
+      "type": "bulletList",
+      "items": [
+        {
+          "item": "Follow sound health guidance."
+        },
+        {
+          "item": "Seek medical help without unnecessary delay."
+        },
+        {
+          "item": "Replace fear with prayer and intercession."
+        },
+        {
+          "item": "Support those who are isolated or suffering."
+        }
+      ]
+    },
+    {
+      "type": "faq",
+      "items": [
+        {
+          "question": "Is it wrong to feel afraid during a crisis?",
+          "answer": "No. Like David, we can honestly bring our fears to God in prayer."
+        },
+        {
+          "question": "What does biblical faith look like?",
+          "answer": "Faith trusts God while also walking in wisdom and obedience."
+        },
+        {
+          "question": "How can I stay spiritually strong?",
+          "answer": "Remain rooted in Scripture, prayer, and Christian community."
+        }
+      ]
+    },
+    {
+      "type": "cta",
+      "label": "Request Prayer",
+      "url": "/contact",
+      "text": "We would love to pray with you during this season.",
+      "style": "primary"
+    }
+  ],
+  "summary": "When life is shaken by crisis, fear can easily overwhelm us. This message combines biblical wisdom with practical responsibility, showing how faith in God and wise action help us remain steady during difficult seasons.",
+  "author": "Rev. Benson K Sunny",
+  "thumbnail": "https://www.karmactive.com/wp-content/uploads/2025/08/Cascadia-Megaquake-15-Chance-by-2075-Will-Trigger-100-Foot-Tsunami-and-Permanent-Coastal-Sinking.webp",
+  "featured": false,
+  "date": "2026-07-06",
+  "publish": true,
+  "quiz": [
+    {
+      "question": "What did David do in his distress?",
+      "options": [
+        {
+          "option": "He cried out to God"
+        },
+        {
+          "option": "He trusted only himself"
+        },
+        {
+          "option": "He ran away from everyone"
+        },
+        {
+          "option": "He stopped praying"
+        },
+        {
+          "option": "He cried out to God"
+        },
+        {
+          "option": "He trusted only himself"
+        },
+        {
+          "option": "He ran away from everyone"
+        },
+        {
+          "option": "He stopped praying"
+        }
+      ],
+      "correctIndex": 0,
+      "explanation": "David honestly brought his fears before God."
+    },
+    {
+      "question": "What does the Passover story teach?",
+      "options": [
+        {
+          "option": "Faith includes obedient action"
+        },
+        {
+          "option": "Faith ignores wisdom"
+        },
+        {
+          "option": "Faith removes responsibility"
+        },
+        {
+          "option": "Faith avoids preparation"
+        },
+        {
+          "option": "Faith includes obedient action"
+        },
+        {
+          "option": "Faith ignores wisdom"
+        },
+        {
+          "option": "Faith removes responsibility"
+        },
+        {
+          "option": "Faith avoids preparation"
+        }
+      ],
+      "correctIndex": 0,
+      "explanation": "God's people obeyed His instructions."
+    },
+    {
+      "question": "How should believers respond to fear?",
+      "options": [
+        {
+          "option": "Turn it into prayer"
+        },
+        {
+          "option": "Panic"
+        },
+        {
+          "option": "Ignore it"
+        },
+        {
+          "option": "Spread fear"
+        },
+        {
+          "option": "Turn it into prayer"
+        },
+        {
+          "option": "Panic"
+        },
+        {
+          "option": "Ignore it"
+        },
+        {
+          "option": "Spread fear"
+        }
+      ],
+      "correctIndex": 0,
+      "explanation": "Prayer anchors us in God's peace."
+    },
+    {
+      "question": "What spiritual danger does the sermon warn about?",
+      "options": [
+        {
+          "option": "A hardened heart"
+        },
+        {
+          "option": "Generosity"
+        },
+        {
+          "option": "Hope"
+        },
+        {
+          "option": "Humility"
+        },
+        {
+          "option": "A hardened heart"
+        },
+        {
+          "option": "Generosity"
+        },
+        {
+          "option": "Hope"
+        },
+        {
+          "option": "Humility"
+        }
+      ],
+      "correctIndex": 0,
+      "explanation": "A hardened heart resists God's correction."
+    }
+  ],
+  "title": "Finding Anchor in the Tsunami: Practical Wisdom and Spiritual Accountability in Times of Crisis",
+  "tags": [
+    {
+      "tag": "Everyday Life"
+    },
+    {
+      "tag": "Prayer"
+    },
+    {
+      "tag": "Faith"
+    }
+  ],
+  "description": "Learn how Scripture and practical wisdom work together during times of crisis. Discover how Psalm 142 and the Passover story encourage faith, responsibility, and hope.",
+  "scripture": "Psalm 142:4",
+  "includeQuiz": true,
+  "category": "Everyday Life",
+  "keyTakeaways": [
+    {
+      "item": "God is our refuge."
+    },
+    {
+      "item": "Faith and wisdom work together."
+    },
+    {
+      "item": "Prayer redirects fear."
+    },
+    {
+      "item": "Care for others practically."
+    },
+    {
+      "item": "Keep a soft heart before God."
+    }
+  ]
+}

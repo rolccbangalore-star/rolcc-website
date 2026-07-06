@@ -14,10 +14,88 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/articles.css" />
     <link rel="stylesheet" href="/admin/admin.css" />
   </head>
   <body class="admin-page">
-    <div id="nc-root"></div>
+    <header id="admin-topbar" class="admin-shell-topbar" hidden>
+      <div class="admin-topbar__left" aria-hidden="true"></div>
+      <div class="admin-topbar__center">
+        <div class="admin-search">
+          <p class="admin-search__pretext">Search for an article</p>
+          <div class="admin-search__field" id="admin-search-slot">
+            <svg class="admin-search__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
+              <circle cx="11" cy="11" r="7" />
+              <path d="m20 20-3.5-3.5" />
+            </svg>
+          </div>
+        </div>
+      </div>
+      <div class="admin-topbar__right">
+        <a
+          href="https://www.rolcc.in/"
+          class="btn-outline admin-website-link"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Website</a
+        >
+        <div id="admin-profile-slot" class="admin-profile-slot"></div>
+      </div>
+    </header>
+
+    <aside id="admin-sidebar" class="admin-shell-sidebar" hidden>
+      <div class="admin-sidebar-brand">
+        <img
+          class="admin-sidebar-brand__logo"
+          src="/images/favicon-96x96.png"
+          alt="River of Life Christian Church"
+          width="40"
+          height="40"
+        />
+        <div class="admin-sidebar-brand__text">
+          <p class="admin-sidebar-brand__name">River of Life Christian Church</p>
+          <p class="admin-sidebar-brand__sub">Article Composer</p>
+        </div>
+      </div>
+
+      <div class="admin-view-switcher admin-dropdown" id="admin-view-switcher">
+        <button type="button" class="admin-view-switcher__trigger" aria-haspopup="true" aria-expanded="false">
+          <svg class="admin-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
+            <rect x="3" y="3" width="7" height="7" rx="1" />
+            <rect x="14" y="3" width="7" height="7" rx="1" />
+            <rect x="3" y="14" width="7" height="7" rx="1" />
+            <rect x="14" y="14" width="7" height="7" rx="1" />
+          </svg>
+          <span class="admin-view-switcher__label">Contents</span>
+          <svg class="admin-view-switcher__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
+            <path d="m6 9 6 6 6-6" />
+          </svg>
+        </button>
+        <div class="admin-view-switcher__menu admin-dropdown__menu" role="menu">
+          <button type="button" class="admin-view-switcher__option" data-view="contents" role="menuitem">Contents</button>
+          <button type="button" class="admin-view-switcher__option" data-view="media" role="menuitem">Media</button>
+        </div>
+      </div>
+
+      <p class="admin-sidebar-section-label">Collections</p>
+      <nav class="admin-sidebar-nav" aria-label="Article collections">
+        <a href="#/collections/everyday-faith" class="admin-sidebar-link" data-collection="everyday-faith">
+          <svg class="admin-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
+            <path d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
+          </svg>
+          <span class="admin-sidebar-link__text">Everyday Faith</span>
+        </a>
+        <a href="#/collections/back-to-bible" class="admin-sidebar-link" data-collection="back-to-bible">
+          <svg class="admin-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+          </svg>
+          <span class="admin-sidebar-link__text">Back to the Bible</span>
+        </a>
+      </nav>
+    </aside>
+
+    <div id="nc-root" class="admin-workspace"></div>
     <p id="cms-error" class="admin-error" role="alert" hidden></p>
     <noscript>
       <p class="admin-error">Enable JavaScript to use the article composer.</p>

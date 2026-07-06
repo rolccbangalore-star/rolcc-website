@@ -302,6 +302,16 @@
   display: block;
 }
 
+@media (max-width: 639px) {
+  .articles-card--tall {
+    min-height: 17.6rem;
+  }
+
+  .articles-card__media {
+    aspect-ratio: 1 / 1;
+  }
+}
+
 .articles-card__badge {
   position: absolute;
   top: 0.75rem;
@@ -725,6 +735,7 @@
   gap: 0.55rem;
   transform: translateX(-50%);
   max-width: calc(100% - 1.5rem);
+  overflow: visible;
 }
 
 .article-clap {
@@ -736,6 +747,7 @@
   border: 1px solid #e2e8f0;
   background: #fff;
   cursor: pointer;
+  overflow: visible;
   box-shadow:
     0 4px 14px rgba(15, 23, 42, 0.12),
     0 2px 6px rgba(15, 23, 42, 0.06);
@@ -768,14 +780,17 @@
   border-radius: 9999px;
   background: #0f172a;
   flex-shrink: 0;
-  overflow: hidden;
+  overflow: visible;
+  position: relative;
 }
 
 .article-clap__lottie {
   display: block;
-  width: 3.25rem;
-  height: 3.25rem;
+  width: 4.5rem;
+  height: 4.5rem;
   pointer-events: none;
+  position: relative;
+  z-index: 1;
 }
 
 .article-clap:disabled {

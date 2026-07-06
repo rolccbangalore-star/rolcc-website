@@ -1998,6 +1998,17 @@ body.footer-in-view:not(.has-fixed-footer) .footer-reveal button {
   pointer-events: none; /* allow clicks to pass through to footer links */
 }
 
+body.footer-in-view .article-action-dock {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+body.footer-in-view .article-action-dock > * {
+  pointer-events: none;
+  animation: none;
+}
+
 /* ========== Footer link hover ========== */
 .footer-link {
   transition: color 0.2s ease;

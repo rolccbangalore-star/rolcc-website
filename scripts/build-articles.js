@@ -18,6 +18,7 @@ const {
   collectBlockText,
   renderBlocks,
   renderArticleMetaBar,
+  renderArticleHeroHeader,
   renderArticleTagsHtml,
   renderArticleCardTag,
   normalizeArticleTags,
@@ -656,18 +657,8 @@ function articleSchema(article, canonical) {
   return JSON.stringify(base, null, 2);
 }
 
-function renderClapWidget(article, label) {
-  const ariaLabel = label || "Appreciate this article";
-  return `<div class="article-clap" data-article-clap data-slug="${escapeHtml(article.slug)}">
-          <button type="button" class="article-clap__btn" data-clap-button aria-label="${escapeHtml(ariaLabel)}" aria-pressed="false">
-            <canvas class="article-clap__lottie" data-clap-lottie width="88" height="88" aria-hidden="true"></canvas>
-          </button>
-          <div class="article-clap__meta">
-            <p class="article-clap__count"><span data-clap-count>0</span></p>
-            <p class="article-clap__label">Appreciations</p>
-            <p class="article-clap__user" data-clap-user hidden></p>
-          </div>
-        </div>`;
+function renderClapScripts(article) {
+  return `\n    <script id="article-clap-slug" type="application/json">${JSON.stringify(article.slug)}</script>\n    <script src="/js/articles/clap.js"></script>`;
 }
 
 function renderQuizSection(article) {
@@ -707,22 +698,18 @@ function buildEverydayFaithPage(article, allArticles) {
       <article class="mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
         <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-accent">${escapeHtml(article.typeLabel)}${article.sermonSeries ? ` · ${escapeHtml(article.sermonSeries)}` : ""}</p>
         <h1 class="mt-3 text-balance text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">${escapeHtml(article.title)}</h1>
-        ${renderArticleMetaBar(article)}
-        <img class="mt-8 w-full rounded-2xl border border-slate-200" src="${escapeHtml(article.thumbnail)}" alt="" width="960" height="540" loading="lazy" />
+        ${renderArticleHeroHeader(article)}
         ${renderSummaryBox(article.summary)}
         <div class="article-prose mt-8">${article.bodyHtml}</div>
         ${renderKeyTakeaways(article.keyTakeaways)}
         ${renderQuizSection(article)}
-        <div class="mt-10">
-          ${renderClapWidget(article)}
-        </div>
         ${renderRelated(allArticles, article)}
         <p class="mt-10"><a href="/articles" class="text-sm font-medium text-accent hover:underline">← Back to all articles</a></p>
       </article>
       </div>
       <div class="serve-unveil-spacer min-h-screen" aria-hidden="true"></div>`;
 
-  const scripts = `<script src="/js/articles/clap.js"></script>${renderQuizScripts(article)}`;
+  const scripts = `${renderClapScripts(article)}${renderQuizScripts(article)}`;
   return buildPageShell({ title, description: article.description, canonical, ogType: "article", ogImage: article.thumbnail.startsWith("http") ? article.thumbnail : `${SITE_ORIGIN}${article.thumbnail}`, headExtra, bodyMain, assetRoot, scripts, siteFooter: true });
 }
 
@@ -777,16 +764,13 @@ function buildBackToBiblePage(article, allArticles) {
         ${questionsHtml}
         ${activitiesHtml}
         ${quizHtml}
-        <div class="mt-10">
-          ${renderClapWidget(article, "Appreciate this study")}
-        </div>
         ${renderRelated(allArticles, article)}
         <p class="mt-10"><a href="/articles" class="text-sm font-medium text-accent hover:underline">← Back to all articles</a></p>
       </article>
       </div>
       <div class="serve-unveil-spacer min-h-screen" aria-hidden="true"></div>`;
 
-  const scripts = `<script src="/js/articles/clap.js"></script>${renderQuizScripts(article)}`;
+  const scripts = `${renderClapScripts(article)}${renderQuizScripts(article)}`;
   return buildPageShell({ title, description: article.description, canonical, ogType: "article", ogImage: article.thumbnail.startsWith("http") ? article.thumbnail : `${SITE_ORIGIN}${article.thumbnail}`, headExtra, bodyMain, assetRoot: "/", scripts, siteFooter: true });
 }
 

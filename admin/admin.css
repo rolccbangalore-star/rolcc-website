@@ -2533,6 +2533,17 @@ body.admin-page--authed:not(.admin-page--editor) .admin-publish-slot {
 .admin-editor-title-block.admin-field--missing .admin-editor-title-input {
   border-color: #dc2626;
   box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15);
+  animation: admin-title-missing-pulse 1.1s ease-in-out 2;
+}
+
+@keyframes admin-title-missing-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15);
+  }
+  50% {
+    box-shadow: 0 0 0 7px rgba(220, 38, 38, 0.28);
+  }
 }
 
 #nc-root .admin-field--missing {
@@ -2540,6 +2551,19 @@ body.admin-page--authed:not(.admin-page--editor) .admin-publish-slot {
   outline: 2px solid #dc2626;
   outline-offset: 4px;
   background: rgba(254, 242, 242, 0.65);
+  animation: admin-field-missing-pulse 1.1s ease-in-out 2;
+}
+
+@keyframes admin-field-missing-pulse {
+  0%,
+  100% {
+    outline-color: #dc2626;
+    box-shadow: none;
+  }
+  50% {
+    outline-color: #f87171;
+    box-shadow: 0 0 0 6px rgba(220, 38, 38, 0.14);
+  }
 }
 
 .admin-import-btn {

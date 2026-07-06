@@ -1012,7 +1012,20 @@
         .catch(function (err) {
           var msg = (err && err.message) || String(err || "Save failed");
           if (/missing required/i.test(msg)) {
-            setEditorStatus("Complete highlighted fields to publish.", true);
+            var missing = window.AdminImport.validatePublishRequirements
+              ? window.AdminImport.validatePublishRequirements()
+              : [];
+            if (missing.length && window.AdminImport.highlightPublishFields) {
+              window.AdminImport.highlightPublishFields(root, missing);
+              var names = missing
+                .map(function (item) {
+                  return item.label;
+                })
+                .join(", ");
+              setEditorStatus("To publish, complete: " + names + ".", true);
+            } else {
+              setEditorStatus("Complete highlighted fields to publish.", true);
+            }
           } else {
             setEditorStatus(msg, true);
           }
@@ -1043,18 +1056,13 @@
       ? window.AdminImport.validatePublishRequirements()
       : [];
     if (missing.length) {
-      var first = window.AdminImport.highlightPublishFields
-        ? window.AdminImport.highlightPublishFields(root, missing)
-        : null;
+      window.AdminImport.highlightPublishFields(root, missing);
       var names = missing
         .map(function (item) {
           return item.label;
         })
         .join(", ");
       setEditorStatus("To publish, complete: " + names + ".", true);
-      if (first && first.scrollIntoView) {
-        first.scrollIntoView({ behavior: "smooth", block: "center" });
-      }
       return;
     }
 

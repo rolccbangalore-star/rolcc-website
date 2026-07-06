@@ -921,6 +921,89 @@
     return labelEl.parentElement || labelEl;
   }
 
+  function resolvePublishFieldEl(root, item) {
+    if (!root || !item) return null;
+
+    if (item.key === "title") {
+      return $("admin-editor-title-block");
+    }
+
+    if (item.key === "tags") {
+      return root.querySelector(".admin-field--tags-wired");
+    }
+
+    var labelKey =
+      item.key === "description" ? "search preview" : item.key === "blocks" ? "article content" : item.key;
+    var wrap = findFieldByLabel(root, labelKey);
+    if (wrap) return wrap;
+
+    var labels = PUBLISH_FIELD_LABELS[item.key] || [String(item.label || "").toLowerCase()];
+    var nodes = root.querySelectorAll("main label, main h2, main legend, main p");
+    for (var i = 0; i < nodes.length; i++) {
+      var text = normalizeLabel(nodes[i].textContent || "");
+      var matched = labels.some(function (label) {
+        return text === label || text.indexOf(label) === 0;
+      });
+      if (!matched) continue;
+      return findFieldContainer(nodes[i]);
+    }
+
+    return null;
+  }
+
+  function getScrollParent(el) {
+    var node = el && el.parentElement;
+    while (node && node !== document.body) {
+      var style = window.getComputedStyle(node);
+      var overflowY = style.overflowY;
+      if ((overflowY === "auto" || overflowY === "scroll") && node.scrollHeight > node.clientHeight + 1) {
+        return node;
+      }
+      node = node.parentElement;
+    }
+    return null;
+  }
+
+  function scrollToPublishField(el) {
+    if (!el) return;
+
+    var topbar = $("admin-topbar");
+    var headerOffset = topbar && !topbar.hidden ? topbar.offsetHeight + 20 : 20;
+    var titleBlock = $("admin-editor-title-block");
+
+    if (titleBlock && (el === titleBlock || titleBlock.contains(el))) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      var titleInput = $("admin-editor-title-input");
+      if (titleInput) {
+        window.setTimeout(function () {
+          titleInput.focus({ preventScroll: true });
+        }, 320);
+      }
+      return;
+    }
+
+    var scrollParent = getScrollParent(el);
+    if (scrollParent) {
+      var parentRect = scrollParent.getBoundingClientRect();
+      var elRect = el.getBoundingClientRect();
+      var nextTop = scrollParent.scrollTop + (elRect.top - parentRect.top) - headerOffset;
+      scrollParent.scrollTo({ top: Math.max(0, nextTop), behavior: "smooth" });
+    } else {
+      var rect = el.getBoundingClientRect();
+      var absoluteTop = window.pageYOffset + rect.top - headerOffset;
+      window.scrollTo({ top: Math.max(0, absoluteTop), behavior: "smooth" });
+    }
+
+    var focusable = el.querySelector(
+      'input:not([type="hidden"]), textarea, select, button, [tabindex]:not([tabindex="-1"])'
+    );
+    if (focusable) {
+      window.setTimeout(function () {
+        focusable.focus({ preventScroll: true });
+      }, 360);
+    }
+  }
+
   function clearFieldHighlights(root) {
     if (!root) return;
     root.querySelectorAll(".admin-field--missing").forEach(function (el) {
@@ -936,40 +1019,19 @@
 
     var firstEl = null;
     missing.forEach(function (item) {
-      if (item.key === "title") {
-        var titleBlock = $("admin-editor-title-block");
-        if (titleBlock) {
-          titleBlock.classList.add("admin-field--missing");
-          if (!firstEl) firstEl = titleBlock;
-        }
-        return;
-      }
-
-      if (item.key === "tags") {
-        var tagsField = root.querySelector(".admin-field--tags-wired");
-        if (tagsField) {
-          tagsField.classList.add("admin-field--missing");
-          if (!firstEl) firstEl = tagsField;
-        }
-        return;
-      }
-
-      var labels = PUBLISH_FIELD_LABELS[item.key] || [String(item.label || "").toLowerCase()];
-      var nodes = root.querySelectorAll("main label, main h2, main legend, main p");
-      for (var i = 0; i < nodes.length; i++) {
-        var text = normalizeLabel(nodes[i].textContent || "");
-        var matched = labels.some(function (label) {
-          return text === label || text.indexOf(label) === 0;
-        });
-        if (!matched) continue;
-        var container = findFieldContainer(nodes[i]);
-        if (container) {
-          container.classList.add("admin-field--missing");
-          if (!firstEl) firstEl = container;
-        }
-        break;
-      }
+      var el = resolvePublishFieldEl(root, item);
+      if (!el) return;
+      el.classList.add("admin-field--missing");
+      if (!firstEl) firstEl = el;
     });
+
+    if (firstEl) {
+      window.requestAnimationFrame(function () {
+        window.requestAnimationFrame(function () {
+          scrollToPublishField(firstEl);
+        });
+      });
+    }
 
     return firstEl;
   }

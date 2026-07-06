@@ -635,6 +635,12 @@
       el.classList.add("admin-decap-media-hidden");
       el.setAttribute("aria-hidden", "true");
       el.hidden = true;
+      el.style.setProperty("display", "none", "important");
+      el.style.setProperty("height", "0", "important");
+      el.style.setProperty("min-height", "0", "important");
+      el.style.setProperty("overflow", "hidden", "important");
+      el.style.setProperty("margin", "0", "important");
+      el.style.setProperty("padding", "0", "important");
       hidden += 1;
     });
     // #region agent log
@@ -2999,6 +3005,7 @@
     mountCreateButton(root);
     renderCustomCollectionCards(root);
     enhanceMediaView(root);
+    if (isMediaRoute()) hideDecapMediaObstructions(root);
     mountEditorSubheader(root);
     mountEditorSplitShell(root);
     if (isEditorRoute()) {

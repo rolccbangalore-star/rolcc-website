@@ -14,17 +14,35 @@
 }
 
 .articles-hub-top {
-  background-color: #f8fafc;
-  background-image:
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.05) 35%, rgba(248, 250, 252, 0.88) 78%, #f8fafc 100%),
+  position: relative;
+  background: #f8fafc;
+}
+
+.articles-hub-top::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 46rem;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.08) 72%, rgba(248, 250, 252, 0.45) 92%, rgba(248, 250, 252, 0) 100%),
     url("../assets/contact%20us%20BG.webp") center top / cover no-repeat;
 }
 
+.articles-hub-top > * {
+  position: relative;
+  z-index: 1;
+}
+
 @media (max-width: 639px) {
-  .articles-hub-top {
-    background-image:
-      linear-gradient(to bottom, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.05) 35%, rgba(248, 250, 252, 0.88) 78%, #f8fafc 100%),
-      url("../assets/msite-contact-us-bg.png") center top / cover no-repeat;
+  .articles-hub-top::before {
+    height: 40rem;
+    background:
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.08) 100%) 0 0 / 100% 40rem no-repeat,
+      url("../assets/msite-contact-us-bg.png") center top / 100% 40rem no-repeat;
   }
 }
 

@@ -887,14 +887,50 @@
   }
 
   function resetEditorSplitShell(root) {
+    var shell = document.getElementById("admin-editor-split-shell");
+    if (shell) shell.remove();
+    document.body.classList.remove("admin-page--editor-split");
     root.querySelectorAll(".admin-editor-split").forEach(function (el) {
-      el.remove();
+      if (el.id !== "admin-editor-split-shell" && !el.closest("#admin-editor-split-shell")) el.remove();
     });
     root.querySelectorAll(".admin-editor-decap-hidden").forEach(function (el) {
       el.classList.remove("admin-editor-decap-hidden");
+      el.removeAttribute("aria-hidden");
     });
     root.querySelectorAll("main.admin-editor-split-active").forEach(function (el) {
       el.classList.remove("admin-editor-split-active");
+    });
+  }
+
+  function hideDecapEditorUI(root) {
+    if (!isEditorRoute()) return;
+    var selectors = [
+      "form",
+      '[class*="EditorControlPane"]',
+      '[class*="ControlPane"]',
+      '[class*="EditorControl"]',
+      '[class*="WidgetObject"]',
+      '[class*="ObjectWidget"]',
+    ];
+    selectors.forEach(function (sel) {
+      root.querySelectorAll(sel).forEach(function (el) {
+        if (el.closest("#admin-editor-split-shell")) return;
+        el.classList.add("admin-editor-decap-hidden");
+        el.setAttribute("aria-hidden", "true");
+      });
+    });
+    root.querySelectorAll("main").forEach(function (main) {
+      Array.from(main.children).forEach(function (child) {
+        if (
+          child.id === "admin-editor-split-shell" ||
+          child.classList.contains("admin-editor-split-shell") ||
+          child.classList.contains("admin-editor-subheader")
+        ) {
+          return;
+        }
+        child.classList.add("admin-editor-decap-hidden");
+        child.setAttribute("aria-hidden", "true");
+      });
     });
   }
 
@@ -904,33 +940,37 @@
       return;
     }
 
-    var main = root.querySelector("main");
-    if (!main) return;
-
-    var split = main.querySelector(".admin-editor-split");
-    if (!split) {
-      split = document.createElement("div");
-      split.className = "admin-editor-split";
-      split.setAttribute("role", "presentation");
-      split.innerHTML =
+    var shell = document.getElementById("admin-editor-split-shell");
+    if (!shell) {
+      shell = document.createElement("div");
+      shell.id = "admin-editor-split-shell";
+      shell.className = "admin-editor-split-shell";
+      shell.setAttribute("role", "presentation");
+      shell.innerHTML =
+        '<div class="admin-editor-split-shell__subheader"></div>' +
+        '<div class="admin-editor-split">' +
         '<div class="admin-editor-split__left" aria-hidden="true"></div>' +
         '<div class="admin-editor-split__divider" aria-hidden="true"></div>' +
-        '<div class="admin-editor-split__right" aria-hidden="true"></div>';
-
-      var subheader = main.querySelector(".admin-editor-subheader");
-      if (subheader) {
-        subheader.insertAdjacentElement("afterend", split);
-      } else {
-        main.insertBefore(split, main.firstChild);
-      }
+        '<div class="admin-editor-split__right" aria-hidden="true"></div>' +
+        "</div>";
+      document.body.appendChild(shell);
     }
 
-    Array.from(main.children).forEach(function (child) {
-      if (child === split || child.classList.contains("admin-editor-subheader")) return;
-      child.classList.add("admin-editor-decap-hidden");
-    });
+    var collection = getActiveCollection();
+    var backHref = "#/collections/" + (collection || "everyday-faith");
+    var subheader = shell.querySelector(".admin-editor-split-shell__subheader");
+    if (subheader) {
+      subheader.innerHTML =
+        '<a href="' +
+        backHref +
+        '" class="admin-editor-back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>Back</a>' +
+        '<span class="admin-editor-type-badge">' +
+        escapeHtml(COLLECTION_LABELS[collection] || "Article") +
+        "</span>";
+    }
 
-    main.classList.add("admin-editor-split-active");
+    document.body.classList.add("admin-page--editor-split");
+    hideDecapEditorUI(root);
   }
 
   function mountProfileButton(root) {
@@ -2737,6 +2777,13 @@
     enhanceMediaView(root);
     mountEditorSubheader(root);
     mountEditorSplitShell(root);
+    if (isEditorRoute()) {
+      [100, 300, 800, 1500, 2500].forEach(function (delay) {
+        window.setTimeout(function () {
+          mountEditorSplitShell(root);
+        }, delay);
+      });
+    }
   }
 
   function watch() {

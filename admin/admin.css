@@ -2230,7 +2230,69 @@ body.admin-composer-dropdown-open #nc-root .admin-custom-grid {
   white-space: nowrap !important;
 }
 
-/* Editor split shell — 65% | divider | 35% (Decap fields hidden until wired in) */
+/* Editor split shell — fixed overlay: 65% | divider | 35% */
+body.admin-page--editor-split .admin-editor-split-shell {
+  position: fixed;
+  top: var(--rolcc-header-height);
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 500;
+  display: flex;
+  flex-direction: column;
+  background: var(--rolcc-primary);
+  box-sizing: border-box;
+  pointer-events: auto;
+}
+
+body.admin-page--editor-split .admin-editor-split-shell__subheader {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
+  margin: 0;
+  padding: 1.25rem clamp(1rem, 2vw, 2rem) 0.75rem;
+  border-bottom: 1px solid var(--rolcc-slate-200);
+}
+
+body.admin-page--editor-split .admin-editor-split {
+  display: grid;
+  grid-template-columns: 65% 1px calc(35% - 1px);
+  flex: 1 1 auto;
+  width: 100%;
+  min-height: 0;
+  box-sizing: border-box;
+}
+
+body.admin-page--editor-split .admin-editor-split__left {
+  min-width: 0;
+  background: var(--rolcc-primary);
+}
+
+body.admin-page--editor-split .admin-editor-split__divider {
+  width: 1px;
+  align-self: stretch;
+  background: var(--rolcc-slate-300);
+}
+
+body.admin-page--editor-split .admin-editor-split__right {
+  min-width: 0;
+  background: var(--rolcc-slate-50);
+}
+
+/* Hide all Decap editor UI while split shell is active */
+body.admin-page--editor-split #nc-root form,
+body.admin-page--editor-split #nc-root [class*="EditorControlPane"],
+body.admin-page--editor-split #nc-root [class*="ControlPane"],
+body.admin-page--editor-split #nc-root [class*="EditorControl"],
+body.admin-page--editor-split #nc-root [class*="WidgetObject"],
+body.admin-page--editor-split #nc-root .admin-editor-decap-hidden,
+body.admin-page--editor-split #nc-root main > :not(.admin-editor-subheader) {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
 #nc-root.admin-view--editor main.admin-editor-split-active {
   display: flex;
   flex-direction: column;

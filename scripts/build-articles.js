@@ -20,6 +20,7 @@ const {
   renderArticleMetaBar,
   renderArticleTagsHtml,
   normalizeArticleTags,
+  normalizeQuizItem,
   renderSummaryBox,
   renderKeyTakeaways,
   selectRelatedArticles,
@@ -194,12 +195,7 @@ function loadEverydayFaith() {
         includeQuiz: data.includeQuiz === true,
         quiz:
           data.includeQuiz === true
-            ? (data.quiz || []).map((item) => ({
-                question: item.question,
-                options: (item.options || []).map((o) => (typeof o === "string" ? o : o.option || "")),
-                correctIndex: item.correctIndex,
-                explanation: item.explanation || "",
-              }))
+            ? (data.quiz || []).map((item) => normalizeQuizItem(item))
             : [],
         readTime: computeReadTime(textForReadTime),
         bodyHtml: renderBlocks(blocks),
@@ -275,12 +271,7 @@ function loadBackToBible() {
         includeQuiz: data.includeQuiz === true,
         quiz:
           data.includeQuiz === true
-            ? (data.quiz || []).map((item) => ({
-                question: item.question,
-                options: (item.options || []).map((o) => (typeof o === "string" ? o : o.option || "")),
-                correctIndex: item.correctIndex,
-                explanation: item.explanation || "",
-              }))
+            ? (data.quiz || []).map((item) => normalizeQuizItem(item))
             : [],
         readTime,
       };
@@ -415,23 +406,48 @@ function readFooterTemplate() {
     <button id="scroll-top-btn" class="scroll-to-top hidden fixed bottom-5 right-4 z-40 rounded-full bg-slate-900/90 p-2 text-xs text-slate-100 shadow-lg ring-1 ring-slate-600 hover:bg-slate-800 sm:bottom-6 sm:right-6" aria-label="Scroll to top" type="button">↑</button>`;
 }
 
+function renderHubTypeTag(article) {
+  const label =
+    article.type === "everyday-faith" ? "Sermon" : article.type === "back-to-bible" ? "Bible Study" : article.typeLabel;
+  return `<span class="article-tag article-tag--sm article-tag--type">${escapeHtml(label)}</span>`;
+}
+
+function renderArticleCardMeta(article) {
+  const parts = [];
+  if (article.author) parts.push(escapeHtml(article.author));
+  if (article.readTime) parts.push(`${article.readTime} min read`);
+  return parts.join(" · ");
+}
+
 function renderArticleCard(article, options = {}) {
   const href = articleUrl(article);
-  const badges = [];
-  if (options.featured) badges.push('<span class="article-tag article-tag--sm article-tag--featured">Featured</span>');
-  if (options.latest) badges.push('<span class="article-tag article-tag--sm article-tag--latest">Latest</span>');
-  const cardClass = options.featured ? "articles-card articles-card--featured" : "articles-card";
+  const isFeaturedHub = options.featured && options.featuredHub;
+  const cardClass = [
+    "articles-card",
+    "articles-card--tall",
+    isFeaturedHub ? "articles-card--featured-hub" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  const badgeHtml = options.featured
+    ? '<span class="articles-card__badge articles-card__badge--featured">Featured</span>'
+    : options.latest
+      ? '<span class="articles-card__badge articles-card__badge--latest">Latest</span>'
+      : "";
+
   return `<a href="${href}" class="${cardClass}" data-article-type="${escapeHtml(article.type)}" data-article-category="${escapeHtml(article.category || "")}">
-    <img class="articles-card__media" src="${escapeHtml(article.thumbnail)}" alt="" loading="lazy" width="640" height="360" />
+    <div class="articles-card__media-wrap">
+      <img class="articles-card__media" src="${escapeHtml(article.thumbnail)}" alt="" loading="lazy" width="640" height="800" />
+      ${badgeHtml}
+    </div>
     <div class="articles-card__body">
       <div class="articles-card__tags">
-        ${badges.join("")}
-        <span class="article-tag article-tag--sm">${escapeHtml(article.typeLabel)}</span>
+        ${renderHubTypeTag(article)}
         ${renderArticleTagsHtml(article, { mutedAll: true })}
       </div>
       <h2 class="articles-card__title">${escapeHtml(article.title)}</h2>
-      <p class="articles-card__desc">${escapeHtml(article.summary || article.description)}</p>
-      <p class="articles-card__meta">${escapeHtml(article.author)} · ${escapeHtml(article.dateFormatted)} · ${article.readTime} min read</p>
+      <p class="articles-card__meta">${renderArticleCardMeta(article)}</p>
     </div>
   </a>`;
 }
@@ -464,8 +480,8 @@ function renderFilterChips() {
   </div>`;
 }
 
-function buildPageShell({ title, description, canonical, ogType, ogImage, headExtra, bodyMain, assetRoot, scripts, hubPage }) {
-  const footer = hubPage ? readHubFooterTemplate() : readFooterTemplate();
+function buildPageShell({ title, description, canonical, ogType, ogImage, headExtra, bodyMain, assetRoot, scripts, hubPage, siteFooter }) {
+  const footer = hubPage || siteFooter ? readHubFooterTemplate() : readFooterTemplate();
   return `${readHeaderNavTemplate(assetRoot)
     .replaceAll("{{TITLE}}", escapeHtml(title))
     .replaceAll("{{DESCRIPTION}}", escapeHtml(description))
@@ -518,7 +534,7 @@ function buildHubPage(articles, faqs) {
           ? `<section class="border-b border-slate-200 bg-white" aria-label="Featured article">
         <div class="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
           <h2 class="text-lg font-semibold text-slate-900">Featured</h2>
-          <div class="articles-featured articles-featured--single mt-6">${renderArticleCard(featuredArticle, { featured: true })}</div>
+          <div class="articles-featured articles-featured--single mt-6">${renderArticleCard(featuredArticle, { featured: true, featuredHub: true })}</div>
         </div>
       </section>`
           : ""
@@ -560,6 +576,7 @@ function buildHubPage(articles, faqs) {
     description: a.description,
     summary: a.summary || a.description,
     category: a.category,
+    tags: normalizeArticleTags(a),
     author: a.author,
     date: a.date,
     dateFormatted: a.dateFormatted,
@@ -679,10 +696,11 @@ function buildEverydayFaithPage(article, allArticles) {
         ${renderPrevNext(allArticles, article)}
         ${renderRelated(allArticles, article)}
         <p class="mt-10"><a href="/articles" class="text-sm font-medium text-accent hover:underline">← Back to all articles</a></p>
-      </article>`;
+      </article>
+      <div class="serve-unveil-spacer min-h-screen" aria-hidden="true"></div>`;
 
   const scripts = `<script src="/js/articles/clap.js"></script>${renderQuizScripts(article)}`;
-  return buildPageShell({ title, description: article.description, canonical, ogType: "article", ogImage: article.thumbnail.startsWith("http") ? article.thumbnail : `${SITE_ORIGIN}${article.thumbnail}`, headExtra, bodyMain, assetRoot, scripts });
+  return buildPageShell({ title, description: article.description, canonical, ogType: "article", ogImage: article.thumbnail.startsWith("http") ? article.thumbnail : `${SITE_ORIGIN}${article.thumbnail}`, headExtra, bodyMain, assetRoot, scripts, siteFooter: true });
 }
 
 function buildBackToBiblePage(article, allArticles) {
@@ -743,10 +761,11 @@ function buildBackToBiblePage(article, allArticles) {
         ${renderPrevNext(allArticles, article)}
         ${renderRelated(allArticles, article)}
         <p class="mt-10"><a href="/articles" class="text-sm font-medium text-accent hover:underline">← Back to all articles</a></p>
-      </article>`;
+      </article>
+      <div class="serve-unveil-spacer min-h-screen" aria-hidden="true"></div>`;
 
   const scripts = `<script src="/js/articles/clap.js"></script>${renderQuizScripts(article)}`;
-  return buildPageShell({ title, description: article.description, canonical, ogType: "article", ogImage: article.thumbnail.startsWith("http") ? article.thumbnail : `${SITE_ORIGIN}${article.thumbnail}`, headExtra, bodyMain, assetRoot: "/", scripts });
+  return buildPageShell({ title, description: article.description, canonical, ogType: "article", ogImage: article.thumbnail.startsWith("http") ? article.thumbnail : `${SITE_ORIGIN}${article.thumbnail}`, headExtra, bodyMain, assetRoot: "/", scripts, siteFooter: true });
 }
 
 function updateSitemap(articles, faqTotalPages) {

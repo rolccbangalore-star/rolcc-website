@@ -19,6 +19,29 @@
   }
   if (!questions.length) return;
 
+  questions = questions.map(function (q) {
+    const seen = new Set();
+    const options = (q.options || [])
+      .map(function (opt) {
+        return String(opt || "").trim();
+      })
+      .filter(function (text) {
+        if (!text) return false;
+        const key = text.toLowerCase();
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
+    let correctIndex = Number(q.correctIndex) || 0;
+    if (options.length && correctIndex >= options.length) correctIndex = 0;
+    return {
+      question: q.question,
+      options: options,
+      correctIndex: correctIndex,
+      explanation: q.explanation,
+    };
+  });
+
   const quizSection =
     document.getElementById("article-quiz") ||
     root.closest('section[aria-label="Study quiz"]') ||

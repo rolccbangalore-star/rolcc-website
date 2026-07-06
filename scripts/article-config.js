@@ -200,6 +200,31 @@ function normalizeArticleTags(article) {
   return [];
 }
 
+function normalizeQuizOptions(options) {
+  const seen = new Set();
+  return (options || [])
+    .map((o) => String(typeof o === "string" ? o : o?.option || "").trim())
+    .filter((text) => {
+      if (!text) return false;
+      const key = text.toLowerCase();
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+}
+
+function normalizeQuizItem(item) {
+  const options = normalizeQuizOptions(item?.options);
+  let correctIndex = Number(item?.correctIndex) || 0;
+  if (options.length && correctIndex >= options.length) correctIndex = 0;
+  return {
+    question: item?.question || "",
+    options,
+    correctIndex,
+    explanation: item?.explanation || "",
+  };
+}
+
 function renderArticleTagsHtml(article, options) {
   const opts = options || {};
   const tags = normalizeArticleTags(article);
@@ -428,6 +453,8 @@ module.exports = {
   normalizeBlock,
   normalizeStringList,
   normalizeArticleTags,
+  normalizeQuizOptions,
+  normalizeQuizItem,
   renderArticleTagsHtml,
   collectBlockText,
   renderBlocks,

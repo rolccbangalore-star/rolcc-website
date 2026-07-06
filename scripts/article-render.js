@@ -322,12 +322,24 @@
 
   function normalizeQuiz(quiz) {
     return (quiz || []).map(function (item) {
+      var seen = new Set();
+      var options = (item.options || [])
+        .map(function (o) {
+          return String(typeof o === "string" ? o : o.option || "").trim();
+        })
+        .filter(function (text) {
+          if (!text) return false;
+          var key = text.toLowerCase();
+          if (seen.has(key)) return false;
+          seen.add(key);
+          return true;
+        });
+      var correctIndex = Number(item.correctIndex) || 0;
+      if (options.length && correctIndex >= options.length) correctIndex = 0;
       return {
         question: item.question,
-        options: (item.options || []).map(function (o) {
-          return typeof o === "string" ? o : o.option || "";
-        }),
-        correctIndex: item.correctIndex,
+        options: options,
+        correctIndex: correctIndex,
         explanation: item.explanation || "",
       };
     });

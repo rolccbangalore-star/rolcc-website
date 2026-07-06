@@ -19,7 +19,6 @@
 
   const perPage = payload.perPage || 12;
   const featuredSlug = payload.featuredSlug || "";
-  const latestSlug = payload.latestSlug || "";
   let filter = "all";
   let sort = "newest";
   let page = 1;
@@ -36,24 +35,52 @@
       .replace(/"/g, "&quot;");
   }
 
+  function articleTags(article) {
+    if (article.tags && article.tags.length) return article.tags;
+    if (article.category) return [article.category];
+    return [];
+  }
+
+  function typeTagLabel(article) {
+    if (article.type === "everyday-faith") return "Sermon";
+    if (article.type === "back-to-bible") return "Bible Study";
+    return article.typeLabel || article.type || "";
+  }
+
+  function renderTagsHtml(article) {
+    const tags = articleTags(article);
+    const typeTag = `<span class="article-tag article-tag--sm article-tag--type">${escapeHtml(typeTagLabel(article))}</span>`;
+    const tagHtml = tags
+      .map(function (tag) {
+        return `<span class="article-tag article-tag--sm article-tag--muted">${escapeHtml(tag)}</span>`;
+      })
+      .join("");
+    return typeTag + tagHtml;
+  }
+
+  function renderMeta(article) {
+    const parts = [];
+    if (article.author) parts.push(escapeHtml(article.author));
+    if (article.readTime) parts.push(`${article.readTime} min read`);
+    return parts.join(" · ");
+  }
+
   function cardHtml(article, options) {
     const href = `/articles/${article.type}/${article.slug}`;
     const thumb = article.thumbnail || "/images/og-image.jpg";
-    const desc = article.summary || article.description || "";
-    const badges = [];
-    if (options.featured) badges.push('<span class="article-tag article-tag--sm article-tag--featured">Featured</span>');
-    if (options.latest) badges.push('<span class="article-tag article-tag--sm article-tag--latest">Latest</span>');
-    return `<a href="${href}" class="articles-card" data-article-type="${escapeHtml(article.type)}" data-article-category="${escapeHtml(article.category || "")}">
-      <img class="articles-card__media" src="${escapeHtml(thumb)}" alt="" loading="lazy" width="640" height="360" />
+    const badgeHtml = options.latest
+      ? '<span class="articles-card__badge articles-card__badge--latest">Latest</span>'
+      : "";
+
+    return `<a href="${href}" class="articles-card articles-card--tall" data-article-type="${escapeHtml(article.type)}" data-article-category="${escapeHtml(article.category || "")}">
+      <div class="articles-card__media-wrap">
+        <img class="articles-card__media" src="${escapeHtml(thumb)}" alt="" loading="lazy" width="640" height="800" />
+        ${badgeHtml}
+      </div>
       <div class="articles-card__body">
-        <div class="articles-card__tags">
-          ${badges.join("")}
-          <span class="article-tag article-tag--sm">${escapeHtml(article.typeLabel || article.type)}</span>
-          ${article.category ? `<span class="article-tag article-tag--sm article-tag--muted">${escapeHtml(article.category)}</span>` : ""}
-        </div>
+        <div class="articles-card__tags">${renderTagsHtml(article)}</div>
         <h2 class="articles-card__title">${escapeHtml(article.title)}</h2>
-        <p class="articles-card__desc">${escapeHtml(desc)}</p>
-        <p class="articles-card__meta">${escapeHtml(article.author || "")} · ${escapeHtml(article.dateFormatted || "")}${article.readTime ? ` · ${article.readTime} min read` : ""}</p>
+        <p class="articles-card__meta">${renderMeta(article)}</p>
       </div>
     </a>`;
   }

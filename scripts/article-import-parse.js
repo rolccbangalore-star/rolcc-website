@@ -286,8 +286,10 @@
     } else if (isBibleStudyCollection(collection)) {
       out.sections = out.sections || [];
       out.discussionQuestions = (out.discussionQuestions || []).map(function (q) {
-        return typeof q === "string" ? q : trim(q.question || "");
-      }).filter(Boolean);
+        return typeof q === "string" ? { question: q } : { question: trim(q.question || "") };
+      }).filter(function (q) {
+        return q.question;
+      });
     }
 
     if (out.quiz && out.quiz.length) {

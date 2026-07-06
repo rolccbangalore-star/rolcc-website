@@ -460,49 +460,140 @@
     return merged;
   }
 
-  function countStoreImportResults(beforeData, afterData, importData) {
-    var results = { meta: 0, content: 0, quiz: 0, warnings: [] };
-    var metaKeys = ["title", "summary", "description", "author", "scripture", "sermonSeries", "passage"];
-    var contentKeys = ["blocks", "keyTakeaways", "sections", "discussionQuestions"];
-
-    Object.keys(importData).forEach(function (key) {
-      if (JSON.stringify(beforeData[key]) === JSON.stringify(afterData[key])) return;
-      if (metaKeys.indexOf(key) !== -1) results.meta += 1;
-      else if (key === "quiz") results.quiz = (importData.quiz || []).length;
-      else if (key === "includeQuiz") results.meta += 1;
-      else if (contentKeys.indexOf(key) !== -1) {
-        if (key === "blocks") results.content += (importData.blocks || []).length;
-        else if (key === "keyTakeaways") results.content += (importData.keyTakeaways || []).length;
-        else if (key === "sections") results.content += (importData.sections || []).length;
-        else if (key === "discussionQuestions") results.content += (importData.discussionQuestions || []).length;
-      }
-    });
-
-    return results;
+  function getCollectionFromStore(store) {
+    var state = store.getState();
+    if (!state || !state.collections) return null;
+    var name = getCollection();
+    var collections = state.collections;
+    var list = collections.toArray ? collections.toArray() : collections;
+    if (!list || !list.length) return null;
+    for (var i = 0; i < list.length; i++) {
+      var c = list[i];
+      if (c && c.get && c.get("name") === name) return c;
+      if (c && c.name === name) return c;
+    }
+    return null;
   }
 
-  function applyEntryViaStore(entry, options) {
+  function getFieldSchema(store, fieldName) {
+    var collection = getCollectionFromStore(store);
+    if (!collection) return null;
+    var fields = collection.get ? collection.get("fields") : collection.fields;
+    if (!fields) return null;
+    var list = fields.toArray ? fields.toArray() : fields;
+    if (!list || !list.length) return null;
+    for (var i = 0; i < list.length; i++) {
+      var f = list[i];
+      if (f && f.get && f.get("name") === fieldName) return f;
+      if (f && f.name === fieldName) return f;
+    }
+    return null;
+  }
+
+  function changeDraftFieldValue(store, fieldName, value) {
+    var field = getFieldSchema(store, fieldName);
+    if (!field) return false;
+    store.dispatch({
+      type: "DRAFT_CHANGE_FIELD",
+      payload: {
+        field: field,
+        value: value,
+        metadata: {},
+        entries: [],
+      },
+    });
+    return true;
+  }
+
+  function readDraftData() {
+    var entryObj = getDraftEntryJs();
+    return entryObj && entryObj.data ? entryObj.data : {};
+  }
+
+  function verifyStoreImport(importData) {
+    var data = readDraftData();
+    var verified = { meta: 0, content: 0, quiz: 0, warnings: [] };
+
+    if (importData.title && data.title === importData.title) verified.meta += 1;
+    if (importData.summary && data.summary === importData.summary) verified.meta += 1;
+    if (importData.description && data.description === importData.description) verified.meta += 1;
+    if (importData.author && data.author === importData.author) verified.meta += 1;
+    if (importData.scripture && data.scripture === importData.scripture) verified.meta += 1;
+    if (importData.sermonSeries && data.sermonSeries === importData.sermonSeries) verified.meta += 1;
+    if (importData.passage && data.passage === importData.passage) verified.meta += 1;
+
+    if (importData.blocks && importData.blocks.length) {
+      var blockLen = (data.blocks || []).length;
+      if (blockLen > 0) verified.content += blockLen;
+      else verified.warnings.push("Article content blocks did not apply.");
+    }
+    if (importData.keyTakeaways && importData.keyTakeaways.length) {
+      var takeLen = (data.keyTakeaways || []).length;
+      if (takeLen > 0) verified.content += takeLen;
+      else verified.warnings.push("Key takeaways did not apply.");
+    }
+    if (importData.sections && importData.sections.length) {
+      var secLen = (data.sections || []).length;
+      if (secLen > 0) verified.content += secLen;
+      else verified.warnings.push("Sections did not apply.");
+    }
+    if (importData.discussionQuestions && importData.discussionQuestions.length) {
+      var qLen = (data.discussionQuestions || []).length;
+      if (qLen > 0) verified.content += qLen;
+    }
+    if (importData.includeQuiz === true && data.includeQuiz === true) verified.meta += 1;
+    if (importData.quiz && importData.quiz.length) {
+      var quizLen = (data.quiz || []).length;
+      if (quizLen > 0) verified.quiz = quizLen;
+      else verified.warnings.push("Quiz questions did not apply.");
+    }
+
+    return verified;
+  }
+
+  function applyEntryViaStore(entry, options, done) {
     options = options || {};
-    if (!parseApi) return null;
+    if (!parseApi) {
+      if (done) done(null);
+      return null;
+    }
 
     var store = getCmsStore();
-    if (!store) return null;
+    if (!store) {
+      if (done) done(null);
+      return null;
+    }
 
-    var entryObj = getDraftEntryJs();
-    if (!entryObj || !entryObj.data) return null;
+    if (!getDraftEntryJs()) {
+      if (done) done(null);
+      return null;
+    }
 
     var collection = getCollection();
     var normalized = parseApi.normalizeEntryForCms(entry, collection);
     var importData = parseApi.pickImportFields(normalized, collection);
-    if (!Object.keys(importData).length) return { meta: 0, content: 0, quiz: 0, warnings: [] };
+    if (!Object.keys(importData).length) {
+      var empty = { meta: 0, content: 0, quiz: 0, warnings: [] };
+      if (done) done(empty);
+      return empty;
+    }
 
-    var beforeData = JSON.parse(JSON.stringify(entryObj.data || {}));
-    var mergedData = mergeImportIntoData(entryObj.data, importData, options.fillEmptyOnly !== false);
-    entryObj.data = mergedData;
+    var currentData = readDraftData();
+    var mergedData = mergeImportIntoData(currentData, importData, options.fillEmptyOnly !== false);
 
-    store.dispatch({
-      type: "DRAFT_CREATE_FROM_ENTRY",
-      payload: { entry: entryObj },
+    var fieldOrder = isArticlesCollection(collection)
+      ? ["title", "summary", "description", "author", "scripture", "sermonSeries", "blocks", "keyTakeaways", "includeQuiz", "quiz"]
+      : ["title", "description", "passage", "author", "sections", "discussionQuestions", "includeQuiz", "quiz"];
+
+    var quizPending = mergedData.includeQuiz === true && mergedData.quiz && mergedData.quiz.length;
+
+    fieldOrder.forEach(function (key) {
+      if (key === "quiz" && quizPending) return;
+      if (mergedData[key] === undefined) return;
+      if (options.fillEmptyOnly !== false && !isEmptyImportValue(key, currentData[key]) && currentData[key] !== undefined) {
+        return;
+      }
+      changeDraftFieldValue(store, key, mergedData[key]);
     });
 
     if (mergedData.title) {
@@ -520,10 +611,46 @@
       }, 300);
     }
 
-    return countStoreImportResults(beforeData, mergedData, importData);
+    function finish() {
+      var verified = verifyStoreImport(importData);
+      if (done) done(verified);
+      return verified;
+    }
+
+    if (quizPending) {
+      window.setTimeout(function () {
+        changeDraftFieldValue(store, "quiz", mergedData.quiz);
+        window.setTimeout(finish, 80);
+      }, 120);
+      return null;
+    }
+
+    return finish();
   }
 
-  function applyEntryImportDom(root, entry, options) {
+  function applyEntryImport(root, entry, options, done) {
+    options = options || {};
+    applyEntryViaStore(entry, options, function (storeResults) {
+      var results;
+      if (storeResults && (storeResults.meta || storeResults.content || storeResults.quiz)) {
+        results = storeResults;
+      } else if (storeResults && storeResults.warnings && storeResults.warnings.length) {
+        results = storeResults;
+      } else {
+        results = {
+          meta: 0,
+          content: 0,
+          quiz: 0,
+          warnings: [
+            "Could not import into the editor. Save your JSON file, then use it as a reference while filling fields manually.",
+          ],
+        };
+      }
+      if (done) done(results);
+    });
+  }
+
+  function applyEntryImportDom_UNUSED(root, entry, options) {
     options = options || {};
     var collection = getCollection();
     var metaFields = isBibleStudyCollection(collection) ? IMPORT_META_BTB : IMPORT_META_EF;
@@ -576,15 +703,6 @@
     }
 
     return results;
-  }
-
-  function applyEntryImport(root, entry, options) {
-    options = options || {};
-    var storeResults = applyEntryViaStore(entry, options);
-    if (storeResults && (storeResults.meta || storeResults.content || storeResults.quiz)) {
-      return storeResults;
-    }
-    return applyEntryImportDom(root, entry, options);
   }
 
   function showToast(message, type) {
@@ -640,25 +758,27 @@
     }
 
     try {
-      var results = applyEntryImport(root, entry, options);
-      if (!results.meta && !results.content && !results.quiz) {
-        if (entryHasImportData(entry) && attempt < 5) {
-          window.setTimeout(function () {
-            runAutoImport(entry, options, attempt + 1);
-          }, attempt === 0 ? 400 : 700);
-          if (attempt === 0) {
-            showToast("Waiting for editor fields…", "info");
+      applyEntryImport(root, entry, options, function (results) {
+        if (!results.meta && !results.content && !results.quiz) {
+          if (entryHasImportData(entry) && attempt < 5) {
+            window.setTimeout(function () {
+              runAutoImport(entry, options, attempt + 1);
+            }, attempt === 0 ? 400 : 700);
+            if (attempt === 0) {
+              showToast("Waiting for editor fields…", "info");
+            }
+            return;
           }
-          return { ok: true, results: results, pending: true };
+          var failMsg = results.warnings.length
+            ? results.warnings.join(" ")
+            : "Could not fill any fields. Wait for the form to load fully, then try again.";
+          showToast(failMsg, "info");
+          return;
         }
-        showToast(
-          "Could not fill any fields. Wait for the form to load fully, or check Replace fields in the import dialog.",
-          "info"
-        );
-        return { ok: true, results: results, empty: true };
-      }
-      showToast(formatImportSummary(results), "success");
-      return { ok: true, results: results };
+        var toastType = results.warnings.length ? "info" : "success";
+        showToast(formatImportSummary(results), toastType);
+      });
+      return { ok: true, pending: true };
     } catch (err) {
       showToast("Import failed: " + (err.message || err), "error");
       return { ok: false, error: err.message || String(err) };

@@ -1205,11 +1205,16 @@ body.footer-in-view .article-action-dock .article-quiz-fab__ring {
   color: #334155;
 }
 
+.article-takeaways + #article-quiz {
+  margin-top: 4.5rem;
+  padding-top: 2.5rem;
+}
+
 /* Quick Quiz FAB */
 #article-quiz {
   scroll-margin-top: 5.5rem;
-  margin-top: 3.25rem;
-  padding-top: 2rem;
+  margin-top: 3.5rem;
+  padding-top: 2.25rem;
 }
 
 .article-quiz-section--highlight .article-quiz {

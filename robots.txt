@@ -2,3 +2,5 @@ User-agent: *
 Allow: /
 
 Sitemap: https://www.rolcc.in/sitemap.xml
+
+# AI crawl guidance: https://www.rolcc.in/llms.txt

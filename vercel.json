@@ -107,10 +107,6 @@
       "destination": "/articles.html"
     },
     {
-      "source": "/articles/:page(\\d+)",
-      "destination": "/articles-:page.html"
-    },
-    {
       "source": "/articles/everyday-faith/:slug",
       "destination": "/articles/everyday-faith/:slug.html"
     },
@@ -250,8 +246,23 @@
       "permanent": true
     },
     {
+      "source": "/articles/:page(\\d+)",
+      "destination": "/articles",
+      "permanent": false
+    },
+    {
+      "source": "/articles/everyday-faith/:slug.html",
+      "destination": "/articles/everyday-faith/:slug",
+      "permanent": true
+    },
+    {
+      "source": "/articles/back-to-bible/:slug.html",
+      "destination": "/articles/back-to-bible/:slug",
+      "permanent": true
+    },
+    {
       "source": "/articles-:page.html",
-      "destination": "/articles/:page",
+      "destination": "/articles",
       "permanent": true
     },
     {

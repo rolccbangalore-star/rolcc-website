@@ -1,0 +1,30 @@
+# River of Life Christian Church
+
+> A Spirit-led Christian church in Bangalore, India. Welcome to first-time visitors, families, and anyone exploring faith.
+
+## Primary pages
+
+- Home: https://www.rolcc.in/
+- Articles hub: https://www.rolcc.in/articles
+- FAQ: https://www.rolcc.in/faq
+- Worship services: https://www.rolcc.in/services
+- Cell fellowship: https://www.rolcc.in/fellowship
+- Contact: https://www.rolcc.in/contact
+
+## Articles
+
+Faith articles and Bible studies published by River of Life Christian Church.
+
+- **Everyday Faith** — practical sermon reflections for everyday life (`/articles/everyday-faith/{slug}`)
+- **Back to the Bible** — cell group Bible study guides (`/articles/back-to-bible/{slug}`)
+
+Full list: https://www.rolcc.in/articles
+
+## Sitemap
+
+https://www.rolcc.in/sitemap.xml
+
+## Contact
+
+- Website: https://www.rolcc.in/contact
+- Location: Bangalore, India

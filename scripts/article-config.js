@@ -450,7 +450,7 @@ function renderArticleHeroHeader(article) {
   </div>`;
   return `<div class="article-hero">
     ${metaBlock}
-    <img class="article-hero__image w-full rounded-2xl border border-slate-200" src="${escapeHtml(article.thumbnail)}" alt="" width="960" height="540" loading="lazy" />
+    <img class="article-hero__image w-full rounded-2xl border border-slate-200" src="${escapeHtml(article.thumbnail)}" alt="${escapeHtml(articleImageAlt(article))}" width="960" height="540" loading="lazy" />
   </div>`;
 }
 
@@ -499,6 +499,29 @@ function getPrevNext(articles, current) {
   };
 }
 
+function articleImageAlt(article) {
+  return String(article?.title || "Article illustration").trim();
+}
+
+function collectFaqItemsFromBlocks(blocks) {
+  const items = [];
+  (blocks || []).forEach((raw) => {
+    const block = normalizeBlock(raw);
+    if (!block || blockType(block) !== "faq") return;
+    const faqItems = block.items?.length
+      ? block.items
+      : block.question
+        ? [{ question: block.question, answer: block.answer }]
+        : [];
+    faqItems.forEach((item) => {
+      const question = String(item?.question || "").trim();
+      const answer = String(item?.answer || "").trim();
+      if (question && answer) items.push({ question, answer });
+    });
+  });
+  return items;
+}
+
 module.exports = {
   ARTICLES_PER_PAGE,
   LATEST_COUNT,
@@ -534,4 +557,6 @@ module.exports = {
   renderKeyTakeaways,
   selectRelatedArticles,
   getPrevNext,
+  articleImageAlt,
+  collectFaqItemsFromBlocks,
 };

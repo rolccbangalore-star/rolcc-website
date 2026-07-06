@@ -471,20 +471,8 @@ function injectRelatedFaqs(faqs) {
 }
 
 function updateSitemap(totalPages) {
-  const staticPages = [
-    ["/", "weekly", "1.0"],["/about", "monthly", "0.9"],["/services", "monthly", "0.9"],["/contact", "monthly", "0.9"],
-    ["/giving", "monthly", "0.8"],["/events", "weekly", "0.8"],["/membership", "monthly", "0.8"],["/river-kids", "monthly", "0.8"],
-    ["/fellowship", "monthly", "0.8"],["/pmd", "monthly", "0.7"],["/counselling", "monthly", "0.7"],["/rolf", "monthly", "0.7"],
-  ];
-  const urls = staticPages.map(([loc, changefreq, priority]) =>
-    `  <url>\n    <loc>https://www.rolcc.in${loc === "/" ? "/" : loc}</loc>\n    <lastmod>${TODAY}</lastmod>\n    <changefreq>${changefreq}</changefreq>\n    <priority>${priority}</priority>\n  </url>`
-  );
-  for (let i = 1; i <= totalPages; i++) {
-    const loc = i === 1 ? "/faq" : `/faq/${i}`;
-    urls.push(`  <url>\n    <loc>https://www.rolcc.in${loc}</loc>\n    <lastmod>${TODAY}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>${i === 1 ? "0.8" : "0.6"}</priority>\n  </url>`);
-  }
-  const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.join("\n")}\n</urlset>\n`;
-  fs.writeFileSync(path.join(ROOT, "sitemap.xml"), xml, "utf8");
+  const { writeSitemap, loadArticlesFromManifest } = require("./build-sitemap");
+  writeSitemap({ articles: loadArticlesFromManifest(), faqTotalPages: totalPages, today: TODAY });
 }
 
 function main() {

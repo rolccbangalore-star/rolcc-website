@@ -733,6 +733,9 @@
       syncTitleFromDecap(root);
       bindTitleFieldSync(root);
       normalizeEditorFieldLabels(root);
+      if (window.AdminEditorFields && window.AdminEditorFields.mount) {
+        window.AdminEditorFields.mount(root);
+      }
     }, 900);
   }
 
@@ -1797,7 +1800,7 @@
     return {
       title: heading ? heading.textContent.trim() : link.textContent.trim() || "Untitled article",
       author: isBibleStudyCollection(collection) ? "ROLCC Fellowship Team" : "ROLCC Pastoral Team",
-      category: isBibleStudyCollection(collection) ? "Bible Study" : "General",
+      category: isBibleStudyCollection(collection) ? "Bible Study" : "",
       publish: true,
       date: "",
       thumbnail: "",
@@ -2608,6 +2611,9 @@
   }
 
   function resetEditorState() {
+    if (window.AdminEditorFields && window.AdminEditorFields.resetCaches) {
+      window.AdminEditorFields.resetCaches();
+    }
     editorState.dirty = false;
     editorState.snapshot = "";
     editorState.formBound = false;
@@ -3268,6 +3274,9 @@
     enhanceMediaView(root);
     mountEditorChrome(root);
     mountEditorTopbar(root);
+    if (window.AdminEditorFields && window.AdminEditorFields.mount) {
+      window.AdminEditorFields.mount(root);
+    }
   }
 
   function watch() {

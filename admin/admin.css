@@ -2742,6 +2742,59 @@ body.admin-delete-confirm-open {
   white-space: nowrap !important;
 }
 
+.admin-editor-native-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  pointer-events: none !important;
+}
+
+.admin-editor-custom {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.admin-editor-select,
+.admin-editor-input {
+  width: 100%;
+  padding: 0.55rem 0.75rem;
+  border: 1px solid var(--rolcc-slate-200);
+  border-radius: var(--rolcc-radius-lg);
+  background: var(--rolcc-primary);
+  color: var(--rolcc-slate-900);
+  font-family: var(--rolcc-font);
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
+.admin-editor-select:focus,
+.admin-editor-input:focus {
+  outline: none;
+  border-color: var(--rolcc-accent);
+  box-shadow: 0 0 0 3px rgba(99, 91, 255, 0.12);
+}
+
+.admin-editor-author-row {
+  display: grid;
+  grid-template-columns: minmax(6.5rem, 7.5rem) minmax(0, 1fr);
+  gap: 0.5rem;
+}
+
+.admin-editor-field-hint {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--rolcc-slate-500);
+  line-height: 1.45;
+}
+
+#nc-root .admin-field--quiz-collapsed {
+  display: none !important;
+}
+
 /* ——— Import modal & drop zone ——— */
 .admin-import-modal {
   position: fixed;

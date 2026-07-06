@@ -151,7 +151,7 @@ collections:
       - { label: Title, name: title, widget: string, required: false }
       - { label: Summary, name: summary, widget: text, required: false, hint: "Shown at the top of the article." }
       - { label: Search preview, name: description, widget: text, required: false, hint: "For Google and social links (1–2 sentences)." }
-      - { label: Author, name: author, widget: string, default: "ROLCC Pastoral Team" }
+      - { label: Author, name: author, widget: string, default: "ROLCC Pastoral Team", hint: "Use the title prefix and name fields in the editor." }
       - label: Tag
         name: category
         widget: relation
@@ -160,7 +160,7 @@ collections:
         search_fields: [name]
         value_field: name
         display_fields: [name]
-        hint: "Choose an existing tag or create a new one — it will appear for future articles."
+        hint: "Choose an existing tag or use Create new tag — it will appear for future articles."
       - { label: Date, name: date, widget: datetime, date_format: YYYY-MM-DD, time_format: false, required: false }
       - { label: Hero image, name: thumbnail, widget: image, default: "/images/og-image.jpg" }
       - { label: Featured, name: featured, widget: boolean, default: false }
@@ -215,7 +215,7 @@ collections:
       - { label: Title, name: title, widget: string }
       - { label: Description, name: description, widget: text }
       - { label: Passage, name: passage, widget: string }
-      - { label: Author, name: author, widget: string, default: "ROLCC Fellowship Team" }
+      - { label: Author, name: author, widget: string, default: "ROLCC Fellowship Team", hint: "Use the title prefix and name fields in the editor." }
       - label: Tag
         name: category
         widget: relation
@@ -223,8 +223,7 @@ collections:
         search_fields: [name]
         value_field: name
         display_fields: [name]
-        default: "Bible Study"
-        hint: "Choose an existing tag or create a new one — it will appear for future articles."
+        hint: "Choose an existing tag or use Create new tag — it will appear for future articles."
       - { label: Date, name: date, widget: datetime, date_format: YYYY-MM-DD, time_format: false }
       - { label: Thumbnail, name: thumbnail, widget: image, default: "/images/og-image.jpg" }
       - { label: Featured, name: featured, widget: boolean, default: false }

@@ -829,7 +829,6 @@
     }
 
     if (!data.date) changeDraftFieldValue(store, "date", today);
-    if (!data.category) changeDraftFieldValue(store, "category", "General");
     if (!data.thumbnail) changeDraftFieldValue(store, "thumbnail", "/images/og-image.jpg");
     changeDraftFieldValue(store, "publish", options.publish === true);
 
@@ -1235,7 +1234,21 @@
       publish: mode === "publish",
       allowIncomplete: mode === "draft",
     });
-    return persistEntryDraft(0);
+
+    var data = readDraftData();
+    var tagWork = Promise.resolve();
+    if (window.AdminEditorFields) {
+      if (data.category) {
+        tagWork = window.AdminEditorFields.ensureTagPersisted(data.category);
+      }
+      tagWork = tagWork.then(function () {
+        return window.AdminEditorFields.ensurePendingTagsPersisted();
+      });
+    }
+
+    return tagWork.then(function () {
+      return persistEntryDraft(0);
+    });
   }
 
   function clickDecapSaveButton(root) {
@@ -1603,6 +1616,7 @@
     getCmsStore: getCmsStore,
     getDraftEntryJs: getDraftEntryJs,
     readDraftData: readDraftData,
+    changeDraftFieldValue: changeDraftFieldValue,
     prepareDraftForSave: prepareDraftForSave,
     saveEntry: saveEntry,
     deleteArticleEntry: deleteArticleEntry,

@@ -1,0 +1,246 @@
+{
+  "sermonSeries": "Repayment Series",
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "Life can go from smooth to total chaos overnight. Between work pressure, tight finances, and family worries, stress isn't just a concept anymore—it hits right at home."
+    },
+    {
+      "type": "heading",
+      "level": "2",
+      "text": "The Emotional Rollercoaster"
+    },
+    {
+      "type": "paragraph",
+      "text": "When things spin out of control, our default setting is to overthink. We check every bit of bad news and replay terrifying what-if scenarios in our heads until we feel completely stuck."
+    },
+    {
+      "type": "paragraph",
+      "text": "We often make the mistake of riding on emotional highs. When things go great, we are all in, but the moment a storm hits, we crash. True resilience isn't an emotional rush; it's a quiet conviction that stays steady when the environment changes."
+    },
+    {
+      "type": "heading",
+      "level": "2",
+      "text": "What Are You Overlooking?"
+    },
+    {
+      "type": "paragraph",
+      "text": "The Bible cuts through this fear with the story of a desperate widow facing crushing debts. Her creditors were coming to take her children away, and she was completely blinded by her crisis."
+    },
+    {
+      "type": "paragraph",
+      "text": "When she pleaded for help, the prophet Elisha didn't hand her cash. Instead, he asked: 'What do you have in your house?' She insisted she had nothing at all except a tiny jar of oil. Her real problem wasn't just the debt; it was her inability to see what she already possessed. God used that single, forgotten jar of oil to miraculously pay off her debts."
+    },
+    {
+      "type": "heading",
+      "level": "2",
+      "text": "The Trap of Running Backward"
+    },
+    {
+      "type": "paragraph",
+      "text": "We see this same pattern in the life of Simon Peter. Overwhelmed by uncertainty, Peter decided to quit his mission and said, 'I am going fishing.' He retreated right back to his old comfort zone and his old profession."
+    },
+    {
+      "type": "paragraph",
+      "text": "But his human strength failed him—he fished all night and caught absolutely nothing. Jesus met him on the shore at daybreak, not to judge him, but to restore him. He reminded Peter that trying to solve things using old, self-reliant habits will only leave our nets empty."
+    },
+    {
+      "type": "heading",
+      "level": "2",
+      "text": "3 Fast Ways to Reclaim Your Peace"
+    },
+    {
+      "type": "bulletList",
+      "items": [
+        {
+          "item": "Audit what you have: Stop hyper-focusing on what you have lost or what you lack. Look closely at your life and recognize the strengths or resources you are currently overlooking."
+        },
+        {
+          "item": "Look back at past victories: When you feel entirely alone, remember the days you struggled the most in the past. If you survived that previous pit, you can navigate this one too."
+        },
+        {
+          "item": "Prioritize wisdom over frantic hours: Your life and career do not just need more of your exhausted, frantic hours; they need clear, sound wisdom. Take a step back from the noise."
+        }
+      ]
+    },
+    {
+      "type": "faq",
+      "items": [
+        {
+          "question": "Why doesn't the solution to my problem happen immediately?",
+          "answer": "Difficult seasons show us where we rely too much on our own strength. They break our reliance on stagnant comfort zones and help us build deep, inner resilience."
+        },
+        {
+          "question": "What should I do if I've already taken a step backward?",
+          "answer": "Don't treat yourself as a permanent failure. Recognize that trying to fix things using old comfort zones won't work, reset your focus, and move forward without letting past mistakes dictate your value."
+        }
+      ]
+    },
+    {
+      "type": "cta",
+      "label": "Connect with Us",
+      "url": "/contact",
+      "text": "Feeling isolated or overwhelmed? Reach out to our care team this week to find a supportive community.",
+      "style": "primary"
+    }
+  ],
+  "summary": "When career stress, mounting bills, or personal losses hit all at once, it is easy to burn out. Discover a simple shift in perspective that breaks the anxiety cycle and helps you find your footing again.",
+  "author": "Rev. Benson K Sunny",
+  "thumbnail": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSzNwYpE3_lmDSAgdyTM8BxxL6-jHFdVelJrdwQUfegGg&s=10",
+  "featured": false,
+  "date": "2026-07-06",
+  "publish": true,
+  "quiz": [
+    {
+      "question": "What question did the prophet Elisha ask the widow to pivot her focus away from her debt crisis?",
+      "options": [
+        {
+          "option": "How many local creditors are currently arriving at your door?"
+        },
+        {
+          "option": "What do you have in your house?"
+        },
+        {
+          "option": "Why did your late husband fail to clear his financial obligations?"
+        },
+        {
+          "option": "Can you borrow advanced tools from your immediate neighbors?"
+        },
+        {
+          "option": "How many local creditors are currently arriving at your door?"
+        },
+        {
+          "option": "What do you have in your house?"
+        },
+        {
+          "option": "Why did your late husband fail to clear his financial obligations?"
+        },
+        {
+          "option": "Can you borrow advanced tools from your immediate neighbors?"
+        }
+      ],
+      "correctIndex": 1,
+      "explanation": "Elisha asked the widow what she already possessed in her house, helping her see that a forgotten jar of oil would be the key to her breakthrough."
+    },
+    {
+      "question": "What happened when Simon Peter retreated to his old comfort zone and went back to fishing?",
+      "options": [
+        {
+          "option": "He fished all night and caught absolutely nothing."
+        },
+        {
+          "option": "He immediately amassed a massive amount of personal wealth."
+        },
+        {
+          "option": "He successfully avoided the future trials affecting the other disciples."
+        },
+        {
+          "option": "He managed to clear his family pressures within a single day."
+        },
+        {
+          "option": "He fished all night and caught absolutely nothing."
+        },
+        {
+          "option": "He immediately amassed a massive amount of personal wealth."
+        },
+        {
+          "option": "He successfully avoided the future trials affecting the other disciples."
+        },
+        {
+          "option": "He managed to clear his family pressures within a single day."
+        }
+      ],
+      "correctIndex": 0,
+      "explanation": "When Peter relied on his human strength and went back to his old profession, his human efforts failed him completely, leaving his nets empty."
+    },
+    {
+      "question": "According to the text, what is the main danger of building your faith on emotional excitement?",
+      "options": [
+        {
+          "option": "It stops an individual from tracking basic financial parameters."
+        },
+        {
+          "option": "It makes it difficult to participate in community or family meetings."
+        },
+        {
+          "option": "It causes severe spiritual ups and downs, leading to a crash when a storm hits."
+        },
+        {
+          "option": "It forces people to move into isolated rural areas against their will."
+        },
+        {
+          "option": "It stops an individual from tracking basic financial parameters."
+        },
+        {
+          "option": "It makes it difficult to participate in community or family meetings."
+        },
+        {
+          "option": "It causes severe spiritual ups and downs, leading to a crash when a storm hits."
+        },
+        {
+          "option": "It forces people to move into isolated rural areas against their will."
+        }
+      ],
+      "correctIndex": 2,
+      "explanation": "Emotional highs cause major instability; you are all in when things are great, but you crash completely the moment a real challenge appears."
+    },
+    {
+      "question": "What does the text recommend doing when you feel entirely alone or discouraged by current hardships?",
+      "options": [
+        {
+          "option": "Answering endless phone calls from surrounding critics to justify your choices."
+        },
+        {
+          "option": "Spending hours scrolling through problematic data to find an immediate exit strategy."
+        },
+        {
+          "option": "Taking a deliberate walk down memory lane to remember past instances of deliverance."
+        },
+        {
+          "option": "Launching a completely new business plan without checking your current resources."
+        },
+        {
+          "option": "Answering endless phone calls from surrounding critics to justify your choices."
+        },
+        {
+          "option": "Spending hours scrolling through problematic data to find an immediate exit strategy."
+        },
+        {
+          "option": "Taking a deliberate walk down memory lane to remember past instances of deliverance."
+        },
+        {
+          "option": "Launching a completely new business plan without checking your current resources."
+        }
+      ],
+      "correctIndex": 2,
+      "explanation": "Looking back at your history of deliverance reminds you of the previous times you survived hopeless situations, proving you can handle the current crisis too."
+    }
+  ],
+  "title": "Why Everything Feels Heavy Right Now (And How to Fix It)",
+  "tags": [
+    {
+      "tag": "Faith"
+    },
+    {
+      "tag": "Calling"
+    }
+  ],
+  "description": "Burnt out by everyday stress? Learn how to step out of the panic cycle and protect your mental peace.",
+  "scripture": "John 21 / 2 Kings 4",
+  "includeQuiz": true,
+  "category": "Faith",
+  "keyTakeaways": [
+    {
+      "item": "Building your mindset on emotional highs causes severe ups and downs when sudden challenges hit."
+    },
+    {
+      "item": "Crises often blind us to the practical solutions and resources that are already within our reach."
+    },
+    {
+      "item": "Retreating to old, comfortable habits when pressure mounts will only leave your efforts empty."
+    },
+    {
+      "item": "Real peace is found by taking a step back from frantic worry to catch clear, sound wisdom."
+    }
+  ]
+}

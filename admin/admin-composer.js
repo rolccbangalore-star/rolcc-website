@@ -580,6 +580,8 @@
       if (btn.dataset.viewBound === "true") return;
       btn.dataset.viewBound = "true";
       btn.addEventListener("click", function () {
+        var listMode = btn.classList.contains("admin-view-btn--list");
+        setViewMode(root, listMode ? "list" : "grid");
         window.setTimeout(function () {
           var main = root.querySelector("main");
           var toolbar = main && main.querySelector(".admin-collection-toolbar");
@@ -587,12 +589,12 @@
           if (pair) {
             markViewButton(pair.list, "list");
             markViewButton(pair.grid, "grid");
+            setViewMode(root, listMode ? "list" : "grid");
           }
-          syncCollectionViewMode(root);
           var container = root.querySelector(".admin-custom-entries");
           if (container) delete container.dataset.adminSignature;
           renderCustomCollectionCards(root);
-        }, 80);
+        }, 100);
       });
     });
   }
@@ -759,22 +761,19 @@
   }
 
   function isListView(root) {
+    if (root.dataset.adminViewMode === "list") return true;
+    if (root.dataset.adminViewMode === "grid") return false;
+
     var main = root.querySelector("main");
     var toolbar = main && main.querySelector(".admin-collection-toolbar");
     var pair = findViewStyleButtons(toolbar || main);
     if (pair) {
-      var listActive = isDecapButtonActive(pair.list);
-      var gridActive = isDecapButtonActive(pair.grid);
-      pair.list.classList.toggle("admin-view-btn--active", listActive);
-      pair.grid.classList.toggle("admin-view-btn--active", gridActive);
+      var listActive = pair.list.classList.contains("admin-view-btn--active") || isDecapButtonActive(pair.list);
+      var gridActive = pair.grid.classList.contains("admin-view-btn--active") || isDecapButtonActive(pair.grid);
       if (listActive) return true;
       if (gridActive) return false;
     }
 
-    if (main && detectDecapGridView(main)) return false;
-
-    var listBtn = root.querySelector(".admin-view-btn--list");
-    if (listBtn && isDecapButtonActive(listBtn)) return true;
     return false;
   }
 
@@ -782,6 +781,18 @@
     var list = isListView(root);
     root.classList.toggle("admin-view--list", list);
     root.classList.toggle("admin-view--grid", !list);
+  }
+
+  function setViewMode(root, mode) {
+    root.dataset.adminViewMode = mode;
+    syncCollectionViewMode(root);
+    var main = root.querySelector("main");
+    var toolbar = main && main.querySelector(".admin-collection-toolbar");
+    var pair = findViewStyleButtons(toolbar || main);
+    if (pair) {
+      pair.list.classList.toggle("admin-view-btn--active", mode === "list");
+      pair.grid.classList.toggle("admin-view-btn--active", mode === "grid");
+    }
   }
 
   function ensureListHeader(main, show) {
@@ -901,6 +912,13 @@
   }
 
   function hideDecapEntryLists(main) {
+    Array.prototype.forEach.call(main.children, function (child) {
+      if (child.classList.contains("admin-collection-header")) return;
+      if (child.classList.contains("admin-custom-entries")) return;
+      child.classList.add("admin-decap-hidden");
+      child.hidden = true;
+    });
+
     main.querySelectorAll("ul").forEach(function (ul) {
       if (ul.classList.contains("admin-custom-grid") || ul.classList.contains("admin-custom-list")) return;
       ul.classList.add("admin-decap-entries");
@@ -909,10 +927,28 @@
   }
 
   function showDecapEntryLists(main) {
+    Array.prototype.forEach.call(main.children, function (child) {
+      if (!child.classList.contains("admin-decap-hidden")) return;
+      child.hidden = false;
+      child.classList.remove("admin-decap-hidden");
+    });
     main.querySelectorAll(".admin-decap-entries").forEach(function (ul) {
       ul.hidden = false;
       ul.classList.remove("admin-decap-entries");
     });
+  }
+
+  function placeCustomEntries(main, container) {
+    var header = main.querySelector(".admin-collection-header");
+    if (!header) {
+      if (container.parentElement !== main) main.appendChild(container);
+      return;
+    }
+    if (container.parentElement !== main) {
+      main.insertBefore(container, header.nextSibling);
+    } else if (container.previousElementSibling !== header) {
+      main.insertBefore(container, header.nextSibling);
+    }
   }
 
   function removeCustomEntries(root) {
@@ -938,6 +974,12 @@
     if (!collection) return;
 
     function run() {
+      restructureCollectionHeader(root);
+
+      if (!root.dataset.adminViewMode) {
+        setViewMode(root, "grid");
+      }
+
       var listView = isListView(root);
       syncCollectionViewMode(root);
       bindViewModeButtons(root);
@@ -954,13 +996,8 @@
       if (!container) {
         container = document.createElement("div");
         container.className = "admin-custom-entries";
-        var anchor = main.querySelector(".admin-collection-header");
-        if (anchor && anchor.nextSibling) {
-          main.insertBefore(container, anchor.nextSibling);
-        } else {
-          main.appendChild(container);
-        }
       }
+      placeCustomEntries(main, container);
 
       if (container.dataset.adminSignature === signature) return;
       container.dataset.adminSignature = signature;
@@ -1058,6 +1095,7 @@
   }
 
   function resetCollectionLayout(root) {
+    delete root.dataset.adminViewMode;
     var container = root.querySelector(".admin-custom-entries");
     if (container) delete container.dataset.adminSignature;
     entryCache = Object.create(null);

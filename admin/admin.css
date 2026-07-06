@@ -586,7 +586,7 @@ body {
   gap: 1rem;
   width: 100% !important;
   max-width: none !important;
-  margin: 0 0 1.25rem;
+  margin: 0 0 1rem;
   padding: 0;
   background: transparent;
   border: none;
@@ -777,13 +777,28 @@ body {
 }
 
 /* ——— Article cards (custom manifest grid — Decap list hidden) ——— */
-#nc-root .admin-custom-entries {
-  width: 100%;
-  box-sizing: border-box;
+#nc-root main > .admin-decap-hidden {
+  display: none !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  overflow: hidden !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  pointer-events: none !important;
 }
 
 #nc-root main .admin-decap-entries {
   display: none !important;
+}
+
+#nc-root .admin-custom-entries {
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: 0;
+}
+
+#nc-root .admin-collection-toolbar {
+  flex-direction: row-reverse;
 }
 
 #nc-root.admin-view--grid .admin-custom-grid {
@@ -806,6 +821,27 @@ body {
   margin: 0;
   list-style: none;
   box-sizing: border-box;
+}
+
+#nc-root.admin-view--list .admin-custom-list .admin-list-item {
+  margin: 0;
+  border: none;
+  border-bottom: 1px solid var(--rolcc-slate-200);
+  border-radius: 0;
+  box-shadow: none;
+  list-style: none;
+}
+
+#nc-root.admin-view--list .admin-custom-list .admin-list-item:hover {
+  background: var(--rolcc-slate-50);
+}
+
+#nc-root.admin-view--list .admin-custom-entries .admin-list-header {
+  display: grid;
+}
+
+#nc-root.admin-view--grid .admin-custom-entries .admin-list-header {
+  display: none;
 }
 
 #nc-root .admin-grid-card {

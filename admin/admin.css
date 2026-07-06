@@ -608,55 +608,50 @@ body {
   transform: translateX(-50%);
 }
 
-/* ——— Media workspace ——— */
-#nc-root.admin-view--media .admin-main {
-  padding-top: 2.75rem !important;
+/* ——— Media workspace (stable pane outside Decap DOM) ——— */
+.admin-media-pane {
+  display: none;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 100vh;
+  background: var(--rolcc-primary);
+  padding: 2.75rem var(--rolcc-content-gutter) 2.5rem;
 }
 
-#nc-root.admin-view--media main > :not(.admin-media-workspace) {
-  display: none !important;
+.admin-page--authed.admin-page--media .admin-media-pane {
+  display: block;
 }
 
-#nc-root.admin-view--media .admin-decap-media-hidden,
-#nc-root.admin-view--media [class*="NotFoundPage"],
-#nc-root.admin-view--media [class*="NotFoundError"] {
-  display: none !important;
-}
-
-#nc-root.admin-view--media [class*="StyledAuthenticationPage"],
-#nc-root.admin-view--media [class*="AuthenticationPage"] {
-  display: none !important;
-  height: 0 !important;
-  min-height: 0 !important;
+.admin-page--authed.admin-page--media #nc-root.admin-workspace--media-background {
+  position: absolute !important;
+  left: -9999px !important;
+  width: 1px !important;
+  height: 1px !important;
   overflow: hidden !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
 }
 
-#nc-root.admin-view--login [class*="StyledAuthenticationPage"],
-#nc-root.admin-view--login [class*="AuthenticationPage"] {
-  display: flex !important;
+.admin-page--authed.admin-page--media #nc-root.admin-workspace--media-upload {
+  position: static !important;
+  left: auto !important;
+  width: auto !important;
   height: auto !important;
-  min-height: 100vh !important;
-  visibility: visible !important;
+  overflow: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
 }
 
-#nc-root.admin-view--media .admin-content-wrap > *:not(main),
-#nc-root.admin-view--media .admin-decap-shell > *:not(.admin-content-wrap):not(main) {
-  display: none !important;
-}
-
-#nc-root .admin-media-workspace {
+.admin-media-pane .admin-media-workspace {
   width: 100%;
   box-sizing: border-box;
 }
 
-#nc-root .admin-media-header {
+.admin-media-pane .admin-media-header {
   margin-bottom: 1.25rem;
 }
 
-#nc-root .admin-media-head {
+.admin-media-pane .admin-media-head {
   display: flex;
   flex-wrap: wrap;
   align-items: flex-start;
@@ -665,7 +660,7 @@ body {
   width: 100%;
 }
 
-#nc-root .admin-media-head__titles h1 {
+.admin-media-pane .admin-media-head__titles h1 {
   margin: 0 0 0.35rem;
   font-size: 1.375rem;
   font-weight: 600;
@@ -673,7 +668,7 @@ body {
   line-height: 1.2;
 }
 
-#nc-root .admin-media-head__subtitle {
+.admin-media-pane .admin-media-head__subtitle {
   margin: 0;
   max-width: 28rem;
   font-size: 0.875rem;
@@ -681,7 +676,7 @@ body {
   color: var(--rolcc-slate-600);
 }
 
-#nc-root .admin-media-head__actions {
+.admin-media-pane .admin-media-head__actions {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -689,7 +684,7 @@ body {
   gap: 0.65rem;
 }
 
-#nc-root .admin-media-filters {
+.admin-media-pane .admin-media-filters {
   display: inline-flex;
   align-items: center;
   padding: 0;
@@ -699,7 +694,7 @@ body {
   overflow: hidden;
 }
 
-#nc-root .admin-media-filter {
+.admin-media-pane .admin-media-filter {
   padding: 0.45rem 0.8rem;
   border: none;
   border-right: 1px solid var(--rolcc-slate-300);
@@ -712,22 +707,22 @@ body {
   transition: background 0.15s ease, color 0.15s ease;
 }
 
-#nc-root .admin-media-filter:last-child {
+.admin-media-pane .admin-media-filter:last-child {
   border-right: none;
 }
 
-#nc-root .admin-media-filter:hover {
+.admin-media-pane .admin-media-filter:hover {
   background: var(--rolcc-slate-50);
   color: var(--rolcc-slate-900);
 }
 
-#nc-root .admin-media-filter--active {
+.admin-media-pane .admin-media-filter--active {
   background: rgba(99, 91, 255, 0.12);
   color: var(--rolcc-accent);
   font-weight: 600;
 }
 
-#nc-root .admin-media-upload-btn {
+.admin-media-pane .admin-media-upload-btn {
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
@@ -738,13 +733,13 @@ body {
   font-weight: 600;
 }
 
-#nc-root .admin-media-upload-btn__icon {
+.admin-media-pane .admin-media-upload-btn__icon {
   width: 1rem;
   height: 1rem;
   flex-shrink: 0;
 }
 
-#nc-root .admin-media-view-toggle {
+.admin-media-pane .admin-media-view-toggle {
   display: inline-flex;
   align-items: center;
   border: 1px solid var(--rolcc-slate-300);
@@ -753,25 +748,25 @@ body {
   overflow: hidden;
 }
 
-#nc-root .admin-media-view-toggle .admin-view-btn {
+.admin-media-pane .admin-media-view-toggle .admin-view-btn {
   border: none;
   border-right: 1px solid var(--rolcc-slate-300);
   border-radius: 0;
   background: transparent;
 }
 
-#nc-root .admin-media-view-toggle .admin-view-btn:last-child {
+.admin-media-pane .admin-media-view-toggle .admin-view-btn:last-child {
   border-right: none;
 }
 
-#nc-root .admin-media-usage-tags {
+.admin-media-pane .admin-media-usage-tags {
   display: flex;
   flex-wrap: wrap;
   gap: 0.3rem;
   margin-top: 0.35rem;
 }
 
-#nc-root .admin-media-usage-tag {
+.admin-media-pane .admin-media-usage-tag {
   display: inline-flex;
   align-items: center;
   padding: 0.12rem 0.45rem;
@@ -784,14 +779,14 @@ body {
   white-space: nowrap;
 }
 
-#nc-root .admin-media-list {
+.admin-media-pane .admin-media-list {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
   width: 100%;
 }
 
-#nc-root .admin-media-list-row {
+.admin-media-pane .admin-media-list-row {
   display: grid;
   grid-template-columns: 4.5rem minmax(0, 1fr);
   gap: 0.85rem;
@@ -805,17 +800,17 @@ body {
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
-#nc-root .admin-media-list-row:hover {
+.admin-media-pane .admin-media-list-row:hover {
   border-color: var(--rolcc-slate-300);
   box-shadow: var(--rolcc-shadow-md);
 }
 
-#nc-root .admin-media-list-row--copied {
+.admin-media-pane .admin-media-list-row--copied {
   border-color: var(--rolcc-accent);
   box-shadow: 0 0 0 1px rgba(99, 91, 255, 0.25);
 }
 
-#nc-root .admin-media-list-row__thumb {
+.admin-media-pane .admin-media-list-row__thumb {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -826,13 +821,13 @@ body {
   overflow: hidden;
 }
 
-#nc-root .admin-media-list-row__thumb img {
+.admin-media-pane .admin-media-list-row__thumb img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-#nc-root .admin-media-list-row__main {
+.admin-media-pane .admin-media-list-row__main {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -840,14 +835,14 @@ body {
   min-width: 0;
 }
 
-#nc-root .admin-media-list-row__top {
+.admin-media-pane .admin-media-list-row__top {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 0.4rem;
 }
 
-#nc-root .admin-media-list-row__name {
+.admin-media-pane .admin-media-list-row__name {
   font-size: 0.875rem;
   font-weight: 600;
   color: var(--rolcc-slate-900);
@@ -856,7 +851,7 @@ body {
   white-space: nowrap;
 }
 
-#nc-root .admin-media-list-row__path {
+.admin-media-pane .admin-media-list-row__path {
   font-size: 0.75rem;
   color: var(--rolcc-slate-500);
   overflow: hidden;
@@ -864,14 +859,14 @@ body {
   white-space: nowrap;
 }
 
-#nc-root .admin-media-grid {
+.admin-media-pane .admin-media-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
   gap: 1rem;
   width: 100%;
 }
 
-#nc-root .admin-media-card {
+.admin-media-pane .admin-media-card {
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -885,18 +880,18 @@ body {
   transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
 }
 
-#nc-root .admin-media-card:hover {
+.admin-media-pane .admin-media-card:hover {
   border-color: var(--rolcc-slate-300);
   box-shadow: var(--rolcc-shadow-md);
   transform: translateY(-1px);
 }
 
-#nc-root .admin-media-card--copied {
+.admin-media-pane .admin-media-card--copied {
   border-color: var(--rolcc-accent);
   box-shadow: 0 0 0 1px rgba(99, 91, 255, 0.25);
 }
 
-#nc-root .admin-media-card__thumb {
+.admin-media-pane .admin-media-card__thumb {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -907,13 +902,13 @@ body {
   overflow: hidden;
 }
 
-#nc-root .admin-media-card__thumb img {
+.admin-media-pane .admin-media-card__thumb img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-#nc-root .admin-media-card__body {
+.admin-media-pane .admin-media-card__body {
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
@@ -921,7 +916,7 @@ body {
   min-width: 0;
 }
 
-#nc-root .admin-media-card__badge {
+.admin-media-pane .admin-media-card__badge {
   align-self: flex-start;
   padding: 0.15rem 0.45rem;
   border-radius: 9999px;
@@ -933,7 +928,7 @@ body {
   color: var(--rolcc-slate-600);
 }
 
-#nc-root .admin-media-card__name {
+.admin-media-pane .admin-media-card__name {
   font-size: 0.8125rem;
   font-weight: 600;
   color: var(--rolcc-slate-900);
@@ -942,7 +937,7 @@ body {
   white-space: nowrap;
 }
 
-#nc-root .admin-media-card__path {
+.admin-media-pane .admin-media-card__path {
   font-size: 0.75rem;
   color: var(--rolcc-slate-500);
   overflow: hidden;
@@ -950,7 +945,7 @@ body {
   white-space: nowrap;
 }
 
-#nc-root .admin-media-empty {
+.admin-media-pane .admin-media-empty {
   padding: 2.5rem 1rem;
   border: 1px dashed var(--rolcc-slate-300);
   border-radius: var(--rolcc-radius-xl);
@@ -959,18 +954,18 @@ body {
   color: var(--rolcc-slate-700);
 }
 
-#nc-root .admin-media-empty__hint {
+.admin-media-pane .admin-media-empty__hint {
   margin: 0.35rem 0 0;
   color: var(--rolcc-slate-500);
   font-size: 0.875rem;
 }
 
-#nc-root .admin-media-empty--loading {
+.admin-media-pane .admin-media-empty--loading {
   border-style: solid;
   background: var(--rolcc-primary);
 }
 
-#nc-root .admin-media-upload-panel {
+.admin-media-pane .admin-media-upload-panel {
   margin-bottom: 1.25rem;
   padding: 1rem;
   border: 1px solid var(--rolcc-slate-200);
@@ -978,7 +973,7 @@ body {
   background: var(--rolcc-slate-50);
 }
 
-#nc-root .admin-media-upload-panel__head {
+.admin-media-pane .admin-media-upload-panel__head {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -986,14 +981,14 @@ body {
   margin-bottom: 0.35rem;
 }
 
-#nc-root .admin-media-upload-panel__title {
+.admin-media-pane .admin-media-upload-panel__title {
   margin: 0;
   font-size: 0.9375rem;
   font-weight: 600;
   color: var(--rolcc-slate-900);
 }
 
-#nc-root .admin-media-upload-panel__close {
+.admin-media-pane .admin-media-upload-panel__close {
   padding: 0.35rem 0.65rem;
   border: 1px solid var(--rolcc-slate-300);
   border-radius: var(--rolcc-radius-lg);
@@ -1005,17 +1000,17 @@ body {
   cursor: pointer;
 }
 
-#nc-root .admin-media-upload-panel__note {
+.admin-media-pane .admin-media-upload-panel__note {
   margin: 0 0 0.75rem;
   font-size: 0.8125rem;
   color: var(--rolcc-slate-600);
 }
 
-#nc-root .admin-media-upload-panel__note code {
+.admin-media-pane .admin-media-upload-panel__note code {
   font-size: 0.75rem;
 }
 
-#nc-root .admin-media-upload-panel__slot .admin-media-overlay {
+.admin-media-pane .admin-media-upload-panel__slot .admin-media-overlay {
   position: static !important;
   inset: auto !important;
   display: block !important;
@@ -1025,7 +1020,7 @@ body {
   pointer-events: auto !important;
 }
 
-#nc-root .admin-media-upload-panel__slot .admin-media-panel {
+.admin-media-pane .admin-media-upload-panel__slot .admin-media-panel {
   position: static !important;
   inset: auto !important;
   transform: none !important;
@@ -1042,11 +1037,11 @@ body {
   background: var(--rolcc-primary) !important;
 }
 
-#nc-root .admin-media-upload-panel__slot .admin-media-panel h1 {
+.admin-media-pane .admin-media-upload-panel__slot .admin-media-panel h1 {
   display: none;
 }
 
-#nc-root .admin-media-upload-panel__slot .admin-media-panel [class*="CloseButton"] {
+.admin-media-pane .admin-media-upload-panel__slot .admin-media-panel [class*="CloseButton"] {
   display: none !important;
 }
 
@@ -1075,6 +1070,13 @@ body {
   margin-left: var(--rolcc-sidebar-width);
   padding-top: var(--rolcc-header-height);
   min-height: 100vh;
+}
+
+.admin-page--authed .admin-media-pane {
+  margin-left: var(--rolcc-sidebar-width);
+  padding-top: var(--rolcc-header-height);
+  min-height: 100vh;
+  width: auto;
 }
 
 .admin-page--authed #nc-root header,

@@ -18,30 +18,12 @@
   var mediaManifest = null;
   var mediaManifestPromise = null;
   var enhanceTimer = null;
-  var enhanceCount = 0;
   var editorState = {
     syncingTitle: false,
     dirty: false,
     snapshot: "",
     formBound: false,
   };
-
-  // #region agent log
-  function debugLog(hypothesisId, location, message, data) {
-    fetch("http://127.0.0.1:7663/ingest/a8dab655-487d-4443-a923-c6ebc86b6891", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "e5fa7f" },
-      body: JSON.stringify({
-        sessionId: "e5fa7f",
-        hypothesisId: hypothesisId,
-        location: location,
-        message: message,
-        data: data || {},
-        timestamp: Date.now(),
-      }),
-    }).catch(function () {});
-  }
-  // #endregion
 
   function $(id) {
     return document.getElementById(id);
@@ -85,13 +67,20 @@
     return btnStyle.display !== "none" && btnStyle.visibility !== "hidden";
   }
 
-  function mediaRouteNeedsLogin(root) {
-    if (!root) return true;
-    var loginBtn = root.querySelector('button[class*="LoginButton"]');
-    if (!loginBtn || normalize(loginBtn.textContent).indexOf("github") === -1) return false;
-    if (loginBtn.hidden) return false;
-    var btnStyle = window.getComputedStyle(loginBtn);
-    return btnStyle.display !== "none" && btnStyle.visibility !== "hidden";
+  function getMediaPane() {
+    return document.getElementById("admin-media-pane");
+  }
+
+  function syncMediaPaneLayout(root) {
+    var pane = getMediaPane();
+    var ncRoot = root || $("nc-root");
+    if (!pane || !ncRoot) return;
+
+    var showPane = isMediaRoute() && !isLoginView(ncRoot);
+    var uploadOpen = ncRoot.dataset.adminMediaUploadOpen === "true";
+    pane.hidden = !showPane;
+    ncRoot.classList.toggle("admin-workspace--media-background", showPane && !uploadOpen);
+    ncRoot.classList.toggle("admin-workspace--media-upload", showPane && uploadOpen);
   }
 
   function getFieldLabelElements(scope) {
@@ -627,34 +616,6 @@
     });
   }
 
-  function hideDecapMediaObstructions(root) {
-    if (!isMediaRoute() || mediaRouteNeedsLogin(root)) return;
-    var hidden = 0;
-    root.querySelectorAll('[class*="AuthenticationPage"], [class*="StyledAuthenticationPage"]').forEach(function (el) {
-      if (el.closest(".admin-media-workspace")) return;
-      el.classList.add("admin-decap-media-hidden");
-      el.setAttribute("aria-hidden", "true");
-      el.hidden = true;
-      el.style.setProperty("display", "none", "important");
-      el.style.setProperty("height", "0", "important");
-      el.style.setProperty("min-height", "0", "important");
-      el.style.setProperty("overflow", "hidden", "important");
-      el.style.setProperty("margin", "0", "important");
-      el.style.setProperty("padding", "0", "important");
-      hidden += 1;
-    });
-    // #region agent log
-    var main = root.querySelector("main");
-    debugLog("H2", "hideDecapMediaObstructions", "hid auth obstructions", {
-      runId: "post-fix",
-      hiddenCount: hidden,
-      mainTop: main ? main.getBoundingClientRect().top : null,
-      needsLogin: mediaRouteNeedsLogin(root),
-      isLoginView: isLoginView(root),
-    });
-    // #endregion
-  }
-
   function copyText(value) {
     if (!value) return Promise.resolve();
     if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -692,14 +653,6 @@
   function scheduleEnhance(root, fn) {
     if (enhanceTimer) window.clearTimeout(enhanceTimer);
     enhanceTimer = window.setTimeout(function () {
-      enhanceCount += 1;
-      // #region agent log
-      debugLog("H1", "scheduleEnhance", "enhance scheduled", {
-        enhanceCount: enhanceCount,
-        hash: getHash(),
-        isMediaRoute: isMediaRoute(),
-      });
-      // #endregion
       fn(root);
     }, 16);
   }
@@ -1198,16 +1151,7 @@
       resetEditorSplitShell(root);
     }
     if (isCollectionRoute()) root.classList.add("admin-view--collection");
-    // #region agent log
-    if (isMediaRoute()) {
-      debugLog("H3", "updateViewClass", "media view classes applied", {
-        hash: getHash(),
-        rootClasses: root.className,
-        bodyClasses: body.className,
-        isLoginView: isLoginView(root),
-      });
-    }
-    // #endregion
+    syncMediaPaneLayout(root);
   }
 
   var CREATE_ICON =
@@ -2594,11 +2538,13 @@
       var content = overlay.querySelector(".admin-media-panel");
       if (content) content.classList.remove("admin-media-panel");
     }
-    var workspace = root.querySelector(".admin-media-workspace");
+    var pane = getMediaPane();
+    var workspace = pane && pane.querySelector(".admin-media-workspace");
     if (workspace) {
       var panel = workspace.querySelector(".admin-media-upload-panel");
       if (panel) panel.hidden = true;
     }
+    syncMediaPaneLayout(root);
   }
 
   function mountMediaUploadPanel(root, workspace) {
@@ -2740,56 +2686,31 @@
     return row;
   }
 
-  function placeMediaWorkspace(main, workspace) {
-    if (workspace.parentElement !== main) {
-      main.appendChild(workspace);
-    }
-    if (workspace !== main.firstElementChild) {
-      main.insertBefore(workspace, main.firstElementChild);
-    }
-    Array.prototype.forEach.call(main.children, function (child) {
-      if (child === workspace) return;
-      child.classList.add("admin-decap-hidden");
-      child.hidden = true;
-    });
-  }
-
   function removeMediaWorkspace(root) {
     if (!root) return;
-    // #region agent log
-    debugLog("H1", "removeMediaWorkspace", "removing media workspace", {
-      hash: getHash(),
-      isMediaRoute: isMediaRoute(),
-      stack: new Error().stack ? new Error().stack.split("\n").slice(1, 4).join(" | ") : "",
-    });
-    // #endregion
     closeMediaUploadPanel(root);
     delete root.dataset.adminMediaUploadOpen;
-    var workspace = root.querySelector(".admin-media-workspace");
-    if (workspace) workspace.remove();
-    var main = root.querySelector("main");
-    if (main) showDecapEntryLists(main);
+    var pane = getMediaPane();
+    if (pane) {
+      var workspace = pane.querySelector(".admin-media-workspace");
+      if (workspace) workspace.remove();
+    }
+    root.classList.remove("admin-workspace--media-background", "admin-workspace--media-upload");
+    syncMediaPaneLayout(root);
   }
 
   function renderMediaWorkspace(root) {
-    // #region agent log
-    debugLog("H1", "renderMediaWorkspace:entry", "render called", {
-      hash: getHash(),
-      isMediaRoute: isMediaRoute(),
-    });
-    // #endregion
-    if (!isMediaRoute()) {
+    if (!isMediaRoute() || isLoginView(root)) {
       removeMediaWorkspace(root);
       return;
     }
 
-    function run() {
-      var main = ensureMainWorkspace(root);
-      if (!main) return;
+    var pane = getMediaPane();
+    if (!pane) return;
+    syncMediaPaneLayout(root);
 
+    function run() {
       preserveDecapMediaTab(root);
-      hideDecapMediaObstructions(root);
-      hideDecapMediaNotFound(root);
 
       if (!root.dataset.adminMediaViewMode) {
         setMediaViewMode(root, "grid");
@@ -2807,14 +2728,7 @@
         "|" +
         (manifestReady ? filtered.length + "|" + items.length : "loading");
 
-      var workspace = root.querySelector(".admin-media-workspace");
-      if (workspace && (!workspace.parentElement || !main.contains(workspace))) {
-        workspace.remove();
-        workspace = null;
-      }
-      if (!workspace) {
-        workspace = main.querySelector(".admin-media-workspace");
-      }
+      var workspace = pane.querySelector(".admin-media-workspace");
       if (!workspace) {
         workspace = document.createElement("div");
         workspace.className = "admin-media-workspace";
@@ -2905,6 +2819,7 @@
         uploadBtn.addEventListener("click", function (event) {
           event.stopPropagation();
           root.dataset.adminMediaUploadOpen = "true";
+          syncMediaPaneLayout(root);
           renderMediaWorkspace(root);
         });
 
@@ -2964,28 +2879,7 @@
         mountMediaUploadPanel(root, workspace);
       }
 
-      placeMediaWorkspace(main, workspace);
-      hideDecapMediaNotFound(root);
-      // #region agent log
-      var wsStyle = workspace && window.getComputedStyle ? window.getComputedStyle(workspace) : null;
-      debugLog("H2", "renderMediaWorkspace:run:end", "after placeMediaWorkspace", {
-        runId: "post-fix",
-        hash: getHash(),
-        mainTop: main ? main.getBoundingClientRect().top : null,
-        mainConnected: !!(main && main.isConnected),
-        workspaceConnected: !!(workspace && workspace.isConnected),
-        workspaceInMain: !!(workspace && main && main.contains(workspace)),
-        workspaceHidden: workspace ? workspace.hidden : null,
-        workspaceDisplay: wsStyle ? wsStyle.display : null,
-        workspaceChildCount: workspace ? workspace.childElementCount : 0,
-        ncRootChildCount: root ? root.childElementCount : 0,
-        mainCount: root ? root.querySelectorAll("main").length : 0,
-        hasMediaClass: root.classList.contains("admin-view--media"),
-        signature: workspace ? workspace.dataset.adminSignature : null,
-        manifestReady: Array.isArray(mediaManifest),
-        manifestCount: Array.isArray(mediaManifest) ? mediaManifest.length : 0,
-      });
-      // #endregion
+      pane.appendChild(workspace);
     }
 
     run();
@@ -3005,7 +2899,6 @@
     mountCreateButton(root);
     renderCustomCollectionCards(root);
     enhanceMediaView(root);
-    if (isMediaRoute()) hideDecapMediaObstructions(root);
     mountEditorSubheader(root);
     mountEditorSplitShell(root);
     if (isEditorRoute()) {

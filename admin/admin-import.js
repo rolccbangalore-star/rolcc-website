@@ -584,6 +584,15 @@
         changeDraftFieldValue(store, "quiz", quizValue);
       }
     }
+
+    if (mergedData.tags && mergedData.tags.length) {
+      if (window.AdminEditorFields && window.AdminEditorFields.applyTags) {
+        window.AdminEditorFields.applyTags(mergedData.tags);
+      } else {
+        changeDraftFieldValue(store, "tags", tagsToStoreValue(mergedData.tags));
+        changeDraftFieldValue(store, "category", mergedData.tags[0] || "");
+      }
+    }
   }
 
   function readDraftData() {
@@ -634,6 +643,11 @@
       var quizLen = (data.quiz || []).length;
       if (quizLen > 0) verified.quiz = quizLen;
       else verified.warnings.push("Quiz questions did not apply.");
+    }
+    if (importData.tags && importData.tags.length) {
+      var importedTags = normalizeDraftTags(data);
+      if (importedTags.length) verified.meta += 1;
+      else verified.warnings.push("Tags did not apply.");
     }
 
     return verified;
@@ -1432,36 +1446,42 @@
       return { ok: false };
     }
 
-    try {
-      applyEntryImport(root, entry, options, function (results) {
-        if (!results.meta && !results.content && !results.quiz) {
-          if (entryHasImportData(entry) && attempt < 8) {
-            window.setTimeout(function () {
-              runAutoImport(entry, options, attempt + 1);
-            }, attempt === 0 ? 400 : 600);
-            if (attempt === 0) {
-              showToast("Waiting for editor…", "info");
+    function runImport() {
+      try {
+        applyEntryImport(root, entry, options, function (results) {
+          if (!results.meta && !results.content && !results.quiz) {
+            if (entryHasImportData(entry) && attempt < 8) {
+              window.setTimeout(function () {
+                runAutoImport(entry, options, attempt + 1);
+              }, attempt === 0 ? 400 : 600);
+              if (attempt === 0) {
+                showToast("Waiting for editor…", "info");
+              }
+              return;
             }
+            var folder = getRepoImportFolder(getCollection());
+            var filename = downloadRepoReadyJson(entry);
+            var failMsg = filename
+              ? "Editor import failed. Downloaded " + filename + " — save to " + folder + "/ and open in the CMS."
+              : results.warnings.length
+                ? results.warnings.join(" ")
+                : "Could not fill fields. Download repo JSON from the import dialog instead.";
+            showToast(failMsg, "info");
             return;
           }
-          var folder = getRepoImportFolder(getCollection());
-          var filename = downloadRepoReadyJson(entry);
-          var failMsg = filename
-            ? "Editor import failed. Downloaded " + filename + " — save to " + folder + "/ and open in the CMS."
-            : results.warnings.length
-              ? results.warnings.join(" ")
-              : "Could not fill fields. Download repo JSON from the import dialog instead.";
-          showToast(failMsg, "info");
-          return;
-        }
-        var toastType = results.warnings.length ? "info" : "success";
-        showToast(formatImportSummary(results), toastType);
-      });
-      return { ok: true, pending: true };
-    } catch (err) {
-      showToast("Import failed: " + (err.message || err), "error");
-      return { ok: false, error: err.message || String(err) };
+          var toastType = results.warnings.length ? "info" : "success";
+          showToast(formatImportSummary(results), toastType);
+        });
+        return { ok: true, pending: true };
+      } catch (err) {
+        showToast("Import failed: " + (err.message || err), "error");
+        return { ok: false, error: err.message || String(err) };
+      }
     }
+
+    return loadImportTags().then(function () {
+      return runImport();
+    });
   }
 
   function looksLikeImport(text) {
@@ -1503,7 +1523,7 @@
       '<h2 id="admin-import-title" class="admin-import-modal__title">Import article</h2>' +
       '<p class="admin-import-modal__summary" id="admin-import-summary"></p>' +
       '<label class="admin-import-modal__label"><input type="checkbox" id="admin-import-replace" /> Replace fields that already have content</label>' +
-      '<p class="admin-import-modal__hint">Imports title, summary, content, and quiz. Set tag, date, hero image, featured, and published manually in the editor.</p>' +
+      '<p class="admin-import-modal__hint">Imports title, summary, content, quiz, and suggested tags. Set date, hero image, featured, and published manually in the editor.</p>' +
       '<details class="admin-import-modal__help"><summary>Article import JSON template</summary><pre id="admin-import-example"></pre></details>' +
       '<div class="admin-import-modal__actions">' +
       '<button type="button" class="btn-outline" data-import-close>Cancel</button>' +
@@ -1566,6 +1586,37 @@
 
   var pendingEntry = null;
 
+  function loadImportTags() {
+    if (!parseApi || !parseApi.setAllowedTags) return Promise.resolve([]);
+    return fetch("/data/tags/index.json")
+      .then(function (res) {
+        return res.ok ? res.json() : { tags: [] };
+      })
+      .catch(function () {
+        return { tags: [] };
+      })
+      .then(function (data) {
+        var tags = Array.isArray(data.tags) ? data.tags : [];
+        parseApi.setAllowedTags(tags);
+        return tags;
+      });
+  }
+
+  function getImportExampleTemplate(collection) {
+    var base =
+      parseApi.CONTENT_JSON_EXAMPLE[collection] || parseApi.CONTENT_JSON_EXAMPLE.articles;
+    var example = Object.assign({}, base);
+    if (parseApi.getAllowedTags) {
+      example._allowedTags = parseApi.getAllowedTags();
+      if (!example._tagInstructions) {
+        example._tagInstructions =
+          "Read the full article. Pick 1–2 tags from _allowedTags that best match the content's themes and application. Use exact spelling only.";
+      }
+      example.tags = [];
+    }
+    return example;
+  }
+
   function openImportModal(entry) {
     if (!parseApi) return;
     pendingEntry = entry;
@@ -1573,13 +1624,11 @@
     var summary = summarizeText(entry);
     $("admin-import-summary").textContent = summary;
     var example = $("admin-import-example");
-    if (example) {
-      example.textContent = JSON.stringify(
-        parseApi.CONTENT_JSON_EXAMPLE[getCollection()] || parseApi.CONTENT_JSON_EXAMPLE.articles,
-        null,
-        2
-      );
-    }
+    loadImportTags().then(function () {
+      if (example) {
+        example.textContent = JSON.stringify(getImportExampleTemplate(getCollection()), null, 2);
+      }
+    });
     modal.hidden = false;
   }
 
@@ -1718,6 +1767,7 @@
   }
 
   function init() {
+    loadImportTags();
     bindImportUi();
     window.addEventListener("hashchange", syncDropZoneVisibility);
   }

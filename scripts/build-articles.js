@@ -642,11 +642,7 @@ function renderClapWidget(article, label) {
   const ariaLabel = label || "Appreciate this article";
   return `<div class="article-clap" data-article-clap data-slug="${escapeHtml(article.slug)}">
           <button type="button" class="article-clap__btn" data-clap-button aria-label="${escapeHtml(ariaLabel)}" aria-pressed="false">
-            <svg class="article-clap__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M7 11v8a1 1 0 0 0 1 1h2v-9H6a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h1" />
-              <path d="M15 11V4a1 1 0 0 0-1-1h-1.2a1 1 0 0 0-.82.43l-2.38 3.46" />
-              <path d="M15 11h2.2a1 1 0 0 1 .97 1.24l-.92 4.6A1 1 0 0 1 16.3 21H9" />
-            </svg>
+            <canvas class="article-clap__lottie" data-clap-lottie width="88" height="88" aria-hidden="true"></canvas>
           </button>
           <div class="article-clap__meta">
             <p class="article-clap__count"><span data-clap-count>0</span></p>

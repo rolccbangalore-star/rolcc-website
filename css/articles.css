@@ -621,22 +621,29 @@
   justify-content: center;
   width: 2.75rem;
   height: 2.75rem;
+  padding: 0;
   border: none;
   border-radius: 9999px;
   background: #f8fafc;
   color: #64748b;
   cursor: pointer;
+  overflow: hidden;
   transition: transform 0.15s ease, background 0.15s ease, color 0.15s ease;
+}
+
+.article-clap__lottie {
+  display: block;
+  width: 2.75rem;
+  height: 2.75rem;
+  pointer-events: none;
 }
 
 .article-clap__btn:hover:not(:disabled) {
   background: #ede9fe;
-  color: #635bff;
 }
 
 .article-clap.is-active .article-clap__btn {
-  background: #635bff;
-  color: #fff;
+  background: #ede9fe;
 }
 
 .article-clap__btn:disabled {
@@ -646,11 +653,6 @@
 
 .article-clap__btn.is-pulse {
   animation: article-clap-pulse 0.35s ease;
-}
-
-.article-clap__icon {
-  width: 1.35rem;
-  height: 1.35rem;
 }
 
 .article-clap__meta {

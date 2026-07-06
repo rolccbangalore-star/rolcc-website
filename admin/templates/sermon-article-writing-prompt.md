@@ -60,9 +60,11 @@ Explanation: John 8:12 — Jesus says, "I am the light of the world."
 
 ## Rules
 - Never leave a section empty — use `[Review: …]` placeholders only when information is genuinely missing
-- Do not include tag, date, hero image, featured, or published status
+- Do not include date, hero image, featured, or published status
 - Avoid church jargon unless you explain it simply
 - Keep paragraphs short for mobile readers
+
+**Tags (for Step 2):** You do not pick tags in Step 1. In Step 2, ChatGPT will read your article and choose 1–2 tags from the church tag list based on what the content is actually about.
 
 ---
 
@@ -80,4 +82,4 @@ After Step 1, open `admin/templates/blog-content-import.json` in this repo and p
 
 Then say:
 
-> Convert the article below into valid JSON matching this template exactly. Keep all keys. For quiz: exactly 4 options per question, one correct, `correctIndex` is 0-based. Include 3 key takeaways. Omit image, video, and FAQ blocks unless present in the article. Do not include tag, date, hero image, featured, or published.
+> Convert the article below into valid JSON matching this template exactly. Keep all keys. For quiz: exactly 4 options per question, one correct, `correctIndex` is 0-based. Include 3 key takeaways. **Read the full article and fill the `tags` array with the 1–2 best-matching tags from `_allowedTags` only** — pick based on the content's main themes and application areas, using exact spelling (see `_tagInstructions`). Omit image, video, and FAQ blocks unless present in the article. Do not include date, hero image, featured, or published.

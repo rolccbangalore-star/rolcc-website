@@ -208,6 +208,133 @@
     return entry;
   }
 
+  var allowedTags = [];
+
+  function setAllowedTags(tags) {
+    allowedTags = (tags || [])
+      .map(function (tag) {
+        return String(tag || "").trim();
+      })
+      .filter(Boolean);
+  }
+
+  function getAllowedTags() {
+    return allowedTags.slice();
+  }
+
+  function canonicalTagName(name) {
+    var key = String(name || "").trim().toLowerCase();
+    if (!key) return "";
+    for (var i = 0; i < allowedTags.length; i++) {
+      if (allowedTags[i].toLowerCase() === key) return allowedTags[i];
+    }
+    return String(name || "").trim();
+  }
+
+  function collectEntryText(entry, collection) {
+    var parts = [entry.title, entry.summary, entry.description, entry.scripture, entry.sermonSeries, entry.passage, entry.author];
+    if (isArticlesCollection(collection)) {
+      (entry.blocks || []).forEach(function (block) {
+        if (!block || typeof block !== "object") return;
+        parts.push(block.text, block.attribution, block.reference, block.label);
+        if (Array.isArray(block.items)) parts = parts.concat(block.items);
+      });
+      parts = parts.concat(entry.keyTakeaways || []);
+    } else {
+      (entry.sections || []).forEach(function (section) {
+        if (!section) return;
+        parts.push(section.heading, section.body);
+      });
+      parts = parts.concat(entry.discussionQuestions || []);
+    }
+    return parts
+      .map(function (part) {
+        return trim(part);
+      })
+      .filter(Boolean)
+      .join(" ")
+      .toLowerCase();
+  }
+
+  function scoreTagAgainstText(tag, text) {
+    var score = 0;
+    var normalizedTag = String(tag || "").toLowerCase();
+    if (!normalizedTag || !text) return 0;
+    if (text.indexOf(normalizedTag) !== -1) score += normalizedTag.length + 8;
+    normalizedTag.split(/\s+|&/).forEach(function (word) {
+      word = word.replace(/[^a-z0-9]/g, "");
+      if (word.length < 3) return;
+      if (text.indexOf(word) !== -1) score += word.length;
+    });
+    return score;
+  }
+
+  function suggestTagsFromContent(entry, collection) {
+    var text = collectEntryText(entry, collection);
+    var ranked = allowedTags
+      .map(function (tag) {
+        return { tag: tag, score: scoreTagAgainstText(tag, text) };
+      })
+      .filter(function (row) {
+        return row.score > 0;
+      })
+      .sort(function (a, b) {
+        return b.score - a.score || a.tag.localeCompare(b.tag);
+      });
+
+    var picks = ranked.map(function (row) {
+      return row.tag;
+    });
+
+    if (isBibleStudyCollection(collection) && picks.indexOf("Bible Study") === -1 && allowedTags.indexOf("Bible Study") !== -1) {
+      picks.unshift("Bible Study");
+    }
+
+    if (!picks.length) {
+      if (isBibleStudyCollection(collection) && allowedTags.indexOf("Bible Study") !== -1) {
+        picks.push("Bible Study");
+      } else if (allowedTags.indexOf("Faith & Peace") !== -1) {
+        picks.push("Faith & Peace");
+      } else if (allowedTags.length) {
+        picks.push(allowedTags[0]);
+      }
+    }
+
+    var seen = Object.create(null);
+    return picks
+      .filter(function (tag) {
+        if (!tag || seen[tag]) return false;
+        seen[tag] = true;
+        return true;
+      })
+      .slice(0, 2);
+  }
+
+  function normalizeImportTags(entry, collection) {
+    var tags = [];
+    if (Array.isArray(entry.tags)) {
+      entry.tags.forEach(function (item) {
+        if (typeof item === "string" && item.trim()) tags.push(canonicalTagName(item.trim()));
+        else if (item && item.tag && String(item.tag).trim()) tags.push(canonicalTagName(item.tag));
+      });
+    }
+    if (!tags.length && entry.category) tags.push(canonicalTagName(entry.category));
+
+    var seen = Object.create(null);
+    tags = tags
+      .map(function (tag) {
+        return trim(tag);
+      })
+      .filter(function (tag) {
+        if (!tag || seen[tag]) return false;
+        seen[tag] = true;
+        return true;
+      });
+
+    if (!tags.length) tags = suggestTagsFromContent(entry, collection);
+    return tags.slice(0, 2);
+  }
+
   function normalizeQuizItem(item) {
     if (!item || typeof item !== "object") return null;
     return {
@@ -292,6 +419,12 @@
     if (out.publish === undefined) out.publish = false;
     if (out.featured === undefined) out.featured = false;
 
+    var tags = normalizeImportTags(out, collection);
+    if (tags.length) {
+      out.tags = tags;
+      out.category = tags[0];
+    }
+
     return out;
   }
 
@@ -366,6 +499,13 @@
     if (Array.isArray(picked.blocks) && !picked.blocks.length) delete picked.blocks;
     if (Array.isArray(picked.keyTakeaways) && !picked.keyTakeaways.length) delete picked.keyTakeaways;
     if (Array.isArray(picked.quiz) && !picked.quiz.length) delete picked.quiz;
+
+    var tags = normalizeImportTags(entry, collection);
+    if (tags.length) {
+      picked.tags = tags;
+      picked.category = tags[0];
+    }
+
     return picked;
   }
 
@@ -470,6 +610,9 @@
 
   var CONTENT_JSON_EXAMPLE = {
     articles: {
+      _tagInstructions:
+        "Read the full article. Pick 1–2 tags from _allowedTags that best match the content's themes and application. Use exact spelling only.",
+      tags: [],
       title: "Article title here",
       summary: "Short intro shown on the article page.",
       description: "One or two sentences for Google and social previews.",
@@ -493,6 +636,9 @@
       ],
     },
     "bible-study": {
+      _tagInstructions:
+        "Read the full study. Pick 1–2 tags from _allowedTags that best match the passage and application. Include Bible Study when appropriate.",
+      tags: [],
       title: "Study title",
       description: "Short description for search previews.",
       passage: "John 3:1-21",
@@ -523,6 +669,7 @@
     summary: "Short intro shown on the article page.",
     description: "One or two sentences for Google and social previews.",
     author: "ROLCC Pastoral Team",
+    tags: ["Faith & Peace"],
     category: "Faith & Peace",
     date: "2026-07-06",
     scripture: "Matthew 11:28-30",
@@ -539,6 +686,10 @@
 
   return {
     stripInternalKeys: stripInternalKeys,
+    setAllowedTags: setAllowedTags,
+    getAllowedTags: getAllowedTags,
+    normalizeImportTags: normalizeImportTags,
+    suggestTagsFromContent: suggestTagsFromContent,
     normalizeEntryForCms: normalizeEntryForCms,
     normalizeEntryForDisk: normalizeEntryForDisk,
     slugifyTitle: slugifyTitle,

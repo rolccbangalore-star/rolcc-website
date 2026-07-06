@@ -1,0 +1,88 @@
+{
+  "_instructions": "Convert the draft below into this JSON. For each quiz question: write one correct answer and three plausible wrong answers based on the article (not silly or random). Set correctIndex to the 0-based index of the correct option. Do not include tag, date, hero image, featured, or published.",
+  "title": "Your article title",
+  "summary": "2–3 sentences shown at the top of the article page. Warm, clear, visitor-friendly.",
+  "description": "One or two sentences for Google and social link previews.",
+  "author": "ROLCC Pastoral Team",
+  "scripture": "Matthew 11:28-30",
+  "sermonSeries": "Everyday Faith",
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "Opening paragraph. Keep it short and welcoming for first-time readers."
+    },
+    {
+      "type": "heading",
+      "level": "2",
+      "text": "Section heading (use level 2 or 3)"
+    },
+    {
+      "type": "paragraph",
+      "text": "Body text under the heading."
+    },
+    {
+      "type": "quote",
+      "text": "Quoted verse or line of teaching.",
+      "attribution": "Matthew 11:28"
+    },
+    {
+      "type": "scriptureCallout",
+      "reference": "Matthew 11:28-30",
+      "text": "Optional full verse text."
+    },
+    {
+      "type": "bulletList",
+      "items": [
+        "First bullet point",
+        "Second bullet point"
+      ]
+    },
+    {
+      "type": "image",
+      "src": "/images/your-image.jpg",
+      "alt": "Describe the image for accessibility",
+      "caption": "Optional caption"
+    },
+    {
+      "type": "faq",
+      "items": [
+        {
+          "question": "A common question?",
+          "answer": "A short, helpful answer."
+        }
+      ]
+    },
+    {
+      "type": "cta",
+      "label": "Plan your visit",
+      "url": "/contact",
+      "text": "Optional line above the button.",
+      "style": "primary"
+    },
+    {
+      "type": "video",
+      "url": "https://www.youtube.com/watch?v=VIDEO_ID",
+      "title": "Video title for screen readers",
+      "caption": "Optional caption"
+    }
+  ],
+  "keyTakeaways": [
+    "First short takeaway (one line)",
+    "Second short takeaway",
+    "Third short takeaway"
+  ],
+  "includeQuiz": true,
+  "quiz": [
+    {
+      "question": "What does Jesus invite the weary to do?",
+      "options": [
+        "Come to him",
+        "Work harder before resting",
+        "Solve everything on their own",
+        "Wait until life is completely calm"
+      ],
+      "correctIndex": 0,
+      "explanation": "Matthew 11:28 — Jesus welcomes the weary as they are."
+    }
+  ]
+}

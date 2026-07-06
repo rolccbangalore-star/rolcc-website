@@ -242,6 +242,78 @@
       .filter(Boolean);
   }
 
+  function normalizeBlockForCms(block) {
+    if (!block || typeof block !== "object") return null;
+    var out = Object.assign({}, block);
+    if (out.type === "list") out.type = "bulletList";
+    if (out.type === "scripture") out.type = "scriptureCallout";
+    if (out.type === "bulletList" && Array.isArray(out.items)) {
+      out.items = out.items.map(function (item) {
+        if (typeof item === "string") return { item: item };
+        if (item && typeof item === "object") return { item: trim(item.item || item.text || "") };
+        return { item: "" };
+      }).filter(function (row) {
+        return row.item;
+      });
+    }
+    return out;
+  }
+
+  function normalizeQuizForCms(quiz) {
+    return (quiz || []).map(function (item) {
+      var row = normalizeQuizItem(item);
+      if (!row) return null;
+      row.options = (row.options || []).map(function (opt) {
+        return typeof opt === "string" ? { option: opt } : { option: trim(opt.option || opt.text || "") };
+      }).filter(function (opt) {
+        return opt.option;
+      });
+      return row;
+    }).filter(Boolean);
+  }
+
+  function normalizeEntryForCms(entry, collection) {
+    collection = normalizeCollectionId(collection);
+    var out = stripInternalKeys(Object.assign({}, entry || {}));
+    prepareQuizEntry(out);
+
+    if (isArticlesCollection(collection)) {
+      out.blocks = normalizeBlocks(out.blocks || []).map(normalizeBlockForCms).filter(Boolean);
+      out.keyTakeaways = (out.keyTakeaways || []).map(function (k) {
+        var text = typeof k === "string" ? k : trim(k.item || k.text || "");
+        return text ? { item: text } : null;
+      }).filter(Boolean);
+    } else if (isBibleStudyCollection(collection)) {
+      out.sections = out.sections || [];
+      out.discussionQuestions = (out.discussionQuestions || []).map(function (q) {
+        return typeof q === "string" ? q : trim(q.question || "");
+      }).filter(Boolean);
+    }
+
+    if (out.quiz && out.quiz.length) {
+      out.quiz = normalizeQuizForCms(out.quiz);
+    }
+
+    return out;
+  }
+
+  function pickImportFields(entry, collection) {
+    collection = normalizeCollectionId(collection);
+    var keys = isArticlesCollection(collection)
+      ? ["title", "summary", "description", "author", "scripture", "sermonSeries", "blocks", "keyTakeaways", "includeQuiz", "quiz"]
+      : ["title", "description", "passage", "author", "sections", "discussionQuestions", "includeQuiz", "quiz"];
+    var picked = {};
+    keys.forEach(function (key) {
+      if (entry[key] !== undefined && entry[key] !== null && entry[key] !== "") {
+        picked[key] = entry[key];
+      }
+    });
+    if (Array.isArray(picked.blocks) && !picked.blocks.length) delete picked.blocks;
+    if (Array.isArray(picked.keyTakeaways) && !picked.keyTakeaways.length) delete picked.keyTakeaways;
+    if (Array.isArray(picked.quiz) && !picked.quiz.length) delete picked.quiz;
+    return picked;
+  }
+
   function parseArticleJson(text, collection) {
     var data = JSON.parse(text);
     if (!data || typeof data !== "object") throw new Error("Invalid JSON object");
@@ -412,6 +484,9 @@
 
   return {
     stripInternalKeys: stripInternalKeys,
+    normalizeEntryForCms: normalizeEntryForCms,
+    pickImportFields: pickImportFields,
+    normalizeCollectionId: normalizeCollectionId,
     parseFrontmatter: parseFrontmatter,
     parseArticleJson: parseArticleJson,
     parseMarkdownToEntry: parseMarkdownToEntry,

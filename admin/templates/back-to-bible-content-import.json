@@ -1,0 +1,36 @@
+{
+  "_instructions": "Convert the draft below into this JSON. For each quiz question: write one correct answer and three plausible wrong answers based on the study (not silly or random). Set correctIndex to the 0-based index of the correct option. Do not include tag, date, hero image, featured, or published.",
+  "title": "Study title",
+  "description": "Short description for the study page and search previews.",
+  "passage": "John 3:1-21",
+  "author": "ROLCC Fellowship Team",
+  "sections": [
+    {
+      "heading": "Read the passage",
+      "body": "Teaching notes or discussion text for this section."
+    },
+    {
+      "heading": "Discuss together",
+      "body": "Prompts or guidance for the group."
+    }
+  ],
+  "discussionQuestions": [
+    "What stands out to you in this passage?",
+    "How does this apply to everyday life?",
+    "Who can you encourage with what you learned?"
+  ],
+  "includeQuiz": true,
+  "quiz": [
+    {
+      "question": "According to this passage, what is the main theme?",
+      "options": [
+        "God's love and truth",
+        "Political power",
+        "Financial success",
+        "Avoiding all difficulty"
+      ],
+      "correctIndex": 0,
+      "explanation": "Brief note tying the answer back to the passage."
+    }
+  ]
+}

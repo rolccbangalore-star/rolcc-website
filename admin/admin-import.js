@@ -423,7 +423,107 @@
     ["author", "author"],
   ];
 
-  function applyEntryImport(root, entry, options) {
+  var AUTHOR_DEFAULTS = ["ROLCC Pastoral Team", "ROLCC Fellowship Team"];
+
+  function getCmsStore() {
+    return window.CMS && window.CMS.store ? window.CMS.store : null;
+  }
+
+  function getDraftEntryJs() {
+    var store = getCmsStore();
+    if (!store) return null;
+    var state = store.getState();
+    if (!state || !state.entryDraft) return null;
+    var draft = state.entryDraft;
+    var entry = draft.get ? draft.get("entry") : draft.entry;
+    if (!entry) return null;
+    if (entry.toJS) return entry.toJS();
+    return JSON.parse(JSON.stringify(entry));
+  }
+
+  function isEmptyImportValue(key, value) {
+    if (value === undefined || value === null) return true;
+    if (typeof value === "string" && !value.trim()) return true;
+    if (typeof value === "boolean" && key === "includeQuiz" && value === false) return true;
+    if (key === "author" && typeof value === "string" && AUTHOR_DEFAULTS.indexOf(value.trim()) !== -1) return true;
+    if (Array.isArray(value) && value.length === 0) return true;
+    return false;
+  }
+
+  function mergeImportIntoData(currentData, importData, fillEmptyOnly) {
+    var merged = Object.assign({}, currentData || {});
+    Object.keys(importData).forEach(function (key) {
+      if (!fillEmptyOnly || isEmptyImportValue(key, merged[key])) {
+        merged[key] = importData[key];
+      }
+    });
+    return merged;
+  }
+
+  function countStoreImportResults(beforeData, afterData, importData) {
+    var results = { meta: 0, content: 0, quiz: 0, warnings: [] };
+    var metaKeys = ["title", "summary", "description", "author", "scripture", "sermonSeries", "passage"];
+    var contentKeys = ["blocks", "keyTakeaways", "sections", "discussionQuestions"];
+
+    Object.keys(importData).forEach(function (key) {
+      if (JSON.stringify(beforeData[key]) === JSON.stringify(afterData[key])) return;
+      if (metaKeys.indexOf(key) !== -1) results.meta += 1;
+      else if (key === "quiz") results.quiz = (importData.quiz || []).length;
+      else if (key === "includeQuiz") results.meta += 1;
+      else if (contentKeys.indexOf(key) !== -1) {
+        if (key === "blocks") results.content += (importData.blocks || []).length;
+        else if (key === "keyTakeaways") results.content += (importData.keyTakeaways || []).length;
+        else if (key === "sections") results.content += (importData.sections || []).length;
+        else if (key === "discussionQuestions") results.content += (importData.discussionQuestions || []).length;
+      }
+    });
+
+    return results;
+  }
+
+  function applyEntryViaStore(entry, options) {
+    options = options || {};
+    if (!parseApi) return null;
+
+    var store = getCmsStore();
+    if (!store) return null;
+
+    var entryObj = getDraftEntryJs();
+    if (!entryObj || !entryObj.data) return null;
+
+    var collection = getCollection();
+    var normalized = parseApi.normalizeEntryForCms(entry, collection);
+    var importData = parseApi.pickImportFields(normalized, collection);
+    if (!Object.keys(importData).length) return { meta: 0, content: 0, quiz: 0, warnings: [] };
+
+    var beforeData = JSON.parse(JSON.stringify(entryObj.data || {}));
+    var mergedData = mergeImportIntoData(entryObj.data, importData, options.fillEmptyOnly !== false);
+    entryObj.data = mergedData;
+
+    store.dispatch({
+      type: "DRAFT_CREATE_FROM_ENTRY",
+      payload: { entry: entryObj },
+    });
+
+    if (mergedData.title) {
+      var headerInput = $("admin-editor-title-input");
+      if (headerInput) setInputValue(headerInput, mergedData.title);
+      var root = getRoot();
+      if (root && window.AdminComposer && window.AdminComposer.syncTitleFromDecap) {
+        window.AdminComposer.syncTitleFromDecap(root);
+      }
+    }
+
+    if (window.AdminComposer && window.AdminComposer.resetEditorSnapshot) {
+      window.setTimeout(function () {
+        window.AdminComposer.resetEditorSnapshot(getRoot());
+      }, 300);
+    }
+
+    return countStoreImportResults(beforeData, mergedData, importData);
+  }
+
+  function applyEntryImportDom(root, entry, options) {
     options = options || {};
     var collection = getCollection();
     var metaFields = isBibleStudyCollection(collection) ? IMPORT_META_BTB : IMPORT_META_EF;
@@ -476,6 +576,15 @@
     }
 
     return results;
+  }
+
+  function applyEntryImport(root, entry, options) {
+    options = options || {};
+    var storeResults = applyEntryViaStore(entry, options);
+    if (storeResults && (storeResults.meta || storeResults.content || storeResults.quiz)) {
+      return storeResults;
+    }
+    return applyEntryImportDom(root, entry, options);
   }
 
   function showToast(message, type) {

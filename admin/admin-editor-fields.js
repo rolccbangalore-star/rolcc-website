@@ -398,9 +398,18 @@
     if (!isEditorRoute()) return null;
     var pane = root.querySelector('[class*="EditorControlPane"]');
     if (!pane) return null;
-    var anchor = findFieldWrap(root, "author") || findFieldWrap(root, "date");
+    var anchor =
+      findFieldWrap(root, "author") ||
+      findFieldWrap(root, "date") ||
+      findFieldWrap(root, "featured article") ||
+      findFieldWrap(root, "featured");
     if (!anchor || !pane.contains(anchor)) return null;
-    return anchor.parentElement || pane;
+    return pane;
+  }
+
+  function positionTagField(wrap, mount) {
+    if (!wrap || !mount) return;
+    mount.appendChild(wrap);
   }
 
   function unmountEditorFields(root) {
@@ -467,12 +476,9 @@
         "</div>" +
         '<p class="admin-editor-field-hint admin-tags-field__hint" id="admin-editor-tag-hint">Type to find tags. Add at least 2 before publishing.</p>';
 
-      var anchor = findFieldWrap(root, "author") || findFieldWrap(root, "date");
-      if (anchor && anchor.parentElement) {
-        anchor.parentElement.insertBefore(wrap, anchor.nextSibling);
-      } else {
-        mount.appendChild(wrap);
-      }
+      positionTagField(wrap, mount);
+    } else {
+      positionTagField(wrap, mount);
     }
 
     if (wrap.dataset.adminTagWired === "true") {

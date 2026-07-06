@@ -14,6 +14,9 @@
   const empty = document.querySelector("[data-articles-empty]");
   const meta = document.querySelector("[data-articles-results-meta]");
   const sortSelect = document.querySelector("[data-articles-sort]");
+  const sortToggle = document.querySelector("[data-articles-sort-toggle]");
+  const sortMenu = document.querySelector("[data-articles-sort-menu]");
+  const sortIcon = document.querySelector(".articles-sort-icon");
   const paginationWrap = document.querySelector("[data-articles-pagination-wrap]");
   if (!chips || !grid) return;
 
@@ -94,6 +97,40 @@
 
   function getPool() {
     return payload.articles.filter(matchesFilter);
+  }
+
+  function setSort(nextSort) {
+    sort = nextSort || "newest";
+    page = 1;
+    if (sortSelect) sortSelect.value = sort;
+    updateSortUi();
+    render();
+  }
+
+  function updateSortUi() {
+    if (sortIcon) {
+      sortIcon.classList.toggle("is-sorted", sort !== "newest");
+    }
+    if (sortMenu) {
+      sortMenu.querySelectorAll("[data-articles-sort-value]").forEach(function (btn) {
+        const active = btn.getAttribute("data-articles-sort-value") === sort;
+        btn.classList.toggle("is-active", active);
+        btn.setAttribute("aria-selected", active ? "true" : "false");
+      });
+    }
+  }
+
+  function closeSortMenu() {
+    if (!sortMenu || !sortToggle) return;
+    sortMenu.hidden = true;
+    sortToggle.setAttribute("aria-expanded", "false");
+  }
+
+  function toggleSortMenu() {
+    if (!sortMenu || !sortToggle) return;
+    const open = sortMenu.hidden;
+    sortMenu.hidden = !open;
+    sortToggle.setAttribute("aria-expanded", open ? "true" : "false");
   }
 
   function sortArticles(list) {
@@ -206,9 +243,27 @@
 
   if (sortSelect) {
     sortSelect.addEventListener("change", function () {
-      sort = sortSelect.value || "newest";
-      page = 1;
-      render();
+      setSort(sortSelect.value || "newest");
+    });
+  }
+
+  if (sortToggle && sortMenu) {
+    sortToggle.addEventListener("click", function (e) {
+      e.stopPropagation();
+      toggleSortMenu();
+    });
+
+    sortMenu.addEventListener("click", function (e) {
+      const btn = e.target.closest("[data-articles-sort-value]");
+      if (!btn) return;
+      setSort(btn.getAttribute("data-articles-sort-value") || "newest");
+      closeSortMenu();
+    });
+
+    document.addEventListener("click", function (e) {
+      if (!sortMenu.hidden && !e.target.closest(".articles-sort-mobile")) {
+        closeSortMenu();
+      }
     });
   }
 
@@ -225,5 +280,6 @@
     });
   }
 
+  updateSortUi();
   render();
 })();

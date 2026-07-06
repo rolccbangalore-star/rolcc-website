@@ -71,11 +71,114 @@
 }
 
 .articles-toolbar {
+  display: block;
+}
+
+.articles-toolbar__row {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
-  justify-content: space-between;
   gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .articles-toolbar__row {
+    justify-content: space-between;
+    width: 100%;
+  }
+}
+
+.articles-sort-wrap {
+  flex-shrink: 0;
+}
+
+.articles-sort-mobile {
+  display: none;
+  position: relative;
+}
+
+.articles-sort-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 9999px;
+  border: 1px solid #e2e8f0;
+  background: #fff;
+  color: #475569;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+
+.articles-sort-icon:hover {
+  border-color: #cbd5e1;
+  color: #0f172a;
+}
+
+.articles-sort-icon.is-sorted {
+  border-color: #635bff;
+  background: #635bff;
+  color: #fff;
+}
+
+.articles-sort-menu {
+  position: absolute;
+  top: calc(100% + 0.35rem);
+  right: 0;
+  z-index: 20;
+  min-width: 9rem;
+  border-radius: 0.75rem;
+  border: 1px solid #e2e8f0;
+  background: #fff;
+  padding: 0.35rem;
+  box-shadow: 0 10px 25px -8px rgba(15, 23, 42, 0.18);
+}
+
+.articles-sort-menu__item {
+  display: block;
+  width: 100%;
+  border: none;
+  border-radius: 0.5rem;
+  background: transparent;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: #334155;
+  text-align: left;
+}
+
+.articles-sort-menu__item:hover {
+  background: #f8fafc;
+}
+
+.articles-sort-menu__item.is-active {
+  color: #635bff;
+  background: #f5f3ff;
+}
+
+@media (max-width: 639px) {
+  .articles-toolbar__row {
+    gap: 0;
+  }
+
+  .articles-chips--toolbar {
+    flex: 1;
+    min-width: 0;
+    padding-right: 0.25rem;
+  }
+
+  .articles-sort--desktop {
+    display: none;
+  }
+
+  .articles-sort-mobile {
+    display: block;
+    position: sticky;
+    right: 0;
+    z-index: 2;
+    flex-shrink: 0;
+    padding-left: 1.25rem;
+    background: linear-gradient(to right, rgba(248, 250, 252, 0) 0%, rgba(248, 250, 252, 0.92) 35%, #f8fafc 100%);
+  }
 }
 
 .articles-toolbar__controls {

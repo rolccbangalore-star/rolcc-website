@@ -463,6 +463,36 @@ function renderFilterChips(options = {}) {
   </div>`;
 }
 
+function renderHubToolbar() {
+  return `<div class="articles-toolbar">
+    <div class="articles-toolbar__row">
+      ${renderFilterChips({ toolbar: true })}
+      <div class="articles-sort-wrap">
+        <label class="articles-sort articles-sort--desktop">
+          <span class="articles-sort__label">Sort by</span>
+          <select class="articles-sort__select" data-articles-sort aria-label="Sort articles">
+            <option value="newest" selected>Newest</option>
+            <option value="oldest">Oldest</option>
+            <option value="title">Title A–Z</option>
+          </select>
+        </label>
+        <div class="articles-sort-mobile">
+          <button type="button" class="articles-sort-icon" data-articles-sort-toggle aria-label="Sort articles" aria-haspopup="listbox" aria-expanded="false">
+            <svg class="articles-sort-icon__svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M4 6h10"/><path d="M4 12h7"/><path d="M4 18h4"/><path d="M15 8l3-3 3 3"/><path d="M18 5v14"/><path d="M15 16l3 3 3-3"/>
+            </svg>
+          </button>
+          <div class="articles-sort-menu" data-articles-sort-menu hidden role="listbox" aria-label="Sort articles">
+            <button type="button" class="articles-sort-menu__item is-active" data-articles-sort-value="newest" role="option">Newest</button>
+            <button type="button" class="articles-sort-menu__item" data-articles-sort-value="oldest" role="option">Oldest</button>
+            <button type="button" class="articles-sort-menu__item" data-articles-sort-value="title" role="option">Title A–Z</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
 function hubLatestSlug(articles, featuredSlug) {
   const candidate = articles.find((a) => `${a.type}/${a.slug}` !== featuredSlug);
   return candidate ? `${candidate.type}/${candidate.slug}` : "";
@@ -541,20 +571,8 @@ function buildHubPage(articles, faqs) {
 
       <section class="articles-list-section border-b border-slate-200" aria-label="Articles">
         <div class="mx-auto max-w-6xl px-4 pb-10 sm:px-6 md:pb-14 lg:px-8">
-          <div class="articles-toolbar">
-            ${renderFilterChips({ toolbar: true })}
-            <div class="articles-toolbar__controls">
-              <label class="articles-sort">
-                <span class="articles-sort__label">Sort by</span>
-                <select class="articles-sort__select" data-articles-sort aria-label="Sort articles">
-                  <option value="newest" selected>Newest</option>
-                  <option value="oldest">Oldest</option>
-                  <option value="title">Title A–Z</option>
-                </select>
-              </label>
-            </div>
-          </div>
-          <p class="articles-results-meta mt-2 text-sm text-slate-500" data-articles-results-meta></p>
+          ${renderHubToolbar()}
+          <p class="articles-results-meta hidden sm:block mt-2 text-sm text-slate-500" data-articles-results-meta></p>
           <div class="mt-6" data-articles-grid>
             <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">${initialCards.join("")}</div>
           </div>

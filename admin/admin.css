@@ -2505,6 +2505,31 @@ body.admin-page--authed:not(.admin-page--editor) .admin-publish-slot {
   white-space: nowrap;
 }
 
+.admin-topbar-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  min-width: 2.5rem;
+  height: 2.5rem;
+  min-height: 2.5rem;
+  padding: 0;
+}
+
+.admin-topbar-icon-btn__icon {
+  width: 1.05rem;
+  height: 1.05rem;
+  flex-shrink: 0;
+}
+
+.admin-import-btn.admin-topbar-icon-btn,
+.admin-preview-btn.admin-topbar-icon-btn,
+.admin-save-draft-btn.admin-topbar-icon-btn,
+.admin-delete-btn.admin-topbar-icon-btn {
+  padding: 0;
+  font-size: 0;
+}
+
 .admin-editor-title-block.admin-field--missing .admin-editor-title-input {
   border-color: #dc2626;
   box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15);
@@ -2519,8 +2544,6 @@ body.admin-page--authed:not(.admin-page--editor) .admin-publish-slot {
 
 .admin-import-btn {
   min-height: 2.5rem;
-  padding: 0.625rem 1rem;
-  font-size: 0.8125rem;
 }
 
 .admin-delete-btn {

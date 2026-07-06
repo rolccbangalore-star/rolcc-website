@@ -844,8 +844,9 @@
       var meta = window.AdminImport.getDraftMeta();
       if (meta && meta.newRecord) isNew = true;
     }
-    btn.textContent = isNew ? "Discard" : "Delete";
     btn.setAttribute("aria-label", isNew ? "Discard unsaved article" : "Delete article");
+    btn.setAttribute("data-tooltip", isNew ? "Discard" : "Delete");
+    btn.setAttribute("title", isNew ? "Discard" : "Delete");
   }
 
   function deleteArticle(root) {

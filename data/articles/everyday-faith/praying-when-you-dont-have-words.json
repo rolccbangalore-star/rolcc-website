@@ -1,0 +1,22 @@
+{
+  "title": "Praying when you don't have words",
+  "description": "A short Everyday Faith reflection on honest prayer when life feels too heavy for polished words.",
+  "summary": "God listens to sighs, silence, and simple honesty. You do not need the right phrase to come to Him.",
+  "author": "ROLCC Pastoral Team",
+  "category": "Prayer",
+  "date": "2026-07-01",
+  "featured": false,
+  "sermonSeries": "Everyday Faith",
+  "scripture": "Romans 8:26",
+  "publish": false,
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "Some weeks prayer feels natural. Other weeks you open your Bible, stare at the ceiling, and wonder if God hears you at all. Both are human—and both are welcome."
+    },
+    {
+      "type": "paragraph",
+      "text": "The Spirit helps us in our weakness. When we do not know what to pray for, God still meets us in the gap between what we feel and what we can say."
+    }
+  ]
+}

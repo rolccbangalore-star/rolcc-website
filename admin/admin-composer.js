@@ -580,7 +580,17 @@
   }
 
   function isListView(root) {
-    return !!root.querySelector(".admin-view-btn--list[aria-pressed='true']");
+    var listBtn = root.querySelector(".admin-view-btn--list");
+    if (!listBtn) {
+      listBtn = Array.prototype.find.call(root.querySelectorAll("button"), function (btn) {
+        var label = normalize(btn.getAttribute("aria-label") || btn.textContent || "");
+        return label.indexOf("list") !== -1;
+      });
+    }
+    if (!listBtn) return false;
+    if (listBtn.getAttribute("aria-pressed") === "true") return true;
+    if (listBtn.getAttribute("aria-current") === "true") return true;
+    return listBtn.classList.contains("active") || listBtn.getAttribute("data-active") === "true";
   }
 
   function syncCollectionViewMode(root) {

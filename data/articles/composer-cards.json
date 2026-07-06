@@ -1,0 +1,60 @@
+{
+  "everyday-faith": {
+    "finding-rest-when-work-never-stops": {
+      "title": "Finding rest when work never stops",
+      "author": "ROLCC Pastoral Team",
+      "category": "Work & Calling",
+      "date": "2026-06-15",
+      "thumbnail": "/images/og-image.jpg",
+      "publish": true
+    },
+    "god-is-still-with-you-in-grief": {
+      "title": "God is still with you in grief",
+      "author": "Pastor Samuel",
+      "category": "Faith & Peace",
+      "date": "2026-07-03",
+      "thumbnail": "/images/og-image.jpg",
+      "publish": true
+    },
+    "how-to-stop-stressing-and-trust-god": {
+      "title": "How to Stop Stressing and Trust God with Your Problems",
+      "author": "ROLCC Pastoral Team",
+      "category": "Faith & Peace",
+      "date": "2026-06-25",
+      "thumbnail": "/images/og-image.jpg",
+      "publish": true
+    },
+    "praying-when-you-dont-have-words": {
+      "title": "Praying when you don't have words",
+      "author": "ROLCC Pastoral Team",
+      "category": "Prayer",
+      "date": "2026-07-01",
+      "publish": false
+    }
+  },
+  "back-to-bible": {
+    "genesis-1-in-the-beginning": {
+      "title": "Genesis 1 — In the beginning",
+      "author": "ROLCC Fellowship Team",
+      "category": "Bible Study",
+      "date": "2026-07-02",
+      "publish": false
+    },
+    "psalm-23-the-lord-is-my-shepherd": {
+      "title": "Psalm 23 — The Lord Is My Shepherd",
+      "author": "ROLCC Fellowship Team",
+      "category": "Bible Study",
+      "date": "2026-06-10",
+      "thumbnail": "/images/og-image.jpg",
+      "publish": true
+    },
+    "romans-8-life-in-the-spirit": {
+      "title": "Romans 8:1-11 — Life in the Spirit",
+      "author": "ROLCC Fellowship Team",
+      "category": "Bible Study",
+      "date": "2026-06-20",
+      "thumbnail": "/images/og-image.jpg",
+      "publish": true
+    }
+  }
+}

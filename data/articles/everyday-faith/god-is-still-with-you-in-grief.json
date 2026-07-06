@@ -1,0 +1,24 @@
+{
+  "title": "God is still with you in grief",
+  "description": "Comfort for seasons of loss—when faith feels quiet but God has not stepped away.",
+  "summary": "Grief is not a failure of faith. Jesus wept, and He walks with you through sorrow at your pace.",
+  "author": "Pastor Samuel",
+  "category": "Faith & Peace",
+  "date": "2026-07-03",
+  "thumbnail": "/images/og-image.jpg",
+  "featured": false,
+  "sermonSeries": "Everyday Faith",
+  "scripture": "Psalm 34:18",
+  "publish": true,
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "Loss can make church feel loud when your heart feels hollow. You are not alone, and you are not behind spiritually because sorrow takes time."
+    },
+    {
+      "type": "quote",
+      "text": "The Lord is close to the brokenhearted and saves those who are crushed in spirit.",
+      "attribution": "Psalm 34:18"
+    }
+  ]
+}

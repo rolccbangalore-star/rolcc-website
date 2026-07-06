@@ -1,0 +1,238 @@
+{
+  "sermonSeries": "Repayment Series",
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "We live in an unpredictable world where circumstances can shift from relative peace to total chaos overnight. When a major crisis hits, it is incredibly easy to spend all our energy scrolling through bad news, tracking terrifying statistics, and hyper-focusing on the wind and waves around us."
+    },
+    {
+      "type": "heading",
+      "level": "2",
+      "text": "The Comfort Zone Trap"
+    },
+    {
+      "type": "paragraph",
+      "text": "As humans, our default instinct is to seek a cocoon of safety. We want a life where we are never challenged or exposed to danger, often praying for 'blessings' simply to keep things risk-free. When a storm inevitably breaches our defenses, we complain about our jobs, our families, and our stress—a clear sign we are resisting growth."
+    },
+    {
+      "type": "heading",
+      "level": "2",
+      "text": "A Sleepy Master and a Sinking Boat"
+    },
+    {
+      "type": "paragraph",
+      "text": "This feeling of sheer panic is perfectly illustrated in the Gospel of Luke. Jesus tells His disciples, 'Let us go over to the other side of the lake.' They board a boat, but a massive squall sweeps down, and the boat begins taking on water, placing them in immediate danger."
+    },
+    {
+      "type": "paragraph",
+      "text": "Fascinatingly, the disciples were in this terrifying position because they obeyed Jesus. We often assume following God means an easy path, but sometimes we are called into difficulty because God has no interest in leaving us inside a stagnant cocoon."
+    },
+    {
+      "type": "quote",
+      "text": "Master, master, we are going to drown! ... Where is your faith?",
+      "attribution": "Luke 8:24-25"
+    },
+    {
+      "type": "paragraph",
+      "text": "The disciples' mistake wasn't recognizing the severity of the storm—the danger was real. Their mistake was their perspective. They were looking so intently at the wind that they completely forgot who was sitting in the boat with them."
+    },
+    {
+      "type": "heading",
+      "level": "2",
+      "text": "3 Fast Ways to Change Your Focus"
+    },
+    {
+      "type": "bulletList",
+      "items": [
+        {
+          "item": "Shift your prayers: Stop asking exclusively for your challenges to be weakened, and start praying for your inner self to be strengthened."
+        },
+        {
+          "item": "Guard your morning time: Don't excuse your lack of quiet time by saying you are too busy. True wisdom is caught in stillness, not manufactured through endless exhaustion."
+        },
+        {
+          "item": "See crisis as an intense training ground: Treat this difficult season as an opportunity to build resilience and exercise your faith for future success."
+        }
+      ]
+    },
+    {
+      "type": "faq",
+      "items": [
+        {
+          "question": "Does having faith mean I should ignore real-world dangers and statistics?",
+          "answer": "Not at all. The storm hitting the boat was a physical reality. Faith doesn't mean denying facts; it means acknowledging that the power of God inside your boat is vastly greater than the storm outside of it."
+        },
+        {
+          "question": "Why does God allow hard times to happen if I am doing the right thing?",
+          "answer": "God's primary goal for you is growth, not permanent comfort. Remaining in a cozy cocoon forever prevents you from developing the strength and skills needed to fulfill your true purpose."
+        }
+      ]
+    },
+    {
+      "type": "cta",
+      "label": "Connect with Us",
+      "url": "/contact",
+      "text": "Feeling overwhelmed by life's waves? Reach out to our care team this week to find a supportive community.",
+      "style": "primary"
+    }
+  ],
+  "summary": "When personal trials or sudden crises leave you completely overwhelmed, our default setting is to panic and over-analyze. Discover how a famous storm in the Gospel of Luke reveals a simple blueprint to stop tracking the chaos and reclaim your mental peace.",
+  "author": "Rev. Benson K Sunny",
+  "thumbnail": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS4GwDPnqF0p29KBHY9LNsFAR6_N52cJzNsmjfcQFubfyZSbwUPYa5Xun4&s=10",
+  "featured": false,
+  "date": "2026-07-06",
+  "publish": true,
+  "quiz": [
+    {
+      "question": "According to the sermon, what was the primary perspective mistake made by the disciples during the storm?",
+      "options": [
+        {
+          "option": "They completely misjudged the route and sailed into the wrong part of the lake."
+        },
+        {
+          "option": "They focused so hard on the wind that they forgot who was in the boat with them."
+        },
+        {
+          "option": "They accidentally fell asleep and left no one to steer the ship."
+        },
+        {
+          "option": "They tried to fix the leak on their own before calling out to Jesus."
+        },
+        {
+          "option": "They completely misjudged the route and sailed into the wrong part of the lake."
+        },
+        {
+          "option": "They focused so hard on the wind that they forgot who was in the boat with them."
+        },
+        {
+          "option": "They accidentally fell asleep and left no one to steer the ship."
+        },
+        {
+          "option": "They tried to fix the leak on their own before calling out to Jesus."
+        }
+      ],
+      "correctIndex": 1,
+      "explanation": "The text explains that while the danger was entirely real, the disciples panicked because they focused intently on the wind rather than remembering Jesus' presence."
+    },
+    {
+      "question": "Why does God sometimes call us into seasons of difficulty instead of keeping us in a comfort zone?",
+      "options": [
+        {
+          "option": "To punish believers for making common, everyday complaints."
+        },
+        {
+          "option": "Because He wants to prevent us from achieving future success."
+        },
+        {
+          "option": "To test if we have memorized specific scriptural statistics."
+        },
+        {
+          "option": "To ensure we don't remain stuck and stagnant inside a cozy cocoon."
+        },
+        {
+          "option": "To punish believers for making common, everyday complaints."
+        },
+        {
+          "option": "Because He wants to prevent us from achieving future success."
+        },
+        {
+          "option": "To test if we have memorized specific scriptural statistics."
+        },
+        {
+          "option": "To ensure we don't remain stuck and stagnant inside a cozy cocoon."
+        }
+      ],
+      "correctIndex": 3,
+      "explanation": "The sermon states that God has no interest in leaving us resting inside a stagnant cocoon; He allows challenges to help us grow and build resilience."
+    },
+    {
+      "question": "What example from the life of David is used to show how we should reframe our daily prayers?",
+      "options": [
+        {
+          "option": "David didn't pray for the lion to grow weaker; he relied on divine strength to overcome it."
+        },
+        {
+          "option": "David hid in a safe cocoon until the threat passed by completely."
+        },
+        {
+          "option": "David constantly complained to his family before facing any major dangers."
+        },
+        {
+          "option": "David gathered extensive data on the lion's teeth before taking action."
+        },
+        {
+          "option": "David didn't pray for the lion to grow weaker; he relied on divine strength to overcome it."
+        },
+        {
+          "option": "David hid in a safe cocoon until the threat passed by completely."
+        },
+        {
+          "option": "David constantly complained to his family before facing any major dangers."
+        },
+        {
+          "option": "David gathered extensive data on the lion's teeth before taking action."
+        }
+      ],
+      "correctIndex": 0,
+      "explanation": "When facing a lion, David didn't pray for the threat to be weakened or minimized; he used the inner strength and divine anointing already given to him to defeat it."
+    },
+    {
+      "question": "What dangerous habit is identified as a clear sign that a person is refusing to step out of their comfort zone?",
+      "options": [
+        {
+          "option": "Dedication to updating an emotion journal."
+        },
+        {
+          "option": "A regular habit of constant complaining about external circumstances."
+        },
+        {
+          "option": "Spending the first part of the morning in quiet prayer."
+        },
+        {
+          "option": "Seeking medical-grade protection during a global health crisis."
+        },
+        {
+          "option": "Dedication to updating an emotion journal."
+        },
+        {
+          "option": "A regular habit of constant complaining about external circumstances."
+        },
+        {
+          "option": "Spending the first part of the morning in quiet prayer."
+        },
+        {
+          "option": "Seeking medical-grade protection during a global health crisis."
+        }
+      ],
+      "correctIndex": 1,
+      "explanation": "The sermon notes that the habit of constant complaining about our jobs, families, or churches is a clear indicator of a refusal to leave our comfort zones."
+    }
+  ],
+  "title": "Stressed and Overthinking? How to Stay Calm When Life Spins Out of Control",
+  "tags": [
+    {
+      "tag": "Anxiety & Stress"
+    },
+    {
+      "tag": "Faith"
+    }
+  ],
+  "description": "Burnt out by overthinking and life's unexpected storms? Learn how to step out of the panic cycle and build real resilience using principles from Luke 8.",
+  "scripture": "Luke 8:22-25",
+  "includeQuiz": true,
+  "category": "Anxiety & Stress",
+  "keyTakeaways": [
+    {
+      "item": "Following God's path doesn't guarantee a life completely free of sudden storms and difficulties."
+    },
+    {
+      "item": "The disciples' failure was a matter of perspective, looking at the threat instead of remembering who was with them."
+    },
+    {
+      "item": "Supernatural wisdom is caught by prioritizing quiet time, not by running on endless exhaustion."
+    },
+    {
+      "item": "True faith acknowledges the reality of a problem but rests in the greater power of God's presence."
+    }
+  ]
+}

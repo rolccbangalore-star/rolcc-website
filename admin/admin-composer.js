@@ -91,6 +91,13 @@
       .replace(/"/g, "&quot;");
   }
 
+  function setTooltip(el, text) {
+    if (!el || !text) return;
+    el.setAttribute("title", text);
+    el.setAttribute("aria-label", text);
+    el.setAttribute("data-tooltip", text);
+  }
+
   function loadCardManifest() {
     if (cardManifest) return Promise.resolve(cardManifest);
     if (cardManifestPromise) return cardManifestPromise;
@@ -171,12 +178,54 @@
     });
   }
 
+  function dockComposerMenu(wrap) {
+    if (!wrap) return;
+    var menu = wrap._composerMenuEl || wrap.querySelector(".admin-composer-menu__menu");
+    if (!menu || menu.dataset.floating !== "true") return;
+    delete menu.dataset.floating;
+    menu.classList.remove("admin-composer-menu__menu--floating");
+    menu.style.position = "";
+    menu.style.top = "";
+    menu.style.right = "";
+    menu.style.left = "";
+    menu.style.zIndex = "";
+    menu.style.display = "";
+    wrap.appendChild(menu);
+  }
+
+  function floatComposerMenu(wrap, menu, trigger) {
+    if (!wrap || !menu || !trigger) return;
+    var rect = trigger.getBoundingClientRect();
+    menu.dataset.floating = "true";
+    menu.classList.add("admin-composer-menu__menu--floating");
+    menu.style.position = "fixed";
+    menu.style.top = Math.round(rect.bottom + 6) + "px";
+    menu.style.right = Math.round(window.innerWidth - rect.right) + "px";
+    menu.style.left = "auto";
+    menu.style.zIndex = "10000";
+    menu.style.display = "block";
+    wrap._composerMenuEl = menu;
+    document.body.appendChild(menu);
+  }
+
+  function syncComposerDropdownBodyClass() {
+    document.body.classList.toggle(
+      "admin-composer-dropdown-open",
+      !!document.querySelector(".admin-composer-menu.is-open")
+    );
+  }
+
   function closeAllDropdowns() {
-    document.querySelectorAll(".admin-dropdown.is-open, .admin-composer-menu.is-open").forEach(function (el) {
-      el.classList.remove("is-open");
-      var trigger = el.querySelector(".admin-composer-menu__trigger");
+    document.querySelectorAll(".admin-composer-menu.is-open").forEach(function (wrap) {
+      wrap.classList.remove("is-open");
+      var trigger = wrap.querySelector(".admin-composer-menu__trigger");
       if (trigger) trigger.setAttribute("aria-expanded", "false");
+      dockComposerMenu(wrap);
     });
+    document.querySelectorAll(".admin-dropdown.is-open").forEach(function (el) {
+      el.classList.remove("is-open");
+    });
+    syncComposerDropdownBodyClass();
   }
 
   function bindShellDropdowns() {
@@ -199,6 +248,14 @@
     });
   }
 
+  function bindShellTooltips() {
+    var switcher = $("admin-view-switcher");
+    if (switcher) {
+      var trigger = switcher.querySelector(".admin-view-switcher__trigger");
+      setTooltip(trigger, "Switch view");
+    }
+  }
+
   function wireViewSwitcher(root) {
     var switcher = $("admin-view-switcher");
     if (!switcher) return;
@@ -208,17 +265,21 @@
     if (label) label.textContent = isMediaRoute() ? "Media" : "Contents";
 
     switcher.querySelector('[data-view="contents"]').onclick = function () {
-      if (tabs.contents) tabs.contents.click();
-      else location.hash = "#/collections/everyday-faith";
       closeAllDropdowns();
       if (label) label.textContent = "Contents";
+      tabs = getHeaderTabs(root);
+      if (tabs.contents) tabs.contents.click();
+      else location.hash = "#/collections/everyday-faith";
+      scheduleEnhance(root, enhance);
     };
 
     switcher.querySelector('[data-view="media"]').onclick = function () {
-      if (tabs.media) tabs.media.click();
-      else location.hash = "#/media";
       closeAllDropdowns();
       if (label) label.textContent = "Media";
+      tabs = getHeaderTabs(root);
+      if (tabs.media) tabs.media.click();
+      else location.hash = "#/media";
+      scheduleEnhance(root, enhance);
     };
   }
 
@@ -246,6 +307,7 @@
     if (sidebar) sidebar.hidden = false;
 
     bindShellDropdowns();
+    bindShellTooltips();
     wireViewSwitcher(root);
     markActiveNavLinks();
     mountSearch(root);
@@ -274,9 +336,9 @@
     btn.classList.add("admin-logout-btn");
     if (btn.dataset.adminLogoutStyled !== "true") {
       btn.dataset.adminLogoutStyled = "true";
-      if (!btn.getAttribute("aria-label")) btn.setAttribute("aria-label", "Log out");
       btn.innerHTML = LOGOUT_ICON;
     }
+    setTooltip(btn, "Log out");
   }
 
   function applyDecapLayoutFixes(root) {
@@ -340,29 +402,37 @@
       return;
     }
 
-    var main = root.querySelector("main");
-    var createBtn = null;
-    if (main) {
-      createBtn =
-        findCreateButton(main.querySelector(".admin-collection-head") || main) || findCreateButton(main);
-    }
-
-    var slotBtn = createSlot.querySelector(".admin-create-article, a[href*='new']");
-    if (!createBtn && slotBtn) {
-      createBtn = slotBtn;
-    }
+    var collection = getActiveCollection() || "everyday-faith";
+    var href = "#/collections/" + collection + "/new";
+    var createBtn = createSlot.querySelector("a.admin-create-article");
 
     if (!createBtn) {
-      createSlot.hidden = true;
-      return;
+      createBtn = document.createElement("a");
+      createBtn.className = "admin-create-article btn-primary";
+      createSlot.textContent = "";
+      createSlot.appendChild(createBtn);
     }
 
+    createBtn.href = href;
     styleCreateButton(createBtn);
-
-    while (createSlot.firstChild) {
-      createSlot.removeChild(createSlot.firstChild);
+    setTooltip(createBtn, "Create Article");
+    if (createBtn.dataset.createBound !== "true") {
+      createBtn.dataset.createBound = "true";
+      createBtn.addEventListener("click", function (event) {
+        event.preventDefault();
+        var collection = getActiveCollection() || "everyday-faith";
+        var target = "#/collections/" + collection + "/new";
+        var ncRoot = getComposerRoot();
+        var decapNew =
+          ncRoot &&
+          (ncRoot.querySelector('main a[href*="/new"]') || ncRoot.querySelector('a[href*="/collections/' + collection + '/new"]'));
+        if (decapNew) {
+          decapNew.click();
+          return;
+        }
+        if (location.hash !== target) location.hash = target;
+      });
     }
-    createSlot.appendChild(createBtn);
     createSlot.hidden = false;
   }
 
@@ -490,6 +560,8 @@
     if (controls && !topBlock.querySelector(".admin-composer-toolbar")) {
       controls.classList.add("admin-collection-toolbar", "admin-decap-toolbar");
       controls.hidden = true;
+      controls.remove();
+      controls = null;
     }
 
     applyCollectionTitle(main, getActiveCollection());
@@ -633,6 +705,7 @@
       btn.dataset.adminViewStyled = "true";
       btn.innerHTML = type === "list" ? LIST_VIEW_ICON : GRID_VIEW_ICON;
     }
+    setTooltip(btn, type === "list" ? "List view" : "Grid view");
     btn.classList.toggle("admin-view-btn--active", isDecapButtonActive(btn));
   }
 
@@ -819,25 +892,86 @@
   }
 
   function ensureListHeader(main, show) {
-    var header = main.querySelector(".admin-list-header");
     if (!show) {
-      if (header) header.hidden = true;
+      var existing = main.querySelector(".admin-list-header");
+      if (existing) existing.hidden = true;
       return null;
     }
-    if (!header) {
-      header = document.createElement("div");
-      header.className = "admin-list-header";
-      header.innerHTML =
-        '<span class="admin-list-header__cell admin-list-header__name">Title</span>' +
-        '<span class="admin-list-header__cell admin-list-header__collection">Collection</span>' +
-        '<span class="admin-list-header__cell admin-list-header__author">Author</span>' +
-        '<span class="admin-list-header__cell admin-list-header__date">Date</span>' +
-        '<span class="admin-list-header__cell admin-list-header__status">Status</span>';
-      var list = main.querySelector("ul");
-      if (list) main.insertBefore(header, list);
+    return main.querySelector(".admin-list-header");
+  }
+
+  var LIST_SORTABLE_COLUMNS = [
+    { field: "title", label: "Title", className: "admin-list-header__name" },
+    { field: "author", label: "Author", className: "admin-list-header__author" },
+    { field: "date", label: "Date", className: "admin-list-header__date" },
+    { field: "status", label: "Status", className: "admin-list-header__status" },
+  ];
+
+  function sortIndicator(root, field) {
+    if (getSortField(root) !== field) return "";
+    return getSortDirection(root) === "asc" ? " \u2191" : " \u2193";
+  }
+
+  function columnLabel(field) {
+    if (field === "title") return "Title";
+    for (var i = 0; i < LIST_SORTABLE_COLUMNS.length; i++) {
+      if (LIST_SORTABLE_COLUMNS[i].field === field) return LIST_SORTABLE_COLUMNS[i].label;
     }
-    header.hidden = false;
+    return field;
+  }
+
+  function buildListHeader(root) {
+    var header = document.createElement("div");
+    header.className = "admin-list-header";
+    header.setAttribute("role", "row");
+
+    var titleBtn = document.createElement("button");
+    titleBtn.type = "button";
+    titleBtn.className = "admin-list-header__cell admin-list-header__name admin-list-header__cell--sortable";
+    titleBtn.dataset.sortField = "title";
+    titleBtn.textContent = "Title" + sortIndicator(root, "title");
+    titleBtn.setAttribute("aria-label", "Sort by title");
+    header.appendChild(titleBtn);
+
+    var collectionCell = document.createElement("span");
+    collectionCell.className = "admin-list-header__cell admin-list-header__collection";
+    collectionCell.textContent = "Collection";
+    header.appendChild(collectionCell);
+
+    LIST_SORTABLE_COLUMNS.slice(1).forEach(function (col) {
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "admin-list-header__cell " + col.className + " admin-list-header__cell--sortable";
+      btn.dataset.sortField = col.field;
+      btn.textContent = col.label + sortIndicator(root, col.field);
+      btn.setAttribute("aria-label", "Sort by " + col.label.toLowerCase());
+      header.appendChild(btn);
+    });
+
+    header.querySelectorAll("[data-sort-field]").forEach(function (btn) {
+      btn.addEventListener("click", function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        toggleColumnSort(root, btn.dataset.sortField);
+      });
+    });
+
+    updateListHeaderState(root, header);
     return header;
+  }
+
+  function updateListHeaderState(root, header) {
+    if (!header) return;
+    var activeField = getSortField(root);
+    header.querySelectorAll("[data-sort-field]").forEach(function (btn) {
+      var field = btn.dataset.sortField;
+      btn.textContent = columnLabel(field) + sortIndicator(root, field);
+      btn.classList.toggle("admin-list-header__cell--active", field === activeField);
+      btn.setAttribute(
+        "aria-sort",
+        field === activeField ? (getSortDirection(root) === "asc" ? "ascending" : "descending") : "none"
+      );
+    });
   }
 
   var LIST_DOC_ICON =
@@ -930,6 +1064,7 @@
     { key: "title", label: "Title", icon: "title" },
     { key: "date", label: "Date", icon: "calendar" },
     { key: "author", label: "Author", icon: "user" },
+    { key: "status", label: "Status", icon: "status" },
   ];
 
   var MENU_ICONS = {
@@ -949,6 +1084,8 @@
       '<svg class="admin-menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M4 5h16l-6 7v6l-4 2v-8Z"/></svg>',
     sort:
       '<svg class="admin-menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="m8 9 4-4 4 4"/><path d="m8 15 4 4 4-4"/></svg>',
+    status:
+      '<svg class="admin-menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8 12h8"/></svg>',
     chevron:
       '<svg class="admin-menu-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>',
   };
@@ -957,12 +1094,61 @@
     return MENU_ICONS[name] || MENU_ICONS.all;
   }
 
+  function getComposerRoot() {
+    return $("nc-root");
+  }
+
   function getSortField(root) {
-    return root.dataset.adminSortField || "modified";
+    root = root || getComposerRoot();
+    return (root && root.dataset.adminSortField) || "modified";
+  }
+
+  function getSortDirection(root) {
+    root = root || getComposerRoot();
+    return root && root.dataset.adminSortDir === "asc" ? "asc" : "desc";
+  }
+
+  function defaultSortDirection(field) {
+    if (field === "title" || field === "author" || field === "status") return "asc";
+    return "desc";
+  }
+
+  function setSortState(root, field, direction) {
+    root = root || getComposerRoot();
+    if (!root) return;
+    root.dataset.adminSortField = field;
+    root.dataset.adminSortDir = direction === "asc" ? "asc" : "desc";
+    updateComposerMenus(root);
+  }
+
+  function toggleColumnSort(root, field) {
+    root = root || getComposerRoot();
+    if (!root || !field) return;
+    var current = getSortField(root);
+    var direction = getSortDirection(root);
+    if (current === field) {
+      setSortState(root, field, direction === "asc" ? "desc" : "asc");
+    } else {
+      setSortState(root, field, defaultSortDirection(field));
+    }
+    refreshCollectionCards(root);
   }
 
   function getFilterKey(root) {
-    return root.dataset.adminFilterKey || "all";
+    root = root || getComposerRoot();
+    return (root && root.dataset.adminFilterKey) || "all";
+  }
+
+  function updateComposerMenus(root) {
+    root = root || getComposerRoot();
+    if (!root) return;
+    root.querySelectorAll(".admin-composer-menu").forEach(function (menu) {
+      if (menu.classList.contains("is-open")) {
+        if (menu.updateTrigger) menu.updateTrigger();
+        return;
+      }
+      if (menu.renderMenu) menu.renderMenu();
+    });
   }
 
   function getFilterOptions(collection) {
@@ -1048,16 +1234,18 @@
     wrap.appendChild(menu);
 
     function updateTrigger() {
+      var composerRoot = getComposerRoot();
       var options = config.getOptions();
-      var current = config.getValue(root);
+      var current = config.getValue(composerRoot);
       var match = findMenuOption(options, current);
       valueEl.textContent = match ? match.label : config.fallbackLabel || "";
     }
 
     function renderOptions() {
       menu.textContent = "";
+      var composerRoot = getComposerRoot();
       var options = config.getOptions();
-      var current = config.getValue(root);
+      var current = config.getValue(composerRoot);
       var lastGroup = "";
 
       options.forEach(function (opt) {
@@ -1086,12 +1274,17 @@
           "</span>";
 
         btn.addEventListener("click", function (event) {
+          event.preventDefault();
           event.stopPropagation();
-          config.setValue(root, opt.key);
+          var composerRoot = getComposerRoot();
+          if (!composerRoot) return;
+          config.setValue(composerRoot, opt.key);
           updateTrigger();
+          dockComposerMenu(wrap);
           wrap.classList.remove("is-open");
           trigger.setAttribute("aria-expanded", "false");
-          config.onChange();
+          syncComposerDropdownBodyClass();
+          config.onChange(composerRoot);
         });
         menu.appendChild(btn);
       });
@@ -1106,6 +1299,8 @@
         updateTrigger();
         wrap.classList.add("is-open");
         trigger.setAttribute("aria-expanded", "true");
+        floatComposerMenu(wrap, menu, trigger);
+        syncComposerDropdownBodyClass();
       }
     });
 
@@ -1117,41 +1312,52 @@
       renderOptions();
       updateTrigger();
     };
+    wrap.updateTrigger = updateTrigger;
 
     updateTrigger();
+    setTooltip(trigger, config.prefixLabel || config.fallbackLabel || "Menu");
     return wrap;
   }
 
-  function sortManifestSlugs(entries, slugs, sortField) {
+  function sortManifestSlugs(entries, slugs, sortField, sortDir) {
     var field = sortField || "modified";
+    var asc = sortDir === "asc";
+    var multiplier = asc ? 1 : -1;
+
     return slugs.slice().sort(function (a, b) {
       var ea = entries[a];
       var eb = entries[b];
-      var va;
-      var vb;
+      var cmp = 0;
+
       if (field === "title") {
-        va = normalize(ea.title);
-        vb = normalize(eb.title);
-        return va.localeCompare(vb);
+        cmp = normalize(ea.title).localeCompare(normalize(eb.title));
+      } else if (field === "author") {
+        cmp = normalize(ea.author || "ROLCC").localeCompare(normalize(eb.author || "ROLCC"));
+        if (cmp === 0) cmp = normalize(ea.title).localeCompare(normalize(eb.title));
+      } else if (field === "date") {
+        var da = ea.publish === false ? "" : ea.date || "";
+        var db = eb.publish === false ? "" : eb.date || "";
+        cmp = da.localeCompare(db);
+        if (cmp === 0) cmp = normalize(ea.title).localeCompare(normalize(eb.title));
+      } else if (field === "status") {
+        var sa = ea.publish === false ? 1 : 0;
+        var sb = eb.publish === false ? 1 : 0;
+        cmp = sa - sb;
+        if (cmp === 0) cmp = normalize(ea.title).localeCompare(normalize(eb.title));
+      } else {
+        var ma = ea.modified || ea.date || "";
+        var mb = eb.modified || eb.date || "";
+        cmp = ma.localeCompare(mb);
+        if (cmp === 0) cmp = normalize(ea.title).localeCompare(normalize(eb.title));
       }
-      if (field === "author") {
-        va = normalize(ea.author);
-        vb = normalize(eb.author);
-        return va.localeCompare(vb);
-      }
-      if (field === "date") {
-        va = ea.date || "";
-        vb = eb.date || "";
-        return vb.localeCompare(va);
-      }
-      va = ea.modified || ea.date || "";
-      vb = eb.modified || eb.date || "";
-      if (va !== vb) return vb.localeCompare(va);
-      return normalize(ea.title).localeCompare(normalize(eb.title));
+
+      return cmp * multiplier;
     });
   }
 
   function refreshCollectionCards(root) {
+    root = root || getComposerRoot();
+    if (!root) return;
     var container = root.querySelector(".admin-custom-entries");
     if (container) delete container.dataset.adminSignature;
     renderCustomCollectionCards(root);
@@ -1189,14 +1395,14 @@
       var listBtn = document.createElement("button");
       listBtn.type = "button";
       listBtn.className = "admin-view-btn admin-view-btn--list";
-      listBtn.setAttribute("aria-label", "List view");
       listBtn.innerHTML = LIST_VIEW_ICON;
+      setTooltip(listBtn, "List view");
 
       var gridBtn = document.createElement("button");
       gridBtn.type = "button";
       gridBtn.className = "admin-view-btn admin-view-btn--grid";
-      gridBtn.setAttribute("aria-label", "Grid view");
       gridBtn.innerHTML = GRID_VIEW_ICON;
+      setTooltip(gridBtn, "Grid view");
 
       viewToggle.appendChild(listBtn);
       viewToggle.appendChild(gridBtn);
@@ -1212,9 +1418,10 @@
         getValue: getSortField,
         setValue: function (r, key) {
           r.dataset.adminSortField = key;
+          r.dataset.adminSortDir = defaultSortDirection(key);
         },
-        onChange: function () {
-          refreshCollectionCards(root);
+        onChange: function (r) {
+          refreshCollectionCards(r);
         },
       });
 
@@ -1224,14 +1431,14 @@
         prefixLabel: "Filter",
         fallbackLabel: "All articles",
         getOptions: function () {
-          return getFilterOptions(collection);
+          return getFilterOptions(getActiveCollection());
         },
         getValue: getFilterKey,
         setValue: function (r, key) {
           r.dataset.adminFilterKey = key;
         },
-        onChange: function () {
-          refreshCollectionCards(root);
+        onChange: function (r) {
+          refreshCollectionCards(r);
         },
       });
 
@@ -1242,10 +1449,20 @@
     }
 
     var sortMenuEl = toolbar.querySelector(".admin-composer-menu--sort");
-    if (sortMenuEl && sortMenuEl.renderMenu) sortMenuEl.renderMenu();
+    if (sortMenuEl && !sortMenuEl.classList.contains("is-open") && sortMenuEl.updateTrigger) {
+      sortMenuEl.updateTrigger();
+    }
 
     var filterMenuEl = toolbar.querySelector(".admin-composer-menu--filter");
-    if (filterMenuEl && filterMenuEl.renderMenu) filterMenuEl.renderMenu();
+    if (filterMenuEl && !filterMenuEl.classList.contains("is-open")) {
+      var filterSig = getActiveCollection();
+      if (filterMenuEl.dataset.filterSig !== filterSig) {
+        filterMenuEl.dataset.filterSig = filterSig;
+        if (filterMenuEl.renderMenu) filterMenuEl.renderMenu();
+      } else if (filterMenuEl.updateTrigger) {
+        filterMenuEl.updateTrigger();
+      }
+    }
 
     var listMode = isListView(root);
     toolbar.querySelector(".admin-view-btn--list").classList.toggle("admin-view-btn--active", listMode);
@@ -1359,10 +1576,23 @@
 
       var query = getSearchQuery();
       var sortField = getSortField(root);
-      var slugs = sortManifestSlugs(entries, Object.keys(entries), sortField);
+      var sortDir = getSortDirection(root);
+      var slugs = sortManifestSlugs(entries, Object.keys(entries), sortField, sortDir);
       var filterKey = getFilterKey(root);
       var signature =
-        collection + "|" + (listView ? "list" : "grid") + "|" + sortField + "|" + filterKey + "|" + query + "|" + slugs.join(",");
+        collection +
+        "|" +
+        (listView ? "list" : "grid") +
+        "|" +
+        sortField +
+        "|" +
+        sortDir +
+        "|" +
+        filterKey +
+        "|" +
+        query +
+        "|" +
+        slugs.join(",");
 
       var container = main.querySelector(".admin-custom-entries");
       if (!container) {
@@ -1376,22 +1606,14 @@
         container.textContent = "";
 
         if (listView) {
-          var listHeader = document.createElement("div");
-          listHeader.className = "admin-list-header";
-          listHeader.innerHTML =
-            '<span class="admin-list-header__cell admin-list-header__name">Title</span>' +
-            '<span class="admin-list-header__cell admin-list-header__collection">Collection</span>' +
-            '<span class="admin-list-header__cell admin-list-header__author">Author</span>' +
-            '<span class="admin-list-header__cell admin-list-header__date">Date</span>' +
-            '<span class="admin-list-header__cell admin-list-header__status">Status</span>';
-          container.appendChild(listHeader);
+          container.appendChild(buildListHeader(root));
 
           var list = document.createElement("ul");
           list.className = "admin-custom-list";
-        slugs.forEach(function (slug) {
-          var data = entries[slug];
-          if (!matchesSearch(data, collection, query)) return;
-          if (!matchesFilter(data, getFilterKey(root))) return;
+          slugs.forEach(function (slug) {
+            var data = entries[slug];
+            if (!matchesSearch(data, collection, query)) return;
+            if (!matchesFilter(data, filterKey)) return;
             var li = document.createElement("li");
             li.className = "admin-list-item admin-grid-card";
             var link = document.createElement("a");
@@ -1404,10 +1626,10 @@
         } else {
           var grid = document.createElement("ul");
           grid.className = "admin-custom-grid";
-        slugs.forEach(function (slug) {
-          var data = entries[slug];
-          if (!matchesSearch(data, collection, query)) return;
-          if (!matchesFilter(data, getFilterKey(root))) return;
+          slugs.forEach(function (slug) {
+            var data = entries[slug];
+            if (!matchesSearch(data, collection, query)) return;
+            if (!matchesFilter(data, filterKey)) return;
             var li = document.createElement("li");
             li.className = "admin-grid-card";
             var link = document.createElement("a");
@@ -1418,6 +1640,8 @@
           });
           container.appendChild(grid);
         }
+      } else if (listView) {
+        updateListHeaderState(root, container.querySelector(".admin-list-header"));
       }
 
       container.hidden = false;
@@ -1475,11 +1699,100 @@
   }
 
   function resetCollectionLayout(root) {
+    root = root || getComposerRoot();
+    if (!root) return;
     delete root.dataset.adminViewMode;
     delete root.dataset.adminFilterKey;
+    delete root.dataset.adminSortField;
+    delete root.dataset.adminSortDir;
     var container = root.querySelector(".admin-custom-entries");
     if (container) delete container.dataset.adminSignature;
     entryCache = Object.create(null);
+  }
+
+  function ensureMainWorkspace(root) {
+    var main = root.querySelector("main");
+    if (main) return main;
+
+    var shell = root.querySelector(".admin-decap-shell") || root.querySelector(":scope > div");
+    if (!shell) return null;
+
+    main = document.createElement("main");
+    main.className = "admin-main";
+    shell.appendChild(main);
+    return main;
+  }
+
+  function ensureMediaLibraryOpen(root) {
+    if (!isMediaRoute()) return;
+
+    if (root.querySelector(".ReactModal__Overlay--after-open")) return;
+
+    var tabs = getHeaderTabs(root);
+    if (tabs.media) {
+      tabs.media.click();
+      return;
+    }
+
+    if (getHash().indexOf("/media") === -1) {
+      location.hash = "#/media";
+    }
+  }
+
+  function mountMediaInline(root) {
+    var main = ensureMainWorkspace(root);
+    if (!main) return false;
+
+    var overlay = root.querySelector(".ReactModal__Overlay");
+    if (!overlay) return false;
+
+    overlay.classList.add("admin-media-overlay");
+    var content = overlay.querySelector(".ReactModal__Content");
+    if (content) content.classList.add("admin-media-panel");
+
+    var header = main.querySelector(".admin-media-header");
+    if (!header) {
+      header = document.createElement("div");
+      header.className = "admin-collection-header admin-media-header";
+      var head = document.createElement("div");
+      head.className = "admin-collection-head admin-media-head";
+      var h1 = document.createElement("h1");
+      h1.textContent = "Media";
+      head.appendChild(h1);
+      header.appendChild(head);
+      main.insertBefore(header, main.firstChild);
+    }
+
+    if (overlay.parentElement !== main) {
+      safeAppend(main, overlay);
+    } else if (header.nextElementSibling !== overlay) {
+      main.insertBefore(overlay, header.nextElementSibling);
+    }
+
+    return true;
+  }
+
+  function enhanceMediaView(root) {
+    if (!isMediaRoute()) {
+      root.querySelectorAll(".admin-media-header").forEach(function (el) {
+        el.remove();
+      });
+      root.querySelectorAll(".admin-media-overlay").forEach(function (overlay) {
+        overlay.classList.remove("admin-media-overlay");
+        var content = overlay.querySelector(".admin-media-panel");
+        if (content) content.classList.remove("admin-media-panel");
+      });
+      return;
+    }
+
+    ensureMediaLibraryOpen(root);
+
+    if (!mountMediaInline(root)) {
+      window.setTimeout(function () {
+        ensureMediaLibraryOpen(root);
+        mountMediaInline(root);
+      }, 150);
+    }
   }
 
   function enhance(root) {
@@ -1490,6 +1803,7 @@
     syncCollectionViewMode(root);
     mountCreateButton(root);
     renderCustomCollectionCards(root);
+    enhanceMediaView(root);
     tagEditorLayout(root);
   }
 
@@ -1497,14 +1811,36 @@
     var root = $("nc-root");
     if (!root) return;
 
-    document.addEventListener("click", closeAllDropdowns);
+    document.addEventListener("click", function (event) {
+      if (
+        event.target.closest(
+          ".admin-composer-menu__menu, .admin-composer-menu__trigger, .admin-composer-menu__option, #admin-view-switcher"
+        )
+      ) {
+        return;
+      }
+      closeAllDropdowns();
+    });
     enhance(root);
 
     window.addEventListener("hashchange", function () {
       resetEditorLayout(root);
       resetCollectionLayout(root);
+      closeAllDropdowns();
       scheduleEnhance(root, enhance);
     });
+
+    window.addEventListener("resize", closeAllDropdowns);
+    window.addEventListener(
+      "scroll",
+      function (event) {
+        if (event.target && event.target.closest && event.target.closest(".admin-composer-menu__menu--floating")) {
+          return;
+        }
+        closeAllDropdowns();
+      },
+      true
+    );
 
     new MutationObserver(function () {
       scheduleEnhance(root, enhance);

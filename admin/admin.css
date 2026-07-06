@@ -2090,6 +2090,51 @@ body.admin-composer-dropdown-open #nc-root .admin-custom-grid {
   white-space: nowrap !important;
 }
 
+/* Editor split shell — 65% | divider | 35% (Decap fields hidden until wired in) */
+#nc-root.admin-view--editor main.admin-editor-split-active {
+  display: flex;
+  flex-direction: column;
+  width: 100% !important;
+  max-width: none !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+#nc-root.admin-view--editor main.admin-editor-split-active .admin-editor-subheader {
+  padding-left: clamp(1rem, 2vw, 2rem);
+  padding-right: clamp(1rem, 2vw, 1.5rem);
+}
+
+#nc-root.admin-view--editor .admin-editor-split {
+  display: grid;
+  grid-template-columns: 65% 1px calc(35% - 1px);
+  flex: 1 1 auto;
+  width: 100%;
+  min-height: calc(100vh - var(--rolcc-header-height) - 5rem);
+  box-sizing: border-box;
+}
+
+#nc-root.admin-view--editor .admin-editor-split__left {
+  min-width: 0;
+  background: var(--rolcc-primary);
+}
+
+#nc-root.admin-view--editor .admin-editor-split__divider {
+  width: 1px;
+  min-height: 100%;
+  align-self: stretch;
+  background: var(--rolcc-slate-300);
+}
+
+#nc-root.admin-view--editor .admin-editor-split__right {
+  min-width: 0;
+  background: var(--rolcc-slate-50);
+}
+
+#nc-root.admin-view--editor .admin-editor-decap-hidden {
+  display: none !important;
+}
+
 /* Two-column editor — 65% content left, 35% blog info right */
 #nc-root.admin-view--editor .admin-main {
   padding-left: clamp(1rem, 2vw, 2rem) !important;

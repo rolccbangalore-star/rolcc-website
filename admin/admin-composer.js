@@ -849,6 +849,53 @@
       "</span>";
   }
 
+  function resetEditorSplitShell(root) {
+    root.querySelectorAll(".admin-editor-split").forEach(function (el) {
+      el.remove();
+    });
+    root.querySelectorAll(".admin-editor-decap-hidden").forEach(function (el) {
+      el.classList.remove("admin-editor-decap-hidden");
+    });
+    root.querySelectorAll("main.admin-editor-split-active").forEach(function (el) {
+      el.classList.remove("admin-editor-split-active");
+    });
+  }
+
+  function mountEditorSplitShell(root) {
+    if (!isEditorRoute() || isLoginView(root)) {
+      resetEditorSplitShell(root);
+      return;
+    }
+
+    var main = root.querySelector("main");
+    if (!main) return;
+
+    var split = main.querySelector(".admin-editor-split");
+    if (!split) {
+      split = document.createElement("div");
+      split.className = "admin-editor-split";
+      split.setAttribute("role", "presentation");
+      split.innerHTML =
+        '<div class="admin-editor-split__left" aria-hidden="true"></div>' +
+        '<div class="admin-editor-split__divider" aria-hidden="true"></div>' +
+        '<div class="admin-editor-split__right" aria-hidden="true"></div>';
+
+      var subheader = main.querySelector(".admin-editor-subheader");
+      if (subheader) {
+        subheader.insertAdjacentElement("afterend", split);
+      } else {
+        main.insertBefore(split, main.firstChild);
+      }
+    }
+
+    Array.from(main.children).forEach(function (child) {
+      if (child === split || child.classList.contains("admin-editor-subheader")) return;
+      child.classList.add("admin-editor-decap-hidden");
+    });
+
+    main.classList.add("admin-editor-split-active");
+  }
+
   function mountProfileButton(root) {
     var profileSlot = $("admin-profile-slot");
     if (!profileSlot) return;
@@ -2542,14 +2589,7 @@
     renderCustomCollectionCards(root);
     enhanceMediaView(root);
     mountEditorSubheader(root);
-    tagEditorLayout(root);
-    if (isEditorRoute() && !root.querySelector(".admin-editor-columns")) {
-      [150, 500, 1000, 2000].forEach(function (delay) {
-        window.setTimeout(function () {
-          tagEditorLayout(root);
-        }, delay);
-      });
-    }
+    mountEditorSplitShell(root);
   }
 
   function watch() {
@@ -2570,6 +2610,7 @@
 
     window.addEventListener("hashchange", function () {
       resetEditorLayout(root);
+      resetEditorSplitShell(root);
       resetEditorState();
       resetCollectionLayout(root);
       closeMediaUploadPanel(root);

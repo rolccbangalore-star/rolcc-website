@@ -2267,6 +2267,9 @@ body.admin-page--editor-split .admin-editor-split {
 body.admin-page--editor-split .admin-editor-split__left {
   min-width: 0;
   background: var(--rolcc-primary);
+  overflow-y: auto;
+  padding: 0 clamp(1rem, 2vw, 2rem) 2rem 0;
+  box-sizing: border-box;
 }
 
 body.admin-page--editor-split .admin-editor-split__divider {
@@ -2277,7 +2280,68 @@ body.admin-page--editor-split .admin-editor-split__divider {
 
 body.admin-page--editor-split .admin-editor-split__right {
   min-width: 0;
-  background: var(--rolcc-slate-50);
+  background: #fff;
+  overflow-y: auto;
+  padding: 0 clamp(1rem, 1.5vw, 1.5rem) 2rem;
+  box-sizing: border-box;
+}
+
+body.admin-page--editor-split .admin-editor-split__fields {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  width: 100%;
+}
+
+body.admin-page--editor-split .admin-editor-split__fields--meta .admin-field--meta,
+body.admin-page--editor-split .admin-editor-split__fields--content .admin-field--content {
+  margin-bottom: 1rem;
+}
+
+body.admin-page--editor-split .admin-editor-split__fields--meta label,
+body.admin-page--editor-split .admin-editor-split__fields--meta [class*="FieldLabel"] {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--rolcc-slate-500);
+}
+
+body.admin-page--editor-split .admin-editor-split__fields--content label,
+body.admin-page--editor-split .admin-editor-split__fields--content [class*="FieldLabel"] {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--rolcc-slate-700);
+}
+
+body.admin-page--editor-split .admin-editor-col > .admin-editor-column-label,
+body.admin-page--editor-split .admin-editor-split__left > .admin-editor-column-label,
+body.admin-page--editor-split .admin-editor-split__right > .admin-editor-column-label {
+  display: block;
+  margin: 0 0 1rem;
+  padding: 1rem 0 0.5rem;
+  border-bottom: 1px solid var(--rolcc-slate-200);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--rolcc-slate-500);
+}
+
+/* Show Decap fields moved into the split shell */
+body.admin-page--editor-split #admin-editor-split-shell [class*="EditorControl"],
+body.admin-page--editor-split #admin-editor-split-shell .admin-field--meta,
+body.admin-page--editor-split #admin-editor-split-shell .admin-field--content {
+  display: block !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+  position: relative !important;
+  width: 100% !important;
+  max-width: none !important;
+  clip: auto !important;
+  overflow: visible !important;
+  height: auto !important;
+  opacity: 1 !important;
 }
 
 /* Hide all Decap editor UI while split shell is active */

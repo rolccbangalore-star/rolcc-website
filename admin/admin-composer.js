@@ -117,9 +117,38 @@
     "featured",
     "published",
     "scripture",
+    "main scripture",
     "sermon series",
     "passage",
   ];
+
+  var META_FIELD_ORDER = [
+    "title",
+    "summary",
+    "search preview",
+    "description",
+    "author",
+    "tag",
+    "date",
+    "hero image",
+    "thumbnail",
+    "featured",
+    "published",
+    "scripture",
+    "main scripture",
+    "passage",
+    "sermon series",
+  ];
+
+  function getMetaFieldRank(label) {
+    var normalized = normalize(label).replace(/\s*\(optional\)$/i, "").trim();
+    for (var i = 0; i < META_FIELD_ORDER.length; i++) {
+      if (normalized === META_FIELD_ORDER[i] || normalized.indexOf(META_FIELD_ORDER[i]) === 0) {
+        return i;
+      }
+    }
+    return 999;
+  }
 
   function isMetaField(label) {
     var normalized = normalize(label).replace(/\?$/, "").replace(/\s*\(optional\)$/, "").trim();
@@ -142,6 +171,14 @@
   }
 
   function findEditorFieldControls(root) {
+    var shell = document.getElementById("admin-editor-split-shell");
+    if (shell) {
+      var mounted = shell.querySelectorAll(".admin-field--meta, .admin-field--content");
+      if (mounted.length) {
+        return Array.prototype.slice.call(mounted);
+      }
+    }
+
     var main = root.querySelector("main");
     if (!main) return [];
 
@@ -934,6 +971,93 @@
     });
   }
 
+  function ensureSplitFieldBuckets(shell) {
+    var left = shell.querySelector(".admin-editor-split__left");
+    var right = shell.querySelector(".admin-editor-split__right");
+    if (!left || !right) return null;
+
+    var contentFields = left.querySelector(".admin-editor-split__fields--content");
+    if (!contentFields) {
+      left.innerHTML =
+        '<p class="admin-editor-column-label">Blog Content</p>' +
+        '<div class="admin-editor-split__fields admin-editor-split__fields--content"></div>';
+      contentFields = left.querySelector(".admin-editor-split__fields--content");
+    }
+
+    var metaFields = right.querySelector(".admin-editor-split__fields--meta");
+    if (!metaFields) {
+      right.innerHTML =
+        '<p class="admin-editor-column-label">Blog Info</p>' +
+        '<div class="admin-editor-split__fields admin-editor-split__fields--meta"></div>';
+      metaFields = right.querySelector(".admin-editor-split__fields--meta");
+    }
+
+    left.removeAttribute("aria-hidden");
+    right.removeAttribute("aria-hidden");
+    return { contentFields: contentFields, metaFields: metaFields };
+  }
+
+  function mountEditorFieldsInSplit(root) {
+    if (!isEditorRoute() || isLoginView(root)) return;
+
+    var shell = document.getElementById("admin-editor-split-shell");
+    if (!shell) return;
+
+    var buckets = ensureSplitFieldBuckets(shell);
+    if (!buckets) return;
+
+    var controls = findEditorFieldControls(root);
+    if (!controls.length) return;
+
+    var metaEntries = [];
+    var contentControls = [];
+
+    controls.forEach(function (control) {
+      var labelText = getControlLabel(control);
+      control.classList.remove("admin-editor-decap-hidden");
+      control.removeAttribute("aria-hidden");
+
+      if (isContentField(labelText)) {
+        control.classList.add("admin-field--content");
+        control.classList.remove("admin-field--meta");
+        contentControls.push(control);
+        return;
+      }
+
+      if (!isMetaField(labelText)) return;
+
+      control.classList.add("admin-field--meta");
+      control.classList.remove("admin-field--content");
+
+      if (normalize(labelText) === "title") {
+        control.classList.add("admin-field--title-synced");
+        var decapTitle = control.querySelector('input[type="text"], textarea');
+        if (decapTitle && decapTitle.dataset.titleSyncBound !== "true") {
+          decapTitle.dataset.titleSyncBound = "true";
+          decapTitle.addEventListener("input", function () {
+            syncTitleFromDecap(root);
+          });
+        }
+      }
+
+      metaEntries.push({ control: control, rank: getMetaFieldRank(labelText) });
+    });
+
+    metaEntries.sort(function (a, b) {
+      return a.rank - b.rank;
+    });
+
+    contentControls.forEach(function (control) {
+      buckets.contentFields.appendChild(control);
+    });
+    metaEntries.forEach(function (entry) {
+      buckets.metaFields.appendChild(entry.control);
+    });
+
+    shell.dataset.adminFieldsMounted = "true";
+    syncTitleFromDecap(root);
+  }
+
   function mountEditorSplitShell(root) {
     if (!isEditorRoute() || isLoginView(root)) {
       resetEditorSplitShell(root);
@@ -949,9 +1073,15 @@
       shell.innerHTML =
         '<div class="admin-editor-split-shell__subheader"></div>' +
         '<div class="admin-editor-split">' +
-        '<div class="admin-editor-split__left" aria-hidden="true"></div>' +
+        '<div class="admin-editor-split__left">' +
+        '<p class="admin-editor-column-label">Blog Content</p>' +
+        '<div class="admin-editor-split__fields admin-editor-split__fields--content"></div>' +
+        "</div>" +
         '<div class="admin-editor-split__divider" aria-hidden="true"></div>' +
-        '<div class="admin-editor-split__right" aria-hidden="true"></div>' +
+        '<div class="admin-editor-split__right">' +
+        '<p class="admin-editor-column-label">Blog Info</p>' +
+        '<div class="admin-editor-split__fields admin-editor-split__fields--meta"></div>' +
+        "</div>" +
         "</div>";
       document.body.appendChild(shell);
     }
@@ -971,6 +1101,7 @@
 
     document.body.classList.add("admin-page--editor-split");
     hideDecapEditorUI(root);
+    mountEditorFieldsInSplit(root);
   }
 
   function mountProfileButton(root) {
@@ -2781,6 +2912,7 @@
       [100, 300, 800, 1500, 2500].forEach(function (delay) {
         window.setTimeout(function () {
           mountEditorSplitShell(root);
+          mountEditorFieldsInSplit(root);
         }, delay);
       });
     }

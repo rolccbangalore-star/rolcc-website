@@ -13,73 +13,172 @@
   const grid = document.querySelector("[data-articles-grid]");
   const empty = document.querySelector("[data-articles-empty]");
   const meta = document.querySelector("[data-articles-results-meta]");
+  const sortSelect = document.querySelector("[data-articles-sort]");
+  const paginationWrap = document.querySelector("[data-articles-pagination-wrap]");
   if (!chips || !grid) return;
 
   const perPage = payload.perPage || 12;
-  const page = payload.page || 1;
+  const featuredSlug = payload.featuredSlug || "";
+  const latestSlug = payload.latestSlug || "";
   let filter = "all";
+  let sort = "newest";
+  let page = 1;
 
-  function articleTags(article) {
-    if (Array.isArray(article.tags) && article.tags.length) return article.tags;
-    return article.category ? [article.category] : [];
+  function articleKey(article) {
+    return `${article.type}/${article.slug}`;
   }
 
-  function cardHtml(article) {
+  function escapeHtml(text) {
+    return String(text || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  function cardHtml(article, options) {
     const href = `/articles/${article.type}/${article.slug}`;
     const thumb = article.thumbnail || "/images/og-image.jpg";
     const desc = article.summary || article.description || "";
-    const tagPills = articleTags(article)
-      .map((tag) => `<span class="article-tag article-tag--sm article-tag--muted">${tag}</span>`)
-      .join("");
-    return `<a href="${href}" class="articles-card" data-article-type="${article.type}" data-article-category="${article.category || ""}">
-      <img class="articles-card__media" src="${thumb}" alt="" loading="lazy" width="640" height="360" />
+    const badges = [];
+    if (options.featured) badges.push('<span class="article-tag article-tag--sm article-tag--featured">Featured</span>');
+    if (options.latest) badges.push('<span class="article-tag article-tag--sm article-tag--latest">Latest</span>');
+    return `<a href="${href}" class="articles-card" data-article-type="${escapeHtml(article.type)}" data-article-category="${escapeHtml(article.category || "")}">
+      <img class="articles-card__media" src="${escapeHtml(thumb)}" alt="" loading="lazy" width="640" height="360" />
       <div class="articles-card__body">
         <div class="articles-card__tags">
-          <span class="article-tag article-tag--sm">${article.typeLabel || article.type}</span>
-          ${tagPills}
+          ${badges.join("")}
+          <span class="article-tag article-tag--sm">${escapeHtml(article.typeLabel || article.type)}</span>
+          ${article.category ? `<span class="article-tag article-tag--sm article-tag--muted">${escapeHtml(article.category)}</span>` : ""}
         </div>
-        <h2 class="articles-card__title">${article.title}</h2>
-        <p class="articles-card__desc">${desc}</p>
-        <p class="articles-card__meta">${article.author || ""} · ${article.dateFormatted || ""}${article.readTime ? ` · ${article.readTime} min read` : ""}</p>
+        <h2 class="articles-card__title">${escapeHtml(article.title)}</h2>
+        <p class="articles-card__desc">${escapeHtml(desc)}</p>
+        <p class="articles-card__meta">${escapeHtml(article.author || "")} · ${escapeHtml(article.dateFormatted || "")}${article.readTime ? ` · ${article.readTime} min read` : ""}</p>
       </div>
     </a>`;
   }
 
   function matchesFilter(article) {
     if (filter === "all") return true;
-    if (filter === "everyday-faith" || filter === "back-to-bible") return article.type === filter;
-    return articleTags(article).some((tag) => tag.toLowerCase() === filter.toLowerCase());
+    return article.type === filter;
   }
 
-  function renderFiltered() {
-    const filtered = payload.articles.filter(matchesFilter);
+  function getPool() {
+    return payload.articles.filter(function (article) {
+      if (featuredSlug && articleKey(article) === featuredSlug) return false;
+      return matchesFilter(article);
+    });
+  }
+
+  function sortArticles(list) {
+    const sorted = list.slice();
+    if (sort === "oldest") {
+      sorted.sort(function (a, b) {
+        return String(a.date || "").localeCompare(String(b.date || ""));
+      });
+    } else if (sort === "title") {
+      sorted.sort(function (a, b) {
+        return String(a.title || "").localeCompare(String(b.title || ""));
+      });
+    } else {
+      sorted.sort(function (a, b) {
+        return String(b.date || "").localeCompare(String(a.date || ""));
+      });
+    }
+    return sorted;
+  }
+
+  function renderPagination(totalPages) {
+    if (!paginationWrap) return;
+    if (totalPages <= 1) {
+      paginationWrap.hidden = true;
+      paginationWrap.innerHTML = "";
+      return;
+    }
+
+    paginationWrap.hidden = false;
+    let pages = "";
+    for (let i = 1; i <= totalPages; i++) {
+      if (i === page) {
+        pages += `<span class="articles-pagination__page is-current" aria-current="page">${i}</span>`;
+      } else {
+        pages += `<button type="button" class="articles-pagination__page" data-articles-page="${i}">${i}</button>`;
+      }
+    }
+
+    const prevDisabled = page <= 1 ? " is-disabled" : "";
+    const nextDisabled = page >= totalPages ? " is-disabled" : "";
+    paginationWrap.innerHTML =
+      `<nav class="articles-pagination" aria-label="Articles pages">` +
+      `<button type="button" class="articles-pagination__nav${prevDisabled}" data-articles-page="${page - 1}" ${page <= 1 ? "disabled" : ""}>Previous</button>` +
+      `<div class="flex flex-wrap gap-1">${pages}</div>` +
+      `<button type="button" class="articles-pagination__nav${nextDisabled}" data-articles-page="${page + 1}" ${page >= totalPages ? "disabled" : ""}>Next</button>` +
+      `</nav>`;
+  }
+
+  function render() {
+    const pool = sortArticles(getPool());
+    const totalPages = Math.max(1, Math.ceil(pool.length / perPage));
+    if (page > totalPages) page = totalPages;
     const start = (page - 1) * perPage;
-    const pageItems = filtered.slice(start, start + perPage);
+    const pageItems = pool.slice(start, start + perPage);
+    const newestInPool = pool[0] ? articleKey(pool[0]) : "";
 
     grid.innerHTML = pageItems.length
-      ? `<div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">${pageItems.map(cardHtml).join("")}</div>`
+      ? `<div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">${pageItems
+          .map(function (article) {
+            const key = articleKey(article);
+            return cardHtml(article, {
+              latest: sort === "newest" && key === newestInPool && key !== featuredSlug,
+            });
+          })
+          .join("")}</div>`
       : "";
 
     if (empty) empty.classList.toggle("hidden", pageItems.length > 0);
     if (meta) {
-      if (!filtered.length) {
+      if (!pool.length) {
         meta.textContent = "No articles match this filter.";
       } else {
-        const end = Math.min(start + perPage, filtered.length);
-        meta.textContent = `Showing ${start + 1}–${end} of ${filtered.length} articles`;
+        const end = Math.min(start + perPage, pool.length);
+        meta.textContent = `Showing ${start + 1}–${end} of ${pool.length} articles`;
       }
     }
+
+    renderPagination(totalPages);
   }
 
-  chips.addEventListener("click", (e) => {
+  chips.addEventListener("click", function (e) {
     const btn = e.target.closest("[data-articles-filter]");
     if (!btn) return;
     filter = btn.getAttribute("data-articles-filter") || "all";
-    chips.querySelectorAll(".articles-chip").forEach((chip) => {
+    page = 1;
+    chips.querySelectorAll(".articles-chip").forEach(function (chip) {
       chip.classList.toggle("is-active", chip === btn);
     });
-    renderFiltered();
+    render();
   });
 
-  renderFiltered();
+  if (sortSelect) {
+    sortSelect.addEventListener("change", function () {
+      sort = sortSelect.value || "newest";
+      page = 1;
+      render();
+    });
+  }
+
+  if (paginationWrap) {
+    paginationWrap.addEventListener("click", function (e) {
+      const btn = e.target.closest("[data-articles-page]");
+      if (!btn || btn.disabled) return;
+      const nextPage = Number(btn.getAttribute("data-articles-page"));
+      if (!nextPage || nextPage < 1) return;
+      page = nextPage;
+      render();
+      const section = document.querySelector('[aria-label="All articles"]');
+      if (section) section.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  }
+
+  render();
 })();

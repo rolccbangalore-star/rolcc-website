@@ -25,6 +25,123 @@ const {
   selectRelatedArticles,
   getPrevNext,
 } = require("./article-config");
+const { parseCsv } = require("./csv-parse");
+const {
+  isApprovedFaq,
+  confidenceScore,
+  assignTopic,
+  selectRelatedFaqs,
+  getPageFaqMeta,
+  sortFaqsForDisplay,
+  faqNumber,
+  formatAnswerHtml,
+  FAQ_CHIP_TOPICS,
+} = require("./faq-config");
+
+function loadApprovedFaqs() {
+  const csvPath = path.join(DATA_DIR, "faqs-source-v2.csv");
+  if (!fs.existsSync(csvPath)) return [];
+  const records = parseCsv(fs.readFileSync(csvPath, "utf8"));
+  const faqs = records
+    .filter(isApprovedFaq)
+    .map((record) => {
+      const faq = {
+        id: record.ID.trim(),
+        question: (record.Question || "").trim(),
+        answer: (record.Answer || "").trim(),
+        category: (record.Category || "General").trim(),
+        scripture: (record.Scripture || "").trim(),
+        priority: confidenceScore(record),
+        sortOrder: faqNumber(record.ID),
+        slug: record.ID.trim().toLowerCase(),
+      };
+      faq.topic = assignTopic(faq);
+      faq.topicLabel = FAQ_CHIP_TOPICS.find((chip) => chip.id === faq.topic)?.label || faq.topic;
+      return faq;
+    })
+    .filter((faq) => faq.question && faq.answer);
+
+  return sortFaqsForDisplay(faqs).map((faq, index) => ({
+    ...faq,
+    sortOrder: index + 1,
+  }));
+}
+
+function renderFaqAccordionItem(faq, prefix) {
+  const headingId = `${prefix}faq-q-${faq.slug}`;
+  const panelId = `${prefix}faq-a-${faq.slug}`;
+  return `<article class="faq-accordion__item" data-faq-id="${escapeHtml(faq.id)}" data-faq-topic="${escapeHtml(faq.topic)}" data-faq-category="${escapeHtml(faq.category)}">
+  <h3 class="faq-accordion__heading">
+    <button type="button" class="faq-accordion__trigger" id="${headingId}" aria-expanded="false" aria-controls="${panelId}">
+      <span class="faq-accordion__question">${escapeHtml(faq.question)}</span>
+      <span class="faq-accordion__icon" aria-hidden="true"></span>
+    </button>
+  </h3>
+  <div class="faq-accordion__panel" id="${panelId}" role="region" aria-labelledby="${headingId}" hidden>
+    <div class="faq-accordion__answer">${formatAnswerHtml(faq.answer)}${faq.scripture ? `<p class="faq-accordion__scripture"><em>${escapeHtml(faq.scripture)}</em></p>` : ""}</div>
+  </div>
+</article>`;
+}
+
+function renderHubFaqSection(faqs) {
+  const related = selectRelatedFaqs(faqs, "articles");
+  if (!related.length) return "";
+  const meta = getPageFaqMeta("articles");
+  const accordion = `<div class="faq-accordion" data-faq-accordion>${related
+    .map((faq) => renderFaqAccordionItem(faq, "articles-"))
+    .join("\n")}</div>`;
+
+  return `      <section class="related-faqs border-b border-slate-200 bg-slate-50" aria-labelledby="related-faqs-heading-articles">
+        <div class="mx-auto max-w-6xl px-4 py-14 sm:px-6 md:py-16 lg:px-8">
+          <div class="scroll-reveal max-w-2xl">
+            <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-400">Questions &amp; Answers</p>
+            <h2 id="related-faqs-heading-articles" class="mt-3 text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">${escapeHtml(meta.heading)}</h2>
+            <p class="mt-3 text-sm text-slate-600 sm:text-base">${escapeHtml(meta.description)}</p>
+          </div>
+          <div class="mt-8 scroll-reveal scroll-reveal--delay-1">${accordion}</div>
+          <div class="mt-8 scroll-reveal scroll-reveal--delay-2">
+            <a href="/faq" class="inline-flex items-center rounded-full bg-accent px-6 py-2.5 text-sm font-semibold text-white shadow-sm ring-1 ring-accent/70 transition hover:bg-accentSoft">View All FAQs</a>
+          </div>
+        </div>
+      </section>`;
+}
+
+function renderHubCtaBanner() {
+  return `      <section class="border-b border-slate-200 bg-white">
+        <div class="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-12 md:py-14 lg:px-8">
+          <div class="cta-gradient rounded-3xl scroll-reveal" id="cta-gradient">
+            <div class="cta-gradient__bg rounded-3xl"></div>
+            <div class="cta-gradient__overlay rounded-3xl"></div>
+            <div class="relative z-10 px-6 py-10 sm:px-10 sm:py-12 text-center">
+              <p class="text-xs font-semibold uppercase tracking-[0.18em] text-white/70">Go deeper together</p>
+              <h2 class="mt-3 text-xl font-semibold tracking-tight text-white sm:text-2xl text-balance">Study God's Word in community</h2>
+              <p class="mx-auto mt-3 max-w-lg text-sm text-white/75">Join a cell fellowship, ask a question, or plan a visit — we would love to walk with you.</p>
+              <div class="mt-6 flex flex-wrap justify-center gap-3">
+                <a href="/fellowship" class="inline-flex items-center rounded-full bg-white px-6 py-2.5 text-sm font-semibold text-slate-900 shadow-sm transition hover:bg-white/90">Explore Fellowship</a>
+                <a href="/contact" class="inline-flex items-center rounded-full border border-white/30 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-white/10 hover:border-white/50">Contact Us</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>`;
+}
+
+function pickFeaturedArticle(articles) {
+  const featured = articles.filter((a) => a.featured).sort((a, b) => b.date.localeCompare(a.date));
+  if (featured.length) return featured[0];
+  return articles[0] || null;
+}
+
+function readHubFooterTemplate() {
+  const contactPath = path.join(ROOT, "contact.html");
+  if (!fs.existsSync(contactPath)) return readFooterTemplate();
+  const contactHtml = fs.readFileSync(contactPath, "utf8");
+  const footerMatch = contactHtml.match(
+    /<!-- Footer: fixed at bottom[\s\S]*?<\/footer>\s*<!-- Scroll to Top Button -->[\s\S]*?<\/button>/
+  );
+  if (!footerMatch) return readFooterTemplate();
+  return `\n    ${footerMatch[0].trim()}\n`;
+}
 
 const ROOT = path.join(__dirname, "..");
 const TODAY = new Date().toISOString().slice(0, 10);
@@ -298,12 +415,17 @@ function readFooterTemplate() {
     <button id="scroll-top-btn" class="scroll-to-top hidden fixed bottom-5 right-4 z-40 rounded-full bg-slate-900/90 p-2 text-xs text-slate-100 shadow-lg ring-1 ring-slate-600 hover:bg-slate-800 sm:bottom-6 sm:right-6" aria-label="Scroll to top" type="button">↑</button>`;
 }
 
-function renderArticleCard(article) {
+function renderArticleCard(article, options = {}) {
   const href = articleUrl(article);
-  return `<a href="${href}" class="articles-card">
+  const badges = [];
+  if (options.featured) badges.push('<span class="article-tag article-tag--sm article-tag--featured">Featured</span>');
+  if (options.latest) badges.push('<span class="article-tag article-tag--sm article-tag--latest">Latest</span>');
+  const cardClass = options.featured ? "articles-card articles-card--featured" : "articles-card";
+  return `<a href="${href}" class="${cardClass}" data-article-type="${escapeHtml(article.type)}" data-article-category="${escapeHtml(article.category || "")}">
     <img class="articles-card__media" src="${escapeHtml(article.thumbnail)}" alt="" loading="lazy" width="640" height="360" />
     <div class="articles-card__body">
       <div class="articles-card__tags">
+        ${badges.join("")}
         <span class="article-tag article-tag--sm">${escapeHtml(article.typeLabel)}</span>
         ${renderArticleTagsHtml(article, { mutedAll: true })}
       </div>
@@ -334,21 +456,16 @@ function renderPagination(pageNum, totalPages) {
   return `<nav class="articles-pagination" aria-label="Articles pages">${prev}<div class="flex flex-wrap gap-1">${pages}</div>${next}</nav>`;
 }
 
-function renderFilterChips(categories) {
-  const chips = [
-    `<button type="button" class="articles-chip is-active" data-articles-filter="all">All</button>`,
-    `<button type="button" class="articles-chip" data-articles-filter="everyday-faith">Everyday Faith</button>`,
-    `<button type="button" class="articles-chip" data-articles-filter="back-to-bible">Back to the Bible</button>`,
-  ];
-  categories.forEach((cat) => {
-    chips.push(
-      `<button type="button" class="articles-chip" data-articles-filter="${escapeHtml(cat)}">${escapeHtml(cat)}</button>`
-    );
-  });
-  return `<div class="articles-chips mt-6" role="toolbar" aria-label="Filter articles" data-articles-chips>${chips.join("")}</div>`;
+function renderFilterChips() {
+  return `<div class="articles-chips mt-6" role="toolbar" aria-label="Filter articles" data-articles-chips>
+    <button type="button" class="articles-chip is-active" data-articles-filter="all">All</button>
+    <button type="button" class="articles-chip" data-articles-filter="everyday-faith">Sermon</button>
+    <button type="button" class="articles-chip" data-articles-filter="back-to-bible">Bible Study</button>
+  </div>`;
 }
 
-function buildPageShell({ title, description, canonical, ogType, ogImage, headExtra, bodyMain, assetRoot, scripts }) {
+function buildPageShell({ title, description, canonical, ogType, ogImage, headExtra, bodyMain, assetRoot, scripts, hubPage }) {
+  const footer = hubPage ? readHubFooterTemplate() : readFooterTemplate();
   return `${readHeaderNavTemplate(assetRoot)
     .replaceAll("{{TITLE}}", escapeHtml(title))
     .replaceAll("{{DESCRIPTION}}", escapeHtml(description))
@@ -357,74 +474,83 @@ function buildPageShell({ title, description, canonical, ogType, ogImage, headEx
     .replaceAll("{{OG_IMAGE}}", ogImage || `${SITE_ORIGIN}/images/og-image.jpg`)
     .replace("{{HEAD_EXTRA}}", headExtra)}
     <main class="main-no-top-gap relative z-10">${bodyMain}</main>
-${readFooterTemplate()}
+${footer}
     <script src="${assetRoot}js/main.js"></script>
     ${scripts || ""}
   </body>
 </html>`;
 }
 
-function buildHubPage(articles, pageNum, totalPages, categories) {
-  const start = (pageNum - 1) * ARTICLES_PER_PAGE;
-  const pageArticles = articles.slice(start, start + ARTICLES_PER_PAGE);
-  const featured = articles.filter((a) => a.featured).slice(0, FEATURED_MAX);
-  const latest = articles.slice(0, LATEST_COUNT);
-  const canonical = pageNum === 1 ? `${SITE_ORIGIN}/articles` : `${SITE_ORIGIN}/articles/${pageNum}`;
-  const title =
-    pageNum === 1
-      ? "Articles & Bible Studies | River of Life Christian Church, Bangalore"
-      : `Articles & Bible Studies | Page ${pageNum} | River of Life Christian Church`;
+function buildHubPage(articles, faqs) {
+  const featuredArticle = pickFeaturedArticle(articles);
+  const featuredSlug = featuredArticle ? `${featuredArticle.type}/${featuredArticle.slug}` : "";
+  const listArticles = featuredArticle
+    ? articles.filter((a) => `${a.type}/${a.slug}` !== featuredSlug)
+    : articles;
+  const latestSlug = articles[0] ? `${articles[0].type}/${articles[0].slug}` : "";
+  const canonical = `${SITE_ORIGIN}/articles`;
+  const title = "Articles & Bible Studies | River of Life Christian Church, Bangalore";
   const description =
-    "Everyday Faith articles and Back to the Bible cell fellowship studies from River of Life Christian Church in Bangalore.";
+    "Everyday Faith sermon summaries and Back to the Bible cell fellowship studies from River of Life Christian Church in Bangalore.";
 
   const headExtra = `<link rel="stylesheet" href="/css/articles.css" />
-    <link rel="canonical" href="${canonical}" />
-    ${pageNum > 1 ? `<link rel="prev" href="${pageNum === 2 ? `${SITE_ORIGIN}/articles` : `${SITE_ORIGIN}/articles/${pageNum - 1}`}" />` : ""}
-    ${pageNum < totalPages ? `<link rel="next" href="${SITE_ORIGIN}/articles/${pageNum + 1}" />` : ""}`;
+    <link rel="stylesheet" href="/css/faq.css" />
+    <link rel="canonical" href="${canonical}" />`;
+
+  const initialCards = listArticles.slice(0, ARTICLES_PER_PAGE).map((article, index) => {
+    const isLatest = `${article.type}/${article.slug}` === latestSlug && latestSlug !== featuredSlug;
+    return renderArticleCard(article, { latest: isLatest });
+  });
 
   const bodyMain = `
-      <section class="articles-hero contact-hero relative border-b border-slate-200">
-        <div class="relative z-10 mx-auto max-w-6xl px-4 pt-6 pb-10 sm:px-6 sm:pt-24 sm:pb-12 lg:px-8">
+      <section class="articles-hero contact-hero contact-hero--bg-image relative overflow-hidden border-b border-slate-200">
+        <div class="contact-hero__curve" aria-hidden="true"></div>
+        <div class="relative z-10 mx-auto max-w-6xl px-4 pt-6 pb-12 sm:px-6 sm:pt-24 sm:pb-14 md:pt-28 md:pb-16 lg:px-8 lg:pt-32 lg:pb-20">
           <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-accent">Articles &amp; Studies</p>
           <h1 class="mt-3 text-balance text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl md:text-4xl">Faith for everyday life and deeper Bible study</h1>
-          <p class="mt-5 max-w-2xl text-sm text-slate-600 sm:text-base leading-relaxed">Read Everyday Faith reflections from Sunday messages, or explore Back to the Bible studies for cell fellowship.</p>
-          ${renderFilterChips(categories)}
+          <p class="mt-5 max-w-2xl text-sm text-slate-600 sm:text-base leading-relaxed">Read sermon reflections and Bible study guides written for everyday life and cell fellowship.</p>
+          ${renderFilterChips()}
         </div>
       </section>
 
       ${
-        pageNum === 1 && featured.length
-          ? `<section class="border-b border-slate-200 bg-white" aria-label="Featured articles">
+        featuredArticle
+          ? `<section class="border-b border-slate-200 bg-white" aria-label="Featured article">
         <div class="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
           <h2 class="text-lg font-semibold text-slate-900">Featured</h2>
-          <div class="articles-featured mt-6">${featured.map(renderArticleCard).join("")}</div>
+          <div class="articles-featured articles-featured--single mt-6">${renderArticleCard(featuredArticle, { featured: true })}</div>
         </div>
       </section>`
           : ""
       }
 
-      ${
-        pageNum === 1 && latest.length
-          ? `<section class="border-b border-slate-200 bg-slate-50" aria-label="Latest articles">
-        <div class="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
-          <h2 class="text-lg font-semibold text-slate-900">Latest</h2>
-          <div class="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">${latest.map(renderArticleCard).join("")}</div>
-        </div>
-      </section>`
-          : ""
-      }
-
-      <section class="border-b border-slate-200 bg-white" aria-label="All articles">
+      <section class="border-b border-slate-200 bg-slate-50" aria-label="All articles">
         <div class="mx-auto max-w-6xl px-4 py-10 sm:px-6 md:py-14 lg:px-8">
-          <h2 class="text-lg font-semibold text-slate-900">${pageNum === 1 ? "All articles" : `Page ${pageNum}`}</h2>
-          <p class="articles-results-meta mt-2 text-sm text-slate-500" data-articles-results-meta>Showing ${start + 1}–${Math.min(start + ARTICLES_PER_PAGE, articles.length)} of ${articles.length} articles</p>
-          <div class="mt-6" data-articles-grid>
-            <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">${pageArticles.map(renderArticleCard).join("")}</div>
+          <div class="articles-toolbar">
+            <h2 class="text-lg font-semibold text-slate-900">All articles</h2>
+            <div class="articles-toolbar__controls">
+              <label class="articles-sort">
+                <span class="articles-sort__label">Sort by</span>
+                <select class="articles-sort__select" data-articles-sort aria-label="Sort articles">
+                  <option value="newest" selected>Newest</option>
+                  <option value="oldest">Oldest</option>
+                  <option value="title">Title A–Z</option>
+                </select>
+              </label>
+            </div>
           </div>
-          <p class="articles-empty hidden mt-8" data-articles-empty>No articles match this filter.</p>
-          <div class="mt-10">${renderPagination(pageNum, totalPages)}</div>
+          <p class="articles-results-meta mt-2 text-sm text-slate-500" data-articles-results-meta></p>
+          <div class="mt-6" data-articles-grid>
+            <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">${initialCards.join("")}</div>
+          </div>
+          <p class="articles-empty hidden mt-8 text-center text-sm text-slate-500" data-articles-empty>No articles match this filter.</p>
+          <div class="mt-10" data-articles-pagination-wrap hidden></div>
         </div>
-      </section>`;
+      </section>
+
+      ${renderHubCtaBanner()}
+      ${renderHubFaqSection(faqs)}
+      <div class="serve-unveil-spacer min-h-screen" aria-hidden="true"></div>`;
 
   const listPayload = articles.map((a) => ({
     type: a.type,
@@ -435,21 +561,24 @@ function buildHubPage(articles, pageNum, totalPages, categories) {
     summary: a.summary || a.description,
     category: a.category,
     author: a.author,
+    date: a.date,
     dateFormatted: a.dateFormatted,
     readTime: a.readTime,
     thumbnail: a.thumbnail,
+    featured: a.featured === true,
   }));
 
   const scripts = `<script id="articles-data" type="application/json">${JSON.stringify({
     articles: listPayload,
     perPage: ARTICLES_PER_PAGE,
-    page: pageNum,
-    categories,
+    featuredSlug,
+    latestSlug,
   })}</script>
-    <script src="/js/articles/hub.js"></script>`;
+    <script src="/js/articles/hub.js"></script>
+    <script src="/js/faq/accordion.js"></script>`;
 
   return {
-    fileName: pageNum === 1 ? "articles.html" : `articles-${pageNum}.html`,
+    fileName: "articles.html",
     html: buildPageShell({
       title,
       description,
@@ -458,6 +587,7 @@ function buildHubPage(articles, pageNum, totalPages, categories) {
       bodyMain,
       assetRoot: "/",
       scripts,
+      hubPage: true,
     }),
   };
 }
@@ -761,14 +891,7 @@ function syncSiteNav() {
 
 function main() {
   const articles = loadArticles();
-  const categories = [
-    ...new Set(
-      articles
-        .flatMap((a) => (a.tags && a.tags.length ? a.tags : [a.category]))
-        .filter(Boolean)
-    ),
-  ].sort();
-  const totalPages = Math.max(1, Math.ceil(articles.length / ARTICLES_PER_PAGE));
+  const faqs = loadApprovedFaqs();
 
   fs.mkdirSync(OUT_EF, { recursive: true });
   fs.mkdirSync(OUT_BTB, { recursive: true });
@@ -779,11 +902,16 @@ function main() {
     JSON.stringify({ articles: articles.map(({ bodyHtml, blocks, ...rest }) => rest), total: articles.length, perPage: ARTICLES_PER_PAGE }, null, 0)
   );
 
-  for (let page = 1; page <= totalPages; page++) {
-    const { fileName, html } = buildHubPage(articles, page, totalPages, categories);
-    fs.writeFileSync(path.join(ROOT, fileName), html, "utf8");
-    console.log(`Wrote ${fileName}`);
-  }
+  const { fileName, html } = buildHubPage(articles, faqs);
+  fs.writeFileSync(path.join(ROOT, fileName), html, "utf8");
+  console.log(`Wrote ${fileName}`);
+
+  fs.readdirSync(ROOT)
+    .filter((name) => /^articles-\d+\.html$/.test(name))
+    .forEach((name) => {
+      fs.unlinkSync(path.join(ROOT, name));
+      console.log(`Removed stale ${name}`);
+    });
 
   articles.forEach((article) => {
     const html =
@@ -799,7 +927,7 @@ function main() {
   updateSitemap(articles, getFaqTotalPages());
   syncSiteNav();
 
-  console.log(`Built ${articles.length} articles across ${totalPages} hub page(s).`);
+  console.log(`Built ${articles.length} articles.`);
 }
 
 main();

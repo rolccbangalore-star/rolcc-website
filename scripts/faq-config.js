@@ -81,6 +81,7 @@ const PAGE_FAQ_MAP = {
   rolf: ["Q0243", "Q0246", "Q0249", "Q0257", "Q0250", "Q0251", "Q0463", "Q0261"],
   events: ["Q0034", "Q0131", "Q0108", "Q0064", "Q0290", "Q0144", "Q0095", "Q0079"],
   membership: ["Q0088", "Q0228", "Q0100", "Q0201", "Q0043", "Q0105", "Q0311", "Q0079"],
+  articles: ["Q0155", "Q0206", "Q0010", "Q0217", "Q0408", "Q0311", "Q0016", "Q0053"],
 };
 
 /** Section copy for page-specific FAQ blocks */
@@ -133,6 +134,10 @@ const PAGE_FAQ_META = {
     heading: "Membership & next steps",
     description: "Attending without pressure, deciding at your pace, and what membership means at ROLCC.",
   },
+  articles: {
+    heading: "Questions about sermons & Bible study",
+    description: "How our articles connect to Sunday messages, cell fellowship, and growing in Scripture.",
+  },
 };
 
 /** Maps site page slugs to FAQ topics (fallback when PAGE_FAQ_MAP entry is missing) */
@@ -149,6 +154,7 @@ const PAGE_TOPIC_MAP = {
   events: ["belonging-community", "visiting"],
   membership: ["belonging-community", "visiting"],
   contact: ["visiting", "prayer-support"],
+  articles: ["faith-questions", "belonging-community"],
 };
 
 /** @deprecated use PAGE_TOPIC_MAP */

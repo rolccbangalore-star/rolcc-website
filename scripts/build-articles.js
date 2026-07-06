@@ -19,12 +19,12 @@ const {
   renderBlocks,
   renderArticleMetaBar,
   renderArticleTagsHtml,
+  renderArticleCardTag,
   normalizeArticleTags,
   normalizeQuizItem,
   renderSummaryBox,
   renderKeyTakeaways,
   selectRelatedArticles,
-  getPrevNext,
 } = require("./article-config");
 const { parseCsv } = require("./csv-parse");
 const {
@@ -406,17 +406,9 @@ function readFooterTemplate() {
     <button id="scroll-top-btn" class="scroll-to-top hidden fixed bottom-5 right-4 z-40 rounded-full bg-slate-900/90 p-2 text-xs text-slate-100 shadow-lg ring-1 ring-slate-600 hover:bg-slate-800 sm:bottom-6 sm:right-6" aria-label="Scroll to top" type="button">↑</button>`;
 }
 
-function renderHubTypeTag(article) {
-  const label =
-    article.type === "everyday-faith" ? "Sermon" : article.type === "back-to-bible" ? "Bible Study" : article.typeLabel;
-  return `<span class="article-tag article-tag--sm article-tag--type">${escapeHtml(label)}</span>`;
-}
-
 function renderArticleCardMeta(article) {
-  const parts = [];
-  if (article.author) parts.push(escapeHtml(article.author));
-  if (article.readTime) parts.push(`${article.readTime} min read`);
-  return parts.join(" · ");
+  if (!article.readTime) return "";
+  return `${article.readTime} min read`;
 }
 
 function renderArticleCard(article, options = {}) {
@@ -442,8 +434,7 @@ function renderArticleCard(article, options = {}) {
     </div>
     <div class="articles-card__body">
       <div class="articles-card__tags">
-        ${renderHubTypeTag(article)}
-        ${renderArticleTagsHtml(article, { mutedAll: true })}
+        ${renderArticleCardTag(article)}
       </div>
       <h2 class="articles-card__title">${escapeHtml(article.title)}</h2>
       <p class="articles-card__meta">${renderArticleCardMeta(article)}</p>
@@ -618,15 +609,6 @@ function renderRelated(articles, current) {
   </section>`;
 }
 
-function renderPrevNext(articles, current) {
-  const { prev, next } = getPrevNext(articles, current);
-  if (!prev && !next) return "";
-  return `<nav class="article-nav-links" aria-label="Article navigation">
-    ${prev ? `<a href="${articleUrl(prev)}">← ${escapeHtml(prev.title)}</a>` : "<span></span>"}
-    ${next ? `<a href="${articleUrl(next)}" class="text-right">${escapeHtml(next.title)} →</a>` : ""}
-  </nav>`;
-}
-
 function articleSchema(article, canonical) {
   const base = {
     "@context": "https://schema.org",
@@ -694,7 +676,6 @@ function buildEverydayFaithPage(article, allArticles) {
             <span aria-hidden="true">👏</span> Appreciate · <span data-clap-count>0</span>
           </button>
         </div>
-        ${renderPrevNext(allArticles, article)}
         ${renderRelated(allArticles, article)}
         <p class="mt-10"><a href="/articles" class="text-sm font-medium text-accent hover:underline">← Back to all articles</a></p>
       </article>
@@ -761,7 +742,6 @@ function buildBackToBiblePage(article, allArticles) {
             <span aria-hidden="true">👏</span> Appreciate · <span data-clap-count>0</span>
           </button>
         </div>
-        ${renderPrevNext(allArticles, article)}
         ${renderRelated(allArticles, article)}
         <p class="mt-10"><a href="/articles" class="text-sm font-medium text-accent hover:underline">← Back to all articles</a></p>
       </article>

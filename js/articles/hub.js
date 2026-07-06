@@ -47,22 +47,22 @@
     return article.typeLabel || article.type || "";
   }
 
-  function renderTagsHtml(article) {
+  function primaryTag(article) {
     const tags = articleTags(article);
-    const typeTag = `<span class="article-tag article-tag--sm article-tag--type">${escapeHtml(typeTagLabel(article))}</span>`;
-    const tagHtml = tags
-      .map(function (tag) {
-        return `<span class="article-tag article-tag--sm article-tag--muted">${escapeHtml(tag)}</span>`;
-      })
-      .join("");
-    return typeTag + tagHtml;
+    if (tags.length) return tags[0];
+    if (article.category) return article.category;
+    return typeTagLabel(article);
+  }
+
+  function renderTagsHtml(article) {
+    const label = primaryTag(article);
+    if (!label) return "";
+    return `<span class="article-tag article-tag--sm article-tag--muted">${escapeHtml(label)}</span>`;
   }
 
   function renderMeta(article) {
-    const parts = [];
-    if (article.author) parts.push(escapeHtml(article.author));
-    if (article.readTime) parts.push(`${article.readTime} min read`);
-    return parts.join(" · ");
+    if (!article.readTime) return "";
+    return `${article.readTime} min read`;
   }
 
   function cardHtml(article, options) {

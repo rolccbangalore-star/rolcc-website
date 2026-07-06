@@ -229,12 +229,27 @@ function renderArticleTagsHtml(article, options) {
   const opts = options || {};
   const tags = normalizeArticleTags(article);
   if (!tags.length) return "";
+  const maxTags = opts.maxTags != null ? opts.maxTags : tags.length;
   return tags
+    .slice(0, maxTags)
     .map((tag, index) => {
       const muted = opts.mutedAll || index > 0;
       return `<span class="article-tag article-tag--sm${muted ? " article-tag--muted" : ""}">${escapeHtml(tag)}</span>`;
     })
     .join("");
+}
+
+function primaryArticleTag(article) {
+  const tags = normalizeArticleTags(article);
+  if (tags.length) return tags[0];
+  if (article.category) return article.category;
+  return article.typeLabel || "";
+}
+
+function renderArticleCardTag(article) {
+  const label = primaryArticleTag(article);
+  if (!label) return "";
+  return `<span class="article-tag article-tag--sm article-tag--muted">${escapeHtml(label)}</span>`;
 }
 
 function blockType(block) {
@@ -456,6 +471,8 @@ module.exports = {
   normalizeQuizOptions,
   normalizeQuizItem,
   renderArticleTagsHtml,
+  renderArticleCardTag,
+  primaryArticleTag,
   collectBlockText,
   renderBlocks,
   renderArticleMetaBar,

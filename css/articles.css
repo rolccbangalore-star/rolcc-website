@@ -462,7 +462,7 @@
 
 .articles-card__title {
   margin-top: 0.65rem;
-  font-size: 1.05rem;
+  font-size: 0.9375rem;
   font-weight: 600;
   line-height: 1.35;
   color: #0f172a;
@@ -504,7 +504,7 @@
 }
 
 .articles-card--featured-hub .articles-card__title {
-  font-size: 1.125rem;
+  font-size: 1rem;
   -webkit-line-clamp: 3;
 }
 
@@ -531,7 +531,7 @@
   }
 
   .articles-card--featured-hub .articles-card__title {
-    font-size: 1.25rem;
+    font-size: 1.0625rem;
     -webkit-line-clamp: 2;
   }
 }

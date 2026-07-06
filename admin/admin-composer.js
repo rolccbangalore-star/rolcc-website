@@ -292,22 +292,39 @@
     var createSlot = $("admin-create-slot");
     if (!createSlot) return;
 
-    var main = root.querySelector("main");
-    var createBtn = null;
-    if (main) {
-      createBtn = findCreateButton(main.querySelector(".admin-collection-head") || main) || findCreateButton(main);
-    }
-
-    if (createBtn) {
-      styleCreateButton(createBtn);
-      if (createBtn.parentElement !== createSlot) {
-        createSlot.appendChild(createBtn);
-      }
-      createSlot.hidden = false;
+    if (!isCollectionRoute()) {
+      createSlot.hidden = true;
       return;
     }
 
-    createSlot.hidden = !isCollectionRoute();
+    var main = root.querySelector("main");
+    var createBtn = null;
+    if (main) {
+      createBtn =
+        findCreateButton(main.querySelector(".admin-collection-head") || main) || findCreateButton(main);
+    }
+
+    var slotBtn = createSlot.querySelector(".admin-create-article, a[href*='new']");
+    if (!createBtn && slotBtn) {
+      createBtn = slotBtn;
+    }
+
+    if (!createBtn) {
+      createSlot.hidden = true;
+      return;
+    }
+
+    styleCreateButton(createBtn);
+
+    createSlot.querySelectorAll(".admin-create-article, a[href*='new']").forEach(function (link) {
+      if (link !== createBtn) link.remove();
+    });
+
+    if (createBtn.parentElement !== createSlot) {
+      createSlot.appendChild(createBtn);
+    }
+
+    createSlot.hidden = false;
   }
 
   function findCreateButton(main) {
@@ -357,8 +374,6 @@
         topBlock.appendChild(controls);
       }
     }
-
-    mountCreateButton(root);
 
     var headerWrap = main.querySelector(".admin-collection-header");
     if (!headerWrap) {

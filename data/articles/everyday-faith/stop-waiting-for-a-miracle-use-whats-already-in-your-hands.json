@@ -1,0 +1,233 @@
+{
+  "sermonSeries": "Repayment Series",
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "Life has a way of hitting us with unexpected chaos overnight. Between intense career pressure, mounting debts, and family anxieties, it is easy to feel completely out of options and emotionally broken."
+    },
+    {
+      "type": "heading",
+      "level": "2",
+      "text": "The Instinct to Withdraw"
+    },
+    {
+      "type": "paragraph",
+      "text": "When the pressure gets too heavy, our natural human response is to pull back and hide. We replay worst-case scenarios in our heads, blame external factors, and retreat into old habits just to feel a sense of control."
+    },
+    {
+      "type": "paragraph",
+      "text": "But hyper-focusing on what we lack only fuels our anxiety. We exhaust ourselves waiting for a massive external rescue, completely blind to the fact that the tools for our breakthrough are already within arm's reach."
+    },
+    {
+      "type": "heading",
+      "level": "2",
+      "text": "The Lesson of the Hidden Armor"
+    },
+    {
+      "type": "paragraph",
+      "text": "We see this clearly when God called Gideon to save his people. Gideon was full of doubts and fear, secretly hiding in a winepress. When he finally gathered an army of 32,000, God deliberately thinned the ranks down to just 300 men so human pride couldn't take the credit."
+    },
+    {
+      "type": "paragraph",
+      "text": "God didn't hand this tiny group swords or shields. Instead, they were given three unconventional items: an empty jar, a torch inside it, and a trumpet. It was a visual reminder that when you break your pride (the jar), let your inner faith shine (the torch), and open your mouth in praise (the trumpet), giant obstacles fall."
+    },
+    {
+      "type": "heading",
+      "level": "2",
+      "text": "3 Simple Steps to Pivot Your Focus"
+    },
+    {
+      "type": "bulletList",
+      "items": [
+        {
+          "item": "Audit your current assets: Stop listing everything you lack. Write down exactly what you have right now—a specific skill, a supportive relationship, or a tiny resource—no matter how small it looks."
+        },
+        {
+          "item": "Ditch the emotional highs: Don't build your mindset on short-lived excitement. Build it on solid conviction that stays steady even when your external environment gets messy."
+        },
+        {
+          "item": "Remember past breakthroughs: When you feel entirely alone, look back at your history. If you survived a seemingly hopeless situation in your past, you have the capacity to handle this one too."
+        }
+      ]
+    },
+    {
+      "type": "faq",
+      "items": [
+        {
+          "question": "What if I feel exactly like Gideon—anxious and unqualified?",
+          "answer": "God doesn't require you to be a flawless spiritual giant. Gideon was full of questions and fear, but your willingness to take the next step matters far more than your current status."
+        },
+        {
+          "question": "Why doesn't the solution to my problem happen immediately?",
+          "answer": "Difficult seasons strip away our bad habits and break our reliance on easy comfort zones. They force us to build a deeper, more resilient kind of inner strength."
+        }
+      ]
+    },
+    {
+      "type": "cta",
+      "label": "Connect with Us",
+      "url": "/contact",
+      "text": "Feeling isolated or overwhelmed by life's waves? Reach out to our care team this week to find a supportive community.",
+      "style": "primary"
+    }
+  ],
+  "summary": "When sudden pressure or financial stress leaves you feeling completely overwhelmed, your default instinct is to hide. Discover how breaking your pride and shifting your focus can reveal the unexpected resources you already possess.",
+  "author": "Rev. Benson K Sunny",
+  "thumbnail": "https://live.staticflickr.com/2177/5699011149_2943335f10_b.jpg",
+  "featured": false,
+  "date": "2026-07-06",
+  "publish": true,
+  "quiz": [
+    {
+      "question": "What unconventional items did God give to Gideon's 300 men instead of traditional weapons?",
+      "options": [
+        {
+          "option": "Heavy iron armor, long spears, and wooden shields"
+        },
+        {
+          "option": "An empty jar, a torch inside, and a trumpet"
+        },
+        {
+          "option": "Advanced archery bows, metal helmets, and maps"
+        },
+        {
+          "option": "Chariots, slingshots, and basic stone tools"
+        },
+        {
+          "option": "Heavy iron armor, long spears, and wooden shields"
+        },
+        {
+          "option": "An empty jar, a torch inside, and a trumpet"
+        },
+        {
+          "option": "Advanced archery bows, metal helmets, and maps"
+        },
+        {
+          "option": "Chariots, slingshots, and basic stone tools"
+        }
+      ],
+      "correctIndex": 1,
+      "explanation": "Instead of weapons, Gideon's men were given jars, hidden torches, and trumpets to emphasize that victory belonged to God's power rather than human military strength."
+    },
+    {
+      "question": "What question did the prophet Elisha ask the widow to pivot her focus away from her debt crisis?",
+      "options": [
+        {
+          "option": "How many local creditors are currently arriving at your door?"
+        },
+        {
+          "option": "What do you have in your house?"
+        },
+        {
+          "option": "Why did your late husband fail to clear his financial obligations?"
+        },
+        {
+          "option": "Can you borrow advanced tools from your immediate neighbors?"
+        },
+        {
+          "option": "How many local creditors are currently arriving at your door?"
+        },
+        {
+          "option": "What do you have in your house?"
+        },
+        {
+          "option": "Why did your late husband fail to clear his financial obligations?"
+        },
+        {
+          "option": "Can you borrow advanced tools from your immediate neighbors?"
+        }
+      ],
+      "correctIndex": 1,
+      "explanation": "Elisha asked the widow what she already possessed in her house, helping her see that a forgotten jar of oil would be the key to her breakthrough."
+    },
+    {
+      "question": "According to the text, what is the main danger of building your faith on emotional excitement?",
+      "options": [
+        {
+          "option": "It stops an individual from tracking basic financial parameters."
+        },
+        {
+          "option": "It makes it difficult to participate in community or family meetings."
+        },
+        {
+          "option": "It causes severe spiritual ups and downs, leading to a crash when a storm hits."
+        },
+        {
+          "option": "It forces people to move into isolated rural areas against their will."
+        },
+        {
+          "option": "It stops an individual from tracking basic financial parameters."
+        },
+        {
+          "option": "It makes it difficult to participate in community or family meetings."
+        },
+        {
+          "option": "It causes severe spiritual ups and downs, leading to a crash when a storm hits."
+        },
+        {
+          "option": "It forces people to move into isolated rural areas against their will."
+        }
+      ],
+      "correctIndex": 2,
+      "explanation": "Emotional highs cause major instability; you are all in when things are great, but you crash completely the moment a real challenge appears."
+    },
+    {
+      "question": "What does the text recommend doing when you feel entirely alone or discouraged by current hardships?",
+      "options": [
+        {
+          "option": "Answering endless phone calls from surrounding critics to justify your choices."
+        },
+        {
+          "option": "Spending hours scrolling through problematic data to find an immediate exit strategy."
+        },
+        {
+          "option": "Taking a deliberate walk down memory lane to remember past instances of deliverance."
+        },
+        {
+          "option": "Launching a completely new business plan without checking your current resources."
+        },
+        {
+          "option": "Answering endless phone calls from surrounding critics to justify your choices."
+        },
+        {
+          "option": "Spending hours scrolling through problematic data to find an immediate exit strategy."
+        },
+        {
+          "option": "Taking a deliberate walk down memory lane to remember past instances of deliverance."
+        },
+        {
+          "option": "Launching a completely new business plan without checking your current resources."
+        }
+      ],
+      "correctIndex": 2,
+      "explanation": "Looking back at your history of deliverance reminds you of the previous times you survived hopeless situations, proving you can handle the current crisis too."
+    }
+  ],
+  "title": "Stop Waiting for a Miracle: Use What's Already in Your Hands",
+  "tags": [
+    {
+      "tag": "Finance & Budget"
+    },
+    {
+      "tag": "Everyday Life"
+    }
+  ],
+  "description": "Feeling helpless and stuck? Learn how to stop waiting for external rescue and find your strength using timeless biblical principles.",
+  "scripture": "Judges 7 / 2 Kings 4 / John 21",
+  "includeQuiz": true,
+  "category": "Finance & Budget",
+  "keyTakeaways": [
+    {
+      "item": "Crises frequently blind us to the practical solutions and resources that are already within our reach."
+    },
+    {
+      "item": "God intentionally limits our visible resources to break our pride and build authentic inner conviction."
+    },
+    {
+      "item": "True faith means showing up responsibly with what you have, while leaving the final outcome with God."
+    },
+    {
+      "item": "Looking back at past victories provides the mental and spiritual fuel needed to face current trials."
+    }
+  ]
+}

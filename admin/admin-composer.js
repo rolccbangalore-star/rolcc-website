@@ -206,21 +206,34 @@
     wireViewSwitcher(root);
     markActiveNavLinks();
     mountSearch(root);
+    mountProfileButton(root);
 
+    applyDecapLayoutFixes(root);
+  }
+
+  function mountProfileButton(root) {
     var profileSlot = $("admin-profile-slot");
-    var headerImg = root.querySelector("header img");
+    if (!profileSlot) return;
+
     var profile =
       root.querySelector("header .admin-user-menu") ||
       root.querySelector("header button[aria-haspopup='true']") ||
-      (headerImg && headerImg.closest("button")) ||
-      (headerImg && headerImg.closest("div"));
+      root.querySelector("header button");
 
-    if (profileSlot && profile && profile.parentElement !== profileSlot) {
+    if (profile && profile.parentElement !== profileSlot) {
       profile.classList.add("admin-user-menu");
       profileSlot.appendChild(profile);
     }
 
-    applyDecapLayoutFixes(root);
+    var btn = profileSlot.querySelector("button");
+    if (!btn) return;
+
+    btn.classList.add("admin-logout-btn");
+    if (btn.dataset.adminLogoutStyled !== "true") {
+      btn.dataset.adminLogoutStyled = "true";
+      if (!btn.getAttribute("aria-label")) btn.setAttribute("aria-label", "Log out");
+      btn.innerHTML = LOGOUT_ICON;
+    }
   }
 
   function applyDecapLayoutFixes(root) {
@@ -233,7 +246,11 @@
 
     var node = root.querySelector("main");
     while (node && node !== root) {
-      if (node.tagName === "DIV") node.classList.add("admin-content-wrap");
+      if (node.tagName === "DIV") {
+        node.classList.add("admin-content-wrap");
+        node.style.maxWidth = "none";
+        node.style.width = "100%";
+      }
       node = node.parentElement;
     }
   }
@@ -257,6 +274,10 @@
 
   var CREATE_ICON =
     '<svg class="admin-create-article__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>';
+  var LOGOUT_ICON =
+    '<svg class="admin-logout-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg>';
+  var PLACEHOLDER_THUMB =
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10.5" r="1.5"/><path d="m21 17-5.5-5.5a1.5 1.5 0 0 0-2.12 0L8 17"/></svg>';
 
   function styleCreateButton(createBtn) {
     if (!createBtn) return;
@@ -309,16 +330,26 @@
     var main = root.querySelector("main");
     if (!main) return;
 
-    var topBlock = null;
-    Array.prototype.forEach.call(main.children, function (child) {
-      if (child.tagName === "DIV" && child.querySelector("h1") && !topBlock) topBlock = child;
-    });
-    if (!topBlock) return;
+    var h1 = main.querySelector("h1");
+    if (!h1) return;
+
+    var topBlock = h1.parentElement;
+    while (topBlock && topBlock.parentElement !== main && topBlock !== main) {
+      if (topBlock.parentElement && topBlock.parentElement.tagName === "DIV" && topBlock.parentElement.parentElement === main) {
+        topBlock = topBlock.parentElement;
+        break;
+      }
+      topBlock = topBlock.parentElement;
+    }
+    if (!topBlock || topBlock === main) topBlock = h1.parentElement;
 
     var controls = findControls(main);
-
     topBlock.classList.add("admin-collection-head");
-    mountCreateButton(root);
+
+    Array.prototype.forEach.call(topBlock.querySelectorAll("p"), function (node) {
+      node.hidden = true;
+    });
+
     if (controls) {
       controls.classList.add("admin-collection-toolbar");
       styleViewToggleButtons(controls);
@@ -327,22 +358,33 @@
       }
     }
 
+    mountCreateButton(root);
+
     var headerWrap = main.querySelector(".admin-collection-header");
     if (!headerWrap) {
       headerWrap = document.createElement("div");
       headerWrap.className = "admin-collection-header";
       main.insertBefore(headerWrap, topBlock);
+    }
+    if (topBlock.parentElement !== headerWrap) {
       headerWrap.appendChild(topBlock);
     }
+    if (headerWrap !== main.firstElementChild) {
+      main.insertBefore(headerWrap, main.firstElementChild);
+    }
 
-    var staleRow = headerWrap.querySelector(".admin-collection-toolbar-row");
+    var staleRow = main.querySelector(".admin-collection-toolbar-row");
     if (staleRow) staleRow.remove();
   }
 
   function styleViewToggleButtons(toolbar) {
-    var buttons = toolbar.querySelectorAll("button");
-    Array.prototype.forEach.call(buttons, function (btn) {
-      if (btn.classList.contains("admin-view-btn")) return;
+    var viewButtons = [];
+
+    Array.prototype.forEach.call(toolbar.querySelectorAll("button"), function (btn) {
+      if (btn.closest(".admin-view-toggle")) {
+        viewButtons.push(btn);
+        return;
+      }
       var label = normalize(btn.getAttribute("aria-label") || btn.textContent || "");
       var isGrid = label.indexOf("grid") !== -1;
       var isList = label.indexOf("list") !== -1;
@@ -352,7 +394,20 @@
       btn.innerHTML = isGrid
         ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>'
         : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>';
+      viewButtons.push(btn);
     });
+
+    if (viewButtons.length) {
+      var toggle = toolbar.querySelector(".admin-view-toggle");
+      if (!toggle) {
+        toggle = document.createElement("div");
+        toggle.className = "admin-view-toggle";
+        viewButtons[0].parentElement.insertBefore(toggle, viewButtons[0]);
+      }
+      viewButtons.forEach(function (btn) {
+        if (btn.parentElement !== toggle) toggle.appendChild(btn);
+      });
+    }
 
     var select = toolbar.querySelector("select");
     if (select) {
@@ -394,41 +449,64 @@
     return entryCache[key];
   }
 
-  function buildCardExtras(data, collection) {
-    if (!data) return null;
+  function getThumbUrl(data, imageEl) {
+    if (data && data.thumbnail) return data.thumbnail;
+    if (!imageEl) return "";
+    var bg = window.getComputedStyle(imageEl).backgroundImage;
+    if (!bg || bg === "none" || bg.indexOf("url") === -1) return "";
+    var match = bg.match(/url\(["']?([^"')]+)["']?\)/);
+    return match ? match[1] : "";
+  }
 
+  function buildMetaLine(data) {
+    var author = data.author || "ROLCC";
+    if (data.publish === false) {
+      return escapeHtml(author) + ' · <span class="admin-card-meta__draft">Draft</span>';
+    }
+    var date = formatDate(data.date);
+    return escapeHtml(author) + (date ? " · " + escapeHtml(date) : "");
+  }
+
+  function renderCard(link, data, collection, imageEl) {
     var typeLabel = COLLECTION_LABELS[collection] || collection;
-    var tags = document.createElement("div");
-    tags.className = "admin-card-tags";
-    tags.innerHTML =
-      '<span class="article-tag article-tag--sm">' +
-      escapeHtml(typeLabel) +
-      '</span><span class="article-tag article-tag--sm article-tag--muted">' +
-      escapeHtml(data.category || "General") +
-      "</span>" +
-      (data.passage || data.scripture
-        ? '<span class="article-tag article-tag--sm article-tag--muted">' + escapeHtml(data.passage || data.scripture) + "</span>"
-        : "") +
-      (data.publish === false ? '<span class="article-tag article-tag--sm admin-card-tag--draft">Draft</span>' : "");
+    var thumbUrl = getThumbUrl(data, imageEl);
 
-    var meta = document.createElement("p");
-    meta.className = "admin-card-meta";
-    meta.textContent = [data.author || "ROLCC", formatDate(data.date)].filter(Boolean).join(" · ");
-
-    var extras = document.createElement("div");
-    extras.className = "admin-card-extras";
-    extras.appendChild(tags);
-
-    var desc = data.summary || data.description;
-    if (desc) {
-      var description = document.createElement("p");
-      description.className = "admin-card-desc";
-      description.textContent = desc;
-      extras.appendChild(description);
+    var thumb = document.createElement("div");
+    thumb.className = "admin-card-thumb" + (thumbUrl ? "" : " admin-card-thumb--placeholder");
+    if (thumbUrl) {
+      thumb.style.backgroundImage = 'url("' + String(thumbUrl).replace(/"/g, "") + '")';
+    } else {
+      thumb.innerHTML = PLACEHOLDER_THUMB;
     }
 
-    extras.appendChild(meta);
-    return extras;
+    var body = document.createElement("div");
+    body.className = "admin-card-body";
+
+    var collectionEl = document.createElement("p");
+    collectionEl.className = "admin-card-collection";
+    collectionEl.textContent = typeLabel;
+
+    var titleEl = document.createElement("h2");
+    titleEl.className = "admin-card-title";
+    titleEl.textContent = data.title || "Untitled article";
+
+    var metaEl = document.createElement("p");
+    metaEl.className = "admin-card-meta";
+    metaEl.innerHTML = buildMetaLine(data);
+
+    var categoryWrap = document.createElement("div");
+    categoryWrap.className = "admin-card-category";
+    categoryWrap.innerHTML =
+      '<span class="article-tag article-tag--sm article-tag--muted">' + escapeHtml(data.category || "General") + "</span>";
+
+    body.appendChild(collectionEl);
+    body.appendChild(titleEl);
+    body.appendChild(metaEl);
+    body.appendChild(categoryWrap);
+
+    link.textContent = "";
+    link.appendChild(thumb);
+    link.appendChild(body);
   }
 
   function enhanceGridCards(root) {
@@ -445,32 +523,14 @@
       var parsed = parseEntryPath(link.getAttribute("href") || "");
       if (!parsed) return;
 
-      var body = link.children[0];
-      var image = link.children[1];
-      if (body) body.classList.add("admin-card-body");
-      if (image) {
-        image.classList.add("admin-card-image");
-        image.hidden = true;
-      }
-
-      /* Wireframe: text on top, image on bottom */
-      if (body) body.style.order = "1";
-      if (image) image.style.order = "2";
-
-      var headings = body ? body.querySelectorAll("h2") : [];
-      if (headings.length > 1) headings[0].hidden = true;
-      if (headings.length) headings[headings.length - 1].classList.add("admin-card-title");
+      var imageEl = link.querySelector(".admin-card-image") || link.children[1];
+      if (imageEl) imageEl.classList.add("admin-card-image");
 
       if (link.dataset.adminCard === "done") return;
 
       fetchEntry(parsed.collection, parsed.slug).then(function (data) {
-        if (!data || !body || link.dataset.adminCard === "done") return;
-        var titleEl = body.querySelector(".admin-card-title");
-        if (titleEl && data.title) titleEl.textContent = data.title;
-        var existing = body.querySelector(".admin-card-extras");
-        if (existing) existing.remove();
-        var extras = buildCardExtras(data, parsed.collection);
-        if (extras) body.appendChild(extras);
+        if (link.dataset.adminCard === "done") return;
+        renderCard(link, data || { title: link.textContent.trim() }, parsed.collection, imageEl);
         link.dataset.adminCard = "done";
       });
     });

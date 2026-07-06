@@ -103,7 +103,7 @@
   "thumbnail": "/images/og-image.jpg",
   "featured": false,
   "date": "2026-07-06",
-  "publish": false,
+  "publish": true,
   "quiz": [
     {
       "question": "According to the sermon, what often causes disappointment in life?",

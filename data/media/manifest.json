@@ -4,9 +4,11 @@
     "name": "A Call to Stand Firm.png",
     "source": "site",
     "folder": "assets",
+    "width": 434,
+    "height": 502,
+    "usageCount": 1,
     "usedOn": [
-      "Home",
-      "Manifest"
+      "Home"
     ]
   },
   {
@@ -14,6 +16,9 @@
     "name": "apple-touch-icon.png",
     "source": "site",
     "folder": "images",
+    "width": 180,
+    "height": 180,
+    "usageCount": 112,
     "usedOn": [
       "About Us",
       "Article: Finding Rest When Work Never Stops",
@@ -22,8 +27,6 @@
       "Article: Psalm 23 The Lord Is My Shepherd",
       "Article: Romans 8 Life In The Spirit",
       "Articles",
-      "Build Articles",
-      "Build Faq",
       "Cell Fellowship",
       "Contact",
       "Counselling",
@@ -31,7 +34,6 @@
       "FAQ",
       "Giving",
       "Home",
-      "Manifest",
       "Membership",
       "PMD",
       "River Kids",
@@ -44,9 +46,11 @@
     "name": "benson-sunny-aboutus.webp",
     "source": "site",
     "folder": "assets",
+    "width": 400,
+    "height": 500,
+    "usageCount": 2,
     "usedOn": [
-      "About Us",
-      "Manifest"
+      "About Us"
     ]
   },
   {
@@ -54,9 +58,11 @@
     "name": "carousel- banner-1.webp",
     "source": "site",
     "folder": "assets",
+    "width": 2400,
+    "height": 1600,
+    "usageCount": 3,
     "usedOn": [
-      "Home",
-      "Manifest"
+      "Home"
     ]
   },
   {
@@ -64,10 +70,11 @@
     "name": "carousel- banner-2.webp",
     "source": "site",
     "folder": "assets",
+    "width": 1920,
+    "height": 1080,
+    "usageCount": 1,
     "usedOn": [
-      "Home",
-      "Manifest",
-      "Styles"
+      "Home"
     ]
   },
   {
@@ -75,10 +82,11 @@
     "name": "carousel- banner-3.webp",
     "source": "site",
     "folder": "assets",
+    "width": 1920,
+    "height": 1080,
+    "usageCount": 1,
     "usedOn": [
-      "Home",
-      "Manifest",
-      "Styles"
+      "Home"
     ]
   },
   {
@@ -86,10 +94,11 @@
     "name": "carousel- banner-4.webp",
     "source": "site",
     "folder": "assets",
+    "width": 2400,
+    "height": 1600,
+    "usageCount": 1,
     "usedOn": [
-      "Home",
-      "Manifest",
-      "Styles"
+      "Home"
     ]
   },
   {
@@ -97,9 +106,11 @@
     "name": "Cell_fellowship (1).png",
     "source": "site",
     "folder": "assets",
+    "width": 208,
+    "height": 280,
+    "usageCount": 1,
     "usedOn": [
-      "Cell Fellowship",
-      "Manifest"
+      "Cell Fellowship"
     ]
   },
   {
@@ -107,9 +118,11 @@
     "name": "Cell_fellowship (10).png",
     "source": "site",
     "folder": "assets",
+    "width": 208,
+    "height": 280,
+    "usageCount": 1,
     "usedOn": [
-      "Cell Fellowship",
-      "Manifest"
+      "Cell Fellowship"
     ]
   },
   {
@@ -117,9 +130,11 @@
     "name": "Cell_fellowship (11).png",
     "source": "site",
     "folder": "assets",
+    "width": 208,
+    "height": 280,
+    "usageCount": 1,
     "usedOn": [
-      "Cell Fellowship",
-      "Manifest"
+      "Cell Fellowship"
     ]
   },
   {
@@ -127,9 +142,11 @@
     "name": "Cell_fellowship (12).png",
     "source": "site",
     "folder": "assets",
+    "width": 208,
+    "height": 280,
+    "usageCount": 1,
     "usedOn": [
-      "Cell Fellowship",
-      "Manifest"
+      "Cell Fellowship"
     ]
   },
   {
@@ -137,9 +154,11 @@
     "name": "Cell_fellowship (13).png",
     "source": "site",
     "folder": "assets",
+    "width": 208,
+    "height": 280,
+    "usageCount": 1,
     "usedOn": [
-      "Cell Fellowship",
-      "Manifest"
+      "Cell Fellowship"
     ]
   },
   {
@@ -147,9 +166,11 @@
     "name": "Cell_fellowship (2).png",
     "source": "site",
     "folder": "assets",
+    "width": 208,
+    "height": 280,
+    "usageCount": 1,
     "usedOn": [
-      "Cell Fellowship",
-      "Manifest"
+      "Cell Fellowship"
     ]
   },
   {
@@ -157,9 +178,11 @@
     "name": "Cell_fellowship (3).png",
     "source": "site",
     "folder": "assets",
+    "width": 208,
+    "height": 280,
+    "usageCount": 1,
     "usedOn": [
-      "Cell Fellowship",
-      "Manifest"
+      "Cell Fellowship"
     ]
   },
   {
@@ -167,9 +190,11 @@
     "name": "Cell_fellowship (4).png",
     "source": "site",
     "folder": "assets",
+    "width": 208,
+    "height": 280,
+    "usageCount": 1,
     "usedOn": [
-      "Cell Fellowship",
-      "Manifest"
+      "Cell Fellowship"
     ]
   },
   {
@@ -177,9 +202,11 @@
     "name": "Cell_fellowship (5).png",
     "source": "site",
     "folder": "assets",
+    "width": 208,
+    "height": 280,
+    "usageCount": 1,
     "usedOn": [
-      "Cell Fellowship",
-      "Manifest"
+      "Cell Fellowship"
     ]
   },
   {
@@ -187,9 +214,11 @@
     "name": "Cell_fellowship (6).png",
     "source": "site",
     "folder": "assets",
+    "width": 208,
+    "height": 280,
+    "usageCount": 1,
     "usedOn": [
-      "Cell Fellowship",
-      "Manifest"
+      "Cell Fellowship"
     ]
   },
   {
@@ -197,9 +226,11 @@
     "name": "Cell_fellowship (7).png",
     "source": "site",
     "folder": "assets",
+    "width": 208,
+    "height": 280,
+    "usageCount": 1,
     "usedOn": [
-      "Cell Fellowship",
-      "Manifest"
+      "Cell Fellowship"
     ]
   },
   {
@@ -207,9 +238,11 @@
     "name": "Cell_fellowship (8).png",
     "source": "site",
     "folder": "assets",
+    "width": 208,
+    "height": 280,
+    "usageCount": 1,
     "usedOn": [
-      "Cell Fellowship",
-      "Manifest"
+      "Cell Fellowship"
     ]
   },
   {
@@ -217,9 +250,11 @@
     "name": "Cell_fellowship (9).png",
     "source": "site",
     "folder": "assets",
+    "width": 208,
+    "height": 280,
+    "usageCount": 1,
     "usedOn": [
-      "Cell Fellowship",
-      "Manifest"
+      "Cell Fellowship"
     ]
   },
   {
@@ -227,10 +262,11 @@
     "name": "contact us BG.webp",
     "source": "site",
     "folder": "assets",
+    "width": 2184,
+    "height": 698,
+    "usageCount": 2,
     "usedOn": [
-      "Faq",
-      "Manifest",
-      "Styles"
+      "Faq"
     ]
   },
   {
@@ -238,9 +274,11 @@
     "name": "counsellinglargeimg (1).png",
     "source": "site",
     "folder": "assets",
+    "width": 1200,
+    "height": 500,
+    "usageCount": 1,
     "usedOn": [
-      "Counselling",
-      "Manifest"
+      "Counselling"
     ]
   },
   {
@@ -248,9 +286,11 @@
     "name": "counsellinglargeimg (2).png",
     "source": "site",
     "folder": "assets",
+    "width": 1200,
+    "height": 500,
+    "usageCount": 1,
     "usedOn": [
-      "Counselling",
-      "Manifest"
+      "Counselling"
     ]
   },
   {
@@ -258,9 +298,11 @@
     "name": "counsellinglargeimg (3).png",
     "source": "site",
     "folder": "assets",
+    "width": 1200,
+    "height": 500,
+    "usageCount": 1,
     "usedOn": [
-      "Counselling",
-      "Manifest"
+      "Counselling"
     ]
   },
   {
@@ -268,9 +310,11 @@
     "name": "counsellinglargeimg (4).png",
     "source": "site",
     "folder": "assets",
+    "width": 1200,
+    "height": 500,
+    "usageCount": 1,
     "usedOn": [
-      "Counselling",
-      "Manifest"
+      "Counselling"
     ]
   },
   {
@@ -278,9 +322,11 @@
     "name": "crisis.png",
     "source": "site",
     "folder": "assets",
+    "width": 500,
+    "height": 400,
+    "usageCount": 2,
     "usedOn": [
-      "Counselling",
-      "Manifest"
+      "Counselling"
     ]
   },
   {
@@ -288,9 +334,11 @@
     "name": "family-arc.webp",
     "source": "site",
     "folder": "assets",
+    "width": 400,
+    "height": 400,
+    "usageCount": 2,
     "usedOn": [
-      "Main",
-      "Manifest"
+      "Main"
     ]
   },
   {
@@ -298,24 +346,27 @@
     "name": "fav.jpg",
     "source": "site",
     "folder": "assets",
-    "usedOn": [
-      "Manifest"
-    ]
+    "width": 176,
+    "height": 769,
+    "usageCount": 0
   },
   {
     "path": "/images/favicon-32x32.png",
     "name": "favicon-32x32.png",
     "source": "site",
     "folder": "images",
-    "usedOn": [
-      "Manifest"
-    ]
+    "width": 32,
+    "height": 32,
+    "usageCount": 0
   },
   {
     "path": "/images/favicon-48x48.png",
     "name": "favicon-48x48.png",
     "source": "site",
     "folder": "images",
+    "width": 48,
+    "height": 48,
+    "usageCount": 112,
     "usedOn": [
       "About Us",
       "Article: Finding Rest When Work Never Stops",
@@ -324,8 +375,6 @@
       "Article: Psalm 23 The Lord Is My Shepherd",
       "Article: Romans 8 Life In The Spirit",
       "Articles",
-      "Build Articles",
-      "Build Faq",
       "Cell Fellowship",
       "Contact",
       "Counselling",
@@ -333,7 +382,6 @@
       "FAQ",
       "Giving",
       "Home",
-      "Manifest",
       "Membership",
       "PMD",
       "River Kids",
@@ -346,6 +394,9 @@
     "name": "favicon-96x96.png",
     "source": "site",
     "folder": "images",
+    "width": 96,
+    "height": 96,
+    "usageCount": 112,
     "usedOn": [
       "About Us",
       "Article: Finding Rest When Work Never Stops",
@@ -354,8 +405,6 @@
       "Article: Psalm 23 The Lord Is My Shepherd",
       "Article: Romans 8 Life In The Spirit",
       "Articles",
-      "Build Articles",
-      "Build Faq",
       "Cell Fellowship",
       "Contact",
       "Counselling",
@@ -363,7 +412,6 @@
       "FAQ",
       "Giving",
       "Home",
-      "Manifest",
       "Membership",
       "PMD",
       "River Kids",
@@ -376,9 +424,11 @@
     "name": "giving-amazonpay.svg",
     "source": "site",
     "folder": "assets",
+    "width": 44,
+    "height": 44,
+    "usageCount": 2,
     "usedOn": [
-      "Giving",
-      "Manifest"
+      "Giving"
     ]
   },
   {
@@ -386,9 +436,11 @@
     "name": "giving-bhim.svg",
     "source": "site",
     "folder": "assets",
+    "width": 44,
+    "height": 44,
+    "usageCount": 2,
     "usedOn": [
-      "Giving",
-      "Manifest"
+      "Giving"
     ]
   },
   {
@@ -396,9 +448,11 @@
     "name": "giving-gpay.svg",
     "source": "site",
     "folder": "assets",
+    "width": 44,
+    "height": 44,
+    "usageCount": 2,
     "usedOn": [
-      "Giving",
-      "Manifest"
+      "Giving"
     ]
   },
   {
@@ -406,9 +460,11 @@
     "name": "giving-hero-bg.webp",
     "source": "site",
     "folder": "assets",
+    "width": 2400,
+    "height": 3200,
+    "usageCount": 2,
     "usedOn": [
-      "Giving",
-      "Manifest"
+      "Giving"
     ]
   },
   {
@@ -416,9 +472,11 @@
     "name": "giving-hero-wave.svg",
     "source": "site",
     "folder": "assets",
+    "width": 100,
+    "height": 100,
+    "usageCount": 2,
     "usedOn": [
-      "Giving",
-      "Manifest"
+      "Giving"
     ]
   },
   {
@@ -426,9 +484,11 @@
     "name": "giving-paytm.svg",
     "source": "site",
     "folder": "assets",
+    "width": 82,
+    "height": 44,
+    "usageCount": 2,
     "usedOn": [
-      "Giving",
-      "Manifest"
+      "Giving"
     ]
   },
   {
@@ -436,9 +496,11 @@
     "name": "giving-phonepe.svg",
     "source": "site",
     "folder": "assets",
+    "width": 44,
+    "height": 44,
+    "usageCount": 2,
     "usedOn": [
-      "Giving",
-      "Manifest"
+      "Giving"
     ]
   },
   {
@@ -446,18 +508,20 @@
     "name": "giving-qr-placeholder.png",
     "source": "site",
     "folder": "assets",
-    "usedOn": [
-      "Manifest"
-    ]
+    "width": 1920,
+    "height": 1080,
+    "usageCount": 0
   },
   {
     "path": "/assets/giving-qrcode.png",
     "name": "giving-qrcode.png",
     "source": "site",
     "folder": "assets",
+    "width": 373,
+    "height": 373,
+    "usageCount": 2,
     "usedOn": [
-      "Giving",
-      "Manifest"
+      "Giving"
     ]
   },
   {
@@ -465,9 +529,11 @@
     "name": "giving-whatsapppay.svg",
     "source": "site",
     "folder": "assets",
+    "width": 44,
+    "height": 44,
+    "usageCount": 2,
     "usedOn": [
-      "Giving",
-      "Manifest"
+      "Giving"
     ]
   },
   {
@@ -475,18 +541,20 @@
     "name": "God’s Power Has No Limits.png",
     "source": "site",
     "folder": "assets",
-    "usedOn": [
-      "Manifest"
-    ]
+    "width": 434,
+    "height": 502,
+    "usageCount": 0
   },
   {
     "path": "/assets/group-photo-arc.webp",
     "name": "group-photo-arc.webp",
     "source": "site",
     "folder": "assets",
+    "width": 400,
+    "height": 400,
+    "usageCount": 2,
     "usedOn": [
-      "Main",
-      "Manifest"
+      "Main"
     ]
   },
   {
@@ -494,9 +562,11 @@
     "name": "Guided by God.png",
     "source": "site",
     "folder": "assets",
+    "width": 434,
+    "height": 502,
+    "usageCount": 1,
     "usedOn": [
-      "Home",
-      "Manifest"
+      "Home"
     ]
   },
   {
@@ -504,9 +574,11 @@
     "name": "kid-arc.webp",
     "source": "site",
     "folder": "assets",
+    "width": 400,
+    "height": 400,
+    "usageCount": 2,
     "usedOn": [
-      "Main",
-      "Manifest"
+      "Main"
     ]
   },
   {
@@ -514,9 +586,11 @@
     "name": "largecoverimg (1).png",
     "source": "site",
     "folder": "assets",
+    "width": 1200,
+    "height": 500,
+    "usageCount": 1,
     "usedOn": [
-      "Cell Fellowship",
-      "Manifest"
+      "Cell Fellowship"
     ]
   },
   {
@@ -524,9 +598,11 @@
     "name": "largecoverimg (2).png",
     "source": "site",
     "folder": "assets",
+    "width": 1200,
+    "height": 500,
+    "usageCount": 1,
     "usedOn": [
-      "Cell Fellowship",
-      "Manifest"
+      "Cell Fellowship"
     ]
   },
   {
@@ -534,9 +610,11 @@
     "name": "largecoverimg (3).png",
     "source": "site",
     "folder": "assets",
+    "width": 1200,
+    "height": 500,
+    "usageCount": 1,
     "usedOn": [
-      "Cell Fellowship",
-      "Manifest"
+      "Cell Fellowship"
     ]
   },
   {
@@ -544,9 +622,11 @@
     "name": "largecoverimg (4).png",
     "source": "site",
     "folder": "assets",
+    "width": 1200,
+    "height": 500,
+    "usageCount": 1,
     "usedOn": [
-      "Cell Fellowship",
-      "Manifest"
+      "Cell Fellowship"
     ]
   },
   {
@@ -554,9 +634,11 @@
     "name": "largecoverimg (5).png",
     "source": "site",
     "folder": "assets",
+    "width": 1200,
+    "height": 500,
+    "usageCount": 1,
     "usedOn": [
-      "Cell Fellowship",
-      "Manifest"
+      "Cell Fellowship"
     ]
   },
   {
@@ -564,8 +646,10 @@
     "name": "largecoverimgrk (1).png",
     "source": "site",
     "folder": "assets",
+    "width": 1200,
+    "height": 500,
+    "usageCount": 1,
     "usedOn": [
-      "Manifest",
       "River Kids"
     ]
   },
@@ -574,8 +658,10 @@
     "name": "largecoverimgrk (2).png",
     "source": "site",
     "folder": "assets",
+    "width": 1200,
+    "height": 500,
+    "usageCount": 1,
     "usedOn": [
-      "Manifest",
       "River Kids"
     ]
   },
@@ -584,8 +670,10 @@
     "name": "largecoverimgrk (3).png",
     "source": "site",
     "folder": "assets",
+    "width": 1200,
+    "height": 500,
+    "usageCount": 1,
     "usedOn": [
-      "Manifest",
       "River Kids"
     ]
   },
@@ -594,8 +682,10 @@
     "name": "largecoverimgrk (4).png",
     "source": "site",
     "folder": "assets",
+    "width": 1200,
+    "height": 500,
+    "usageCount": 1,
     "usedOn": [
-      "Manifest",
       "River Kids"
     ]
   },
@@ -604,15 +694,18 @@
     "name": "Lastest Sermon.png",
     "source": "site",
     "folder": "assets",
-    "usedOn": [
-      "Manifest"
-    ]
+    "width": 1920,
+    "height": 1080,
+    "usageCount": 0
   },
   {
     "path": "/assets/logo.svg",
     "name": "logo.svg",
     "source": "site",
     "folder": "assets",
+    "width": 373,
+    "height": 457,
+    "usageCount": 72,
     "usedOn": [
       "About Us",
       "Article: Finding Rest When Work Never Stops",
@@ -621,8 +714,6 @@
       "Article: Psalm 23 The Lord Is My Shepherd",
       "Article: Romans 8 Life In The Spirit",
       "Articles",
-      "Build Articles",
-      "Build Faq",
       "Cell Fellowship",
       "Contact",
       "Counselling",
@@ -630,7 +721,6 @@
       "FAQ",
       "Giving",
       "Home",
-      "Manifest",
       "Membership",
       "PMD",
       "River Kids",
@@ -643,19 +733,20 @@
     "name": "msite-contact-us-bg.png",
     "source": "site",
     "folder": "assets",
-    "usedOn": [
-      "Manifest",
-      "Styles"
-    ]
+    "width": 550,
+    "height": 360,
+    "usageCount": 0
   },
   {
     "path": "/images/og-image.jpg",
     "name": "og-image.jpg",
     "source": "site",
     "folder": "images",
+    "width": 176,
+    "height": 769,
+    "usageCount": 464,
     "usedOn": [
       "About Us",
-      "Article Config",
       "Article: Finding Rest When Work Never Stops",
       "Article: Finding rest when work never stops",
       "Article: God Is Still With You In Grief",
@@ -667,9 +758,6 @@
       "Article: Romans 8 Life In The Spirit",
       "Article: Romans 8:1-11 — Life in the Spirit",
       "Articles",
-      "Articles index",
-      "Build Articles",
-      "Build Faq",
       "Cell Fellowship",
       "Contact",
       "Counselling",
@@ -679,7 +767,6 @@
       "Giving",
       "Home",
       "Hub",
-      "Manifest",
       "Membership",
       "PMD",
       "River Kids",
@@ -692,9 +779,11 @@
     "name": "parenting.png",
     "source": "site",
     "folder": "assets",
+    "width": 500,
+    "height": 400,
+    "usageCount": 2,
     "usedOn": [
-      "Counselling",
-      "Manifest"
+      "Counselling"
     ]
   },
   {
@@ -702,9 +791,11 @@
     "name": "pastor-benson.png",
     "source": "site",
     "folder": "assets",
+    "width": 1186,
+    "height": 1438,
+    "usageCount": 2,
     "usedOn": [
-      "Home",
-      "Manifest"
+      "Home"
     ]
   },
   {
@@ -712,9 +803,11 @@
     "name": "pastor-signature.png",
     "source": "site",
     "folder": "assets",
+    "width": 104,
+    "height": 41,
+    "usageCount": 2,
     "usedOn": [
-      "Home",
-      "Manifest"
+      "Home"
     ]
   },
   {
@@ -722,9 +815,11 @@
     "name": "pillars-cellchurch.webp",
     "source": "site",
     "folder": "assets",
+    "width": 606,
+    "height": 537,
+    "usageCount": 2,
     "usedOn": [
-      "Home",
-      "Manifest"
+      "Home"
     ]
   },
   {
@@ -732,9 +827,11 @@
     "name": "pillars-glocalimpact.webp",
     "source": "site",
     "folder": "assets",
+    "width": 610,
+    "height": 537,
+    "usageCount": 2,
     "usedOn": [
-      "Home",
-      "Manifest"
+      "Home"
     ]
   },
   {
@@ -742,9 +839,11 @@
     "name": "pillars-holyspirit.webp",
     "source": "site",
     "folder": "assets",
+    "width": 604,
+    "height": 537,
+    "usageCount": 2,
     "usedOn": [
-      "Home",
-      "Manifest"
+      "Home"
     ]
   },
   {
@@ -752,9 +851,11 @@
     "name": "pillars-praiseandworship.webp",
     "source": "site",
     "folder": "assets",
+    "width": 602,
+    "height": 537,
+    "usageCount": 2,
     "usedOn": [
-      "Home",
-      "Manifest"
+      "Home"
     ]
   },
   {
@@ -762,8 +863,10 @@
     "name": "PMD_1.png",
     "source": "site",
     "folder": "assets",
+    "width": 208,
+    "height": 280,
+    "usageCount": 2,
     "usedOn": [
-      "Manifest",
       "PMD"
     ]
   },
@@ -772,8 +875,10 @@
     "name": "PMD_2.png",
     "source": "site",
     "folder": "assets",
+    "width": 208,
+    "height": 280,
+    "usageCount": 2,
     "usedOn": [
-      "Manifest",
       "PMD"
     ]
   },
@@ -782,8 +887,10 @@
     "name": "PMD_4.png",
     "source": "site",
     "folder": "assets",
+    "width": 208,
+    "height": 280,
+    "usageCount": 2,
     "usedOn": [
-      "Manifest",
       "PMD"
     ]
   },
@@ -792,8 +899,10 @@
     "name": "PMD_5.png",
     "source": "site",
     "folder": "assets",
+    "width": 208,
+    "height": 280,
+    "usageCount": 2,
     "usedOn": [
-      "Manifest",
       "PMD"
     ]
   },
@@ -802,8 +911,10 @@
     "name": "PMD_6.png",
     "source": "site",
     "folder": "assets",
+    "width": 208,
+    "height": 280,
+    "usageCount": 2,
     "usedOn": [
-      "Manifest",
       "PMD"
     ]
   },
@@ -812,8 +923,10 @@
     "name": "PMD_7.png",
     "source": "site",
     "folder": "assets",
+    "width": 208,
+    "height": 280,
+    "usageCount": 2,
     "usedOn": [
-      "Manifest",
       "PMD"
     ]
   },
@@ -822,8 +935,10 @@
     "name": "PMD_8.png",
     "source": "site",
     "folder": "assets",
+    "width": 208,
+    "height": 280,
+    "usageCount": 2,
     "usedOn": [
-      "Manifest",
       "PMD"
     ]
   },
@@ -832,8 +947,10 @@
     "name": "PMD_9.png",
     "source": "site",
     "folder": "assets",
+    "width": 208,
+    "height": 280,
+    "usageCount": 2,
     "usedOn": [
-      "Manifest",
       "PMD"
     ]
   },
@@ -842,9 +959,11 @@
     "name": "pr-raj-arc.webp",
     "source": "site",
     "folder": "assets",
+    "width": 400,
+    "height": 400,
+    "usageCount": 2,
     "usedOn": [
-      "Main",
-      "Manifest"
+      "Main"
     ]
   },
   {
@@ -852,9 +971,11 @@
     "name": "prayer-arc.webp",
     "source": "site",
     "folder": "assets",
+    "width": 400,
+    "height": 400,
+    "usageCount": 2,
     "usedOn": [
-      "Main",
-      "Manifest"
+      "Main"
     ]
   },
   {
@@ -862,9 +983,11 @@
     "name": "pre-marital.png",
     "source": "site",
     "folder": "assets",
+    "width": 500,
+    "height": 400,
+    "usageCount": 2,
     "usedOn": [
-      "Counselling",
-      "Manifest"
+      "Counselling"
     ]
   },
   {
@@ -872,9 +995,11 @@
     "name": "rajitha-benson.webp",
     "source": "site",
     "folder": "assets",
+    "width": 400,
+    "height": 500,
+    "usageCount": 2,
     "usedOn": [
-      "About Us",
-      "Manifest"
+      "About Us"
     ]
   },
   {
@@ -882,9 +1007,11 @@
     "name": "river_flows.png",
     "source": "site",
     "folder": "assets",
+    "width": 400,
+    "height": 560,
+    "usageCount": 2,
     "usedOn": [
-      "About Us",
-      "Manifest"
+      "About Us"
     ]
   },
   {
@@ -892,9 +1019,11 @@
     "name": "riverkids-arc.webp",
     "source": "site",
     "folder": "assets",
+    "width": 400,
+    "height": 400,
+    "usageCount": 2,
     "usedOn": [
-      "Main",
-      "Manifest"
+      "Main"
     ]
   },
   {
@@ -902,9 +1031,11 @@
     "name": "riverkids-kids-arc.webp",
     "source": "site",
     "folder": "assets",
+    "width": 400,
+    "height": 400,
+    "usageCount": 2,
     "usedOn": [
-      "Main",
-      "Manifest"
+      "Main"
     ]
   },
   {
@@ -912,8 +1043,10 @@
     "name": "rk_heroimg (1).png",
     "source": "site",
     "folder": "assets",
+    "width": 208,
+    "height": 280,
+    "usageCount": 1,
     "usedOn": [
-      "Manifest",
       "River Kids"
     ]
   },
@@ -922,8 +1055,10 @@
     "name": "rk_heroimg (10).png",
     "source": "site",
     "folder": "assets",
+    "width": 208,
+    "height": 280,
+    "usageCount": 1,
     "usedOn": [
-      "Manifest",
       "River Kids"
     ]
   },
@@ -932,8 +1067,10 @@
     "name": "rk_heroimg (2).png",
     "source": "site",
     "folder": "assets",
+    "width": 208,
+    "height": 280,
+    "usageCount": 1,
     "usedOn": [
-      "Manifest",
       "River Kids"
     ]
   },
@@ -942,8 +1079,10 @@
     "name": "rk_heroimg (3).png",
     "source": "site",
     "folder": "assets",
+    "width": 208,
+    "height": 280,
+    "usageCount": 1,
     "usedOn": [
-      "Manifest",
       "River Kids"
     ]
   },
@@ -952,8 +1091,10 @@
     "name": "rk_heroimg (4).png",
     "source": "site",
     "folder": "assets",
+    "width": 208,
+    "height": 280,
+    "usageCount": 1,
     "usedOn": [
-      "Manifest",
       "River Kids"
     ]
   },
@@ -962,8 +1103,10 @@
     "name": "rk_heroimg (5).png",
     "source": "site",
     "folder": "assets",
+    "width": 208,
+    "height": 280,
+    "usageCount": 1,
     "usedOn": [
-      "Manifest",
       "River Kids"
     ]
   },
@@ -972,8 +1115,10 @@
     "name": "rk_heroimg (6).png",
     "source": "site",
     "folder": "assets",
+    "width": 208,
+    "height": 280,
+    "usageCount": 1,
     "usedOn": [
-      "Manifest",
       "River Kids"
     ]
   },
@@ -982,8 +1127,10 @@
     "name": "rk_heroimg (7).png",
     "source": "site",
     "folder": "assets",
+    "width": 208,
+    "height": 280,
+    "usageCount": 1,
     "usedOn": [
-      "Manifest",
       "River Kids"
     ]
   },
@@ -992,8 +1139,10 @@
     "name": "rk_heroimg (8).png",
     "source": "site",
     "folder": "assets",
+    "width": 208,
+    "height": 280,
+    "usageCount": 1,
     "usedOn": [
-      "Manifest",
       "River Kids"
     ]
   },
@@ -1002,8 +1151,10 @@
     "name": "rk_heroimg (9).png",
     "source": "site",
     "folder": "assets",
+    "width": 208,
+    "height": 280,
+    "usageCount": 1,
     "usedOn": [
-      "Manifest",
       "River Kids"
     ]
   },
@@ -1012,8 +1163,10 @@
     "name": "rolf_hero (1).png",
     "source": "site",
     "folder": "assets",
+    "width": 208,
+    "height": 280,
+    "usageCount": 1,
     "usedOn": [
-      "Manifest",
       "ROLF"
     ]
   },
@@ -1022,8 +1175,10 @@
     "name": "rolf_hero (10).png",
     "source": "site",
     "folder": "assets",
+    "width": 208,
+    "height": 280,
+    "usageCount": 1,
     "usedOn": [
-      "Manifest",
       "ROLF"
     ]
   },
@@ -1032,8 +1187,10 @@
     "name": "rolf_hero (2).png",
     "source": "site",
     "folder": "assets",
+    "width": 208,
+    "height": 280,
+    "usageCount": 1,
     "usedOn": [
-      "Manifest",
       "ROLF"
     ]
   },
@@ -1042,8 +1199,10 @@
     "name": "rolf_hero (3).png",
     "source": "site",
     "folder": "assets",
+    "width": 208,
+    "height": 280,
+    "usageCount": 1,
     "usedOn": [
-      "Manifest",
       "ROLF"
     ]
   },
@@ -1052,8 +1211,10 @@
     "name": "rolf_hero (4).png",
     "source": "site",
     "folder": "assets",
+    "width": 208,
+    "height": 280,
+    "usageCount": 1,
     "usedOn": [
-      "Manifest",
       "ROLF"
     ]
   },
@@ -1062,8 +1223,10 @@
     "name": "rolf_hero (5).png",
     "source": "site",
     "folder": "assets",
+    "width": 208,
+    "height": 280,
+    "usageCount": 1,
     "usedOn": [
-      "Manifest",
       "ROLF"
     ]
   },
@@ -1072,8 +1235,10 @@
     "name": "rolf_hero (6).png",
     "source": "site",
     "folder": "assets",
+    "width": 208,
+    "height": 280,
+    "usageCount": 1,
     "usedOn": [
-      "Manifest",
       "ROLF"
     ]
   },
@@ -1082,8 +1247,10 @@
     "name": "rolf_hero (7).png",
     "source": "site",
     "folder": "assets",
+    "width": 208,
+    "height": 280,
+    "usageCount": 1,
     "usedOn": [
-      "Manifest",
       "ROLF"
     ]
   },
@@ -1092,8 +1259,10 @@
     "name": "rolf_hero (8).png",
     "source": "site",
     "folder": "assets",
+    "width": 208,
+    "height": 280,
+    "usageCount": 1,
     "usedOn": [
-      "Manifest",
       "ROLF"
     ]
   },
@@ -1102,8 +1271,10 @@
     "name": "rolf_hero (9).png",
     "source": "site",
     "folder": "assets",
+    "width": 208,
+    "height": 280,
+    "usageCount": 1,
     "usedOn": [
-      "Manifest",
       "ROLF"
     ]
   },
@@ -1112,9 +1283,11 @@
     "name": "selviraj-pastor.webp",
     "source": "site",
     "folder": "assets",
+    "width": 400,
+    "height": 500,
+    "usageCount": 2,
     "usedOn": [
-      "About Us",
-      "Manifest"
+      "About Us"
     ]
   },
   {
@@ -1122,9 +1295,11 @@
     "name": "selviraj-prayer-arc.webp",
     "source": "site",
     "folder": "assets",
+    "width": 400,
+    "height": 400,
+    "usageCount": 2,
     "usedOn": [
-      "Main",
-      "Manifest"
+      "Main"
     ]
   },
   {
@@ -1132,72 +1307,74 @@
     "name": "Sermon-cover-1.png",
     "source": "site",
     "folder": "assets",
-    "usedOn": [
-      "Manifest"
-    ]
+    "width": 434,
+    "height": 502,
+    "usageCount": 0
   },
   {
     "path": "/assets/Sermon-cover-2.png",
     "name": "Sermon-cover-2.png",
     "source": "site",
     "folder": "assets",
-    "usedOn": [
-      "Manifest"
-    ]
+    "width": 434,
+    "height": 502,
+    "usageCount": 0
   },
   {
     "path": "/assets/Sermon-cover-3.png",
     "name": "Sermon-cover-3.png",
     "source": "site",
     "folder": "assets",
-    "usedOn": [
-      "Manifest"
-    ]
+    "width": 434,
+    "height": 502,
+    "usageCount": 0
   },
   {
     "path": "/assets/Sermon-cover-4.png",
     "name": "Sermon-cover-4.png",
     "source": "site",
     "folder": "assets",
-    "usedOn": [
-      "Manifest"
-    ]
+    "width": 434,
+    "height": 502,
+    "usageCount": 0
   },
   {
     "path": "/assets/Sermon-cover-5.png",
     "name": "Sermon-cover-5.png",
     "source": "site",
     "folder": "assets",
-    "usedOn": [
-      "Manifest"
-    ]
+    "width": 434,
+    "height": 502,
+    "usageCount": 0
   },
   {
     "path": "/assets/Sermon-cover-6.png",
     "name": "Sermon-cover-6.png",
     "source": "site",
     "folder": "assets",
-    "usedOn": [
-      "Manifest"
-    ]
+    "width": 434,
+    "height": 502,
+    "usageCount": 0
   },
   {
     "path": "/assets/serve-bg.png",
     "name": "serve-bg.png",
     "source": "site",
     "folder": "assets",
-    "usedOn": [
-      "Manifest"
-    ]
+    "width": 1536,
+    "height": 1024,
+    "usageCount": 0
   },
   {
     "path": "/assets/serve-kids.png",
     "name": "serve-kids.png",
     "source": "site",
     "folder": "assets",
+    "width": 176,
+    "height": 186,
+    "usageCount": 2,
     "usedOn": [
-      "Home",
-      "Manifest"
+      "Home"
     ]
   },
   {
@@ -1205,9 +1382,11 @@
     "name": "serve-media.png",
     "source": "site",
     "folder": "assets",
+    "width": 176,
+    "height": 186,
+    "usageCount": 2,
     "usedOn": [
-      "Home",
-      "Manifest"
+      "Home"
     ]
   },
   {
@@ -1215,9 +1394,11 @@
     "name": "serve-ushers.png",
     "source": "site",
     "folder": "assets",
+    "width": 176,
+    "height": 187,
+    "usageCount": 2,
     "usedOn": [
-      "Home",
-      "Manifest"
+      "Home"
     ]
   },
   {
@@ -1225,9 +1406,11 @@
     "name": "serve-worship.png",
     "source": "site",
     "folder": "assets",
+    "width": 176,
+    "height": 186,
+    "usageCount": 2,
     "usedOn": [
-      "Home",
-      "Manifest"
+      "Home"
     ]
   },
   {
@@ -1235,18 +1418,20 @@
     "name": "serve.png",
     "source": "site",
     "folder": "assets",
-    "usedOn": [
-      "Manifest"
-    ]
+    "width": 1920,
+    "height": 1080,
+    "usageCount": 0
   },
   {
     "path": "/assets/counselling/spiritual.png",
     "name": "spiritual.png",
     "source": "site",
     "folder": "assets",
+    "width": 500,
+    "height": 400,
+    "usageCount": 2,
     "usedOn": [
-      "Counselling",
-      "Manifest"
+      "Counselling"
     ]
   },
   {
@@ -1254,9 +1439,11 @@
     "name": "sports-day-river-kids-arc.webp",
     "source": "site",
     "folder": "assets",
+    "width": 400,
+    "height": 400,
+    "usageCount": 2,
     "usedOn": [
-      "Main",
-      "Manifest"
+      "Main"
     ]
   },
   {
@@ -1264,9 +1451,11 @@
     "name": "The Battle Belongs to the Lord.png",
     "source": "site",
     "folder": "assets",
+    "width": 434,
+    "height": 502,
+    "usageCount": 1,
     "usedOn": [
-      "Home",
-      "Manifest"
+      "Home"
     ]
   },
   {
@@ -1274,9 +1463,11 @@
     "name": "The Fourth Man in the Fire.png",
     "source": "site",
     "folder": "assets",
+    "width": 434,
+    "height": 502,
+    "usageCount": 1,
     "usedOn": [
-      "Home",
-      "Manifest"
+      "Home"
     ]
   },
   {
@@ -1284,9 +1475,11 @@
     "name": "The Song of Victory.png",
     "source": "site",
     "folder": "assets",
+    "width": 434,
+    "height": 502,
+    "usageCount": 1,
     "usedOn": [
-      "Home",
-      "Manifest"
+      "Home"
     ]
   },
   {
@@ -1294,9 +1487,11 @@
     "name": "thunderstorm-arc.webp",
     "source": "site",
     "folder": "assets",
+    "width": 400,
+    "height": 400,
+    "usageCount": 2,
     "usedOn": [
-      "Main",
-      "Manifest"
+      "Main"
     ]
   },
   {
@@ -1304,8 +1499,10 @@
     "name": "worship_service (1).png",
     "source": "site",
     "folder": "assets",
+    "width": 208,
+    "height": 280,
+    "usageCount": 1,
     "usedOn": [
-      "Manifest",
       "Services"
     ]
   },
@@ -1314,8 +1511,10 @@
     "name": "worship_service (10).png",
     "source": "site",
     "folder": "assets",
+    "width": 208,
+    "height": 280,
+    "usageCount": 1,
     "usedOn": [
-      "Manifest",
       "Services"
     ]
   },
@@ -1324,8 +1523,10 @@
     "name": "worship_service (11).png",
     "source": "site",
     "folder": "assets",
+    "width": 208,
+    "height": 280,
+    "usageCount": 1,
     "usedOn": [
-      "Manifest",
       "Services"
     ]
   },
@@ -1334,8 +1535,10 @@
     "name": "worship_service (12).png",
     "source": "site",
     "folder": "assets",
+    "width": 208,
+    "height": 280,
+    "usageCount": 1,
     "usedOn": [
-      "Manifest",
       "Services"
     ]
   },
@@ -1344,8 +1547,10 @@
     "name": "worship_service (13).png",
     "source": "site",
     "folder": "assets",
+    "width": 208,
+    "height": 280,
+    "usageCount": 1,
     "usedOn": [
-      "Manifest",
       "Services"
     ]
   },
@@ -1354,8 +1559,10 @@
     "name": "worship_service (14).png",
     "source": "site",
     "folder": "assets",
+    "width": 208,
+    "height": 280,
+    "usageCount": 1,
     "usedOn": [
-      "Manifest",
       "Services"
     ]
   },
@@ -1364,8 +1571,10 @@
     "name": "worship_service (2).png",
     "source": "site",
     "folder": "assets",
+    "width": 208,
+    "height": 280,
+    "usageCount": 1,
     "usedOn": [
-      "Manifest",
       "Services"
     ]
   },
@@ -1374,8 +1583,10 @@
     "name": "worship_service (3).png",
     "source": "site",
     "folder": "assets",
+    "width": 208,
+    "height": 280,
+    "usageCount": 1,
     "usedOn": [
-      "Manifest",
       "Services"
     ]
   },
@@ -1384,8 +1595,10 @@
     "name": "worship_service (4).png",
     "source": "site",
     "folder": "assets",
+    "width": 208,
+    "height": 280,
+    "usageCount": 1,
     "usedOn": [
-      "Manifest",
       "Services"
     ]
   },
@@ -1394,8 +1607,10 @@
     "name": "worship_service (5).png",
     "source": "site",
     "folder": "assets",
+    "width": 208,
+    "height": 280,
+    "usageCount": 1,
     "usedOn": [
-      "Manifest",
       "Services"
     ]
   },
@@ -1404,8 +1619,10 @@
     "name": "worship_service (6).png",
     "source": "site",
     "folder": "assets",
+    "width": 208,
+    "height": 280,
+    "usageCount": 1,
     "usedOn": [
-      "Manifest",
       "Services"
     ]
   },
@@ -1414,8 +1631,10 @@
     "name": "worship_service (7).png",
     "source": "site",
     "folder": "assets",
+    "width": 208,
+    "height": 280,
+    "usageCount": 1,
     "usedOn": [
-      "Manifest",
       "Services"
     ]
   },
@@ -1424,8 +1643,10 @@
     "name": "worship_service (8).png",
     "source": "site",
     "folder": "assets",
+    "width": 208,
+    "height": 280,
+    "usageCount": 1,
     "usedOn": [
-      "Manifest",
       "Services"
     ]
   },
@@ -1434,8 +1655,10 @@
     "name": "worship_service (9).png",
     "source": "site",
     "folder": "assets",
+    "width": 208,
+    "height": 280,
+    "usageCount": 1,
     "usedOn": [
-      "Manifest",
       "Services"
     ]
   },
@@ -1444,9 +1667,11 @@
     "name": "worship-leader-arc.webp",
     "source": "site",
     "folder": "assets",
+    "width": 400,
+    "height": 400,
+    "usageCount": 2,
     "usedOn": [
-      "Main",
-      "Manifest"
+      "Main"
     ]
   },
   {
@@ -1454,8 +1679,10 @@
     "name": "wslargecover (1).png",
     "source": "site",
     "folder": "assets",
+    "width": 1200,
+    "height": 500,
+    "usageCount": 1,
     "usedOn": [
-      "Manifest",
       "Services"
     ]
   },
@@ -1464,8 +1691,10 @@
     "name": "wslargecover (2).png",
     "source": "site",
     "folder": "assets",
+    "width": 1200,
+    "height": 500,
+    "usageCount": 1,
     "usedOn": [
-      "Manifest",
       "Services"
     ]
   },
@@ -1474,8 +1703,10 @@
     "name": "wslargecover (3).png",
     "source": "site",
     "folder": "assets",
+    "width": 1200,
+    "height": 500,
+    "usageCount": 1,
     "usedOn": [
-      "Manifest",
       "Services"
     ]
   },
@@ -1484,8 +1715,10 @@
     "name": "wslargecover (4).png",
     "source": "site",
     "folder": "assets",
+    "width": 1200,
+    "height": 500,
+    "usageCount": 1,
     "usedOn": [
-      "Manifest",
       "Services"
     ]
   },
@@ -1494,8 +1727,10 @@
     "name": "wslargecover (5).png",
     "source": "site",
     "folder": "assets",
+    "width": 1200,
+    "height": 500,
+    "usageCount": 1,
     "usedOn": [
-      "Manifest",
       "Services"
     ]
   },
@@ -1504,9 +1739,11 @@
     "name": "youth-arc.webp",
     "source": "site",
     "folder": "assets",
+    "width": 400,
+    "height": 400,
+    "usageCount": 2,
     "usedOn": [
-      "Main",
-      "Manifest"
+      "Main"
     ]
   }
 ]

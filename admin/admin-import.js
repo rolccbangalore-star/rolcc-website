@@ -1,6 +1,10 @@
 (function () {
   var parseApi = typeof ArticleImportParse !== "undefined" ? ArticleImportParse : null;
 
+  var LABEL_ALIASES = {
+    scripture: ["scripture", "main scripture"],
+  };
+
   function $(id) {
     return document.getElementById(id);
   }
@@ -10,6 +14,10 @@
       .replace(/\s+/g, " ")
       .trim()
       .toLowerCase();
+  }
+
+  function normalizeLabel(text) {
+    return normalize(text).replace(/\s*\(optional\)$/i, "").trim();
   }
 
   function isEditorRoute() {
@@ -40,11 +48,16 @@
   }
 
   function findFieldByLabel(root, labelText) {
-    var target = normalize(labelText);
-    var labels = root.querySelectorAll("main label");
+    var target = normalizeLabel(labelText);
+    var targets = LABEL_ALIASES[target] || [target];
+
+    var labels = root.querySelectorAll("main label, main [class*='FieldLabel']");
     for (var i = 0; i < labels.length; i++) {
-      if (normalize(labels[i].textContent) === target) {
-        return labels[i].closest("div");
+      var labelNorm = normalizeLabel(labels[i].textContent);
+      for (var j = 0; j < targets.length; j++) {
+        if (labelNorm === targets[j]) {
+          return labels[i].closest("div");
+        }
       }
     }
     return null;
@@ -169,7 +182,7 @@
     ["search preview", "description"],
     ["author", "author"],
     ["tag", "category"],
-    ["scripture", "scripture"],
+    ["main scripture", "scripture"],
     ["sermon series", "sermonSeries"],
   ];
 
@@ -183,31 +196,36 @@
 
   function applyEntryImport(root, entry, options) {
     options = options || {};
+    var contentOnly = options.contentOnly !== false;
     var collection = getCollection();
     var metaFields = collection === "back-to-bible" ? META_FIELDS_BTB : META_FIELDS_EF;
     var results = { meta: 0, content: 0, warnings: [] };
 
-    metaFields.forEach(function (pair) {
-      var label = pair[0];
-      var key = pair[1];
-      if (options.fillEmptyOnly) {
-        var existing = findFieldByLabel(root, label);
-        var input = existing && existing.querySelector("input, textarea");
-        if (input && input.value && input.value.trim()) return;
-      }
-      if (applyScalarField(root, label, entry[key])) results.meta += 1;
-    });
+    if (!contentOnly) {
+      metaFields.forEach(function (pair) {
+        var label = pair[0];
+        var key = pair[1];
+        if (options.fillEmptyOnly) {
+          var existing = findFieldByLabel(root, label);
+          var input = existing && existing.querySelector("input, textarea");
+          if (input && input.value && input.value.trim()) return;
+        }
+        if (applyScalarField(root, label, entry[key])) results.meta += 1;
+      });
 
-    if (entry.date) applyScalarField(root, "date", entry.date);
-    if (typeof entry.featured === "boolean") applyScalarField(root, "featured", entry.featured);
-    if (typeof entry.publish === "boolean") applyScalarField(root, "published", entry.publish);
-    if (typeof entry.includeQuiz === "boolean") applyScalarField(root, "include quiz", entry.includeQuiz);
+      if (entry.date) applyScalarField(root, "date", entry.date);
+      if (typeof entry.featured === "boolean") applyScalarField(root, "featured", entry.featured);
+      if (typeof entry.publish === "boolean") applyScalarField(root, "published", entry.publish);
+      if (typeof entry.includeQuiz === "boolean") applyScalarField(root, "include quiz", entry.includeQuiz);
 
-    if (entry.title) {
-      var headerInput = $("admin-editor-title-input");
-      if (headerInput) setInputValue(headerInput, entry.title);
-      if (window.AdminComposer && window.AdminComposer.syncTitleFromDecap) {
-        window.AdminComposer.syncTitleFromDecap(root);
+      if (entry.title) {
+        var headerInput = $("admin-editor-title-input");
+        if (headerInput && (!options.fillEmptyOnly || !headerInput.value.trim())) {
+          setInputValue(headerInput, entry.title);
+        }
+        if (window.AdminComposer && window.AdminComposer.syncTitleFromDecap) {
+          window.AdminComposer.syncTitleFromDecap(root);
+        }
       }
     }
 
@@ -232,6 +250,94 @@
     return results;
   }
 
+  function showToast(message, type) {
+    var toast = document.createElement("div");
+    toast.className = "admin-import-toast admin-import-toast--" + (type || "info");
+    toast.setAttribute("role", "status");
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    window.requestAnimationFrame(function () {
+      toast.classList.add("admin-import-toast--visible");
+    });
+    window.setTimeout(function () {
+      toast.classList.remove("admin-import-toast--visible");
+      window.setTimeout(function () {
+        toast.remove();
+      }, 300);
+    }, 4500);
+  }
+
+  function formatImportSummary(results, contentOnly) {
+    var msg;
+    if (contentOnly) {
+      msg =
+        results.content === 0
+          ? "No blog content fields were filled."
+          : "Imported " + results.content + " blog content item" + (results.content === 1 ? "" : "s");
+    } else {
+      msg = "Imported " + results.meta + " info field" + (results.meta === 1 ? "" : "s");
+      if (results.content) {
+        msg += " and " + results.content + " content item" + (results.content === 1 ? "" : "s");
+      }
+    }
+    if (results.warnings.length) msg += ". " + results.warnings.join(" ");
+    return msg;
+  }
+
+  function runAutoImport(entry, options) {
+    options = options || {};
+    if (options.contentOnly === undefined) options.contentOnly = true;
+    if (!entry) {
+      showToast("Nothing to import.", "error");
+      return { ok: false };
+    }
+
+    var root = getRoot();
+    if (!root) {
+      showToast("Editor not ready. Try again in a moment.", "error");
+      return { ok: false };
+    }
+
+    try {
+      var results = applyEntryImport(root, entry, options);
+      if (!results.meta && !results.content) {
+        showToast(
+          options.contentOnly ? "No blog content fields found to fill." : "No matching empty fields found to fill.",
+          "info"
+        );
+        return { ok: true, results: results, empty: true };
+      }
+      showToast(formatImportSummary(results, options.contentOnly), "success");
+      return { ok: true, results: results };
+    } catch (err) {
+      showToast("Import failed: " + (err.message || err), "error");
+      return { ok: false, error: err.message || String(err) };
+    }
+  }
+
+  function looksLikeImport(text) {
+    if (!text) return false;
+    var trimmed = String(text).trim();
+    if (trimmed.length < 24) return false;
+
+    if (trimmed.charAt(0) === "{" || trimmed.charAt(0) === "[") {
+      try {
+        JSON.parse(trimmed);
+        return true;
+      } catch (e) {
+        /* not JSON */
+      }
+    }
+
+    return (
+      /"blocks"\s*:/.test(trimmed) ||
+      /"sections"\s*:/.test(trimmed) ||
+      /"keyTakeaways"\s*:/.test(trimmed) ||
+      /"discussionQuestions"\s*:/.test(trimmed) ||
+      /^#\s+.+/m.test(trimmed)
+    );
+  }
+
   function ensureModal() {
     var modal = $("admin-import-modal");
     if (modal) return modal;
@@ -245,8 +351,9 @@
       '<div class="admin-import-modal__panel" role="dialog" aria-labelledby="admin-import-title">' +
       '<h2 id="admin-import-title" class="admin-import-modal__title">Import article</h2>' +
       '<p class="admin-import-modal__summary" id="admin-import-summary"></p>' +
-      '<label class="admin-import-modal__label"><input type="checkbox" id="admin-import-replace" /> Replace fields that already have content</label>' +
-      '<details class="admin-import-modal__help"><summary>JSON format for GPT</summary><pre id="admin-import-example"></pre></details>' +
+      '<label class="admin-import-modal__label"><input type="checkbox" id="admin-import-replace" /> Replace blog content that already has text</label>' +
+      '<p class="admin-import-modal__hint">Imports article body only — set title, tag, date, and other info manually in the editor.</p>' +
+      '<details class="admin-import-modal__help"><summary>Blog content JSON template</summary><pre id="admin-import-example"></pre></details>' +
       '<div class="admin-import-modal__actions">' +
       '<button type="button" class="btn-outline" data-import-close>Cancel</button>' +
       '<button type="button" class="btn-primary" id="admin-import-confirm">Import</button>' +
@@ -264,15 +371,10 @@
       confirmBtn.dataset.bound = "true";
       confirmBtn.addEventListener("click", function () {
         if (!pendingEntry) return;
-        var root = getRoot();
         var replace = $("admin-import-replace") && $("admin-import-replace").checked;
-        var results = applyEntryImport(root, pendingEntry, { fillEmptyOnly: !replace });
+        runAutoImport(pendingEntry, { fillEmptyOnly: !replace, contentOnly: true });
         pendingEntry = null;
         modal.hidden = true;
-        var msg = "Imported " + results.meta + " info fields";
-        if (results.content) msg += " and " + results.content + " content items";
-        if (results.warnings.length) msg += ". " + results.warnings.join(" ");
-        alert(msg);
       });
     }
 
@@ -289,8 +391,8 @@
     zone.hidden = true;
     zone.innerHTML =
       '<div class="admin-import-dropzone__inner">' +
-      "<p><strong>Drop to import</strong></p>" +
-      "<p>JSON, Markdown, or plain text</p>" +
+      "<p><strong>Drop blog content</strong></p>" +
+      "<p>JSON with blocks, takeaways, or sections</p>" +
       "</div>";
     document.body.appendChild(zone);
     return zone;
@@ -305,34 +407,63 @@
     var summary = summarizeText(entry);
     $("admin-import-summary").textContent = summary;
     var example = $("admin-import-example");
-    if (example) example.textContent = JSON.stringify(parseApi.JSON_EXAMPLE, null, 2);
+    if (example) {
+      example.textContent = JSON.stringify(
+        parseApi.CONTENT_JSON_EXAMPLE[getCollection()] || parseApi.CONTENT_JSON_EXAMPLE["everyday-faith"],
+        null,
+        2
+      );
+    }
     modal.hidden = false;
   }
 
   function summarizeText(entry) {
     if (!parseApi) return "";
-    var s = parseApi.summarizeEntry(entry, getCollection());
-    var parts = ['Title: "' + s.title + '"'];
-    if (s.blockCount) parts.push(s.blockCount + " content blocks");
+    var s = parseApi.summarizeContentEntry(entry, getCollection());
+    var parts = ["Blog content"];
+    if (s.blockCount) parts.push(s.blockCount + " blocks");
     if (s.sectionCount) parts.push(s.sectionCount + " sections");
     if (s.takeawayCount) parts.push(s.takeawayCount + " takeaways");
-    if (s.questionCount) parts.push(s.questionCount + " discussion questions");
-    if (s.hasQuiz) parts.push("includes quiz");
+    if (s.questionCount) parts.push(s.questionCount + " questions");
     return parts.join(" · ");
   }
 
-  function handleFile(file) {
+  function handleParsedEntry(entry, options) {
+    options = options || {};
+    if (options.useModal) {
+      openImportModal(entry);
+      return;
+    }
+    var result = runAutoImport(entry, { fillEmptyOnly: options.fillEmptyOnly !== false });
+    if (!result.ok && entry) {
+      openImportModal(entry);
+    }
+  }
+
+  function handleFile(file, options) {
     if (!parseApi || !file) return;
     var reader = new FileReader();
     reader.onload = function () {
       try {
         var entry = parseApi.parseImportFile(reader.result, getCollection(), file.name);
-        openImportModal(entry);
+        handleParsedEntry(entry, options || { fillEmptyOnly: true });
       } catch (err) {
-        alert("Could not parse file: " + (err.message || err));
+        showToast("Could not parse file: " + (err.message || err), "error");
       }
     };
     reader.readAsText(file);
+  }
+
+  function handlePasteText(text) {
+    if (!parseApi || !looksLikeImport(text)) return false;
+    try {
+      var entry = parseApi.parseImportFile(text, getCollection());
+      runAutoImport(entry, { fillEmptyOnly: true });
+      return true;
+    } catch (err) {
+      showToast("Could not parse pasted content: " + (err.message || err), "error");
+      return false;
+    }
   }
 
   function bindImportUi() {
@@ -344,7 +475,7 @@
         input.type = "file";
         input.accept = ".json,.md,.txt,text/plain,application/json";
         input.addEventListener("change", function () {
-          if (input.files && input.files[0]) handleFile(input.files[0]);
+          if (input.files && input.files[0]) handleFile(input.files[0], { fillEmptyOnly: true });
         });
         input.click();
       });
@@ -376,12 +507,35 @@
       zone.hidden = true;
       if (!isEditorRoute()) return;
       var file = event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files[0];
-      handleFile(file);
+      if (file) {
+        handleFile(file, { fillEmptyOnly: true });
+        return;
+      }
+      var text = event.dataTransfer && event.dataTransfer.getData("text/plain");
+      if (text) handlePasteText(text);
     });
 
     document.addEventListener("drop", function (event) {
       if (!isEditorRoute()) return;
       event.preventDefault();
+    });
+
+    document.addEventListener("paste", function (event) {
+      if (!isEditorRoute()) return;
+      var active = document.activeElement;
+      if (
+        active &&
+        (active.tagName === "INPUT" ||
+          active.tagName === "TEXTAREA" ||
+          active.isContentEditable ||
+          active.closest("[contenteditable='true']"))
+      ) {
+        return;
+      }
+      var text = event.clipboardData && event.clipboardData.getData("text/plain");
+      if (!text || !looksLikeImport(text)) return;
+      event.preventDefault();
+      handlePasteText(text);
     });
   }
 
@@ -409,5 +563,7 @@
     applyEntryImport: applyEntryImport,
     handleFile: handleFile,
     openImportModal: openImportModal,
+    runAutoImport: runAutoImport,
+    looksLikeImport: looksLikeImport,
   };
 })();

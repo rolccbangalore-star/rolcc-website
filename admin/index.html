@@ -15,7 +15,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="/css/articles.css" />
-    <link rel="stylesheet" href="/admin/admin.css?v=20260707media" />
+    <link rel="stylesheet" href="/admin/admin.css?v=20260707media2" />
   </head>
   <body class="admin-page">
     <header id="admin-topbar" class="admin-shell-topbar" hidden>
@@ -102,8 +102,8 @@
         </div>
       </div>
 
-      <p class="admin-sidebar-section-label">Collections</p>
-      <nav class="admin-sidebar-nav" aria-label="Article collections">
+      <p class="admin-sidebar-section-label admin-sidebar-section-label--collections">Collections</p>
+      <nav class="admin-sidebar-nav admin-sidebar-nav--collections" aria-label="Article collections">
         <a href="#/collections/everyday-faith" class="admin-sidebar-link" data-collection="everyday-faith">
           <svg class="admin-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
             <path d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
@@ -118,6 +118,9 @@
           <span class="admin-sidebar-link__text">Back to the Bible</span>
         </a>
       </nav>
+
+      <p class="admin-sidebar-section-label admin-sidebar-section-label--pages" hidden>Pages</p>
+      <nav id="admin-media-pages-nav" class="admin-sidebar-nav admin-sidebar-nav--pages" hidden aria-label="Filter images by page"></nav>
     </aside>
 
     <div id="admin-media-pane" class="admin-media-pane" hidden></div>
@@ -129,8 +132,8 @@
     <script>window.CMS_MANUAL_INIT = true;</script>
     <script src="https://unpkg.com/decap-cms@3.3.0/dist/decap-cms.js"></script>
     <script src="/scripts/article-import-parse.js?v=20260706v"></script>
-    <script src="/admin/admin-composer.js?v=20260707media"></script>
-    <script src="/admin/admin-import.js?v=20260706v"></script>
+    <script src="/admin/admin-composer.js?v=20260707media2"></script>
+    <script src="/admin/admin-import.js?v=20260707content"></script>
     <script>
       (function () {
         var errorBox = document.getElementById("cms-error");

@@ -1,13 +1,4 @@
 (function () {
-  var CONTENT_LABELS = [
-    "article content",
-    "sections",
-    "key takeaways",
-    "discussion questions",
-    "activities",
-    "include quiz",
-    "quiz",
-  ];
   var COLLECTION_LABELS = {
     "everyday-faith": "Sermon Summary",
     "back-to-bible": "Back to the Bible",
@@ -17,6 +8,8 @@
   var cardManifestPromise = null;
   var mediaManifest = null;
   var mediaManifestPromise = null;
+  var mediaPages = null;
+  var mediaPagesPromise = null;
   var enhanceTimer = null;
   var editorState = {
     syncingTitle: false,
@@ -83,167 +76,12 @@
     ncRoot.classList.toggle("admin-workspace--media-upload", showPane && uploadOpen);
   }
 
-  function getFieldLabelElements(scope) {
-    return scope.querySelectorAll('label, [class*="FieldLabel-fieldLabel"], [class*="FieldLabel"]');
-  }
-
-  function getControlLabel(control) {
-    var label = control.querySelector('label, [class*="FieldLabel-fieldLabel"], [class*="FieldLabel"]');
-    if (!label) return "";
-    return normalize(label.textContent)
-      .replace(/\?$/, "")
-      .replace(/\s*\(optional\)$/i, "")
-      .replace(/\s+/g, " ")
-      .trim();
-  }
-
-  function normalizeFieldLabel(text) {
-    return normalize(text).replace(/\?$/, "").replace(/\s*\(optional\)$/i, "").trim();
-  }
-
-  function findRootForLabel(labelEl, form) {
-    var editorControl = labelEl.closest('[class*="EditorControl"]');
-    if (editorControl && form.contains(editorControl)) return editorControl;
-
-    var el = labelEl.parentElement;
-    while (el && el !== form) {
-      var parent = el.parentElement;
-      if (!parent || parent === form) return el;
-      var labeledSiblings = 0;
-      for (var i = 0; i < parent.children.length; i++) {
-        var child = parent.children[i];
-        if (child.classList.contains("admin-editor-columns")) continue;
-        if (getFieldLabelElements(child).length) labeledSiblings++;
-      }
-      if (labeledSiblings >= 2) return el;
-      el = parent;
-    }
-    return labelEl.parentElement;
-  }
-
-  var META_LABELS = [
-    "title",
-    "summary",
-    "search preview",
-    "description",
-    "author",
-    "tag",
-    "date",
-    "hero image",
-    "thumbnail",
-    "featured",
-    "published",
-    "scripture",
-    "main scripture",
-    "sermon series",
-    "passage",
-  ];
-
-  var META_FIELD_ORDER = [
-    "title",
-    "summary",
-    "search preview",
-    "description",
-    "author",
-    "tag",
-    "date",
-    "hero image",
-    "thumbnail",
-    "featured",
-    "published",
-    "scripture",
-    "main scripture",
-    "passage",
-    "sermon series",
-  ];
-
-  function getMetaFieldRank(label) {
-    var normalized = normalize(label).replace(/\s*\(optional\)$/i, "").trim();
-    for (var i = 0; i < META_FIELD_ORDER.length; i++) {
-      if (normalized === META_FIELD_ORDER[i] || normalized.indexOf(META_FIELD_ORDER[i]) === 0) {
-        return i;
-      }
-    }
-    return 999;
-  }
-
-  function isMetaField(label) {
-    var normalized = normalize(label).replace(/\?$/, "").replace(/\s*\(optional\)$/, "").trim();
-    return META_LABELS.some(function (name) {
-      return normalized === name || normalized.indexOf(name) === 0;
-    });
-  }
-
-  function isContentField(label) {
-    if (isMetaField(label)) return false;
-    var normalized = normalize(label).replace(/\?$/, "").replace(/\s*\(optional\)$/, "").trim();
-    return CONTENT_LABELS.some(function (name) {
-      var field = name.replace(/\?$/, "");
-      return normalized === field || normalized.indexOf(field) === 0;
-    });
-  }
-
-  function isKnownTopLevelField(labelText) {
-    return isContentField(labelText) || isMetaField(labelText);
-  }
-
-  function findEditorFieldControls(root) {
-    var main = root.querySelector("main");
-    if (!main) return [];
-
-    var form = main.querySelector("form");
-    if (!form) return [];
-
-    var controls = [];
-    var claimed = [];
-
-    form.querySelectorAll('[class*="EditorControl"]').forEach(function (control) {
-      if (control.closest(".admin-editor-grid-header")) return;
-      var labelText = getControlLabel(control);
-      if (!isKnownTopLevelField(labelText)) return;
-      if (claimed.indexOf(control) !== -1) return;
-      claimed.push(control);
-      controls.push(control);
-    });
-
-    if (controls.length) return controls;
-
-    var labels = getFieldLabelElements(form);
-
-    for (var i = 0; i < labels.length; i++) {
-      var label = labels[i];
-      if (label.closest(".admin-editor-grid-header")) continue;
-
-      var labelText = normalizeFieldLabel(label.textContent);
-      if (!isKnownTopLevelField(labelText)) continue;
-
-      var rootEl = findRootForLabel(label, form);
-      if (!rootEl || claimed.indexOf(rootEl) !== -1) continue;
-
-      claimed.push(rootEl);
-      controls.push(rootEl);
-    }
-
-    return controls;
-  }
-
-  function getEditorGridPane(form) {
-    if (!form) return null;
-    return (
-      form.querySelector('[class*="EditorControlPane"]') ||
-      form.querySelector('[class*="ControlPane"]') ||
-      form.querySelector(":scope > div") ||
-      form
-    );
-  }
-
-  function resetEditorGridLayout(root) {
-    root = root || getComposerRoot();
+  function cleanupLegacyEditorShell(root) {
+    var shell = document.getElementById("admin-editor-split-shell");
+    if (shell) shell.remove();
+    document.body.classList.remove("admin-page--editor-split", "admin-page--editor-split-ready");
     if (!root) return;
-    root.querySelectorAll(".admin-editor-grid-header").forEach(function (el) {
-      el.remove();
-    });
-    root.querySelectorAll(".admin-editor-columns").forEach(function (el) {
+    root.querySelectorAll(".admin-editor-grid-header, .admin-editor-columns").forEach(function (el) {
       el.remove();
     });
     root.querySelectorAll(".admin-field--meta, .admin-field--content").forEach(function (el) {
@@ -251,241 +89,17 @@
       el.style.removeProperty("grid-column");
       el.style.removeProperty("order");
     });
-    root.querySelectorAll(".admin-editor-grid-pass-through").forEach(function (el) {
-      el.classList.remove("admin-editor-grid-pass-through");
+    root.querySelectorAll(".admin-editor-grid-pass-through, .admin-editor-grid-pane, .admin-editor-mount").forEach(function (el) {
+      el.classList.remove("admin-editor-grid-pass-through", "admin-editor-grid-pane", "admin-editor-mount");
+      delete el.dataset.adminGridLayout;
+      delete el.dataset.adminLayout;
     });
-    root.querySelectorAll(".admin-editor-grid-pane").forEach(function (pane) {
-      pane.classList.remove("admin-editor-grid-pane");
-      delete pane.dataset.adminGridLayout;
+    root.querySelectorAll(".admin-editor-decap-hidden").forEach(function (el) {
+      el.classList.remove("admin-editor-decap-hidden");
+      el.removeAttribute("aria-hidden");
     });
-  }
-
-  function applyEditorGridLayout(root) {
-    if (!isEditorRoute()) return false;
-
-    var main = root.querySelector("main");
-    if (!main) return false;
-    var form = main.querySelector("form");
-    if (!form) return false;
-
-    var pane = getEditorGridPane(form);
-    if (!pane) return false;
-
-    var controls = findEditorFieldControls(root);
-    if (!controls.length) return false;
-
-    var mount = findEditorFieldMount(form, controls) || pane;
-    mount.classList.add("admin-editor-grid-pane");
-    form.classList.add("admin-editor-form");
-
-    Array.prototype.forEach.call(mount.children, function (child) {
-      if (child.classList.contains("admin-editor-grid-header")) return;
-      if (child.querySelector && child.querySelector('[class*="EditorControl"]')) {
-        child.classList.add("admin-editor-grid-pass-through");
-      }
-    });
-
-    if (!mount.querySelector(".admin-editor-grid-header--content")) {
-      var contentHeader = document.createElement("div");
-      contentHeader.className = "admin-editor-grid-header admin-editor-grid-header--content";
-      contentHeader.textContent = "Blog Content";
-      contentHeader.style.gridColumn = "1";
-      contentHeader.style.order = "0";
-
-      var metaHeader = document.createElement("div");
-      metaHeader.className = "admin-editor-grid-header admin-editor-grid-header--meta";
-      metaHeader.textContent = "Blog Info";
-      metaHeader.style.gridColumn = "2";
-      metaHeader.style.order = "0";
-
-      mount.insertBefore(metaHeader, mount.firstChild);
-      mount.insertBefore(contentHeader, mount.firstChild);
-    }
-
-    var contentOrder = 1;
-    controls.forEach(function (control) {
-      var labelText = getControlLabel(control);
-      control.classList.remove("admin-editor-decap-hidden");
-      control.removeAttribute("aria-hidden");
-
-      if (isContentField(labelText)) {
-        control.classList.add("admin-field--content");
-        control.classList.remove("admin-field--meta");
-        control.style.gridColumn = "1";
-        control.style.order = String(contentOrder++);
-        return;
-      }
-
-      if (!isMetaField(labelText)) return;
-
-      control.classList.add("admin-field--meta");
-      control.classList.remove("admin-field--content");
-      control.style.gridColumn = "2";
-      control.style.order = String(10 + getMetaFieldRank(labelText));
-
-      if (normalize(labelText) === "title") {
-        control.classList.add("admin-field--title-synced");
-        var decapTitle = control.querySelector('input[type="text"], textarea');
-        if (decapTitle && decapTitle.dataset.titleSyncBound !== "true") {
-          decapTitle.dataset.titleSyncBound = "true";
-          decapTitle.addEventListener("input", function () {
-            syncTitleFromDecap(root);
-          });
-        }
-      }
-    });
-
-    var legacyColumns = form.querySelector(".admin-editor-columns");
-    if (legacyColumns) legacyColumns.remove();
-
-    mount.dataset.adminGridLayout = "done";
-    syncTitleFromDecap(root);
-    return true;
-  }
-
-  function findEditorFieldMount(form, controls) {
-    if (!form) return null;
-
-    var pane =
-      form.querySelector('[class*="EditorControlPane"]') ||
-      form.querySelector('[class*="ControlPane"]') ||
-      form.querySelector(":scope > div");
-
-    if (pane) return pane;
-
-    if (!controls || !controls.length) return form;
-
-    var counts = [];
-    controls.forEach(function (control) {
-      var node = control.parentElement;
-      while (node && node !== form) {
-        var found = false;
-        for (var j = 0; j < counts.length; j++) {
-          if (counts[j].node === node) {
-            counts[j].score += 1;
-            found = true;
-            break;
-          }
-        }
-        if (!found) counts.push({ node: node, score: 1 });
-        node = node.parentElement;
-      }
-    });
-
-    var best = form;
-    var bestScore = 0;
-    counts.forEach(function (entry) {
-      if (entry.score > bestScore) {
-        bestScore = entry.score;
-        best = entry.node;
-      }
-    });
-
-    return best;
-  }
-
-  function tagEditorLayout(root) {
-    if (!isEditorRoute()) return;
-
-    var main = root.querySelector("main");
-    if (!main) return;
-
-    var form = main.querySelector("form");
-    if (!form) return;
-
-    var controls = findEditorFieldControls(root);
-    if (!controls.length) return;
-
-    var mount = findEditorFieldMount(form, controls);
-    if (!mount) return;
-    var columns = form.querySelector(".admin-editor-columns");
-
-    if (!columns) {
-      columns = document.createElement("div");
-      columns.className = "admin-editor-columns";
-      columns.innerHTML =
-        '<div class="admin-editor-col admin-editor-col--content">' +
-        '<p class="admin-editor-column-label">Blog Content</p>' +
-        '<div class="admin-editor-col__fields admin-editor-col__fields--content"></div>' +
-        "</div>" +
-        '<div class="admin-editor-col admin-editor-col--meta">' +
-        '<p class="admin-editor-column-label">Blog Info</p>' +
-        '<div class="admin-editor-col__fields admin-editor-col__fields--meta"></div>' +
-        "</div>";
-      mount.insertBefore(columns, mount.firstChild);
-    }
-
-    var contentFields = columns.querySelector(".admin-editor-col__fields--content");
-    var metaFields = columns.querySelector(".admin-editor-col__fields--meta");
-    if (!contentFields || !metaFields) return;
-
-    var metaEntries = [];
-
-    controls.forEach(function (control) {
-      var labelText = getControlLabel(control);
-      if (isContentField(labelText)) {
-        control.classList.add("admin-field--content");
-        control.classList.remove("admin-field--meta");
-        contentFields.appendChild(control);
-        return;
-      }
-
-      if (!isMetaField(labelText)) return;
-
-      control.classList.add("admin-field--meta");
-      control.classList.remove("admin-field--content");
-      if (normalize(labelText) === "title") {
-        control.classList.add("admin-field--title-synced");
-        var decapTitle = control.querySelector('input[type="text"], textarea');
-        if (decapTitle && decapTitle.dataset.titleSyncBound !== "true") {
-          decapTitle.dataset.titleSyncBound = "true";
-          decapTitle.addEventListener("input", function () {
-            syncTitleFromDecap(root);
-          });
-        }
-      }
-      metaEntries.push({ control: control, rank: getMetaFieldRank(labelText) });
-    });
-
-    metaEntries.sort(function (a, b) {
-      return a.rank - b.rank;
-    });
-    metaEntries.forEach(function (entry) {
-      metaFields.appendChild(entry.control);
-    });
-
-    mount.classList.add("admin-editor-mount");
-    form.classList.add("admin-editor-form");
-    mount.dataset.adminLayout = "done";
-    columns.dataset.adminLayout = "done";
-    syncTitleFromDecap(root);
-  }
-
-  function resetEditorLayout(root) {
-    root.querySelectorAll(".admin-editor-columns").forEach(function (columns) {
-      var mount = columns.parentElement;
-      var contentFields = columns.querySelector(".admin-editor-col__fields--content");
-      var metaFields = columns.querySelector(".admin-editor-col__fields--meta");
-
-      [contentFields, metaFields].forEach(function (bucket) {
-        if (!bucket) return;
-        while (bucket.firstChild) {
-          if (mount) mount.insertBefore(bucket.firstChild, columns);
-        }
-      });
-
-      columns.remove();
-      if (mount) {
-        delete mount.dataset.adminLayout;
-        mount.classList.remove("admin-editor-mount");
-      }
-    });
-
-    root.querySelectorAll(".admin-field--meta, .admin-field--content").forEach(function (el) {
-      el.classList.remove("admin-field--meta", "admin-field--content", "admin-field--title-synced");
-    });
-    root.querySelectorAll("form.admin-editor-form").forEach(function (form) {
-      form.classList.remove("admin-editor-form");
+    root.querySelectorAll("form.admin-editor-form, main.admin-editor-split-active").forEach(function (el) {
+      el.classList.remove("admin-editor-form", "admin-editor-split-active");
     });
   }
 
@@ -569,14 +183,33 @@
     return mediaManifestPromise;
   }
 
-  function getMediaFilter(root) {
-    root = root || getComposerRoot();
-    return (root && root.dataset.adminMediaFilter) || "all";
+  function loadMediaPages() {
+    if (mediaPages) return Promise.resolve(mediaPages);
+    if (mediaPagesPromise) return mediaPagesPromise;
+    mediaPagesPromise = fetch("/data/media/pages.json")
+      .then(function (res) {
+        if (!res.ok) throw new Error("missing media pages");
+        return res.json();
+      })
+      .then(function (data) {
+        mediaPages = Array.isArray(data) ? data : [];
+        return mediaPages;
+      })
+      .catch(function () {
+        mediaPages = [{ id: "all", label: "All pages" }];
+        return mediaPages;
+      });
+    return mediaPagesPromise;
   }
 
-  function setMediaFilter(root, filter) {
+  function getMediaPageFilter(root) {
+    root = root || getComposerRoot();
+    return (root && root.dataset.adminMediaPage) || "all";
+  }
+
+  function setMediaPageFilter(root, pageId) {
     if (!root) return;
-    root.dataset.adminMediaFilter = filter;
+    root.dataset.adminMediaPage = pageId || "all";
   }
 
   function isMediaListView(root) {
@@ -818,6 +451,62 @@
     document.querySelectorAll(".admin-sidebar-link[data-collection]").forEach(function (link) {
       link.classList.toggle("admin-sidebar-link--active", link.getAttribute("data-collection") === collection);
     });
+    syncMediaSidebarPages();
+  }
+
+  function syncMediaSidebarPages() {
+    var root = getComposerRoot();
+    var pagesNav = document.getElementById("admin-media-pages-nav");
+    var collectionsNav = document.querySelector(".admin-sidebar-nav--collections");
+    var collectionsLabel = document.querySelector(".admin-sidebar-section-label--collections");
+    var pagesLabel = document.querySelector(".admin-sidebar-section-label--pages");
+    var onMedia = isMediaRoute() && root && !isLoginView(root);
+    var pageId = getMediaPageFilter(root);
+
+    if (collectionsNav) collectionsNav.hidden = onMedia;
+    if (collectionsLabel) collectionsLabel.hidden = onMedia;
+    if (pagesNav) pagesNav.hidden = !onMedia;
+    if (pagesLabel) pagesLabel.hidden = !onMedia;
+
+    if (!pagesNav || !onMedia) return;
+
+    pagesNav.querySelectorAll(".admin-sidebar-link[data-media-page]").forEach(function (link) {
+      link.classList.toggle("admin-sidebar-link--active", link.getAttribute("data-media-page") === pageId);
+    });
+  }
+
+  function mountMediaSidebarPages(root) {
+    var pagesNav = document.getElementById("admin-media-pages-nav");
+    if (!pagesNav || pagesNav.dataset.bound === "true") return;
+
+    loadMediaPages().then(function (pages) {
+      pagesNav.dataset.bound = "true";
+      pagesNav.textContent = "";
+      pages.forEach(function (page) {
+        var btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "admin-sidebar-link admin-sidebar-link--page";
+        btn.dataset.mediaPage = page.id;
+        btn.innerHTML =
+          '<svg class="admin-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/></svg>' +
+          '<span class="admin-sidebar-link__text">' +
+          escapeHtml(page.label) +
+          "</span>";
+        btn.addEventListener("click", function (event) {
+          event.stopPropagation();
+          setMediaPageFilter(root, page.id);
+          var container = pagesNav.closest("aside");
+          if (container) {
+            container.querySelectorAll(".admin-sidebar-link--page").forEach(function (link) {
+              link.classList.toggle("admin-sidebar-link--active", link === btn);
+            });
+          }
+          renderMediaWorkspace(root);
+        });
+        pagesNav.appendChild(btn);
+      });
+      syncMediaSidebarPages();
+    });
   }
 
   function mountCustomShell(root) {
@@ -842,6 +531,7 @@
     bindShellTooltips();
     wireViewSwitcher(root);
     markActiveNavLinks();
+    mountMediaSidebarPages(root);
     if (!onEditor) mountSearch(root);
     mountProfileButton(root);
     mountEditorTopbar(root);
@@ -1062,30 +752,13 @@
       "</span>";
   }
 
-  function resetEditorSplitShell(root) {
-    var shell = document.getElementById("admin-editor-split-shell");
-    if (shell) shell.remove();
-    document.body.classList.remove("admin-page--editor-split", "admin-page--editor-split-ready");
-    resetEditorGridLayout(root);
-    root.querySelectorAll(".admin-editor-decap-hidden").forEach(function (el) {
-      el.classList.remove("admin-editor-decap-hidden");
-      el.removeAttribute("aria-hidden");
-    });
-  }
-
-  function mountEditorSplitShell(root) {
+  function mountEditorChrome(root) {
     if (!isEditorRoute() || isLoginView(root)) {
-      resetEditorSplitShell(root);
+      var stale = root.querySelector(".admin-editor-subheader");
+      if (stale) stale.remove();
       return;
     }
-
-    var legacyShell = document.getElementById("admin-editor-split-shell");
-    if (legacyShell) legacyShell.remove();
-
-    document.body.classList.add("admin-page--editor-split");
-    document.body.classList.remove("admin-page--editor-split-ready");
     mountEditorSubheader(root);
-    applyEditorGridLayout(root);
   }
 
   function mountProfileButton(root) {
@@ -1148,7 +821,7 @@
     if (isMediaRoute()) {
       root.classList.add("admin-view--media");
       body.classList.add("admin-page--media");
-      resetEditorSplitShell(root);
+      cleanupLegacyEditorShell(root);
     }
     if (isCollectionRoute()) root.classList.add("admin-view--collection");
     syncMediaPaneLayout(root);
@@ -2590,78 +2263,242 @@
     }
   }
 
-  function filterMediaItems(items, filter) {
-    if (filter === "articles") {
+  function filterMediaItems(items, pageId, pages) {
+    if (!pageId || pageId === "all") return items;
+    if (pageId === "unassigned") {
       return items.filter(function (item) {
-        return item.source === "articles";
+        return !item.usageCount;
       });
     }
-    if (filter === "site") {
-      return items.filter(function (item) {
-        return item.source === "site";
-      });
-    }
-    return items;
+    var page = null;
+    (pages || []).forEach(function (entry) {
+      if (entry.id === pageId) page = entry;
+    });
+    if (!page) return items;
+    return items.filter(function (item) {
+      return item.usedOn && item.usedOn.indexOf(page.label) !== -1;
+    });
   }
 
-  function buildMediaUsageHtml(item) {
-    if (!item.usedOn || !item.usedOn.length) return "";
+  function formatMediaDimensions(item) {
+    if (item.width && item.height) return item.width + " × " + item.height;
+    return "—";
+  }
+
+  function buildMediaUsageMeta(item) {
+    var count = item.usageCount || 0;
+    if (!count) {
+      return '<span class="admin-media-card__usage admin-media-card__usage--none">Not used</span>';
+    }
+    var title = item.usedOn && item.usedOn.length ? "Used on: " + item.usedOn.join(", ") : "Used " + count + " times on the site";
+    var label = count === 1 ? "Used 1×" : "Used " + count + "×";
     return (
-      '<span class="admin-media-usage-tags">' +
-      item.usedOn
-        .map(function (label) {
-          return '<span class="admin-media-usage-tag">' + escapeHtml(label) + "</span>";
-        })
-        .join("") +
+      '<span class="admin-media-card__usage" title="' +
+      escapeHtml(title) +
+      '">' +
+      escapeHtml(label) +
       "</span>"
     );
   }
 
-  function bindMediaItemClick(el, item) {
-    el.addEventListener("click", function () {
-      copyText(item.path).then(function () {
-        el.classList.add(el.classList.contains("admin-media-list-row") ? "admin-media-list-row--copied" : "admin-media-card--copied");
-        window.setTimeout(function () {
-          el.classList.remove("admin-media-list-row--copied", "admin-media-card--copied");
-        }, 1200);
-      });
-    });
+  function ensureMediaModal() {
+    var modal = document.getElementById("admin-media-modal");
+    if (modal) return modal;
+    modal = document.createElement("div");
+    modal.id = "admin-media-modal";
+    modal.className = "admin-media-modal";
+    modal.hidden = true;
+    modal.innerHTML =
+      '<div class="admin-media-modal__backdrop" data-close="true"></div>' +
+      '<div class="admin-media-modal__panel" role="dialog" aria-modal="true">' +
+      '<button type="button" class="admin-media-modal__close" aria-label="Close">×</button>' +
+      '<div class="admin-media-modal__content"></div>' +
+      "</div>";
+    document.body.appendChild(modal);
+    modal.querySelector(".admin-media-modal__backdrop").addEventListener("click", closeMediaModal);
+    modal.querySelector(".admin-media-modal__close").addEventListener("click", closeMediaModal);
+    return modal;
   }
 
-  function buildMediaCard(item) {
-    var card = document.createElement("button");
-    card.type = "button";
+  function closeMediaModal() {
+    var modal = document.getElementById("admin-media-modal");
+    if (!modal) return;
+    modal.hidden = true;
+    modal.querySelector(".admin-media-modal__content").textContent = "";
+    document.body.classList.remove("admin-media-modal-open");
+  }
+
+  function openMediaPreviewModal(item) {
+    var modal = ensureMediaModal();
+    var content = modal.querySelector(".admin-media-modal__content");
+    var dims = formatMediaDimensions(item);
+    var usage = item.usageCount || 0;
+    content.innerHTML =
+      '<h2 class="admin-media-modal__title">Preview</h2>' +
+      '<div class="admin-media-modal__preview"><img src="' +
+      escapeHtml(item.path) +
+      '" alt="" /></div>' +
+      '<p class="admin-media-modal__meta"><strong>' +
+      escapeHtml(item.name) +
+      "</strong></p>" +
+      '<p class="admin-media-modal__meta">' +
+      escapeHtml(item.path) +
+      "</p>" +
+      '<p class="admin-media-modal__meta">' +
+      escapeHtml(dims) +
+      (usage ? " · Used " + usage + "×" : " · Not used") +
+      "</p>" +
+      '<div class="admin-media-modal__actions">' +
+      '<button type="button" class="btn-outline admin-media-modal__copy">Copy path</button>' +
+      "</div>";
+    content.querySelector(".admin-media-modal__copy").addEventListener("click", function () {
+      copyText(item.path);
+    });
+    modal.hidden = false;
+    document.body.classList.add("admin-media-modal-open");
+  }
+
+  function openMediaReplaceModal(item, root) {
+    var modal = ensureMediaModal();
+    var content = modal.querySelector(".admin-media-modal__content");
+    content.innerHTML =
+      '<h2 class="admin-media-modal__title">Replace image</h2>' +
+      '<p class="admin-media-modal__meta">Current: <code>' +
+      escapeHtml(item.path) +
+      "</code> (" +
+      escapeHtml(formatMediaDimensions(item)) +
+      ")</p>" +
+      '<div class="admin-media-replace-tabs" role="tablist">' +
+      '<button type="button" class="admin-media-replace-tab admin-media-replace-tab--active" data-tab="upload">Upload file</button>' +
+      '<button type="button" class="admin-media-replace-tab" data-tab="url">Link from web</button>' +
+      "</div>" +
+      '<div class="admin-media-replace-panel" data-panel="upload">' +
+      '<p class="admin-media-modal__hint">Choose a new image file. Article images upload to <code>assets/articles/</code> via publish.</p>' +
+      '<input type="file" accept="image/*" class="admin-media-replace-file" />' +
+      '<div class="admin-media-replace-preview" hidden></div>' +
+      '<button type="button" class="btn-primary admin-media-replace-upload-btn">Open uploader</button>' +
+      "</div>" +
+      '<div class="admin-media-replace-panel" data-panel="url" hidden>' +
+      '<p class="admin-media-modal__hint">Paste a public image URL to preview and copy it for your content.</p>' +
+      '<input type="url" class="admin-media-replace-url" placeholder="https://example.com/image.jpg" />' +
+      '<div class="admin-media-replace-preview admin-media-replace-preview--url" hidden></div>' +
+      '<button type="button" class="btn-outline admin-media-replace-copy-url" disabled>Copy URL</button>' +
+      "</div>";
+    var tabs = content.querySelectorAll(".admin-media-replace-tab");
+    var panels = content.querySelectorAll(".admin-media-replace-panel");
+    tabs.forEach(function (tab) {
+      tab.addEventListener("click", function () {
+        tabs.forEach(function (t) {
+          t.classList.toggle("admin-media-replace-tab--active", t === tab);
+        });
+        panels.forEach(function (panel) {
+          panel.hidden = panel.getAttribute("data-panel") !== tab.getAttribute("data-tab");
+        });
+      });
+    });
+    var fileInput = content.querySelector(".admin-media-replace-file");
+    var filePreview = content.querySelector('[data-panel="upload"] .admin-media-replace-preview');
+    fileInput.addEventListener("change", function () {
+      var file = fileInput.files && fileInput.files[0];
+      if (!file) {
+        filePreview.hidden = true;
+        filePreview.textContent = "";
+        return;
+      }
+      var url = URL.createObjectURL(file);
+      filePreview.hidden = false;
+      filePreview.innerHTML =
+        '<img src="' + url + '" alt="" /><p>' + escapeHtml(file.name) + "</p>";
+    });
+    content.querySelector(".admin-media-replace-upload-btn").addEventListener("click", function () {
+      closeMediaModal();
+      root.dataset.adminMediaUploadOpen = "true";
+      syncMediaPaneLayout(root);
+      renderMediaWorkspace(root);
+    });
+    var urlInput = content.querySelector(".admin-media-replace-url");
+    var urlPreview = content.querySelector(".admin-media-replace-preview--url");
+    var copyUrlBtn = content.querySelector(".admin-media-replace-copy-url");
+    urlInput.addEventListener("input", function () {
+      var value = urlInput.value.trim();
+      if (!value) {
+        urlPreview.hidden = true;
+        copyUrlBtn.disabled = true;
+        return;
+      }
+      urlPreview.hidden = false;
+      urlPreview.innerHTML = '<img src="' + escapeHtml(value) + '" alt="" />';
+      copyUrlBtn.disabled = false;
+    });
+    copyUrlBtn.addEventListener("click", function () {
+      copyText(urlInput.value.trim());
+    });
+    modal.hidden = false;
+    document.body.classList.add("admin-media-modal-open");
+  }
+
+  function bindMediaCardActions(card, item, root) {
+    card.querySelector('[data-action="preview"]').addEventListener("click", function (event) {
+      event.stopPropagation();
+      openMediaPreviewModal(item);
+    });
+    card.querySelector('[data-action="replace"]').addEventListener("click", function (event) {
+      event.stopPropagation();
+      openMediaReplaceModal(item, root);
+    });
+    var pathEl = card.querySelector(".admin-media-card__path, .admin-media-list-row__path");
+    if (pathEl) {
+      pathEl.addEventListener("click", function (event) {
+        event.stopPropagation();
+        copyText(item.path).then(function () {
+          var copiedClass = card.classList.contains("admin-media-list-row")
+            ? "admin-media-list-row--copied"
+            : "admin-media-card--copied";
+          card.classList.add(copiedClass);
+          window.setTimeout(function () {
+            card.classList.remove(copiedClass);
+          }, 1200);
+        });
+      });
+    }
+  }
+
+  function buildMediaCard(item, root) {
+    var card = document.createElement("article");
     card.className = "admin-media-card";
     card.dataset.path = item.path;
-    var badge = item.source === "articles" ? "Article" : "Site";
     card.innerHTML =
-      '<span class="admin-media-card__thumb">' +
+      '<div class="admin-media-card__thumb">' +
       '<img src="' +
       escapeHtml(item.path) +
       '" alt="" loading="lazy" decoding="async" />' +
-      "</span>" +
-      '<span class="admin-media-card__body">' +
-      '<span class="admin-media-card__badge">' +
-      escapeHtml(badge) +
-      "</span>" +
+      '<div class="admin-media-card__actions">' +
+      '<button type="button" class="admin-media-card__action" data-action="preview">Preview</button>' +
+      '<button type="button" class="admin-media-card__action" data-action="replace">Replace</button>' +
+      "</div>" +
+      "</div>" +
+      '<div class="admin-media-card__body">' +
       '<span class="admin-media-card__name">' +
       escapeHtml(item.name) +
       "</span>" +
-      '<span class="admin-media-card__path">' +
+      '<button type="button" class="admin-media-card__path">' +
       escapeHtml(item.path) +
+      "</button>" +
+      '<span class="admin-media-card__meta">' +
+      '<span class="admin-media-card__dims">' +
+      escapeHtml(formatMediaDimensions(item)) +
       "</span>" +
-      buildMediaUsageHtml(item) +
-      "</span>";
-    bindMediaItemClick(card, item);
+      buildMediaUsageMeta(item) +
+      "</span>" +
+      "</div>";
+    bindMediaCardActions(card, item, root);
     return card;
   }
 
-  function buildMediaListRow(item) {
-    var row = document.createElement("button");
-    row.type = "button";
+  function buildMediaListRow(item, root) {
+    var row = document.createElement("article");
     row.className = "admin-media-list-row";
     row.dataset.path = item.path;
-    var badge = item.source === "articles" ? "Article" : "Site";
     row.innerHTML =
       '<span class="admin-media-list-row__thumb">' +
       '<img src="' +
@@ -2670,19 +2507,23 @@
       "</span>" +
       '<span class="admin-media-list-row__main">' +
       '<span class="admin-media-list-row__top">' +
-      '<span class="admin-media-card__badge">' +
-      escapeHtml(badge) +
-      "</span>" +
       '<span class="admin-media-list-row__name">' +
       escapeHtml(item.name) +
       "</span>" +
+      '<span class="admin-media-list-row__dims">' +
+      escapeHtml(formatMediaDimensions(item)) +
       "</span>" +
-      '<span class="admin-media-list-row__path">' +
+      buildMediaUsageMeta(item) +
+      "</span>" +
+      '<button type="button" class="admin-media-list-row__path">' +
       escapeHtml(item.path) +
+      "</button>" +
+      '<span class="admin-media-list-row__actions">' +
+      '<button type="button" class="admin-media-card__action" data-action="preview">Preview</button>' +
+      '<button type="button" class="admin-media-card__action" data-action="replace">Replace</button>' +
       "</span>" +
-      buildMediaUsageHtml(item) +
       "</span>";
-    bindMediaItemClick(row, item);
+    bindMediaCardActions(row, item, root);
     return row;
   }
 
@@ -2716,13 +2557,14 @@
         setMediaViewMode(root, "grid");
       }
 
-      var filter = getMediaFilter(root);
+      var pageId = getMediaPageFilter(root);
       var listView = isMediaListView(root);
       var manifestReady = Array.isArray(mediaManifest);
       var items = manifestReady ? mediaManifest : [];
-      var filtered = filterMediaItems(items, filter);
+      var pages = mediaPages || [];
+      var filtered = filterMediaItems(items, pageId, pages);
       var signature =
-        filter +
+        pageId +
         "|" +
         (listView ? "list" : "grid") +
         "|" +
@@ -2791,27 +2633,6 @@
         viewToggle.appendChild(listBtn);
         viewToggle.appendChild(gridBtn);
 
-        var filters = document.createElement("div");
-        filters.className = "admin-media-filters";
-        [
-          { key: "all", label: "All" },
-          { key: "articles", label: "Article uploads" },
-          { key: "site", label: "Site assets" },
-        ].forEach(function (opt) {
-          var btn = document.createElement("button");
-          btn.type = "button";
-          btn.className = "admin-media-filter";
-          btn.dataset.filter = opt.key;
-          btn.textContent = opt.label;
-          if (opt.key === filter) btn.classList.add("admin-media-filter--active");
-          btn.addEventListener("click", function (event) {
-            event.stopPropagation();
-            setMediaFilter(root, opt.key);
-            renderMediaWorkspace(root);
-          });
-          filters.appendChild(btn);
-        });
-
         var uploadBtn = document.createElement("button");
         uploadBtn.type = "button";
         uploadBtn.className = "btn-primary admin-media-upload-btn";
@@ -2824,7 +2645,6 @@
         });
 
         actions.appendChild(viewToggle);
-        actions.appendChild(filters);
         actions.appendChild(uploadBtn);
         head.appendChild(titleWrap);
         head.appendChild(actions);
@@ -2845,43 +2665,34 @@
           empty.className = "admin-media-empty";
           empty.innerHTML =
             "<p><strong>No images in this view.</strong></p>" +
-            '<p class="admin-media-empty__hint">Try another filter, or upload a new image for your articles.</p>';
+            '<p class="admin-media-empty__hint">Try another page in the sidebar, or upload a new image for your articles.</p>';
           workspace.appendChild(empty);
         } else if (listView) {
           var list = document.createElement("div");
           list.className = "admin-media-list";
           filtered.forEach(function (item) {
-            list.appendChild(buildMediaListRow(item));
+            list.appendChild(buildMediaListRow(item, root));
           });
           workspace.appendChild(list);
         } else {
           var grid = document.createElement("div");
           grid.className = "admin-media-grid";
           filtered.forEach(function (item) {
-            grid.appendChild(buildMediaCard(item));
+            grid.appendChild(buildMediaCard(item, root));
           });
           workspace.appendChild(grid);
         }
       } else {
-        workspace.querySelectorAll(".admin-media-filter").forEach(function (btn) {
-          btn.classList.toggle("admin-media-filter--active", btn.dataset.filter === filter);
-        });
-        var listBtnSync = workspace.querySelector(".admin-view-btn--list");
-        var gridBtnSync = workspace.querySelector(".admin-view-btn--grid");
-        if (listBtnSync) {
-          listBtnSync.classList.toggle("admin-view-btn--active", listView);
-          listBtnSync.setAttribute("aria-pressed", listView ? "true" : "false");
-        }
-        if (gridBtnSync) {
-          gridBtnSync.classList.toggle("admin-view-btn--active", !listView);
-          gridBtnSync.setAttribute("aria-pressed", listView ? "false" : "true");
-        }
         mountMediaUploadPanel(root, workspace);
       }
 
       pane.appendChild(workspace);
+      syncMediaSidebarPages();
     }
 
+    loadMediaPages().then(function () {
+      run();
+    });
     run();
     loadMediaManifest().then(run);
   }
@@ -2899,21 +2710,16 @@
     mountCreateButton(root);
     renderCustomCollectionCards(root);
     enhanceMediaView(root);
-    mountEditorSubheader(root);
-    mountEditorSplitShell(root);
-    if (isEditorRoute()) {
-      [100, 300, 600, 1000, 1500, 2500, 4000].forEach(function (delay) {
-        window.setTimeout(function () {
-          mountEditorSplitShell(root);
-        }, delay);
-      });
-    }
+    mountEditorChrome(root);
   }
 
   function watch() {
     var root = $("nc-root");
     if (!root) return;
 
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape") closeMediaModal();
+    });
     document.addEventListener("click", function (event) {
       if (
         event.target.closest(
@@ -2927,8 +2733,7 @@
     enhance(root);
 
     window.addEventListener("hashchange", function () {
-      resetEditorLayout(root);
-      resetEditorSplitShell(root);
+      cleanupLegacyEditorShell(root);
       resetEditorState();
       resetCollectionLayout(root);
       closeMediaUploadPanel(root);

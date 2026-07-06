@@ -2235,8 +2235,8 @@ body.admin-composer-dropdown-open #nc-root .admin-custom-grid {
   white-space: nowrap !important;
 }
 
-/* Editor split shell — fixed overlay: 65% | divider | 35% */
-body.admin-page--editor-split .admin-editor-split-shell {
+/* Editor two-column layout — form stays in React tree, columns inside form */
+body.admin-page--editor-split #nc-root main.admin-main {
   position: fixed;
   top: var(--rolcc-header-height);
   left: 0;
@@ -2245,131 +2245,52 @@ body.admin-page--editor-split .admin-editor-split-shell {
   z-index: 500;
   display: flex;
   flex-direction: column;
-  background: var(--rolcc-primary);
+  overflow: hidden;
+  background: #fff;
+  padding: 0 !important;
   box-sizing: border-box;
-  pointer-events: auto;
 }
 
-body.admin-page--editor-split .admin-editor-split-shell__subheader {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
+body.admin-page--editor-split .admin-editor-subheader {
   flex-shrink: 0;
   margin: 0;
   padding: 1.25rem clamp(1rem, 2vw, 2rem) 0.75rem;
   border-bottom: 1px solid var(--rolcc-slate-200);
 }
 
-body.admin-page--editor-split .admin-editor-split {
-  display: grid;
-  grid-template-columns: 65% 1px calc(35% - 1px);
+body.admin-page--editor-split #nc-root main form,
+body.admin-page--editor-split #nc-root main form.admin-editor-form {
+  display: flex !important;
   flex: 1 1 auto;
-  width: 100%;
-  min-height: 0;
-  box-sizing: border-box;
-}
-
-body.admin-page--editor-split .admin-editor-split__left {
-  min-width: 0;
-  background: var(--rolcc-primary);
-  overflow-y: auto;
-  padding: 0 clamp(1rem, 2vw, 2rem) 2rem 0;
-  box-sizing: border-box;
-}
-
-body.admin-page--editor-split .admin-editor-split__divider {
-  width: 1px;
-  align-self: stretch;
-  background: var(--rolcc-slate-300);
-}
-
-body.admin-page--editor-split .admin-editor-split__right {
-  min-width: 0;
-  background: #fff;
-  overflow-y: auto;
-  padding: 0 clamp(1rem, 1.5vw, 1.5rem) 2rem;
-  box-sizing: border-box;
-}
-
-body.admin-page--editor-split .admin-editor-split__fields {
-  display: flex;
   flex-direction: column;
-  gap: 0;
-  width: 100%;
+  min-height: 0;
+  overflow: hidden;
+  visibility: visible !important;
+  width: 100% !important;
+  max-width: none !important;
 }
 
-body.admin-page--editor-split .admin-editor-split__fields--meta .admin-field--meta,
-body.admin-page--editor-split .admin-editor-split__fields--content .admin-field--content {
-  margin-bottom: 1rem;
+body.admin-page--editor-split .admin-editor-mount,
+body.admin-page--editor-split #nc-root [class*="EditorControlPane"] {
+  display: flex !important;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+  width: 100% !important;
+  max-width: none !important;
 }
 
-body.admin-page--editor-split .admin-editor-split__fields--meta label,
-body.admin-page--editor-split .admin-editor-split__fields--meta [class*="FieldLabel"] {
-  font-size: 0.6875rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--rolcc-slate-500);
-}
-
-body.admin-page--editor-split .admin-editor-split__fields--content label,
-body.admin-page--editor-split .admin-editor-split__fields--content [class*="FieldLabel"] {
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--rolcc-slate-700);
-}
-
-body.admin-page--editor-split .admin-editor-col > .admin-editor-column-label,
-body.admin-page--editor-split .admin-editor-split__left > .admin-editor-column-label,
-body.admin-page--editor-split .admin-editor-split__right > .admin-editor-column-label {
+body.admin-page--editor-split .admin-editor-col > .admin-editor-column-label {
   display: block;
   margin: 0 0 1rem;
-  padding: 1rem 0 0.5rem;
+  padding: 0.75rem 0 0.5rem;
   border-bottom: 1px solid var(--rolcc-slate-200);
   font-size: 0.6875rem;
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--rolcc-slate-500);
-}
-
-/* Show Decap fields moved into the split shell */
-body.admin-page--editor-split #admin-editor-split-shell [class*="EditorControl"],
-body.admin-page--editor-split #admin-editor-split-shell [class*="Widget"],
-body.admin-page--editor-split #admin-editor-split-shell [class*="ObjectControl"],
-body.admin-page--editor-split #admin-editor-split-shell .admin-field--meta,
-body.admin-page--editor-split #admin-editor-split-shell .admin-field--content,
-body.admin-page--editor-split #admin-editor-split-shell .admin-editor-split__fields input,
-body.admin-page--editor-split #admin-editor-split-shell .admin-editor-split__fields textarea,
-body.admin-page--editor-split #admin-editor-split-shell .admin-editor-split__fields select,
-body.admin-page--editor-split #admin-editor-split-shell .admin-editor-split__fields button {
-  display: revert !important;
-  visibility: visible !important;
-  pointer-events: auto !important;
-  position: relative !important;
-  width: auto !important;
-  max-width: 100% !important;
-  clip: auto !important;
-  overflow: visible !important;
-  height: auto !important;
-  opacity: 1 !important;
-}
-
-body.admin-page--editor-split #admin-editor-split-shell .admin-field--meta,
-body.admin-page--editor-split #admin-editor-split-shell .admin-field--content {
-  display: block !important;
-  width: 100% !important;
-}
-
-/* Hide Decap editor UI only after fields are mounted in the split */
-body.admin-page--editor-split-ready #nc-root form,
-body.admin-page--editor-split-ready #nc-root [class*="EditorControlPane"],
-body.admin-page--editor-split-ready #nc-root [class*="ControlPane"],
-body.admin-page--editor-split-ready #nc-root .admin-editor-decap-hidden,
-body.admin-page--editor-split-ready #nc-root main > :not(.admin-editor-subheader):not(.admin-media-workspace) {
-  display: none !important;
-  visibility: hidden !important;
-  pointer-events: none !important;
 }
 
 #nc-root.admin-view--editor main.admin-editor-split-active {
@@ -2447,37 +2368,41 @@ body.admin-page--editor-split-ready #nc-root main > :not(.admin-editor-subheader
   display: none !important;
 }
 
-#nc-root.admin-view--editor .admin-editor-columns {
+#nc-root.admin-view--editor .admin-editor-columns,
+body.admin-page--editor-split .admin-editor-columns {
   display: grid !important;
   grid-template-columns: 65% 35% !important;
   gap: 0 !important;
-  align-items: start !important;
+  flex: 1 1 auto;
+  align-items: stretch !important;
   width: 100% !important;
   max-width: none !important;
-  min-height: calc(100vh - var(--rolcc-header-height) - 5rem);
+  min-height: 0 !important;
+  overflow: hidden;
   box-sizing: border-box;
 }
 
 .admin-editor-col--content {
   min-width: 0 !important;
   width: 100% !important;
-  max-width: 65% !important;
-  padding: 0 clamp(1rem, 2vw, 2rem) 3rem 0;
+  max-width: none !important;
+  padding: 0.75rem clamp(1rem, 2vw, 2rem) 2rem 0;
   box-sizing: border-box;
+  overflow-y: auto;
+  background: #fff;
 }
 
 .admin-editor-col--meta {
-  position: sticky;
-  top: calc(var(--rolcc-header-height) + 0.75rem);
-  align-self: start;
+  position: static;
+  align-self: stretch;
   width: 100% !important;
-  max-width: 35% !important;
-  max-height: calc(100vh - var(--rolcc-header-height) - 1rem);
+  max-width: none !important;
+  max-height: none;
   overflow-y: auto;
-  padding: 0 0 1.5rem clamp(1rem, 1.5vw, 1.5rem);
-  border-left: 1px solid var(--rolcc-slate-200);
-  background: var(--rolcc-slate-50);
-  border-radius: var(--rolcc-radius-lg) 0 0 var(--rolcc-radius-lg);
+  padding: 0.75rem 0 2rem clamp(1rem, 1.5vw, 1.5rem);
+  border-left: 1px solid var(--rolcc-slate-300);
+  background: #fff;
+  border-radius: 0;
   box-sizing: border-box;
 }
 

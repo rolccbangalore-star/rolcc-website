@@ -206,9 +206,13 @@
     var columns = form.querySelector(".admin-editor-columns");
     if (columns) {
       return Array.prototype.slice
-        .call(form.querySelectorAll(".admin-editor-col__fields > div"))
+        .call(
+          form.querySelectorAll(
+            ".admin-editor-col__fields--content > *, .admin-editor-col__fields--meta > *"
+          )
+        )
         .filter(function (node) {
-          return getFieldLabelElements(node).length > 0;
+          return node.nodeType === 1;
         });
     }
 
@@ -323,27 +327,39 @@
     var metaFields = columns.querySelector(".admin-editor-col__fields--meta");
     if (!contentFields || !metaFields) return;
 
+    var metaEntries = [];
+
     controls.forEach(function (control) {
       var labelText = getControlLabel(control);
       if (isContentField(labelText)) {
         control.classList.add("admin-field--content");
         control.classList.remove("admin-field--meta");
         contentFields.appendChild(control);
-      } else {
-        control.classList.add("admin-field--meta");
-        control.classList.remove("admin-field--content");
-        if (normalize(labelText) === "title") {
-          control.classList.add("admin-field--title-synced");
-          var decapTitle = control.querySelector('input[type="text"], textarea');
-          if (decapTitle && decapTitle.dataset.titleSyncBound !== "true") {
-            decapTitle.dataset.titleSyncBound = "true";
-            decapTitle.addEventListener("input", function () {
-              syncTitleFromDecap(root);
-            });
-          }
-        }
-        metaFields.appendChild(control);
+        return;
       }
+
+      if (!isMetaField(labelText)) return;
+
+      control.classList.add("admin-field--meta");
+      control.classList.remove("admin-field--content");
+      if (normalize(labelText) === "title") {
+        control.classList.add("admin-field--title-synced");
+        var decapTitle = control.querySelector('input[type="text"], textarea');
+        if (decapTitle && decapTitle.dataset.titleSyncBound !== "true") {
+          decapTitle.dataset.titleSyncBound = "true";
+          decapTitle.addEventListener("input", function () {
+            syncTitleFromDecap(root);
+          });
+        }
+      }
+      metaEntries.push({ control: control, rank: getMetaFieldRank(labelText) });
+    });
+
+    metaEntries.sort(function (a, b) {
+      return a.rank - b.rank;
+    });
+    metaEntries.forEach(function (entry) {
+      metaFields.appendChild(entry.control);
     });
 
     mount.classList.add("admin-editor-mount");
@@ -966,143 +982,10 @@
     var shell = document.getElementById("admin-editor-split-shell");
     if (shell) shell.remove();
     document.body.classList.remove("admin-page--editor-split", "admin-page--editor-split-ready");
-    root.querySelectorAll(".admin-editor-split").forEach(function (el) {
-      if (el.id !== "admin-editor-split-shell" && !el.closest("#admin-editor-split-shell")) el.remove();
-    });
     root.querySelectorAll(".admin-editor-decap-hidden").forEach(function (el) {
       el.classList.remove("admin-editor-decap-hidden");
       el.removeAttribute("aria-hidden");
     });
-    root.querySelectorAll("main.admin-editor-split-active").forEach(function (el) {
-      el.classList.remove("admin-editor-split-active");
-    });
-  }
-
-  function hideDecapEditorUI(root) {
-    if (!isEditorRoute()) return;
-    var shell = document.getElementById("admin-editor-split-shell");
-    if (!shell || shell.dataset.adminFieldsMounted !== "true") return;
-
-    document.body.classList.add("admin-page--editor-split-ready");
-
-    var selectors = [
-      "form",
-      '[class*="EditorControlPane"]',
-      '[class*="ControlPane"]',
-      '[class*="WidgetObject"]',
-      '[class*="ObjectWidget"]',
-    ];
-    selectors.forEach(function (sel) {
-      root.querySelectorAll(sel).forEach(function (el) {
-        if (el.closest("#admin-editor-split-shell")) return;
-        el.classList.add("admin-editor-decap-hidden");
-        el.setAttribute("aria-hidden", "true");
-      });
-    });
-    root.querySelectorAll("main").forEach(function (main) {
-      Array.from(main.children).forEach(function (child) {
-        if (
-          child.id === "admin-editor-split-shell" ||
-          child.classList.contains("admin-editor-split-shell") ||
-          child.classList.contains("admin-editor-subheader")
-        ) {
-          return;
-        }
-        child.classList.add("admin-editor-decap-hidden");
-        child.setAttribute("aria-hidden", "true");
-      });
-    });
-  }
-
-  function ensureSplitFieldBuckets(shell) {
-    var left = shell.querySelector(".admin-editor-split__left");
-    var right = shell.querySelector(".admin-editor-split__right");
-    if (!left || !right) return null;
-
-    var contentFields = left.querySelector(".admin-editor-split__fields--content");
-    if (!contentFields) {
-      left.innerHTML =
-        '<p class="admin-editor-column-label">Blog Content</p>' +
-        '<div class="admin-editor-split__fields admin-editor-split__fields--content"></div>';
-      contentFields = left.querySelector(".admin-editor-split__fields--content");
-    }
-
-    var metaFields = right.querySelector(".admin-editor-split__fields--meta");
-    if (!metaFields) {
-      right.innerHTML =
-        '<p class="admin-editor-column-label">Blog Info</p>' +
-        '<div class="admin-editor-split__fields admin-editor-split__fields--meta"></div>';
-      metaFields = right.querySelector(".admin-editor-split__fields--meta");
-    }
-
-    left.removeAttribute("aria-hidden");
-    right.removeAttribute("aria-hidden");
-    return { contentFields: contentFields, metaFields: metaFields };
-  }
-
-  function mountEditorFieldsInSplit(root) {
-    if (!isEditorRoute() || isLoginView(root)) return;
-
-    var shell = document.getElementById("admin-editor-split-shell");
-    if (!shell) return;
-
-    var buckets = ensureSplitFieldBuckets(shell);
-    if (!buckets) return;
-
-    var controls = findEditorFieldControls(root);
-    if (!controls.length) return;
-
-    var metaEntries = [];
-    var contentControls = [];
-
-    controls.forEach(function (control) {
-      var labelText = getControlLabel(control);
-      control.classList.remove("admin-editor-decap-hidden");
-      control.removeAttribute("aria-hidden");
-
-      if (isContentField(labelText)) {
-        control.classList.add("admin-field--content");
-        control.classList.remove("admin-field--meta");
-        contentControls.push(control);
-        return;
-      }
-
-      if (!isMetaField(labelText)) return;
-
-      control.classList.add("admin-field--meta");
-      control.classList.remove("admin-field--content");
-
-      if (normalize(labelText) === "title") {
-        control.classList.add("admin-field--title-synced");
-        var decapTitle = control.querySelector('input[type="text"], textarea');
-        if (decapTitle && decapTitle.dataset.titleSyncBound !== "true") {
-          decapTitle.dataset.titleSyncBound = "true";
-          decapTitle.addEventListener("input", function () {
-            syncTitleFromDecap(root);
-          });
-        }
-      }
-
-      metaEntries.push({ control: control, rank: getMetaFieldRank(labelText) });
-    });
-
-    metaEntries.sort(function (a, b) {
-      return a.rank - b.rank;
-    });
-
-    contentControls.forEach(function (control) {
-      buckets.contentFields.appendChild(control);
-    });
-    metaEntries.forEach(function (entry) {
-      buckets.metaFields.appendChild(entry.control);
-    });
-
-    if (!metaEntries.length && !contentControls.length) return;
-
-    shell.dataset.adminFieldsMounted = "true";
-    document.body.classList.add("admin-page--editor-split-ready");
-    syncTitleFromDecap(root);
-    hideDecapEditorUI(root);
   }
 
   function mountEditorSplitShell(root) {
@@ -1111,44 +994,13 @@
       return;
     }
 
-    var shell = document.getElementById("admin-editor-split-shell");
-    if (!shell) {
-      shell = document.createElement("div");
-      shell.id = "admin-editor-split-shell";
-      shell.className = "admin-editor-split-shell";
-      shell.setAttribute("role", "presentation");
-      shell.innerHTML =
-        '<div class="admin-editor-split-shell__subheader"></div>' +
-        '<div class="admin-editor-split">' +
-        '<div class="admin-editor-split__left">' +
-        '<p class="admin-editor-column-label">Blog Content</p>' +
-        '<div class="admin-editor-split__fields admin-editor-split__fields--content"></div>' +
-        "</div>" +
-        '<div class="admin-editor-split__divider" aria-hidden="true"></div>' +
-        '<div class="admin-editor-split__right">' +
-        '<p class="admin-editor-column-label">Blog Info</p>' +
-        '<div class="admin-editor-split__fields admin-editor-split__fields--meta"></div>' +
-        "</div>" +
-        "</div>";
-      document.body.appendChild(shell);
-    }
-
-    var collection = getActiveCollection();
-    var backHref = "#/collections/" + (collection || "everyday-faith");
-    var subheader = shell.querySelector(".admin-editor-split-shell__subheader");
-    if (subheader) {
-      subheader.innerHTML =
-        '<a href="' +
-        backHref +
-        '" class="admin-editor-back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>Back</a>' +
-        '<span class="admin-editor-type-badge">' +
-        escapeHtml(COLLECTION_LABELS[collection] || "Article") +
-        "</span>";
-    }
+    var legacyShell = document.getElementById("admin-editor-split-shell");
+    if (legacyShell) legacyShell.remove();
 
     document.body.classList.add("admin-page--editor-split");
-    mountEditorFieldsInSplit(root);
-    hideDecapEditorUI(root);
+    document.body.classList.remove("admin-page--editor-split-ready");
+    mountEditorSubheader(root);
+    tagEditorLayout(root);
   }
 
   function mountProfileButton(root) {
@@ -3019,7 +2871,6 @@
     if (isEditorRoute()) {
       [100, 300, 600, 1000, 1500, 2500, 4000].forEach(function (delay) {
         window.setTimeout(function () {
-          mountEditorFieldsInSplit(root);
           mountEditorSplitShell(root);
         }, delay);
       });

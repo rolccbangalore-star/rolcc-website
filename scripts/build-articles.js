@@ -530,6 +530,7 @@ function buildHubPage(articles, faqs) {
 
   const bodyMain = `
       <div class="articles-hub-page">
+      <div class="articles-hub-top">
       <section class="articles-hero contact-hero relative">
         <div class="relative z-10 mx-auto max-w-6xl px-4 pt-6 pb-12 sm:px-6 sm:pt-24 sm:pb-16 md:pt-28 md:pb-20 lg:px-8 lg:pt-32 lg:pb-24">
           <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-accent">Articles &amp; Studies</p>
@@ -562,6 +563,7 @@ function buildHubPage(articles, faqs) {
         </div>
       </section>
 
+      </div>
       ${renderHubCtaBanner()}
       ${renderHubFaqSection(faqs)}
       </div>
@@ -636,6 +638,24 @@ function articleSchema(article, canonical) {
   return JSON.stringify(base, null, 2);
 }
 
+function renderClapWidget(article, label) {
+  const ariaLabel = label || "Appreciate this article";
+  return `<div class="article-clap" data-article-clap data-slug="${escapeHtml(article.slug)}">
+          <button type="button" class="article-clap__btn" data-clap-button aria-label="${escapeHtml(ariaLabel)}" aria-pressed="false">
+            <svg class="article-clap__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M7 11v8a1 1 0 0 0 1 1h2v-9H6a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h1" />
+              <path d="M15 11V4a1 1 0 0 0-1-1h-1.2a1 1 0 0 0-.82.43l-2.38 3.46" />
+              <path d="M15 11h2.2a1 1 0 0 1 .97 1.24l-.92 4.6A1 1 0 0 1 16.3 21H9" />
+            </svg>
+          </button>
+          <div class="article-clap__meta">
+            <p class="article-clap__count"><span data-clap-count>0</span></p>
+            <p class="article-clap__label">Appreciations</p>
+            <p class="article-clap__user" data-clap-user hidden></p>
+          </div>
+        </div>`;
+}
+
 function renderQuizSection(article) {
   if (!article.includeQuiz || !article.quiz?.length) return "";
   return `<section class="article-section" id="article-quiz" aria-label="Study quiz">
@@ -680,9 +700,7 @@ function buildEverydayFaithPage(article, allArticles) {
         ${renderKeyTakeaways(article.keyTakeaways)}
         ${renderQuizSection(article)}
         <div class="mt-10">
-          <button type="button" class="article-clap" data-article-clap data-slug="${escapeHtml(article.slug)}" aria-label="Appreciate this article">
-            <span aria-hidden="true">👏</span> Appreciate · <span data-clap-count>0</span>
-          </button>
+          ${renderClapWidget(article)}
         </div>
         ${renderRelated(allArticles, article)}
         <p class="mt-10"><a href="/articles" class="text-sm font-medium text-accent hover:underline">← Back to all articles</a></p>
@@ -746,9 +764,7 @@ function buildBackToBiblePage(article, allArticles) {
         ${activitiesHtml}
         ${quizHtml}
         <div class="mt-10">
-          <button type="button" class="article-clap" data-article-clap data-slug="${escapeHtml(article.slug)}" aria-label="Appreciate this study">
-            <span aria-hidden="true">👏</span> Appreciate · <span data-clap-count>0</span>
-          </button>
+          ${renderClapWidget(article, "Appreciate this study")}
         </div>
         ${renderRelated(allArticles, article)}
         <p class="mt-10"><a href="/articles" class="text-sm font-medium text-accent hover:underline">← Back to all articles</a></p>

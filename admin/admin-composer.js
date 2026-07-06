@@ -1,7 +1,7 @@
 (function () {
   var CONTENT_LABELS = ["article content", "sections"];
   var COLLECTION_LABELS = {
-    "everyday-faith": "Everyday Faith",
+    "everyday-faith": "Sermon Summary",
     "back-to-bible": "Back to the Bible",
   };
   var entryCache = Object.create(null);
@@ -489,7 +489,10 @@
       controls.classList.add("admin-collection-toolbar");
       styleViewToggleButtons(controls);
       safeAppend(topBlock, controls);
+      controls.hidden = false;
     }
+
+    applyCollectionTitle(main, getActiveCollection());
 
     if (!headerWrap) {
       headerWrap = document.createElement("div");
@@ -930,7 +933,35 @@
     });
   }
 
+  function ensureToolbarInHeader(main) {
+    var head = main.querySelector(".admin-collection-head");
+    if (!head) return;
+
+    var toolbar = main.querySelector(".admin-collection-toolbar");
+    if (!toolbar) {
+      toolbar = findControls(main);
+      if (toolbar) toolbar.classList.add("admin-collection-toolbar");
+    }
+
+    if (toolbar) {
+      styleViewToggleButtons(toolbar);
+      safeAppend(head, toolbar);
+      toolbar.hidden = false;
+      toolbar.style.display = "inline-flex";
+    }
+  }
+
+  function applyCollectionTitle(main, collection) {
+    var h1 = main.querySelector("h1");
+    if (!h1 || !collection) return;
+    if (COLLECTION_LABELS[collection]) {
+      h1.textContent = COLLECTION_LABELS[collection];
+    }
+  }
+
   function hideDecapEntryLists(main) {
+    ensureToolbarInHeader(main);
+
     Array.prototype.forEach.call(main.children, function (child) {
       if (child.classList.contains("admin-collection-header")) return;
       if (child.classList.contains("admin-custom-entries")) return;
@@ -993,12 +1024,15 @@
     if (!collection) return;
 
     function run() {
+      restructureCollectionHeader(root);
+
       if (!root.dataset.adminViewMode) {
         setViewMode(root, "grid");
       }
 
       var listView = isListView(root);
       syncCollectionViewMode(root);
+      applyCollectionTitle(main, collection);
 
       var entries = cardManifest && cardManifest[collection];
       if (!entries) return;
@@ -1063,7 +1097,7 @@
 
       container.hidden = false;
       hideDecapEntryLists(main);
-      restructureCollectionHeader(root);
+      ensureToolbarInHeader(main);
       bindViewModeButtons(root);
     }
 

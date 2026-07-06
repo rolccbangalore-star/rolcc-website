@@ -571,7 +571,8 @@ body {
 
 /* ——— Collection header (Google Drive-style toolbar row) ——— */
 #nc-root .admin-collection-header {
-  padding: 1.25rem 0 0;
+  padding: 2rem 0 0;
+  margin-top: 0.75rem;
   max-width: none;
   width: 100%;
   box-sizing: border-box;
@@ -614,6 +615,7 @@ body {
 
 #nc-root .admin-collection-toolbar {
   display: inline-flex !important;
+  visibility: visible !important;
   align-items: center;
   justify-content: flex-end;
   flex: 0 0 auto !important;
@@ -623,6 +625,8 @@ body {
   max-width: none !important;
   margin: 0 !important;
   padding: 0 !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
 }
 
 #nc-root .admin-sort-wrap {
@@ -837,8 +841,34 @@ body {
   background: var(--rolcc-slate-50);
 }
 
-#nc-root.admin-view--list .admin-custom-entries .admin-list-header {
+#nc-root.admin-view--list .admin-custom-list .admin-list-row__link {
   display: grid;
+  grid-template-columns: minmax(14rem, 2.2fr) 8.5rem 9rem 7rem 5.5rem;
+  gap: 1rem;
+  align-items: center;
+  width: 100%;
+  min-height: 3rem;
+  padding: 0.65rem 0.75rem;
+  box-sizing: border-box;
+  color: inherit;
+  text-decoration: none;
+}
+
+#nc-root.admin-view--list .admin-custom-entries .admin-list-header {
+  display: grid !important;
+  grid-template-columns: minmax(14rem, 2.2fr) 8.5rem 9rem 7rem 5.5rem;
+  gap: 1rem;
+  align-items: center;
+  width: 100%;
+  padding: 0.55rem 0.75rem;
+  margin: 0 0 0.35rem;
+  border-bottom: 1px solid var(--rolcc-slate-200);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--rolcc-slate-500);
+  box-sizing: border-box;
 }
 
 #nc-root.admin-view--grid .admin-custom-entries .admin-list-header {

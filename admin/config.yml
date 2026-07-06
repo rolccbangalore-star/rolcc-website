@@ -22,7 +22,7 @@ editor:
 
 collections:
   - name: everyday-faith
-    label: Everyday Faith
+    label: Sermon Summary
     folder: data/articles/everyday-faith
     create: true
     slug: "{{slug}}"

@@ -490,6 +490,236 @@ function hubCardOptions(article, featuredSlug, latestSlug) {
   };
 }
 
+const BLOG_SECTION_PAGES = {
+  "index.html": {
+    slug: "index",
+    eyebrow: "Articles & Studies",
+    title: "Faith for everyday life",
+    description: "Sermon reflections and Bible studies written for real life — featured picks and the latest reads.",
+    limit: 4,
+    gridClass: "grid gap-6 sm:grid-cols-2 lg:grid-cols-4",
+  },
+  "fellowship.html": {
+    slug: "fellowship",
+    eyebrow: "Articles & Studies",
+    title: "Grow together in the Word",
+    description: "Bible studies and readings chosen for cell fellowship and walking with Jesus in community.",
+    limit: 3,
+    gridClass: "grid gap-6 sm:grid-cols-2 lg:grid-cols-3",
+  },
+  "pmd.html": {
+    slug: "pmd",
+    eyebrow: "Articles & Studies",
+    title: "Calling, work, and ministry",
+    description: "Articles on purpose, leadership, and serving with your gifts — matched to PMD themes.",
+    limit: 3,
+    gridClass: "grid gap-6 sm:grid-cols-2 lg:grid-cols-3",
+  },
+  "counselling.html": {
+    slug: "counselling",
+    eyebrow: "Articles & Studies",
+    title: "Hope for hard seasons",
+    description: "Reads on stress, grief, and finding rest in God — selected for pastoral care and support.",
+    limit: 3,
+    gridClass: "grid gap-6 sm:grid-cols-2 lg:grid-cols-3",
+  },
+};
+
+/** Maps ministry pages to article content tags (from admin article-tags). */
+const BLOG_PAGE_TAG_RELEVANCE = {
+  fellowship: {
+    primaryTags: ["Cell Fellowship", "Bible Study"],
+    tags: [
+      "Cell Fellowship",
+      "Bible Study",
+      "Community",
+      "Discipleship",
+      "Prayer",
+      "Faith",
+      "Everyday Life",
+      "Holy Spirit",
+    ],
+    types: ["back-to-bible"],
+  },
+  pmd: {
+    primaryTags: ["PMD", "Calling", "Work & Calling"],
+    tags: [
+      "PMD",
+      "Calling",
+      "Work & Calling",
+      "Work",
+      "Leadership",
+      "Ministry",
+      "Mentorship",
+      "Stewardship",
+      "Finance & Budget",
+    ],
+  },
+  counselling: {
+    primaryTags: ["Counselling", "Anxiety & Stress"],
+    tags: [
+      "Counselling",
+      "Anxiety & Stress",
+      "Grief",
+      "Grief & Care",
+      "Care",
+      "Faith & Peace",
+      "Peace",
+      "Healing",
+      "Healing & Hope",
+      "Hope",
+      "Family",
+      "Prayer",
+    ],
+  },
+};
+
+function scoreArticleForPage(article, pageSlug) {
+  if (pageSlug === "index") return 1;
+
+  const relevance = BLOG_PAGE_TAG_RELEVANCE[pageSlug];
+  if (!relevance) return 0;
+
+  const tags = normalizeArticleTags(article);
+  let score = 0;
+
+  relevance.primaryTags.forEach((tag) => {
+    if (tags.includes(tag)) score += 20;
+  });
+
+  relevance.tags.forEach((tag) => {
+    if (tags.includes(tag) && !relevance.primaryTags.includes(tag)) score += 8;
+  });
+
+  if (relevance.types && relevance.types.includes(article.type)) {
+    score += 6;
+  }
+
+  return score;
+}
+
+function rankArticlesForPage(articles, pageSlug) {
+  if (pageSlug === "index") {
+    const featuredArticle = pickFeaturedArticle(articles);
+    const featuredSlug = featuredArticle ? `${featuredArticle.type}/${featuredArticle.slug}` : "";
+    return sortHubArticles(articles.slice(), "newest", featuredSlug);
+  }
+
+  return articles
+    .map((article) => ({ article, score: scoreArticleForPage(article, pageSlug) }))
+    .filter(({ score }) => score > 0)
+    .sort((a, b) => {
+      if (b.score !== a.score) return b.score - a.score;
+      return String(b.article.date || "").localeCompare(String(a.article.date || ""));
+    })
+    .map(({ article }) => article);
+}
+
+function pickFeaturedFromPool(pool, pageSlug) {
+  if (pageSlug !== "index") {
+    for (const article of pool) {
+      if (article.featured) return article;
+    }
+    return pool[0] || null;
+  }
+
+  const featured = pool
+    .filter((article) => article.featured)
+    .sort((a, b) => String(b.date || "").localeCompare(String(a.date || "")));
+  if (featured.length) return featured[0];
+  return pool[0] || null;
+}
+
+function selectBlogShowcaseArticles(articles, pageConfig) {
+  const limit = pageConfig.limit;
+  const pageSlug = pageConfig.slug;
+  const pool = rankArticlesForPage(articles, pageSlug);
+  if (!pool.length) return [];
+
+  const featuredArticle = pickFeaturedFromPool(pool, pageSlug);
+  const featuredSlug = featuredArticle ? `${featuredArticle.type}/${featuredArticle.slug}` : "";
+  const latestSlug = hubLatestSlug(pool, featuredSlug);
+  const cards = [];
+
+  if (featuredArticle) {
+    cards.push({
+      article: featuredArticle,
+      ...hubCardOptions(featuredArticle, featuredSlug, latestSlug),
+    });
+  }
+
+  for (const article of pool) {
+    if (cards.length >= limit) break;
+    const key = `${article.type}/${article.slug}`;
+    if (key === featuredSlug) continue;
+    cards.push({
+      article,
+      ...hubCardOptions(article, featuredSlug, latestSlug),
+    });
+  }
+
+  return cards;
+}
+
+function renderBlogSection(articles, pageConfig) {
+  const cards = selectBlogShowcaseArticles(articles, pageConfig);
+  if (!cards.length) return "";
+
+  const cardHtml = cards
+    .map(({ article, featured, latest }) => renderArticleCard(article, { featured, latest }))
+    .join("\n");
+
+  return `      <!-- Blog spotlight (auto-generated) -->
+      <section class="home-blog border-b border-slate-200 bg-white" aria-labelledby="home-blog-heading-${pageConfig.slug}">
+        <div class="mx-auto max-w-6xl px-4 py-14 sm:px-6 md:py-16 lg:px-8">
+          <div class="scroll-reveal max-w-2xl">
+            <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-accent">${escapeHtml(pageConfig.eyebrow)}</p>
+            <h2 id="home-blog-heading-${pageConfig.slug}" class="mt-3 text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">${escapeHtml(pageConfig.title)}</h2>
+            <p class="mt-3 text-sm text-slate-600 sm:text-base">${escapeHtml(pageConfig.description)}</p>
+          </div>
+          <div class="mt-8 scroll-reveal scroll-reveal--delay-1">
+            <div class="${pageConfig.gridClass}">${cardHtml}</div>
+          </div>
+          <div class="mt-8 scroll-reveal scroll-reveal--delay-2">
+            <a href="/articles" class="btn-outline inline-flex items-center rounded-full border border-slate-300 px-6 py-2.5 text-sm font-semibold text-slate-800 hover:border-accent hover:text-accentSoft">View All Articles</a>
+          </div>
+        </div>
+      </section>
+`;
+}
+
+function injectBlogSections(articles) {
+  const blogPattern = /      <!-- Blog spotlight \(auto-generated\) -->[\s\S]*?      <\/section>\r?\n/;
+
+  Object.entries(BLOG_SECTION_PAGES).forEach(([fileName, pageConfig]) => {
+    const filePath = path.join(ROOT, fileName);
+    if (!fs.existsSync(filePath)) return;
+
+    let html = fs.readFileSync(filePath, "utf8");
+    const section = renderBlogSection(articles, pageConfig);
+    if (!section) return;
+
+    if (blogPattern.test(html)) {
+      html = html.replace(blogPattern, section);
+    } else {
+      const faqMarker = "      <!-- Related FAQs (auto-generated) -->";
+      if (html.includes(faqMarker)) {
+        html = html.replace(faqMarker, `${section}${faqMarker}`);
+      }
+    }
+
+    if (!html.includes("css/articles.css")) {
+      html = html.replace(
+        'href="css/styles.css"',
+        `href="css/styles.css" />\n    <link rel="stylesheet" href="css/articles.css?v=${ASSET_CACHE_VERSION}"`
+      );
+    }
+
+    fs.writeFileSync(filePath, html, "utf8");
+    console.log(`Injected blog spotlight into ${fileName}`);
+  });
+}
+
 function sortHubArticles(articles, sort, featuredSlug) {
   const sorted = articles.slice();
   if (sort === "oldest") {
@@ -1175,6 +1405,7 @@ function main() {
   pruneStaleArticleHtml(articles);
   writeSitemap({ articles, faqTotalPages: getFaqTotalPages(), today: TODAY });
   syncSiteNav();
+  injectBlogSections(articles);
 
   console.log(`Built ${articles.length} articles.`);
 }

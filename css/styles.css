@@ -2009,6 +2009,16 @@ body.footer-in-view .article-action-dock > * {
   animation: none;
 }
 
+.article-takeaways + #article-quiz {
+  margin-top: 4.5rem;
+  padding-top: 2.5rem;
+}
+
+#article-quiz {
+  margin-top: 3.5rem;
+  padding-top: 2.25rem;
+}
+
 /* ========== Footer link hover ========== */
 .footer-link {
   transition: color 0.2s ease;

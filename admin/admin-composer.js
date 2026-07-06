@@ -796,8 +796,7 @@
         backBtn.hidden = false;
         backBtn.href = getCollectionBackHref(collection);
         backBtn.title = "Back to " + collectionLabel;
-        var label = backBtn.querySelector(".admin-editor-back__label");
-        if (label) label.textContent = collectionLabel;
+        backBtn.setAttribute("aria-label", "Back to " + collectionLabel);
       }
     } else {
       var editorBack = $("admin-editor-back");

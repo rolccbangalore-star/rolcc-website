@@ -1053,7 +1053,7 @@
 
     main.querySelectorAll("button").forEach(function (btn) {
       var text = normalize(btn.textContent);
-      if (text === "delete" || text === "delete entry") {
+      if (text === "delete" || text === "delete entry" || text.indexOf("delete published") === 0) {
         btn.classList.add("admin-editor-controls-hidden");
       }
     });

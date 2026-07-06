@@ -1018,13 +1018,107 @@
     return Promise.resolve();
   }
 
+  function getEntrySlugFromHash() {
+    var match = (location.hash || "").match(/\/entries\/([^/?]+)/);
+    return match ? decodeURIComponent(match[1]) : "";
+  }
+
+  function findEntryEditorDeleteApi(rootEl) {
+    if (!rootEl) return null;
+    var fiberKey = Object.keys(rootEl).find(function (k) {
+      return k.indexOf("__reactFiber$") === 0 || k.indexOf("__reactContainer$") === 0;
+    });
+    if (!fiberKey) return null;
+
+    var seen = new Set();
+    var queue = [rootEl[fiberKey]];
+    while (queue.length) {
+      var node = queue.shift();
+      if (!node || seen.has(node)) continue;
+      seen.add(node);
+
+      if (node.stateNode && typeof node.stateNode.handleDeleteEntry === "function") {
+        return {
+          handleDeleteEntry: function () {
+            return node.stateNode.handleDeleteEntry();
+          },
+          newEntry: Boolean(node.stateNode.props && node.stateNode.props.newEntry),
+        };
+      }
+
+      var props = node.memoizedProps || node.pendingProps;
+      if (props && props.entryDraft && props.collection && typeof props.deleteEntry === "function") {
+        var slug = props.slug || getEntrySlugFromHash();
+        if (props.newEntry) {
+          return {
+            newEntry: true,
+            collection: props.collection,
+            collectionName: props.collection.get ? props.collection.get("name") : getCollection(),
+          };
+        }
+        if (slug) {
+          return {
+            deleteEntry: props.deleteEntry,
+            collection: props.collection,
+            slug: slug,
+            collectionName: props.collection.get ? props.collection.get("name") : getCollection(),
+          };
+        }
+      }
+
+      if (node.child) queue.push(node.child);
+      if (node.sibling) queue.push(node.sibling);
+      if (node.return) queue.push(node.return);
+    }
+    return null;
+  }
+
+  function withConfirmBypass(fn) {
+    var original = window.confirm;
+    window.confirm = function () {
+      return true;
+    };
+    try {
+      return fn();
+    } finally {
+      window.confirm = original;
+    }
+  }
+
+  function waitForEditorExit(timeoutMs) {
+    timeoutMs = timeoutMs || 15000;
+    return new Promise(function (resolve, reject) {
+      if (!isEditorRoute()) {
+        resolve();
+        return;
+      }
+      var started = Date.now();
+      var timer = window.setInterval(function () {
+        if (!isEditorRoute()) {
+          window.clearInterval(timer);
+          resolve();
+          return;
+        }
+        if (Date.now() - started > timeoutMs) {
+          window.clearInterval(timer);
+          reject(new Error("Delete timed out — refresh and try again."));
+        }
+      }, 150);
+    });
+  }
+
   function clickDecapDeleteButton(root) {
     if (!root) return false;
     var candidates = root.querySelectorAll("button, a[class*='Button'], a.btn");
     for (var i = 0; i < candidates.length; i++) {
       var btn = candidates[i];
       var text = (btn.textContent || "").replace(/\s+/g, " ").trim().toLowerCase();
-      if (text === "delete" || text === "delete entry" || text.indexOf("delete published") === 0) {
+      if (
+        text === "delete" ||
+        text === "delete entry" ||
+        text.indexOf("delete published") === 0 ||
+        text.indexOf("delete unpublished") === 0
+      ) {
         btn.click();
         return true;
       }
@@ -1033,34 +1127,34 @@
   }
 
   function deleteExistingEntry(root, meta) {
-    var api = findEditorActionApi(root);
-    if (!api) {
-      if (clickDecapDeleteButton(root)) return Promise.resolve();
-      return Promise.reject(new Error("Could not connect to the editor delete action"));
+    var editorApi = findEntryEditorDeleteApi(root);
+
+    if (editorApi && editorApi.newEntry) {
+      navigateToCollection(editorApi.collectionName || meta.collectionName);
+      return Promise.resolve();
     }
 
-    if (typeof api.handleDeleteEntry === "function") {
-      return Promise.resolve(api.handleDeleteEntry());
+    if (editorApi && typeof editorApi.handleDeleteEntry === "function") {
+      withConfirmBypass(function () {
+        editorApi.handleDeleteEntry();
+      });
+      return waitForEditorExit();
     }
-    if (typeof api.handleDeletePublishedEntry === "function") {
-      return Promise.resolve(api.handleDeletePublishedEntry());
+
+    if (editorApi && typeof editorApi.deleteEntry === "function") {
+      return Promise.resolve(editorApi.deleteEntry(editorApi.collection, editorApi.slug)).then(function () {
+        navigateToCollection(editorApi.collectionName || meta.collectionName);
+      });
     }
-    if (typeof api.deletePublishedEntry === "function" && meta.collection && meta.slug) {
-      return Promise.resolve(api.deletePublishedEntry(meta.collection, meta.slug));
+
+    if (
+      withConfirmBypass(function () {
+        return clickDecapDeleteButton(root);
+      })
+    ) {
+      return waitForEditorExit();
     }
-    if (typeof api.deleteEntry === "function") {
-      if (meta.collection && meta.slug) {
-        return Promise.resolve(api.deleteEntry(meta.collection, meta.slug));
-      }
-      if (meta.collection) {
-        return Promise.resolve(api.deleteEntry(meta.collection));
-      }
-      return Promise.resolve(api.deleteEntry());
-    }
-    if (typeof api.onDelete === "function") {
-      return Promise.resolve(api.onDelete());
-    }
-    if (clickDecapDeleteButton(root)) return Promise.resolve();
+
     return Promise.reject(new Error("Could not connect to the editor delete action"));
   }
 
@@ -1080,11 +1174,9 @@
     }
 
     return deleteExistingEntry(root, meta).then(function () {
-      window.setTimeout(function () {
-        if (isEditorRoute()) {
-          navigateToCollection(meta.collectionName);
-        }
-      }, 400);
+      if (isEditorRoute()) {
+        navigateToCollection(meta.collectionName);
+      }
     });
   }
 

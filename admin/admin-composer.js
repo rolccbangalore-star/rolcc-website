@@ -858,15 +858,62 @@
   function relocatePublishButton(root) {
     var slot = $("admin-publish-slot");
     if (!slot) return;
+    if (!isEditorRoute() || isLoginView(root)) {
+      slot.hidden = true;
+      slot.setAttribute("aria-hidden", "true");
+      return;
+    }
     var btn = findDecapPublishButton(root);
     if (!btn) {
       slot.hidden = true;
+      slot.setAttribute("aria-hidden", "true");
       return;
     }
     btn.classList.add("btn-outline");
     btn.classList.remove("btn-primary");
     if (btn.parentElement !== slot) slot.appendChild(btn);
     slot.hidden = false;
+    slot.setAttribute("aria-hidden", "false");
+  }
+
+  function syncEditorTopbar(root) {
+    var onEditor = isEditorRoute() && !isLoginView(root);
+    var searchWrap = $("admin-search-wrap");
+    var titleBlock = $("admin-editor-title-block");
+    var importBtn = $("admin-import-btn");
+    var previewBtn = $("admin-preview-btn");
+    var saveDraftBtn = $("admin-save-draft-btn");
+    var publishBtn = $("admin-publish-btn");
+    var publishSlot = $("admin-publish-slot");
+    var websiteLink = document.querySelector(".admin-website-link");
+    var backBtn = $("admin-editor-back");
+
+    if (searchWrap) searchWrap.hidden = onEditor;
+    if (titleBlock) titleBlock.hidden = !onEditor;
+    if (importBtn) importBtn.hidden = !onEditor;
+    if (previewBtn) previewBtn.hidden = !onEditor;
+    if (saveDraftBtn) saveDraftBtn.hidden = !onEditor;
+    if (publishBtn) publishBtn.hidden = !onEditor;
+
+    if (publishSlot) {
+      publishSlot.hidden = !onEditor;
+      publishSlot.setAttribute("aria-hidden", onEditor ? "false" : "true");
+    }
+
+    if (websiteLink) websiteLink.hidden = onEditor;
+
+    if (backBtn) {
+      if (onEditor) {
+        var collection = getActiveCollection() || getPreferredCollection();
+        var collectionLabel = COLLECTION_LABELS[collection] || "Contents";
+        backBtn.hidden = false;
+        backBtn.href = getCollectionBackHref(collection);
+        backBtn.title = "Back to " + collectionLabel;
+        backBtn.setAttribute("aria-label", "Back to " + collectionLabel);
+      } else {
+        backBtn.hidden = true;
+      }
+    }
   }
 
   function hideDecapEditorChrome(root) {
@@ -889,37 +936,9 @@
   }
 
   function mountEditorTopbar(root) {
+    syncEditorTopbar(root);
+
     var onEditor = isEditorRoute() && !isLoginView(root);
-    var searchWrap = $("admin-search-wrap");
-    var titleBlock = $("admin-editor-title-block");
-    var importBtn = $("admin-import-btn");
-    var websiteLink = document.querySelector(".admin-website-link");
-
-    if (searchWrap) searchWrap.hidden = onEditor;
-    if (titleBlock) titleBlock.hidden = !onEditor;
-    if (importBtn) importBtn.hidden = !onEditor;
-    if (websiteLink) websiteLink.hidden = onEditor;
-
-    var saveDraftBtn = $("admin-save-draft-btn");
-    var publishBtn = $("admin-publish-btn");
-    if (saveDraftBtn) saveDraftBtn.hidden = !onEditor;
-    if (publishBtn) publishBtn.hidden = !onEditor;
-
-    if (onEditor) {
-      var backBtn = $("admin-editor-back");
-      if (backBtn) {
-        var collection = getActiveCollection() || getPreferredCollection();
-        var collectionLabel = COLLECTION_LABELS[collection] || "Contents";
-        backBtn.hidden = false;
-        backBtn.href = getCollectionBackHref(collection);
-        backBtn.title = "Back to " + collectionLabel;
-        backBtn.setAttribute("aria-label", "Back to " + collectionLabel);
-      }
-    } else {
-      var editorBack = $("admin-editor-back");
-      if (editorBack) editorBack.hidden = true;
-    }
-
     if (!onEditor) return;
 
     var headerInput = $("admin-editor-title-input");
@@ -3001,6 +3020,7 @@
     renderCustomCollectionCards(root);
     enhanceMediaView(root);
     mountEditorChrome(root);
+    mountEditorTopbar(root);
   }
 
   function watch() {

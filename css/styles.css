@@ -1965,6 +1965,16 @@ body {
 body.footer-in-view .footer-reveal {
   z-index: 20 !important;
 }
+
+body.footer-in-view main {
+  pointer-events: none;
+}
+
+body.footer-in-view .footer-reveal,
+body.footer-in-view .footer-reveal a,
+body.footer-in-view .footer-reveal button {
+  pointer-events: auto;
+}
 .footer-reveal .footer-bg {
   object-fit: cover;
   object-position: center;

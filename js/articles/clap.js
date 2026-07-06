@@ -70,24 +70,51 @@
   var LOTTIE_SRC = "/assets/confetti.lottie";
   var holdStarted = false;
   var pointerActive = false;
+  var hintHideTimer = null;
 
   function formatCount(value) {
     var n = Number(value) || 0;
     if (n >= 1000000) return (n / 1000000).toFixed(1).replace(/\.0$/, "") + "M";
     if (n >= 1000) return (n / 1000).toFixed(1).replace(/\.0$/, "") + "K";
-    return String(n);
+    if (n >= 10) return String(n);
+    return String(n).padStart(2, "0");
   }
 
-  function updateUI() {
+  function showPersonalHint() {
+    if (!hintEl || userClaps <= 0) return;
+    hintEl.textContent = "You gave " + userClaps + "x";
+    hintEl.classList.add("is-personal");
+    hintEl.classList.remove("is-hidden");
+    hintEl.hidden = false;
+    if (hintHideTimer) window.clearTimeout(hintHideTimer);
+    hintHideTimer = window.setTimeout(function () {
+      hintEl.hidden = true;
+      hintEl.classList.add("is-hidden");
+      hintHideTimer = null;
+    }, 4000);
+  }
+
+  function updateHintDefault() {
+    if (!hintEl || hintHideTimer) return;
+    if (userClaps > 0) {
+      hintEl.hidden = true;
+      hintEl.classList.add("is-hidden");
+      hintEl.classList.remove("is-personal");
+      hintEl.textContent = "";
+    } else {
+      hintEl.hidden = false;
+      hintEl.classList.remove("is-hidden", "is-personal");
+      hintEl.textContent = "Give Kudos";
+    }
+  }
+
+  function updateUI(options) {
+    options = options || {};
     if (countEl) countEl.textContent = formatCount(totalCount);
-    if (hintEl) {
-      if (userClaps > 0) {
-        hintEl.textContent = "You gave " + userClaps + "x";
-        hintEl.classList.add("is-personal");
-      } else {
-        hintEl.textContent = "Give Kudos";
-        hintEl.classList.remove("is-personal");
-      }
+    if (options.showPersonal && userClaps > 0) {
+      showPersonalHint();
+    } else {
+      updateHintDefault();
     }
     widget.classList.toggle("is-active", userClaps > 0);
     btn.disabled = userClaps >= MAX_USER_CLAPS;
@@ -163,7 +190,7 @@
     totalCount += applied;
     pendingSync += applied;
     localStorage.setItem(storageKey, String(userClaps));
-    updateUI();
+    updateUI({ showPersonal: applied > 0 });
     playClapAnimation();
     scheduleSync();
     return applied;
@@ -262,6 +289,7 @@
 
   window.addEventListener("pagehide", function () {
     stopHold();
+    if (hintHideTimer) window.clearTimeout(hintHideTimer);
     if (pendingSync > 0) flushSync();
   });
 

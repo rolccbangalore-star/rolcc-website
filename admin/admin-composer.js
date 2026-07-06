@@ -354,13 +354,73 @@
     return main.querySelector('a[href*="/new"]') || main.querySelector("a[href*='new']");
   }
 
+  function isIconOnlyButton(btn) {
+    if (!btn || btn.tagName !== "BUTTON") return false;
+    var text = normalize(btn.textContent);
+    if (text.indexOf("sort by") !== -1) return false;
+    return !!btn.querySelector("svg") || text.length === 0;
+  }
+
   function findControls(main) {
-    var selects = main.querySelectorAll("select");
-    for (var i = 0; i < selects.length; i++) {
-      var wrap = selects[i].closest("div");
-      if (wrap && main.contains(wrap)) return wrap;
+    if (!main) return null;
+
+    var h1 = main.querySelector("h1");
+    if (h1) {
+      var topBlock = h1.closest("div");
+      if (topBlock && topBlock.nextElementSibling && topBlock.nextElementSibling.querySelector("button")) {
+        return topBlock.nextElementSibling;
+      }
     }
+
+    var buttons = main.querySelectorAll("button");
+    for (var i = 0; i < buttons.length; i++) {
+      var label = normalize(buttons[i].textContent);
+      if (label.indexOf("sort by") !== -1) {
+        var wrap = buttons[i].closest("div");
+        if (wrap && main.contains(wrap)) return wrap;
+      }
+    }
+
+    var selects = main.querySelectorAll("select");
+    for (var j = 0; j < selects.length; j++) {
+      var selectWrap = selects[j].closest("div");
+      if (selectWrap && main.contains(selectWrap)) return selectWrap;
+    }
+
     return null;
+  }
+
+  function findViewStyleButtons(toolbar) {
+    if (!toolbar) return null;
+
+    var toggle = toolbar.querySelector(".admin-view-toggle");
+    if (toggle) {
+      var styled = toggle.querySelectorAll(".admin-view-btn");
+      if (styled.length >= 2) {
+        return { container: toggle, list: styled[0], grid: styled[1] };
+      }
+    }
+
+    var divs = toolbar.querySelectorAll("div");
+    for (var i = divs.length - 1; i >= 0; i--) {
+      var div = divs[i];
+      if (div.closest(".admin-view-toggle")) continue;
+      var btns = div.querySelectorAll(":scope > button");
+      if (btns.length !== 2) continue;
+      if (isIconOnlyButton(btns[0]) && isIconOnlyButton(btns[1])) {
+        return { container: div, list: btns[0], grid: btns[1] };
+      }
+    }
+
+    return null;
+  }
+
+  function isDecapButtonActive(btn) {
+    if (!btn) return false;
+    if (btn.classList.contains("admin-view-btn--active")) return true;
+    if (btn.getAttribute("aria-pressed") === "true") return true;
+    var color = window.getComputedStyle(btn).color || "";
+    return color.indexOf("179, 185, 196") === -1 && color.indexOf("b3b9c4") === -1;
   }
 
   function restructureCollectionHeader(root) {
@@ -414,27 +474,13 @@
     if (staleRow) staleRow.remove();
   }
 
-  function styleSortControl(toolbar) {
-    var select = toolbar.querySelector("select");
-    if (!select) return;
-
-    if (!select.classList.contains("admin-sort-select")) {
-      select.classList.add("admin-sort-select");
-    }
-
-    var sortWrap = toolbar.querySelector(".admin-sort-wrap");
-    if (!sortWrap) {
-      sortWrap = document.createElement("div");
-      sortWrap.className = "admin-sort-wrap";
-      select.parentElement.insertBefore(sortWrap, select);
-      sortWrap.appendChild(select);
-    }
-
-    if (!sortWrap.querySelector(".admin-sort-label")) {
+  function ensureSortWrapChrome(sortWrap, anchor, options) {
+    options = options || {};
+    if (options.showLabel !== false && !sortWrap.querySelector(".admin-sort-label")) {
       var sortLabel = document.createElement("span");
       sortLabel.className = "admin-sort-label";
       sortLabel.textContent = "Sort by";
-      sortWrap.insertBefore(sortLabel, select);
+      sortWrap.insertBefore(sortLabel, anchor || sortWrap.firstChild);
     }
 
     if (!sortWrap.querySelector(".admin-sort-chevron")) {
@@ -450,29 +496,68 @@
       chevron.appendChild(path);
       sortWrap.appendChild(chevron);
     }
+  }
 
-    if (select.parentElement !== sortWrap) {
-      sortWrap.appendChild(select);
+  function styleSortControl(toolbar) {
+    var select = toolbar.querySelector("select");
+    if (select) {
+      if (!select.classList.contains("admin-sort-select")) {
+        select.classList.add("admin-sort-select");
+      }
+
+      var sortWrap = toolbar.querySelector(".admin-sort-wrap");
+      if (!sortWrap) {
+        sortWrap = document.createElement("div");
+        sortWrap.className = "admin-sort-wrap";
+        select.parentElement.insertBefore(sortWrap, select);
+        sortWrap.appendChild(select);
+      }
+
+      ensureSortWrapChrome(sortWrap, select);
+
+      if (select.parentElement !== sortWrap) {
+        sortWrap.appendChild(select);
+      }
+
+      var valueEl = sortWrap.querySelector(".admin-sort-value");
+      if (!valueEl) {
+        valueEl = document.createElement("span");
+        valueEl.className = "admin-sort-value";
+        var chevron = sortWrap.querySelector(".admin-sort-chevron");
+        sortWrap.insertBefore(valueEl, chevron || select);
+      }
+
+      function updateSortValue() {
+        var option = select.options[select.selectedIndex];
+        valueEl.textContent = option ? option.textContent.trim() : "";
+      }
+
+      if (select.dataset.sortBound !== "true") {
+        select.dataset.sortBound = "true";
+        select.addEventListener("change", updateSortValue);
+      }
+      updateSortValue();
+      return;
     }
 
-    var valueEl = sortWrap.querySelector(".admin-sort-value");
-    if (!valueEl) {
-      valueEl = document.createElement("span");
-      valueEl.className = "admin-sort-value";
-      var chevron = sortWrap.querySelector(".admin-sort-chevron");
-      sortWrap.insertBefore(valueEl, chevron || select);
+    var sortBtn = null;
+    Array.prototype.forEach.call(toolbar.querySelectorAll("button"), function (btn) {
+      if (sortBtn) return;
+      if (normalize(btn.textContent).indexOf("sort by") !== -1) sortBtn = btn;
+    });
+    if (!sortBtn) return;
+
+    sortBtn.classList.add("admin-sort-trigger");
+
+    var dropdownWrap = sortBtn.closest(".admin-sort-wrap");
+    if (!dropdownWrap) {
+      dropdownWrap = document.createElement("div");
+      dropdownWrap.className = "admin-sort-wrap admin-sort-wrap--dropdown";
+      sortBtn.parentElement.insertBefore(dropdownWrap, sortBtn);
+      dropdownWrap.appendChild(sortBtn);
     }
 
-    function updateSortValue() {
-      var option = select.options[select.selectedIndex];
-      valueEl.textContent = option ? option.textContent.trim() : "";
-    }
-
-    if (select.dataset.sortBound !== "true") {
-      select.dataset.sortBound = "true";
-      select.addEventListener("change", updateSortValue);
-    }
-    updateSortValue();
+    ensureSortWrapChrome(dropdownWrap, sortBtn, { showLabel: false });
   }
 
   function bindViewModeButtons(root) {
@@ -481,47 +566,55 @@
       btn.dataset.viewBound = "true";
       btn.addEventListener("click", function () {
         window.setTimeout(function () {
+          var main = root.querySelector("main");
+          var toolbar = main && main.querySelector(".admin-collection-toolbar");
+          var pair = findViewStyleButtons(toolbar || main);
+          if (pair) {
+            markViewButton(pair.list, "list");
+            markViewButton(pair.grid, "grid");
+          }
           syncCollectionViewMode(root);
           root.querySelectorAll("[data-admin-card]").forEach(function (el) {
             delete el.dataset.adminCard;
             delete el.dataset.adminCardView;
           });
           enhanceGridCards(root);
-        }, 0);
+        }, 80);
       });
     });
   }
 
+  var LIST_VIEW_ICON =
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>';
+  var GRID_VIEW_ICON =
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>';
+
+  function markViewButton(btn, type) {
+    btn.classList.add("admin-view-btn", type === "list" ? "admin-view-btn--list" : "admin-view-btn--grid");
+    if (btn.dataset.adminViewStyled !== "true") {
+      btn.dataset.adminViewStyled = "true";
+      btn.innerHTML = type === "list" ? LIST_VIEW_ICON : GRID_VIEW_ICON;
+    }
+    btn.classList.toggle("admin-view-btn--active", isDecapButtonActive(btn));
+  }
+
   function styleViewToggleButtons(toolbar) {
-    var viewButtons = [];
+    var pair = findViewStyleButtons(toolbar);
+    if (pair) {
+      markViewButton(pair.list, "list");
+      markViewButton(pair.grid, "grid");
 
-    Array.prototype.forEach.call(toolbar.querySelectorAll("button"), function (btn) {
-      if (btn.closest(".admin-view-toggle")) {
-        viewButtons.push(btn);
-        return;
-      }
-      var label = normalize(btn.getAttribute("aria-label") || btn.textContent || "");
-      var isGrid = label.indexOf("grid") !== -1;
-      var isList = label.indexOf("list") !== -1;
-      if (!isGrid && !isList) return;
-
-      btn.classList.add("admin-view-btn", isGrid ? "admin-view-btn--grid" : "admin-view-btn--list");
-      btn.innerHTML = isGrid
-        ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>'
-        : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>';
-      viewButtons.push(btn);
-    });
-
-    if (viewButtons.length) {
       var toggle = toolbar.querySelector(".admin-view-toggle");
       if (!toggle) {
         toggle = document.createElement("div");
         toggle.className = "admin-view-toggle";
-        viewButtons[0].parentElement.insertBefore(toggle, viewButtons[0]);
+        pair.container.parentElement.insertBefore(toggle, pair.container);
       }
-      viewButtons.forEach(function (btn) {
-        if (btn.parentElement !== toggle) toggle.appendChild(btn);
-      });
+      if (pair.list.parentElement !== toggle) toggle.appendChild(pair.list);
+      if (pair.grid.parentElement !== toggle) toggle.appendChild(pair.grid);
+      if (pair.container !== toggle && pair.container.parentElement && pair.container.childElementCount === 0) {
+        pair.container.remove();
+      }
     }
 
     styleSortControl(toolbar);
@@ -529,7 +622,16 @@
 
   function parseEntryPath(href) {
     var match = normalizePath(href).match(/collections\/([^/]+)\/entries\/([^/?#]+)/);
-    return match ? { collection: match[1], slug: decodeURIComponent(match[2]) } : null;
+    if (match) return { collection: match[1], slug: decodeURIComponent(match[2]) };
+
+    var hashMatch = getHash().match(/\/collections\/([^/]+)\/entries\/([^/?#]+)/);
+    return hashMatch ? { collection: hashMatch[1], slug: decodeURIComponent(hashMatch[2]) } : null;
+  }
+
+  function cardNeedsPaint(link, listView) {
+    if (link.dataset.adminCard !== "done") return true;
+    if (link.dataset.adminCardView !== (listView ? "list" : "grid")) return true;
+    return listView ? !link.classList.contains("admin-list-row__link") : !link.querySelector(".admin-card-body");
   }
 
   function fetchEntry(collection, slug) {
@@ -580,17 +682,22 @@
   }
 
   function isListView(root) {
-    var listBtn = root.querySelector(".admin-view-btn--list");
-    if (!listBtn) {
-      listBtn = Array.prototype.find.call(root.querySelectorAll("button"), function (btn) {
-        var label = normalize(btn.getAttribute("aria-label") || btn.textContent || "");
-        return label.indexOf("list") !== -1;
-      });
+    var main = root.querySelector("main");
+    var toolbar = main && main.querySelector(".admin-collection-toolbar");
+    var pair = findViewStyleButtons(toolbar || main);
+    if (pair) {
+      var listActive = isDecapButtonActive(pair.list);
+      var gridActive = isDecapButtonActive(pair.grid);
+      pair.list.classList.toggle("admin-view-btn--active", listActive);
+      pair.grid.classList.toggle("admin-view-btn--active", gridActive);
+      if (listActive) return true;
+      if (gridActive) return false;
+      return true;
     }
-    if (!listBtn) return false;
-    if (listBtn.getAttribute("aria-pressed") === "true") return true;
-    if (listBtn.getAttribute("aria-current") === "true") return true;
-    return listBtn.classList.contains("active") || listBtn.getAttribute("data-active") === "true";
+
+    var listBtn = root.querySelector(".admin-view-btn--list");
+    if (listBtn && isDecapButtonActive(listBtn)) return true;
+    return false;
   }
 
   function syncCollectionViewMode(root) {
@@ -717,8 +824,7 @@
         var imageEl = link.querySelector(".admin-card-image") || link.children[1];
         if (imageEl) imageEl.classList.add("admin-card-image");
 
-        var viewMode = listView ? "list" : "grid";
-        if (link.dataset.adminCard === "done" && link.dataset.adminCardView === viewMode) return;
+        if (!cardNeedsPaint(link, listView)) return;
 
         var cacheKey = parsed.collection + "/" + parsed.slug;
         var manifestData = getManifestEntry(parsed.collection, parsed.slug);
@@ -804,6 +910,7 @@
     updateViewClass(root);
     mountCustomShell(root);
     restructureCollectionHeader(root);
+    syncCollectionViewMode(root);
     mountCreateButton(root);
     enhanceGridCards(root);
     tagEditorLayout(root);

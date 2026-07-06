@@ -2289,8 +2289,83 @@ body.admin-page--editor-split #nc-root main form.admin-editor-form {
   max-width: none !important;
 }
 
+body.admin-page--editor-split .admin-editor-grid-pass-through {
+  display: contents !important;
+}
+
+body.admin-page--editor-split .admin-editor-grid-pane,
+body.admin-page--editor-split #nc-root [class*="EditorControlPane"].admin-editor-grid-pane {
+  display: grid !important;
+  grid-template-columns: 65% 35% !important;
+  align-content: start;
+  align-items: start;
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  width: 100% !important;
+  max-width: none !important;
+  gap: 0;
+  padding: 0 !important;
+  box-sizing: border-box;
+}
+
+body.admin-page--editor-split .admin-editor-grid-header {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  margin: 0;
+  padding: 0.75rem 0 0.5rem;
+  border-bottom: 1px solid var(--rolcc-slate-200);
+  background: #fff;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--rolcc-slate-500);
+}
+
+body.admin-page--editor-split .admin-editor-grid-header--content {
+  grid-column: 1 !important;
+  padding-left: clamp(1rem, 2vw, 2rem);
+  padding-right: 1rem;
+}
+
+body.admin-page--editor-split .admin-editor-grid-header--meta {
+  grid-column: 2 !important;
+  padding-left: clamp(1rem, 1.5vw, 1.5rem);
+  padding-right: clamp(1rem, 1.5vw, 1.5rem);
+  border-left: 1px solid var(--rolcc-slate-300);
+}
+
+body.admin-page--editor-split .admin-field--content {
+  grid-column: 1 !important;
+  min-width: 0;
+  padding: 0 1rem 1rem clamp(1rem, 2vw, 2rem);
+  box-sizing: border-box;
+  background: #fff;
+}
+
+body.admin-page--editor-split .admin-field--meta {
+  grid-column: 2 !important;
+  min-width: 0;
+  padding: 0 clamp(1rem, 1.5vw, 1.5rem) 1rem;
+  border-left: 1px solid var(--rolcc-slate-300);
+  background: #fff !important;
+  box-sizing: border-box;
+}
+
+body.admin-page--editor-split .admin-field--meta label,
+body.admin-page--editor-split .admin-field--meta [class*="FieldLabel"] {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--rolcc-slate-500);
+}
+
 body.admin-page--editor-split .admin-editor-mount,
-body.admin-page--editor-split #nc-root [class*="EditorControlPane"] {
+body.admin-page--editor-split #nc-root [class*="EditorControlPane"]:not(.admin-editor-grid-pane) {
   display: flex !important;
   flex: 1 1 auto;
   flex-direction: column;

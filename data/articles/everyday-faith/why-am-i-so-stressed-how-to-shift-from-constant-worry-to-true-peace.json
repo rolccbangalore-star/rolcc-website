@@ -1,0 +1,274 @@
+{
+  "sermonSeries": "Everyday Faith",
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "An important interview is coming up, a major bill is due, or a situation goes completely off the rails. Your heart starts racing, you play out every worst-case scenario in your mind, and you stay up all night trying to figure out a backup plan. You are entirely operating in an anxious, self-reliant state."
+    },
+    {
+      "type": "heading",
+      "level": "2",
+      "text": "The Trap of the 'I Did It' Syndrome"
+    },
+    {
+      "type": "paragraph",
+      "text": "Notice what happens once the problem is solved: you pass the test, you get the job, or the situation settles down. When someone asks how it went, it’s easy to say, 'Oh, I rocked it! I just used a few clever strategies.' We completely forget how terrified we were just days before. This is the trap of self-reliance: we carry 100% of the stress when we're in the foxhole, but we take 100% of the credit once we win."
+    },
+    {
+      "type": "heading",
+      "level": "2",
+      "text": "What the Bible Says About Your Stress"
+    },
+    {
+      "type": "paragraph",
+      "text": "When we try to fight our own battles, we usually fail or burn out because we weren't designed to carry that weight. Look at the history of God's people in the Old Testament. When they faced the massive, intimidating walls of Jericho, God didn’t tell them to build giant ladders or weapons. He told them to march around the city and trust Him. The walls fell down without a conventional fight."
+    },
+    {
+      "type": "quote",
+      "text": "Do not be afraid or dismayed because of this great multitude, for the battle is not yours, but God’s.",
+      "attribution": "2 Chronicles 20:15"
+    },
+    {
+      "type": "scriptureCallout",
+      "reference": "2 Chronicles 20:15",
+      "text": "And he said, Hearken ye, all Judah, and ye inhabitants of Jerusalem, and thou king Jehoshaphat, Thus saith the Lord unto you, Be not afraid nor dismayed by reason of this great multitude; for the battle is not yours, but God's."
+    },
+    {
+      "type": "heading",
+      "level": "2",
+      "text": "The Lesson of Gideon's 300"
+    },
+    {
+      "type": "paragraph",
+      "text": "A perfect example of God breaking this stressful, self-reliant habit is the story of Gideon in the book of Judges. Facing a massive enemy army, Gideon gathered 30,000 men to fight back. But God looked at the army and said there were too many people. If they won, they would claim, 'We saved ourselves by our own power.'"
+    },
+    {
+      "type": "paragraph",
+      "text": "God deliberately thinned the ranks by sending home anyone who was secretly terrified, and then narrowing it down further to a tiny group of just 300 men. God stripped away their human strength so they would have no choice but to rely on Him. When the battle was won, nobody could take the credit except God."
+    },
+    {
+      "type": "heading",
+      "level": "2",
+      "text": "3 Practical Steps to Let God Take the Reins"
+    },
+    {
+      "type": "bulletList",
+      "items": [
+        {
+          "item": "Write Down Your 'Emotion Equation': The next time you feel panicky, write down exactly how you feel: your fears, your lack of control, and your raw prayer to God. Looking back at this keeps us honest and stops us from falsely claiming self-glory."
+        },
+        {
+          "item": "Practice Listening to the Shepherd: Gideon learned to recognize God’s voice in his life through prayer. Make it a habit to open your Bible daily and tune out the noise of media opinions."
+        },
+        {
+          "item": "Build a 'Testimony Bank': Treat every instance of God's provision as permanent evidence for your faith. When a brand-new problem hits you next month, you don't have to panic because you have documented proof of past faithfulness."
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "level": "3",
+      "text": "Action Steps for Your Week"
+    },
+    {
+      "type": "bulletList",
+      "items": [
+        {
+          "item": "Catch Yourself Bragging: When things go right, consciously give thanks to God instead of taking all the credit."
+        },
+        {
+          "item": "Start a Testimony Journal: Track your anxieties before a crisis and God's faithfulness after it."
+        },
+        {
+          "item": "Stop Waiting for Perfect Conditions: You don't need a massive 'army' of money, luck, or resources before you step out in faith; you just need God."
+        },
+        {
+          "item": "Get into a Small Group: Talk about the Word with other believers in fellowship meetings so it takes root."
+        }
+      ]
+    },
+    {
+      "type": "faq",
+      "items": [
+        {
+          "question": "If the battle belongs to God, why am I still facing so many problems?",
+          "answer": "God never promised a life without battles; He promised that you wouldn't have to fight them alone. Difficulties are often the exact ground God uses to build your faith and show His power."
+        },
+        {
+          "question": "Is it wrong that I feel afraid?",
+          "answer": "Fear is a normal human emotion. Gideon was terrified, and many of the great heroes of the Bible struggled with fear. The goal isn't to never feel fear, but to stop letting fear dictate your choices."
+        },
+        {
+          "question": "How do I know if I'm trusting God or just being irresponsible?",
+          "answer": "Irresponsibility means avoiding your duties and hoping they magically disappear. Trusting God means doing what is practically in your power to do (studying, applying for jobs, communicating) while completely leaving the final results in God's hands."
+        }
+      ]
+    },
+    {
+      "type": "cta",
+      "label": "Connect with a Cell Group",
+      "url": "/contact",
+      "text": "Struggling to find peace in your daily battles? Join a fellowship group this week to study God's Word together.",
+      "style": "primary"
+    }
+  ],
+  "summary": "When life hits a breaking point, it is easy to default to hyper-anxiety and fight-or-flight mode. Discover how the ancient strategy of Gideon reveals a practical blueprint to stop trying to fix everything yourself and let God carry the heavy lifting of your daily burdens.",
+  "author": "Rev. Benson K Sunny",
+  "thumbnail": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRv_9rjlrb0ghyYidx7IqIfSoRUDj0Kd2aFsFzmMbfkC-mXx9HdhtcihJje&s=10",
+  "featured": false,
+  "date": "2026-07-06",
+  "publish": true,
+  "quiz": [
+    {
+      "question": "According to 2 Chronicles 20:15, to whom does the battle ultimately belong?",
+      "options": [
+        {
+          "option": "The kingdom's mightiest generals"
+        },
+        {
+          "option": "God"
+        },
+        {
+          "option": "The individual who works the hardest"
+        },
+        {
+          "option": "The nation with the largest army"
+        },
+        {
+          "option": "The kingdom's mightiest generals"
+        },
+        {
+          "option": "God"
+        },
+        {
+          "option": "The individual who works the hardest"
+        },
+        {
+          "option": "The nation with the largest army"
+        }
+      ],
+      "correctIndex": 1,
+      "explanation": "2 Chronicles 20:15 explicitly states, 'for the battle is not yours, but God's.'"
+    },
+    {
+      "question": "Why did God insist on thinning out Gideon's army from 30,000 men?",
+      "options": [
+        {
+          "option": "The Midianite army was much smaller than originally anticipated."
+        },
+        {
+          "option": "There was a severe shortage of food and weapons for the soldiers."
+        },
+        {
+          "option": "He wanted to prevent Israel from pridefully boasting that they saved themselves."
+        },
+        {
+          "option": "Gideon requested a smaller, elite squad for a stealth attack."
+        },
+        {
+          "option": "The Midianite army was much smaller than originally anticipated."
+        },
+        {
+          "option": "There was a severe shortage of food and weapons for the soldiers."
+        },
+        {
+          "option": "He wanted to prevent Israel from pridefully boasting that they saved themselves."
+        },
+        {
+          "option": "Gideon requested a smaller, elite squad for a stealth attack."
+        }
+      ],
+      "correctIndex": 2,
+      "explanation": "God told Gideon that the people were too many, because Israel would claim glory for the victory and say they won by their own power."
+    },
+    {
+      "question": "What happened during Gideon's first test when he asked the fearful men to leave the battlefield?",
+      "options": [
+        {
+          "option": "20,000 men immediately left the field."
+        },
+        {
+          "option": "Only a handful of soldiers decided to walk away."
+        },
+        {
+          "option": "All 30,000 men bravely chose to stay and fight."
+        },
+        {
+          "option": "The remaining army grew angry and revolted against his leadership"
+        },
+        {
+          "option": "20,000 men immediately left the field."
+        },
+        {
+          "option": "Only a handful of soldiers decided to walk away."
+        },
+        {
+          "option": "All 30,000 men bravely chose to stay and fight."
+        },
+        {
+          "option": "The remaining army grew angry and revolted against his leadership"
+        }
+      ],
+      "correctIndex": 0,
+      "explanation": "To Gideon's surprise, two-thirds of his total force (20,000 out of 30,000 men) admitted they were afraid and went home."
+    },
+    {
+      "question": "What practical tool does the sermon recommend to prevent us from rewriting our history with pride?",
+      "options": [
+        {
+          "option": "Memorizing complex theological definitions of human humility."
+        },
+        {
+          "option": "Avoiding any form of career promotion or personal achievement."
+        },
+        {
+          "option": "Asking church leaders to verify our daily career performance."
+        },
+        {
+          "option": "Recording an 'Emotion Equation' in a diary or phone before a crisis is solved."
+        },
+        {
+          "option": "Memorizing complex theological definitions of human humility."
+        },
+        {
+          "option": "Avoiding any form of career promotion or personal achievement."
+        },
+        {
+          "option": "Asking church leaders to verify our daily career performance."
+        },
+        {
+          "option": "Recording an 'Emotion Equation' in a diary or phone before a crisis is solved."
+        }
+      ],
+      "correctIndex": 3,
+      "explanation": "Writing down your raw panic, lack of control, and prayers before a breakthrough prevents your pride from taking credit once the problem settles."
+    }
+  ],
+  "title": "Why Am I So Stressed? How to Shift from Constant Worry to True Peace",
+  "tags": [
+    {
+      "tag": "Anxiety & Stress"
+    },
+    {
+      "tag": "Everyday Life"
+    }
+  ],
+  "description": "Burnt out by constant worry and trying to control the future? Learn how to step out of the stress cycle and rely on divine strength using timeless principles from 2 Chronicles.",
+  "scripture": "2 Chronicles 20:15",
+  "includeQuiz": true,
+  "category": "Anxiety & Stress",
+  "keyTakeaways": [
+    {
+      "item": "We naturally experience anxiety when we treat life's challenges as battles we must win using our own strength and strategies."
+    },
+    {
+      "item": "God deliberately limits our resources and options so that we will stop relying on human pride and learn to trust His supreme power."
+    },
+    {
+      "item": "Committed journaling of your raw emotions and prayers creates an undeniable testimony of God's supernatural deliverance."
+    },
+    {
+      "item": "True spiritual rest is achieved when we show up responsibly but leave the ultimate results completely in God's hands."
+    }
+  ]
+}

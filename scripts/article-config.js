@@ -390,8 +390,18 @@ function renderBlocks(blocks) {
   return out.join("\n");
 }
 
-function renderArticleMetaBar(article) {
+function articleHeroTags(article) {
   const tags = normalizeArticleTags(article);
+  const category = String(article.category || "").trim().toLowerCase();
+  const filtered = tags.filter((tag) => tag.toLowerCase() !== category);
+  if (filtered.length) return filtered;
+  if (tags.length) return tags;
+  if (article.category) return [String(article.category).trim()].filter(Boolean);
+  return [];
+}
+
+function renderArticleMetaBar(article) {
+  const tags = articleHeroTags(article);
   const tagHtml = tags.length
     ? tags.map((tag) => `<span class="article-tag">${escapeHtml(tag)}</span>`).join("")
     : `<span class="article-tag">${escapeHtml(article.category || "General")}</span>`;
@@ -399,7 +409,7 @@ function renderArticleMetaBar(article) {
     ? `<p class="article-meta__author">${escapeHtml(article.author)}</p>`
     : "";
   const scripture = article.scripture
-    ? `<span class="article-meta__item article-meta__scripture">${escapeHtml(article.scripture)}</span>`
+    ? `<p class="article-meta__scripture">${escapeHtml(article.scripture)}</p>`
     : "";
   return `<div class="article-meta">
     <div class="article-meta__tags">${tagHtml}</div>
@@ -407,13 +417,13 @@ function renderArticleMetaBar(article) {
     <div class="article-meta__details">
       <span class="article-meta__item">${escapeHtml(article.dateFormatted)}</span>
       <span class="article-meta__item">${article.readTime} min read</span>
-      ${scripture}
     </div>
+    ${scripture}
   </div>`;
 }
 
 function renderArticleHeroHeader(article) {
-  const tags = normalizeArticleTags(article);
+  const tags = articleHeroTags(article);
   const tagHtml = tags.length
     ? tags.map((tag) => `<span class="article-tag">${escapeHtml(tag)}</span>`).join("")
     : `<span class="article-tag">${escapeHtml(article.category || "General")}</span>`;
@@ -421,7 +431,10 @@ function renderArticleHeroHeader(article) {
     ? `<p class="article-meta__author">${escapeHtml(article.author)}</p>`
     : "";
   const scripture = article.scripture
-    ? `<span class="article-meta__item article-meta__scripture">${escapeHtml(article.scripture)}</span>`
+    ? `<p class="article-meta__scripture">${escapeHtml(article.scripture)}</p>`
+    : "";
+  const series = article.sermonSeries
+    ? `<p class="article-meta__series">${escapeHtml(article.sermonSeries)}</p>`
     : "";
   return `<div class="article-hero">
     <div class="article-meta article-meta--tags"><div class="article-meta__tags">${tagHtml}</div></div>
@@ -431,8 +444,9 @@ function renderArticleHeroHeader(article) {
       <div class="article-meta__details">
         <span class="article-meta__item">${escapeHtml(article.dateFormatted)}</span>
         <span class="article-meta__item">${article.readTime} min read</span>
-        ${scripture}
       </div>
+      ${series}
+      ${scripture}
     </div>
   </div>`;
 }
@@ -500,6 +514,7 @@ module.exports = {
   markdownToHtml,
   normalizeBlock,
   normalizeStringList,
+  articleHeroTags,
   normalizeArticleTags,
   normalizeQuizOptions,
   normalizeQuizItem,

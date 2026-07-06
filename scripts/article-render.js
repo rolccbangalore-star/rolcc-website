@@ -428,7 +428,6 @@
       '<article class="mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8">' +
       '<p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-accent">' +
       escapeHtml(article.typeLabel) +
-      (article.sermonSeries ? " · " + escapeHtml(article.sermonSeries) : "") +
       "</p>" +
       '<h1 class="mt-3 text-balance text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">' +
       escapeHtml(article.title) +

@@ -84,9 +84,9 @@
       </div>
     </header>
     <main class="main-no-top-gap relative z-10">
-      <section class="articles-hero contact-hero contact-hero--bg-image relative overflow-hidden border-b border-slate-200">
-        <div class="contact-hero__curve" aria-hidden="true"></div>
-        <div class="relative z-10 mx-auto max-w-6xl px-4 pt-6 pb-12 sm:px-6 sm:pt-24 sm:pb-14 md:pt-28 md:pb-16 lg:px-8 lg:pt-32 lg:pb-20">
+      <div class="articles-hub-top">
+      <section class="articles-hero relative overflow-hidden">
+        <div class="relative z-10 mx-auto max-w-6xl px-4 pt-6 pb-8 sm:px-6 sm:pt-24 sm:pb-10 md:pt-28 md:pb-12 lg:px-8 lg:pt-32 lg:pb-14">
           <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-accent">Articles &amp; Studies</p>
           <h1 class="mt-3 text-balance text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl md:text-4xl">Faith for everyday life and deeper Bible study</h1>
           <p class="mt-5 max-w-2xl text-sm text-slate-600 sm:text-base leading-relaxed">Read sermon reflections and Bible study guides written for everyday life and cell fellowship.</p>
@@ -98,27 +98,28 @@
         </div>
       </section>
 
-      <section class="border-b border-slate-200 bg-white" aria-label="Featured article">
-        <div class="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
+      <section class="articles-featured-wrap" aria-label="Featured article">
+        <div class="relative z-10 mx-auto max-w-6xl px-4 pb-10 sm:px-6 sm:pb-12 lg:px-8">
           <h2 class="text-lg font-semibold text-slate-900">Featured</h2>
-          <div class="articles-featured articles-featured--single mt-6"><a href="/articles/everyday-faith/gods-wisdom-beyond-understanding" class="articles-card articles-card--tall articles-card--featured-hub" data-article-type="everyday-faith" data-article-category="Faith &amp; Peace">
+          <div class="articles-featured articles-featured--single mt-5"><a href="/articles/everyday-faith/beyond-the-valley-of-fear-walking-in-the-safe-hands-of-the-shepherd" class="articles-card articles-card--featured-hub" data-article-type="everyday-faith" data-article-category="Bible Study">
     <div class="articles-card__media-wrap">
-      <img class="articles-card__media" src="/images/og-image.jpg" alt="" loading="lazy" width="640" height="800" />
+      <img class="articles-card__media" src="https://upload.wikimedia.org/wikipedia/commons/5/5e/First_Book_of_Samuel_Chapter_17-8_%28Bible_Illustrations_by_Sweet_Media%29.jpg" alt="" loading="lazy" width="640" height="800" />
       <span class="articles-card__badge articles-card__badge--featured">Featured</span>
     </div>
     <div class="articles-card__body">
       <div class="articles-card__tags">
         <span class="article-tag article-tag--sm article-tag--type">Sermon</span>
-        <span class="article-tag article-tag--sm article-tag--muted">Faith &amp; Peace</span>
+        <span class="article-tag article-tag--sm article-tag--muted">Bible Study</span><span class="article-tag article-tag--sm article-tag--muted">Work &amp; Calling</span>
       </div>
-      <h2 class="articles-card__title">God's Wisdom Beyond Understanding</h2>
-      <p class="articles-card__meta">ROLCC Pastoral Team · 2 min read</p>
+      <h2 class="articles-card__title">Beyond the Valley of Fear: Walking in the Safe Hands of the Shepherd</h2>
+      <p class="articles-card__meta">Rev. Benson K Sunny · 2 min read</p>
     </div>
   </a></div>
         </div>
       </section>
+      </div>
 
-      <section class="border-b border-slate-200 bg-slate-50" aria-label="All articles">
+      <section class="articles-list-section border-b border-slate-200 bg-slate-50" aria-label="All articles">
         <div class="mx-auto max-w-6xl px-4 py-10 sm:px-6 md:py-14 lg:px-8">
           <div class="articles-toolbar">
             <h2 class="text-lg font-semibold text-slate-900">All articles</h2>
@@ -135,7 +136,20 @@
           </div>
           <p class="articles-results-meta mt-2 text-sm text-slate-500" data-articles-results-meta></p>
           <div class="mt-6" data-articles-grid>
-            <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"><a href="/articles/everyday-faith/how-to-stop-stressing-and-trust-god-with-your-problems" class="articles-card articles-card--tall" data-article-type="everyday-faith" data-article-category="Faith &amp; Peace">
+            <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"><a href="/articles/everyday-faith/gods-wisdom-beyond-understanding" class="articles-card articles-card--tall" data-article-type="everyday-faith" data-article-category="Faith &amp; Peace">
+    <div class="articles-card__media-wrap">
+      <img class="articles-card__media" src="/images/og-image.jpg" alt="" loading="lazy" width="640" height="800" />
+      
+    </div>
+    <div class="articles-card__body">
+      <div class="articles-card__tags">
+        <span class="article-tag article-tag--sm article-tag--type">Sermon</span>
+        <span class="article-tag article-tag--sm article-tag--muted">Faith &amp; Peace</span>
+      </div>
+      <h2 class="articles-card__title">God's Wisdom Beyond Understanding</h2>
+      <p class="articles-card__meta">ROLCC Pastoral Team · 2 min read</p>
+    </div>
+  </a><a href="/articles/everyday-faith/how-to-stop-stressing-and-trust-god-with-your-problems" class="articles-card articles-card--tall" data-article-type="everyday-faith" data-article-category="Faith &amp; Peace">
     <div class="articles-card__media-wrap">
       <img class="articles-card__media" src="https://upload.wikimedia.org/wikipedia/commons/0/0e/Book_of_Judges_Chapter_6-3_%28Bible_Illustrations_by_Sweet_Media%29.jpg" alt="" loading="lazy" width="640" height="800" />
       
@@ -349,7 +363,7 @@
     </button>
 
     <script src="/js/main.js"></script>
-    <script id="articles-data" type="application/json">{"articles":[{"type":"everyday-faith","typeLabel":"Everyday Faith","slug":"gods-wisdom-beyond-understanding","title":"God's Wisdom Beyond Understanding","description":"Discover how Job's story teaches us to trust God's wisdom even when life doesn't make sense. Learn how faith grows through trials and confidence in God's sovereign plan.","summary":"When life falls apart, it is natural to ask God why. This message from the life of Job reminds us that while we may not always receive explanations, we can confidently trust God's wisdom, sovereignty, and eternal purposes.","category":"Faith & Peace","tags":["Faith & Peace"],"author":"ROLCC Pastoral Team","date":"2026-07-06","dateFormatted":"6 July 2026","readTime":2,"thumbnail":"/images/og-image.jpg","featured":true},{"type":"everyday-faith","typeLabel":"Everyday Faith","slug":"how-to-stop-stressing-and-trust-god-with-your-problems","title":"How to Stop Stressing and Trust God with Your Problems","description":"Learn how trusting God instead of relying on yourself brings peace, courage, and confidence through every challenge. Discover biblical lessons from Gideon and 2 Chronicles 20:15.","summary":"Life's challenges often tempt us to carry every burden on our own. This message reminds us that God calls us to trust Him in every battle, exchanging anxiety for faith as we rely on His strength instead of our own.","category":"Faith & Peace","tags":["Faith & Peace"],"author":"Pr. Benson K Sunny","date":"2026-07-06","dateFormatted":"6 July 2026","readTime":2,"thumbnail":"https://upload.wikimedia.org/wikipedia/commons/0/0e/Book_of_Judges_Chapter_6-3_%28Bible_Illustrations_by_Sweet_Media%29.jpg","featured":false},{"type":"back-to-bible","typeLabel":"Back to the Bible","slug":"romans-8-life-in-the-spirit","title":"Romans 8:1-11 — Life in the Spirit","description":"A Back to the Bible cell fellowship study on freedom in Christ and life by the Spirit, with reflection questions and a short quiz.","summary":"A Back to the Bible cell fellowship study on freedom in Christ and life by the Spirit, with reflection questions and a short quiz.","category":"Bible Study","tags":["Bible Study"],"author":"ROLCC Fellowship Team","date":"2026-06-20","dateFormatted":"20 June 2026","readTime":1,"thumbnail":"/images/og-image.jpg","featured":true},{"type":"back-to-bible","typeLabel":"Back to the Bible","slug":"psalm-23-the-lord-is-my-shepherd","title":"Psalm 23 — The Lord Is My Shepherd","description":"A Back to the Bible study on God's care and guidance, with discussion questions for cell fellowship.","summary":"A Back to the Bible study on God's care and guidance, with discussion questions for cell fellowship.","category":"Bible Study","tags":["Bible Study"],"author":"ROLCC Fellowship Team","date":"2026-06-10","dateFormatted":"10 June 2026","readTime":1,"thumbnail":"/images/og-image.jpg","featured":false}],"perPage":12,"featuredSlug":"everyday-faith/gods-wisdom-beyond-understanding","latestSlug":"everyday-faith/gods-wisdom-beyond-understanding"}</script>
+    <script id="articles-data" type="application/json">{"articles":[{"type":"everyday-faith","typeLabel":"Everyday Faith","slug":"beyond-the-valley-of-fear-walking-in-the-safe-hands-of-the-shepherd","title":"Beyond the Valley of Fear: Walking in the Safe Hands of the Shepherd","description":"Discover how Psalm 23 and the life of David teach us to overcome fear, trust God's protection, and find peace in the Shepherd's care.","summary":"When uncertainty and crisis surround us, it is easy to become consumed by fear. This message from Psalm 23 shows how God develops our faith in hidden seasons and invites us to trust His protection instead of living in constant anxiety.","category":"Bible Study","tags":["Bible Study","Work & Calling"],"author":"Rev. Benson K Sunny","date":"2026-07-06","dateFormatted":"6 July 2026","readTime":2,"thumbnail":"https://upload.wikimedia.org/wikipedia/commons/5/5e/First_Book_of_Samuel_Chapter_17-8_%28Bible_Illustrations_by_Sweet_Media%29.jpg","featured":true},{"type":"everyday-faith","typeLabel":"Everyday Faith","slug":"gods-wisdom-beyond-understanding","title":"God's Wisdom Beyond Understanding","description":"Discover how Job's story teaches us to trust God's wisdom even when life doesn't make sense. Learn how faith grows through trials and confidence in God's sovereign plan.","summary":"When life falls apart, it is natural to ask God why. This message from the life of Job reminds us that while we may not always receive explanations, we can confidently trust God's wisdom, sovereignty, and eternal purposes.","category":"Faith & Peace","tags":["Faith & Peace"],"author":"ROLCC Pastoral Team","date":"2026-07-06","dateFormatted":"6 July 2026","readTime":2,"thumbnail":"/images/og-image.jpg","featured":true},{"type":"everyday-faith","typeLabel":"Everyday Faith","slug":"how-to-stop-stressing-and-trust-god-with-your-problems","title":"How to Stop Stressing and Trust God with Your Problems","description":"Learn how trusting God instead of relying on yourself brings peace, courage, and confidence through every challenge. Discover biblical lessons from Gideon and 2 Chronicles 20:15.","summary":"Life's challenges often tempt us to carry every burden on our own. This message reminds us that God calls us to trust Him in every battle, exchanging anxiety for faith as we rely on His strength instead of our own.","category":"Faith & Peace","tags":["Faith & Peace"],"author":"Pr. Benson K Sunny","date":"2026-07-06","dateFormatted":"6 July 2026","readTime":2,"thumbnail":"https://upload.wikimedia.org/wikipedia/commons/0/0e/Book_of_Judges_Chapter_6-3_%28Bible_Illustrations_by_Sweet_Media%29.jpg","featured":false},{"type":"back-to-bible","typeLabel":"Back to the Bible","slug":"romans-8-life-in-the-spirit","title":"Romans 8:1-11 — Life in the Spirit","description":"A Back to the Bible cell fellowship study on freedom in Christ and life by the Spirit, with reflection questions and a short quiz.","summary":"A Back to the Bible cell fellowship study on freedom in Christ and life by the Spirit, with reflection questions and a short quiz.","category":"Bible Study","tags":["Bible Study"],"author":"ROLCC Fellowship Team","date":"2026-06-20","dateFormatted":"20 June 2026","readTime":1,"thumbnail":"/images/og-image.jpg","featured":true},{"type":"back-to-bible","typeLabel":"Back to the Bible","slug":"psalm-23-the-lord-is-my-shepherd","title":"Psalm 23 — The Lord Is My Shepherd","description":"A Back to the Bible study on God's care and guidance, with discussion questions for cell fellowship.","summary":"A Back to the Bible study on God's care and guidance, with discussion questions for cell fellowship.","category":"Bible Study","tags":["Bible Study"],"author":"ROLCC Fellowship Team","date":"2026-06-10","dateFormatted":"10 June 2026","readTime":1,"thumbnail":"/images/og-image.jpg","featured":false}],"perPage":12,"featuredSlug":"everyday-faith/beyond-the-valley-of-fear-walking-in-the-safe-hands-of-the-shepherd","latestSlug":"everyday-faith/beyond-the-valley-of-fear-walking-in-the-safe-hands-of-the-shepherd"}</script>
     <script src="/js/articles/hub.js"></script>
     <script src="/js/faq/accordion.js"></script>
   </body>

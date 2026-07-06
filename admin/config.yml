@@ -152,13 +152,8 @@ collections:
       - { label: Summary, name: summary, widget: text, required: false, hint: "Shown at the top of the article." }
       - { label: Search preview, name: description, widget: text, required: false, hint: "For Google and social links (1–2 sentences)." }
       - { label: Author, name: author, widget: string, default: "ROLCC Pastoral Team", hint: "Use the title prefix and name fields in the editor." }
-      - label: Tags
-        name: tags
-        widget: list
-        required: false
-        field: { label: Tag, name: tag, widget: string }
-        hint: "Add at least 2 tags using the picker below."
-      - { label: Primary tag, name: category, widget: string, required: false, hint: "Auto-set from your first tag." }
+      - { label: Tags, name: tags, widget: hidden, default: [] }
+      - { label: Category, name: category, widget: hidden, required: false }
       - { label: Date, name: date, widget: datetime, date_format: YYYY-MM-DD, time_format: false, required: false }
       - label: Hero image
         name: thumbnail
@@ -222,13 +217,8 @@ collections:
       - { label: Description, name: description, widget: text }
       - { label: Passage, name: passage, widget: string }
       - { label: Author, name: author, widget: string, default: "ROLCC Fellowship Team", hint: "Use the title prefix and name fields in the editor." }
-      - label: Tags
-        name: tags
-        widget: list
-        required: false
-        field: { label: Tag, name: tag, widget: string }
-        hint: "Add at least 2 tags using the picker below."
-      - { label: Primary tag, name: category, widget: string, required: false, hint: "Auto-set from your first tag." }
+      - { label: Tags, name: tags, widget: hidden, default: [] }
+      - { label: Category, name: category, widget: hidden, required: false }
       - { label: Date, name: date, widget: datetime, date_format: YYYY-MM-DD, time_format: false }
       - label: Hero image
         name: thumbnail

@@ -864,6 +864,9 @@
       });
     }
     if (!tags.length && data.category) tags.push(String(data.category).trim());
+    if (window.AdminEditorFields && window.AdminEditorFields.mapLegacyTags) {
+      tags = window.AdminEditorFields.mapLegacyTags(tags);
+    }
     var seen = Object.create(null);
     return tags.filter(function (tag) {
       if (!tag || seen[tag]) return false;
@@ -938,6 +941,15 @@
         if (titleBlock) {
           titleBlock.classList.add("admin-field--missing");
           if (!firstEl) firstEl = titleBlock;
+        }
+        return;
+      }
+
+      if (item.key === "tags") {
+        var tagsField = root.querySelector(".admin-field--tags-wired");
+        if (tagsField) {
+          tagsField.classList.add("admin-field--missing");
+          if (!firstEl) firstEl = tagsField;
         }
         return;
       }

@@ -1,9 +1,15 @@
 (function () {
-  var CREATE_TAG_VALUE = "__create_new_tag__";
+  var MAX_TAGS = 5;
   var AUTHOR_PREFIXES = ["", "Mr.", "Mrs.", "Ms.", "Pr.", "Dr.", "Rev."];
   var PREFIX_PARSE_ORDER = ["Rev.", "Dr.", "Pr.", "Mr.", "Mrs.", "Ms."];
   var GITHUB_REPO = "rolccbangalore-star/rolcc-website";
   var GITHUB_BRANCH = "main";
+  var LEGACY_TAG_MAP = {
+    "Faith & Peace": ["Faith", "Peace"],
+    "Grief & Care": ["Grief", "Care"],
+    "Healing & Hope": ["Healing", "Hope"],
+    "Work & Calling": ["Work", "Calling"],
+  };
 
   var tagCache = null;
   var tagCachePromise = null;
@@ -44,6 +50,82 @@
 
   function readDraftData() {
     return window.AdminImport && window.AdminImport.readDraftData ? window.AdminImport.readDraftData() : {};
+  }
+
+  function expandLegacyTag(tag) {
+    return LEGACY_TAG_MAP[tag] || [tag];
+  }
+
+  function mapLegacyTags(tags) {
+    var result = [];
+    (tags || []).forEach(function (tag) {
+      expandLegacyTag(tag).forEach(function (mapped) {
+        if (mapped && result.indexOf(mapped) === -1) result.push(mapped);
+      });
+    });
+    return result;
+  }
+
+  function wordStartsWithMatch(text, query) {
+    var parts = String(text || "").split(/\s+/);
+    for (var i = 0; i < parts.length; i++) {
+      if (parts[i].indexOf(query) === 0) return true;
+    }
+    return false;
+  }
+
+  function rankTagMatches(query, tags, selected) {
+    var q = normalize(query);
+    var selectedSet = Object.create(null);
+    (selected || []).forEach(function (tag) {
+      selectedSet[tag] = true;
+    });
+
+    var startsWith = [];
+    var wordStarts = [];
+    var contains = [];
+
+    (tags || []).forEach(function (name) {
+      if (!name || selectedSet[name]) return;
+      var n = normalize(name);
+      if (!q) {
+        startsWith.push(name);
+        return;
+      }
+      if (n.indexOf(q) === 0) startsWith.push(name);
+      else if (wordStartsWithMatch(n, q)) wordStarts.push(name);
+      else if (n.indexOf(q) !== -1) contains.push(name);
+    });
+
+    function sortAlpha(list) {
+      return list.sort(function (a, b) {
+        return a.localeCompare(b);
+      });
+    }
+
+    if (!q) return sortAlpha(startsWith);
+    return sortAlpha(startsWith).concat(sortAlpha(wordStarts), sortAlpha(contains));
+  }
+
+  function getTagSuggestions(query, tags, selected) {
+    var ranked = rankTagMatches(query, tags, selected);
+    var trimmed = String(query || "").replace(/\s+/g, " ").trim();
+    if (!trimmed) return ranked.slice(0, 12);
+
+    var exact = (tags || []).some(function (name) {
+      return normalize(name) === normalize(trimmed);
+    });
+    if (!exact && selected.indexOf(trimmed) === -1 && trimmed.length <= 48) {
+      ranked.push({ create: true, name: trimmed });
+    }
+    return ranked.slice(0, 12);
+  }
+
+  function escapeHtml(text) {
+    return String(text || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/"/g, "&quot;");
   }
 
   function slugifyTag(name) {
@@ -98,19 +180,49 @@
     });
   }
 
-  function tagsFromStore() {
+  function tagsFromArticles() {
     var store = getStore();
     if (!store) return [];
     var state = store.getState();
     if (!state || !state.entries || !state.entries.get) return [];
-    var entries = state.entries.get("article-tags");
-    if (!entries || !entries.size) return [];
-    var names = [];
-    entries.forEach(function (entry) {
-      var data = entry.get ? entry.get("data") : entry.data;
-      var name = data && data.get ? data.get("name") : data && data.name;
-      if (name) names.push(String(name).trim());
+    var names = Object.create(null);
+    ["articles", "bible-study"].forEach(function (collection) {
+      var entries = state.entries.get(collection);
+      if (!entries || !entries.forEach) return;
+      entries.forEach(function (entry) {
+        var data = entry.get ? entry.get("data") : entry.data;
+        if (!data) return;
+        var tags = data.get ? data.get("tags") : data.tags;
+        var category = data.get ? data.get("category") : data.category;
+        mapLegacyTags(normalizeTagsList(tags, category, false)).forEach(function (name) {
+          names[name] = true;
+        });
+      });
     });
+    return Object.keys(names);
+  }
+
+  function tagsFromComposerCards(manifest) {
+    var names = Object.create(null);
+    Object.keys(manifest || {}).forEach(function (collection) {
+      Object.keys(manifest[collection] || {}).forEach(function (slug) {
+        var category = manifest[collection][slug] && manifest[collection][slug].category;
+        if (!category) return;
+        mapLegacyTags([String(category).trim()]).forEach(function (name) {
+          names[name] = true;
+        });
+      });
+    });
+    return Object.keys(names);
+  }
+
+  function mergeTagNames() {
+    var names = Object.create(null);
+    function add(name) {
+      if (name) names[String(name).trim()] = true;
+    }
+    Object.keys(pendingNewTags).forEach(add);
+    tagsFromArticles().forEach(add);
     return names;
   }
 
@@ -128,25 +240,29 @@
         (data.tags || []).forEach(function (name) {
           if (name) names[String(name).trim()] = true;
         });
-        tagsFromStore().forEach(function (name) {
-          if (name) names[name] = true;
-        });
-        Object.keys(pendingNewTags).forEach(function (name) {
+        Object.keys(mergeTagNames()).forEach(function (name) {
           names[name] = true;
         });
-        tagCache = Object.keys(names).sort(function (a, b) {
-          return a.localeCompare(b);
-        });
-        return tagCache.slice();
+        return fetch("/data/articles/composer-cards.json")
+          .then(function (res) {
+            if (res.ok) return res.json();
+            return null;
+          })
+          .catch(function () {
+            return null;
+          })
+          .then(function (manifest) {
+            tagsFromComposerCards(manifest).forEach(function (name) {
+              names[name] = true;
+            });
+            tagCache = Object.keys(names).sort(function (a, b) {
+              return a.localeCompare(b);
+            });
+            return tagCache.slice();
+          });
       })
       .catch(function () {
-        var names = Object.create(null);
-        tagsFromStore().forEach(function (name) {
-          if (name) names[name] = true;
-        });
-        Object.keys(pendingNewTags).forEach(function (name) {
-          names[name] = true;
-        });
+        var names = mergeTagNames();
         tagCache = Object.keys(names).sort(function (a, b) {
           return a.localeCompare(b);
         });
@@ -234,19 +350,8 @@
     }
   }
 
-  function promptForTagName() {
-    var value = window.prompt("New tag name", "");
-    if (value === null) return "";
-    value = String(value).replace(/\s+/g, " ").trim();
-    if (!value) return "";
-    if (value.length > 48) {
-      window.alert("Please keep tag names under 48 characters.");
-      return "";
-    }
-    return value;
-  }
-
-  function normalizeTagsList(raw, fallbackCategory) {
+  function normalizeTagsList(raw, fallbackCategory, applyLegacy) {
+    if (applyLegacy === undefined) applyLegacy = true;
     var tags = [];
     if (Array.isArray(raw)) {
       raw.forEach(function (item) {
@@ -255,6 +360,7 @@
       });
     }
     if (!tags.length && fallbackCategory) tags.push(String(fallbackCategory).trim());
+    if (applyLegacy) tags = mapLegacyTags(tags);
     var seen = Object.create(null);
     return tags.filter(function (tag) {
       if (!tag || seen[tag]) return false;
@@ -269,7 +375,7 @@
   }
 
   function applyTags(tags) {
-    var clean = normalizeTagsList(tags);
+    var clean = normalizeTagsList(tags).slice(0, MAX_TAGS);
     var store = getStore();
     if (!store || !window.AdminImport) return;
     if (window.AdminImport.tagsToStoreValue) {
@@ -288,26 +394,17 @@
     });
   }
 
-  function populateTagAddSelect(select, tags, selectedTags) {
-    while (select.firstChild) select.removeChild(select.firstChild);
-    var placeholder = document.createElement("option");
-    placeholder.value = "";
-    placeholder.textContent = selectedTags.length ? "Add another tag…" : "Choose a tag…";
-    select.appendChild(placeholder);
-
-    tags.forEach(function (name) {
-      if (selectedTags.indexOf(name) !== -1) return;
-      var opt = document.createElement("option");
-      opt.value = name;
-      opt.textContent = name;
-      select.appendChild(opt);
-    });
-
-    var createOpt = document.createElement("option");
-    createOpt.value = CREATE_TAG_VALUE;
-    createOpt.textContent = "Create new tag…";
-    select.appendChild(createOpt);
-    select.value = "";
+  function findTagMountPoint(root) {
+    var anchor =
+      findFieldWrap(root, "author") ||
+      findFieldWrap(root, "date") ||
+      findFieldWrap(root, "tags") ||
+      findFieldWrap(root, "tag");
+    if (!anchor) {
+      var main = root.querySelector("main");
+      return main || root;
+    }
+    return anchor.closest('[class*="EditorControlPane"]') || anchor.parentElement || anchor;
   }
 
   function renderTagChips(container, tags, onRemove) {
@@ -317,9 +414,9 @@
       chip.className = "admin-tag-chip";
       chip.innerHTML =
         '<span class="admin-tag-chip__label">' +
-        tag.replace(/&/g, "&amp;").replace(/</g, "&lt;") +
+        escapeHtml(tag) +
         '</span><button type="button" class="admin-tag-chip__remove" aria-label="Remove ' +
-        tag.replace(/"/g, "&quot;") +
+        escapeHtml(tag) +
         '">×</button>';
       chip.querySelector(".admin-tag-chip__remove").addEventListener("click", function () {
         onRemove(tag);
@@ -328,52 +425,153 @@
     });
   }
 
+  function updateTagHint(hintEl, count) {
+    if (!hintEl) return;
+    var needed = Math.max(0, 2 - count);
+    hintEl.classList.toggle("admin-tags-field__hint--warn", needed > 0);
+    if (needed === 2) {
+      hintEl.textContent = "Type to find tags. Add at least 2 before publishing.";
+    } else if (needed === 1) {
+      hintEl.textContent = "1 more tag needed to publish.";
+    } else if (count >= MAX_TAGS) {
+      hintEl.textContent = "Maximum of " + MAX_TAGS + " tags reached.";
+    } else {
+      hintEl.textContent = count + " tags added.";
+    }
+  }
+
   function wireTagField(root) {
-    var wrap = findFieldWrap(root, "tags") || findFieldWrap(root, "tag");
-    if (!wrap) return;
-    wrap.classList.add("admin-field--tags-wired");
+    var mount = findTagMountPoint(root);
+    if (!mount) return;
+
+    var wrap = mount.querySelector(".admin-field--tags-wired");
+    if (!wrap) {
+      wrap = document.createElement("div");
+      wrap.className = "admin-field--tags-wired admin-editor-custom admin-editor-custom--tag";
+      wrap.innerHTML =
+        '<label class="admin-tags-field__label" for="admin-editor-tag-input">Tags</label>' +
+        '<div class="admin-tags-combobox" id="admin-editor-tags-combobox">' +
+        '<div class="admin-tags-combobox__pill" id="admin-editor-tags-pill">' +
+        '<div class="admin-tags-combobox__chips" id="admin-editor-tag-chips" aria-live="polite"></div>' +
+        '<input type="text" class="admin-tags-combobox__input" id="admin-editor-tag-input" placeholder="Type to find a tag…" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="admin-editor-tag-list" aria-autocomplete="list" />' +
+        "</div>" +
+        '<ul class="admin-tags-combobox__list" id="admin-editor-tag-list" role="listbox" hidden></ul>' +
+        "</div>" +
+        '<p class="admin-editor-field-hint admin-tags-field__hint" id="admin-editor-tag-hint">Type to find tags. Add at least 2 before publishing.</p>';
+
+      var anchor = findFieldWrap(root, "author") || findFieldWrap(root, "date");
+      if (anchor && anchor.parentElement) {
+        anchor.parentElement.insertBefore(wrap, anchor.nextSibling);
+      } else {
+        mount.appendChild(wrap);
+      }
+    }
 
     if (wrap.dataset.adminTagWired === "true") {
-      var chipsHost = wrap.querySelector("#admin-editor-tag-chips");
-      if (chipsHost) {
-        var current = readCurrentTags();
-        renderTagChips(chipsHost, current, function (removed) {
-          applyTags(current.filter(function (tag) {
-            return tag !== removed;
-          }));
-          wireTagField(root);
+      var chipsHostLive = wrap.querySelector("#admin-editor-tag-chips");
+      var hintLive = wrap.querySelector("#admin-editor-tag-hint");
+      if (chipsHostLive) {
+        var currentLive = readCurrentTags();
+        renderTagChips(chipsHostLive, currentLive, function (removed) {
+          applyTags(
+            currentLive.filter(function (tag) {
+              return tag !== removed;
+            })
+          );
         });
+        updateTagHint(hintLive, currentLive.length);
       }
       return;
     }
 
-    hideDecapControl(wrap);
-    wrap.querySelectorAll('[class*="ListControl"], [class*="NestedObjectControl"]').forEach(function (el) {
-      if (!el.closest(".admin-editor-custom")) {
-        el.classList.add("admin-editor-native-hidden");
-      }
-    });
-
-    var custom = wrap.querySelector(".admin-editor-custom--tag");
-    if (!custom) {
-      custom = document.createElement("div");
-      custom.className = "admin-editor-custom admin-editor-custom--tag";
-      custom.innerHTML =
-        '<div class="admin-tags-input" id="admin-editor-tags-input">' +
-        '<div class="admin-tags-input__chips" id="admin-editor-tag-chips" aria-live="polite"></div>' +
-        '<select class="admin-editor-select admin-tags-input__add" id="admin-editor-tag-add" aria-label="Add article tag"></select>' +
-        "</div>" +
-        '<p class="admin-editor-field-hint">Add at least 2 tags. Pick from the list or create a new one — new tags are saved for future articles.</p>';
-      wrap.appendChild(custom);
-    }
-
-    var chipsHost = custom.querySelector("#admin-editor-tag-chips");
-    var addSelect = custom.querySelector("#admin-editor-tag-add");
-    if (!chipsHost || !addSelect || addSelect.dataset.bound === "true") {
-      if (addSelect) wrap.dataset.adminTagWired = "true";
+    var combobox = wrap.querySelector("#admin-editor-tags-combobox");
+    var chipsHost = wrap.querySelector("#admin-editor-tag-chips");
+    var input = wrap.querySelector("#admin-editor-tag-input");
+    var list = wrap.querySelector("#admin-editor-tag-list");
+    var hint = wrap.querySelector("#admin-editor-tag-hint");
+    if (!combobox || !chipsHost || !input || !list || input.dataset.bound === "true") {
+      if (input) wrap.dataset.adminTagWired = "true";
       return;
     }
-    addSelect.dataset.bound = "true";
+    input.dataset.bound = "true";
+
+    var allTags = [];
+    var activeIndex = -1;
+    var listOpen = false;
+
+    function closeList() {
+      listOpen = false;
+      activeIndex = -1;
+      list.hidden = true;
+      input.setAttribute("aria-expanded", "false");
+    }
+
+    function openList() {
+      listOpen = true;
+      list.hidden = false;
+      input.setAttribute("aria-expanded", "true");
+    }
+
+    function addTagName(name) {
+      var trimmed = String(name || "").replace(/\s+/g, " ").trim();
+      if (!trimmed || trimmed.length > 48) return;
+      var selected = readCurrentTags();
+      if (selected.indexOf(trimmed) !== -1) return;
+      if (selected.length >= MAX_TAGS) return;
+      rememberTag(trimmed);
+      selected.push(trimmed);
+      applyTags(selected);
+      input.value = "";
+      refreshTagsUi();
+      input.focus();
+    }
+
+    function renderSuggestions() {
+      var selected = readCurrentTags();
+      var suggestions = getTagSuggestions(input.value, allTags, selected);
+      list.textContent = "";
+      activeIndex = -1;
+      if (!suggestions.length) {
+        closeList();
+        return;
+      }
+      openList();
+      suggestions.forEach(function (item, index) {
+        var li = document.createElement("li");
+        li.className = "admin-tags-combobox__option";
+        li.setAttribute("role", "option");
+        li.dataset.index = String(index);
+        if (item && item.create) {
+          li.classList.add("admin-tags-combobox__option--create");
+          li.textContent = 'Create tag: "' + item.name + '"';
+          li.dataset.value = item.name;
+        } else {
+          li.textContent = item;
+          li.dataset.value = item;
+        }
+        li.addEventListener("mousedown", function (event) {
+          event.preventDefault();
+        });
+        li.addEventListener("click", function () {
+          addTagName(li.dataset.value);
+          closeList();
+        });
+        list.appendChild(li);
+      });
+    }
+
+    function highlightOption(index) {
+      var options = list.querySelectorAll(".admin-tags-combobox__option");
+      if (!options.length) return;
+      if (index < 0) index = options.length - 1;
+      if (index >= options.length) index = 0;
+      activeIndex = index;
+      options.forEach(function (opt, i) {
+        opt.classList.toggle("admin-tags-combobox__option--active", i === activeIndex);
+      });
+      var active = options[activeIndex];
+      if (active && active.scrollIntoView) active.scrollIntoView({ block: "nearest" });
+    }
 
     function refreshTagsUi() {
       var selected = readCurrentTags();
@@ -385,32 +583,71 @@
         );
         refreshTagsUi();
       });
-      loadTags().then(function (tags) {
-        populateTagAddSelect(addSelect, tags, selected);
-      });
+      updateTagHint(hint, selected.length);
+      input.disabled = selected.length >= MAX_TAGS;
+      input.placeholder =
+        selected.length >= MAX_TAGS ? "Maximum tags reached" : "Type to find a tag…";
+      if (input.value.trim()) renderSuggestions();
+      else closeList();
     }
 
-    addSelect.addEventListener("change", function () {
-      var value = addSelect.value;
-      if (!value) return;
-      var selected = readCurrentTags();
-      if (value === CREATE_TAG_VALUE) {
-        var created = promptForTagName();
-        addSelect.value = "";
-        if (!created) {
-          refreshTagsUi();
-          return;
-        }
-        rememberTag(created);
-        if (selected.indexOf(created) === -1) selected.push(created);
-        applyTags(selected);
-        refreshTagsUi();
-        return;
-      }
-      if (selected.indexOf(value) === -1) selected.push(value);
-      applyTags(selected);
+    loadTags().then(function (tags) {
+      allTags = tags;
       refreshTagsUi();
     });
+
+    input.addEventListener("input", function () {
+      renderSuggestions();
+    });
+
+    input.addEventListener("focus", function () {
+      if (readCurrentTags().length >= MAX_TAGS) return;
+      renderSuggestions();
+    });
+
+    input.addEventListener("keydown", function (event) {
+      var options = list.querySelectorAll(".admin-tags-combobox__option");
+      if (event.key === "ArrowDown") {
+        event.preventDefault();
+        if (!listOpen) renderSuggestions();
+        highlightOption(activeIndex + 1);
+        return;
+      }
+      if (event.key === "ArrowUp") {
+        event.preventDefault();
+        if (!listOpen) renderSuggestions();
+        highlightOption(activeIndex - 1);
+        return;
+      }
+      if (event.key === "Escape") {
+        closeList();
+        return;
+      }
+      if (event.key === "Enter") {
+        event.preventDefault();
+        if (listOpen && activeIndex >= 0 && options[activeIndex]) {
+          addTagName(options[activeIndex].dataset.value);
+          closeList();
+          return;
+        }
+        addTagName(input.value);
+        closeList();
+      }
+    });
+
+    document.addEventListener("click", function (event) {
+      if (!wrap.contains(event.target)) closeList();
+    });
+
+    (function syncLegacyTagsOnLoad() {
+      var data = readDraftData();
+      var raw = normalizeTagsList(data.tags, data.category, false);
+      var hasLegacy = raw.some(function (tag) {
+        return LEGACY_TAG_MAP[tag];
+      });
+      if (!hasLegacy) return;
+      applyTags(mapLegacyTags(raw));
+    })();
 
     refreshTagsUi();
     wrap.dataset.adminTagWired = "true";
@@ -716,6 +953,20 @@
     hideDecapControl(wrap);
   }
 
+  function readGithubFile(token, path) {
+    var url =
+      "https://api.github.com/repos/" + GITHUB_REPO + "/contents/" + encodeURIComponent(path) + "?ref=" + GITHUB_BRANCH;
+    return fetch(url, {
+      headers: {
+        Authorization: "Bearer " + token,
+        Accept: "application/vnd.github+json",
+      },
+    }).then(function (res) {
+      if (!res.ok) return null;
+      return res.json();
+    });
+  }
+
   function tagExistsOnGithub(token, slug) {
     var path = "data/tags/" + slug + ".json";
     var url =
@@ -751,6 +1002,45 @@
     });
   }
 
+  function updateTagIndexOnGithub(token, tagName) {
+    var path = "data/tags/index.json";
+    return readGithubFile(token, path).then(function (file) {
+      var tags = [];
+      var sha = file && file.sha;
+      if (file && file.content) {
+        try {
+          var data = JSON.parse(decodeGithubContent(file.content));
+          tags = Array.isArray(data.tags) ? data.tags.slice() : [];
+        } catch (err) {
+          tags = [];
+        }
+      }
+      if (tags.indexOf(tagName) !== -1) return true;
+      tags.push(tagName);
+      tags.sort(function (a, b) {
+        return a.localeCompare(b);
+      });
+      var body = JSON.stringify({ tags: tags }, null, 2) + "\n";
+      var url = "https://api.github.com/repos/" + GITHUB_REPO + "/contents/" + encodeURIComponent(path);
+      return fetch(url, {
+        method: "PUT",
+        headers: {
+          Authorization: "Bearer " + token,
+          Accept: "application/vnd.github+json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          message: 'Add tag "' + tagName + '" to index',
+          content: encodeGithubContent(body),
+          branch: GITHUB_BRANCH,
+          sha: sha || undefined,
+        }),
+      }).then(function (res) {
+        return res.ok;
+      });
+    });
+  }
+
   function ensureTagPersisted(tagName) {
     var trimmed = String(tagName || "").trim();
     if (!trimmed) return Promise.resolve(false);
@@ -765,8 +1055,11 @@
     return backend.getToken().then(function (token) {
       if (!token) return false;
       return tagExistsOnGithub(token, slug).then(function (exists) {
-        if (exists) return true;
-        return createTagOnGithub(token, trimmed, slug);
+        var fileWork = exists ? Promise.resolve(true) : createTagOnGithub(token, trimmed, slug);
+        return fileWork.then(function (ok) {
+          if (!ok) return false;
+          return updateTagIndexOnGithub(token, trimmed);
+        });
       });
     });
   }
@@ -802,7 +1095,7 @@
       attempts += 1;
       var liveRoot = getRoot();
       mountEditorFields(liveRoot);
-      var tagReady = !!liveRoot.querySelector("#admin-editor-tags-input");
+      var tagReady = !!liveRoot.querySelector("#admin-editor-tag-input");
       var authorReady = !!liveRoot.querySelector("#admin-editor-author-prefix");
       if ((!tagReady || !authorReady) && attempts < 24) {
         mountRetryTimer = window.setTimeout(retry, 250);
@@ -816,6 +1109,8 @@
     ensureTagPersisted: ensureTagPersisted,
     ensurePendingTagsPersisted: ensurePendingTagsPersisted,
     ensureSingleFeaturedArticle: ensureSingleFeaturedArticle,
+    mapLegacyTags: mapLegacyTags,
+    slugifyTag: slugifyTag,
     rememberTag: rememberTag,
     loadTags: loadTags,
     resetCaches: function () {

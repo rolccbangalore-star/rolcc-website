@@ -424,8 +424,7 @@ function renderArticleCard(article, options = {}) {
   const isFeaturedHub = options.featured && options.featuredHub;
   const cardClass = [
     "articles-card",
-    "articles-card--tall",
-    isFeaturedHub ? "articles-card--featured-hub" : "",
+    isFeaturedHub ? "articles-card--featured-hub" : "articles-card--tall",
   ]
     .filter(Boolean)
     .join(" ");
@@ -519,9 +518,9 @@ function buildHubPage(articles, faqs) {
   });
 
   const bodyMain = `
-      <section class="articles-hero contact-hero contact-hero--bg-image relative overflow-hidden border-b border-slate-200">
-        <div class="contact-hero__curve" aria-hidden="true"></div>
-        <div class="relative z-10 mx-auto max-w-6xl px-4 pt-6 pb-12 sm:px-6 sm:pt-24 sm:pb-14 md:pt-28 md:pb-16 lg:px-8 lg:pt-32 lg:pb-20">
+      <div class="articles-hub-top">
+      <section class="articles-hero relative overflow-hidden">
+        <div class="relative z-10 mx-auto max-w-6xl px-4 pt-6 pb-8 sm:px-6 sm:pt-24 sm:pb-10 md:pt-28 md:pb-12 lg:px-8 lg:pt-32 lg:pb-14">
           <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-accent">Articles &amp; Studies</p>
           <h1 class="mt-3 text-balance text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl md:text-4xl">Faith for everyday life and deeper Bible study</h1>
           <p class="mt-5 max-w-2xl text-sm text-slate-600 sm:text-base leading-relaxed">Read sermon reflections and Bible study guides written for everyday life and cell fellowship.</p>
@@ -531,16 +530,17 @@ function buildHubPage(articles, faqs) {
 
       ${
         featuredArticle
-          ? `<section class="border-b border-slate-200 bg-white" aria-label="Featured article">
-        <div class="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
+          ? `<section class="articles-featured-wrap" aria-label="Featured article">
+        <div class="relative z-10 mx-auto max-w-6xl px-4 pb-10 sm:px-6 sm:pb-12 lg:px-8">
           <h2 class="text-lg font-semibold text-slate-900">Featured</h2>
-          <div class="articles-featured articles-featured--single mt-6">${renderArticleCard(featuredArticle, { featured: true, featuredHub: true })}</div>
+          <div class="articles-featured articles-featured--single mt-5">${renderArticleCard(featuredArticle, { featured: true, featuredHub: true })}</div>
         </div>
       </section>`
           : ""
       }
+      </div>
 
-      <section class="border-b border-slate-200 bg-slate-50" aria-label="All articles">
+      <section class="articles-list-section border-b border-slate-200 bg-slate-50" aria-label="All articles">
         <div class="mx-auto max-w-6xl px-4 py-10 sm:px-6 md:py-14 lg:px-8">
           <div class="articles-toolbar">
             <h2 class="text-lg font-semibold text-slate-900">All articles</h2>

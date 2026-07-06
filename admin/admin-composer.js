@@ -83,6 +83,8 @@
     return DEFAULT_COLLECTION;
   }
 
+  var INTERNAL_COLLECTIONS = ["article-tags"];
+
   function migrateLegacyCollectionHash() {
     var hash = getHash();
     if (hash.indexOf("/collections/") === -1) return false;
@@ -91,6 +93,16 @@
     var normalized = normalizeCollectionId(match[1]);
     if (normalized === match[1]) return false;
     location.replace("#" + hash.replace("/collections/" + match[1], "/collections/" + normalized));
+    return true;
+  }
+
+  function migrateInternalCollectionHash() {
+    var hash = getHash();
+    if (hash.indexOf("/collections/") === -1) return false;
+    var match = hash.match(/\/collections\/([^/?]+)/);
+    if (!match) return false;
+    if (INTERNAL_COLLECTIONS.indexOf(match[1]) === -1) return false;
+    location.replace("#/collections/" + getPreferredCollection());
     return true;
   }
 
@@ -3299,9 +3311,11 @@
     enhance(root);
 
     if (migrateLegacyCollectionHash()) return;
+    if (migrateInternalCollectionHash()) return;
 
     window.addEventListener("hashchange", function () {
       if (migrateLegacyCollectionHash()) return;
+      if (migrateInternalCollectionHash()) return;
       cleanupLegacyEditorShell(root);
       resetEditorState();
       resetCollectionLayout(root);

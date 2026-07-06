@@ -21,8 +21,77 @@
     return dock;
   }
 
+  var dockHideVisible = new Set();
+  var dockHideObserver = null;
+  var dockHideObserved = typeof WeakSet !== "undefined" ? new WeakSet() : null;
+  var dockHideObservedFallback = [];
+
+  function updateDockVisibility() {
+    var dock = document.getElementById("article-action-dock");
+    if (!dock) return;
+    dock.classList.toggle("is-hidden", dockHideVisible.size > 0);
+  }
+
+  function ensureDockHideObserver() {
+    if (dockHideObserver || !("IntersectionObserver" in window)) return dockHideObserver;
+    dockHideObserver = new IntersectionObserver(
+      function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting && entry.intersectionRatio >= 0.12) {
+            dockHideVisible.add(entry.target);
+          } else {
+            dockHideVisible.delete(entry.target);
+          }
+        });
+        updateDockVisibility();
+      },
+      { threshold: [0, 0.12, 0.25], rootMargin: "0px 0px -6% 0px" }
+    );
+    return dockHideObserver;
+  }
+
+  function collectDockHideTargets() {
+    var targets = [];
+    var quizRoot = document.querySelector("[data-article-quiz]");
+    var quizSection =
+      document.getElementById("article-quiz") ||
+      (quizRoot && quizRoot.closest("section")) ||
+      quizRoot;
+    if (quizSection) targets.push(quizSection);
+
+    document.querySelectorAll(".article-faq").forEach(function (el) {
+      targets.push(el);
+    });
+
+    var related = document.querySelector('[aria-labelledby="related-articles-heading"]');
+    if (related) targets.push(related);
+
+    return targets;
+  }
+
+  function observeDockHideTarget(el) {
+    if (!el) return;
+    if (dockHideObserved) {
+      if (dockHideObserved.has(el)) return;
+      dockHideObserved.add(el);
+    } else if (dockHideObservedFallback.indexOf(el) !== -1) {
+      return;
+    } else {
+      dockHideObservedFallback.push(el);
+    }
+    var observer = ensureDockHideObserver();
+    if (!observer) return;
+    observer.observe(el);
+  }
+
+  function initDockAutoHide() {
+    collectDockHideTargets().forEach(observeDockHideTarget);
+  }
+
   window.ArticleClap = {
     getActionDock: getOrCreateActionDock,
+    observeDockHideTarget: observeDockHideTarget,
+    initDockAutoHide: initDockAutoHide,
   };
 
   var dock = getOrCreateActionDock();
@@ -85,6 +154,14 @@
 
   function hidePersonalHint() {
     if (!hintEl) return;
+    // #region agent log
+    dbgLog(
+      "clap.js:hidePersonalHint",
+      "hiding personal hint",
+      { userClaps: userClaps, classes: hintEl.className },
+      "H5"
+    );
+    // #endregion
     personalHintActive = false;
     hintEl.classList.add("is-hidden");
     hintEl.classList.remove("is-visible");
@@ -98,6 +175,14 @@
 
   function showPersonalHint() {
     if (!hintEl || userClaps <= 0) return;
+    // #region agent log
+    dbgLog(
+      "clap.js:showPersonalHint",
+      "showing personal hint",
+      { userClaps: userClaps, visibleMs: HINT_VISIBLE_MS },
+      "H5"
+    );
+    // #endregion
     personalHintActive = true;
     hintEl.textContent = "You gave " + userClaps + "x";
     hintEl.classList.add("is-personal", "is-visible");
@@ -125,6 +210,20 @@
   function updateUI(options) {
     options = options || {};
     if (countEl) countEl.textContent = formatCount(totalCount);
+    // #region agent log
+    dbgLog(
+      "clap.js:updateUI",
+      "updateUI",
+      {
+        showPersonal: !!options.showPersonal,
+        personalHintActive: personalHintActive,
+        hintHideTimer: !!hintHideTimer,
+        userClaps: userClaps,
+        totalCount: totalCount,
+      },
+      "H4"
+    );
+    // #endregion
     if (options.showPersonal && userClaps > 0) {
       showPersonalHint();
     } else if (!personalHintActive && !hintHideTimer) {
@@ -314,4 +413,5 @@
   updateUI();
   ensureDotLottie();
   fetchCount();
+  initDockAutoHide();
 })();

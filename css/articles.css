@@ -859,6 +859,22 @@
   pointer-events: auto;
 }
 
+.article-action-dock.is-hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.article-action-dock.is-hidden > * {
+  pointer-events: none;
+  animation: none;
+}
+
+.article-action-dock.is-hidden .article-clap__ring,
+.article-action-dock.is-hidden .article-quiz-fab__ring {
+  animation: none;
+}
+
 .article-clap-wrap {
   display: flex;
   flex-direction: column;

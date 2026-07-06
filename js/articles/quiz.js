@@ -324,15 +324,7 @@ function initQuizFab(quizSection) {
 
   dock.insertBefore(fab, dock.firstChild);
 
-  if ("IntersectionObserver" in window) {
-    const observer = new IntersectionObserver(
-      function (entries) {
-        entries.forEach(function (entry) {
-          fab.classList.toggle("is-hidden", entry.isIntersecting && entry.intersectionRatio >= 0.15);
-        });
-      },
-      { threshold: [0, 0.15, 0.35] }
-    );
-    observer.observe(quizSection);
+  if (window.ArticleClap && window.ArticleClap.observeDockHideTarget) {
+    window.ArticleClap.observeDockHideTarget(quizSection);
   }
 }

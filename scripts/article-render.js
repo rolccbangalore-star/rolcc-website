@@ -282,10 +282,14 @@
       : '<span class="article-tag">' + escapeHtml(article.category || "General") + "</span>";
     return (
       '<div class="article-meta">' +
+      '<div class="article-meta__tags">' +
       tagHtml +
+      "</div>" +
+      (article.author
+        ? '<p class="article-meta__author">' + escapeHtml(article.author) + "</p>"
+        : "") +
+      '<div class="article-meta__details">' +
       '<span class="article-meta__item">' +
-      escapeHtml(article.author || "") +
-      '</span><span class="article-meta__item">' +
       escapeHtml(article.dateFormatted || "") +
       '</span><span class="article-meta__item">' +
       article.readTime +
@@ -293,7 +297,7 @@
       (article.scripture
         ? '<span class="article-meta__item article-meta__scripture">' + escapeHtml(article.scripture) + "</span>"
         : "") +
-      "</div>"
+      "</div></div>"
     );
   }
 

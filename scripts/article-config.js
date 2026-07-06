@@ -395,12 +395,20 @@ function renderArticleMetaBar(article) {
   const tagHtml = tags.length
     ? tags.map((tag) => `<span class="article-tag">${escapeHtml(tag)}</span>`).join("")
     : `<span class="article-tag">${escapeHtml(article.category || "General")}</span>`;
+  const author = article.author
+    ? `<p class="article-meta__author">${escapeHtml(article.author)}</p>`
+    : "";
+  const scripture = article.scripture
+    ? `<span class="article-meta__item article-meta__scripture">${escapeHtml(article.scripture)}</span>`
+    : "";
   return `<div class="article-meta">
-    ${tagHtml}
-    <span class="article-meta__item">${escapeHtml(article.author)}</span>
-    <span class="article-meta__item">${escapeHtml(article.dateFormatted)}</span>
-    <span class="article-meta__item">${article.readTime} min read</span>
-    ${article.scripture ? `<span class="article-meta__item article-meta__scripture">${escapeHtml(article.scripture)}</span>` : ""}
+    <div class="article-meta__tags">${tagHtml}</div>
+    ${author}
+    <div class="article-meta__details">
+      <span class="article-meta__item">${escapeHtml(article.dateFormatted)}</span>
+      <span class="article-meta__item">${article.readTime} min read</span>
+      ${scripture}
+    </div>
   </div>`;
 }
 

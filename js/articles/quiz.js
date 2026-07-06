@@ -311,16 +311,27 @@ function initQuizFab(quizSection) {
     }, 1400);
   });
 
-  document.body.appendChild(fab);
+  const dock =
+    document.getElementById("article-action-dock") ||
+    (window.ArticleClap && window.ArticleClap.getActionDock ? window.ArticleClap.getActionDock() : null) ||
+    (function () {
+      const el = document.createElement("div");
+      el.id = "article-action-dock";
+      el.className = "article-action-dock";
+      document.body.appendChild(el);
+      return el;
+    })();
+
+  dock.insertBefore(fab, dock.firstChild);
 
   if ("IntersectionObserver" in window) {
     const observer = new IntersectionObserver(
       function (entries) {
         entries.forEach(function (entry) {
-          fab.classList.toggle("is-hidden", entry.isIntersecting);
+          fab.classList.toggle("is-hidden", entry.isIntersecting && entry.intersectionRatio >= 0.15);
         });
       },
-      { root: null, rootMargin: "0px 0px -12% 0px", threshold: 0.12 }
+      { threshold: [0, 0.15, 0.35] }
     );
     observer.observe(quizSection);
   }

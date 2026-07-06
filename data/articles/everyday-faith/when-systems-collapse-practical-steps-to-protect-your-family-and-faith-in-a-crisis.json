@@ -1,0 +1,246 @@
+{
+  "sermonSeries": "Everyday Faith",
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "We live in a world that can shift from relative peace to total chaos overnight. When a crisis hits—whether it is a health pandemic, economic devastation, or localized disaster—the sheer scale of the emergency can quickly break our healthcare, civic, and government systems."
+    },
+    {
+      "type": "heading",
+      "level": "2",
+      "text": "The Realities of a Systemic Tsunami"
+    },
+    {
+      "type": "paragraph",
+      "text": "During the height of a severe crisis, the realities on the ground are often horrifying. Hospitals run out of beds, medical oxygen supplies vanish, and public services become completely overwhelmed. If you are severely affected, human comfort disappears as loved ones are physically barred from being near you, leaving you isolated with masked strangers."
+    },
+    {
+      "type": "paragraph",
+      "text": "In these moments, people frequently default to cheap or superficial solutions. Relying on basic cloth masks because of fashion or brand logos offers zero real protection in a high-transmission environment. When external defenses are gone, we are forced to confront our baseline vulnerability."
+    },
+    {
+      "type": "heading",
+      "level": "2",
+      "text": "Overwhelmed Leaders and Widespread Plagues"
+    },
+    {
+      "type": "paragraph",
+      "text": "This profound sense of helplessness is not new to human history. In Psalm 142, King David finds himself trapped, his spirit growing faint. Under normal circumstances, a king could simply dispatch his soldiers and generals to resolve an issue. But David was trapped in a situation that completely broke his human confidence, forcing him to cry out to God from a cave."
+    },
+    {
+      "type": "quote",
+      "text": "Look and see, there is no one at my right hand; no one is concerned for me. I have no refuge; no one cares for my life.",
+      "attribution": "Psalm 142:4"
+    },
+    {
+      "type": "paragraph",
+      "text": "Similarly, during the plagues of Egypt, God established a strict protocol for protection. The Israelites were commanded to retreat indoors and actively apply the blood of the lamb to their doorposts. The lesson here is vital: being a 'child of God' did not grant automatic immunity if an individual chose to ignore practical, divine instructions. Faith requires active obedience and the application of practical wisdom."
+    },
+    {
+      "type": "heading",
+      "level": "2",
+      "text": "Turning Insight into Action"
+    },
+    {
+      "type": "bulletList",
+      "items": [
+        {
+          "item": "Upgrade Your Shield: Throw away ineffective cloth masks and upgrade strictly to N95 or medical-grade surgical masks."
+        },
+        {
+          "item": "Monitor Health Metrics: Keep basic diagnostic tools, like a pulse oximeter, in your home to track oxygen levels proactively."
+        },
+        {
+          "item": "Act Without Delay: If your oxygen levels hit 94% or lower, seek emergency medical care immediately rather than delaying treatment."
+        },
+        {
+          "item": "Utilize Home Therapies: Consult a doctor remotely to secure early prescriptions and practice prone positioning (lying face down) to reduce lung congestion."
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "level": "3",
+      "text": "Restoring Spiritual Accountability"
+    },
+    {
+      "type": "paragraph",
+      "text": "True spiritual transformation requires a shift away from a hardened heart that ignores warnings and refuses to listen to correction. Sin is not merely breaking a list of rules; it is living as if you are accountable to no one, failing to fulfill God's divine purpose. When anxiety mounts, we must channel our fear into focused intercession, actively standing in the gap for the sick, the isolated, and the fearful in our community."
+    },
+    {
+      "type": "faq",
+      "items": [
+        {
+          "question": "Is it wrong for a believer to feel completely lonely or anxious during a widespread emergency?",
+          "answer": "No. Even King David, a man after God's own heart, cried out in absolute despair when he felt completely abandoned and isolated in the cave. The key is turning that raw fear into an honest prayer before God."
+        },
+        {
+          "question": "What is considered the most dangerous spiritual pitfall during a prolonged crisis?",
+          "answer": "The most dangerous pitfall is a hardened heart. This occurs when we ignore divine corrections, live under the illusion that we are accountable to no one, and consume God's historical blessings without pursuing His purpose."
+        },
+        {
+          "question": "Why isn't simple faith enough to protect someone from a natural or medical crisis?",
+          "answer": "True biblical faith is never divorced from practical obedience. As seen during the biblical Passover, even chosen individuals had to actively apply physical boundaries (the blood on the doorpost) to be preserved. God expects us to pair our spiritual trust with practical, sound wisdom."
+        }
+      ]
+    },
+    {
+      "type": "cta",
+      "label": "Reach Out to Our Care Ministry",
+      "url": "/contact",
+      "text": "Facing absolute isolation or feeling overwhelmed by current events? Connect with our team for remote prayer and support.",
+      "style": "primary"
+    }
+  ],
+  "summary": "When widespread emergencies break our healthcare and civic systems, we are often forced to confront severe isolation and absolute loneliness. Discover how pairing practical medical wisdom with deep spiritual accountability offers a resilient blueprint to navigate life's unexpected storms safely.",
+  "author": "Rev. Benson K Sunny",
+  "thumbnail": "https://images.squarespace-cdn.com/content/v1/66afb00c1b398675930f0e4a/3cc68767-42f4-4f0a-8c64-41349cd8a6b7/AdobeStock_459477114.jpg",
+  "featured": false,
+  "date": "2026-07-06",
+  "publish": false,
+  "quiz": [
+    {
+      "question": "According to the lesson of the biblical Passover, what was required for protection against the plague?",
+      "options": [
+        {
+          "option": "Relying entirely on automatic immunity as a child of God."
+        },
+        {
+          "option": "Moving outside the city to avoid contact with the affected population."
+        },
+        {
+          "option": "Active obedience in applying the blood of the lamb to the doorpost."
+        },
+        {
+          "option": "Gathering the community together for an outdoor public fast."
+        },
+        {
+          "option": "Relying entirely on automatic immunity as a child of God."
+        },
+        {
+          "option": "Moving outside the city to avoid contact with the affected population."
+        },
+        {
+          "option": "Active obedience in applying the blood of the lamb to the doorpost."
+        },
+        {
+          "option": "Gathering the community together for an outdoor public fast."
+        }
+      ],
+      "correctIndex": 2,
+      "explanation": "The text demonstrates that being a child of God did not grant automatic immunity; the Israelites had to actively obey and apply the physical boundary to be preserved."
+    },
+    {
+      "question": "What standard safety item does the article recommend throwing away for failing to provide real protection?",
+      "options": [
+        {
+          "option": "Decorative or basic cloth masks."
+        },
+        {
+          "option": "Certified medical-grade surgical masks."
+        },
+        {
+          "option": "Standard household pulse oximeters."
+        },
+        {
+          "option": "Expired home first aid kits."
+        },
+        {
+          "option": "Decorative or basic cloth masks."
+        },
+        {
+          "option": "Certified medical-grade surgical masks."
+        },
+        {
+          "option": "Standard household pulse oximeters."
+        },
+        {
+          "option": "Expired home first aid kits."
+        }
+      ],
+      "correctIndex": 0,
+      "explanation": "The text states that relying on basic cloth masks because of fashion or brand logos offers zero real protection in a high-transmission environment."
+    },
+    {
+      "question": "What specific health metric threshold is highlighted as an immediate trigger to seek emergency medical care?",
+      "options": [
+        {
+          "option": "When an individual begins to experience absolute loneliness."
+        },
+        {
+          "option": "When home oxygen levels hit 94% or lower."
+        },
+        {
+          "option": "When a person spends more than two hours doom-scrolling."
+        },
+        {
+          "option": "When a patient cannot find an N95 mask at home."
+        },
+        {
+          "option": "When an individual begins to experience absolute loneliness."
+        },
+        {
+          "option": "When home oxygen levels hit 94% or lower."
+        },
+        {
+          "option": "When a person spends more than two hours doom-scrolling."
+        },
+        {
+          "option": "When a patient cannot find an N95 mask at home."
+        }
+      ],
+      "correctIndex": 1,
+      "explanation": "The text explicitly instructs that if your oxygen levels hit 94% or lower, you must seek emergency medical care immediately to avoid limiting your recovery window."
+    },
+    {
+      "question": "How does the sermon define the underlying nature of a 'hardened heart'?",
+      "options": [
+        {
+          "option": "An emotional state triggered by King David crying out from a cave."
+        },
+        {
+          "option": "A refusal to purchase basic diagnostic tools like pulse oximeters."
+        },
+        {
+          "option": "The natural fear and anxiety a person experiences during a pandemic."
+        },
+        {
+          "option": "Ignoring warnings, relying only on physical solutions, and refusing spiritual correction."
+        },
+        {
+          "option": "An emotional state triggered by King David crying out from a cave."
+        },
+        {
+          "option": "A refusal to purchase basic diagnostic tools like pulse oximeters."
+        },
+        {
+          "option": "The natural fear and anxiety a person experiences during a pandemic."
+        },
+        {
+          "option": "Ignoring warnings, relying only on physical solutions, and refusing spiritual correction."
+        }
+      ],
+      "correctIndex": 3,
+      "explanation": "The sermon notes that a hard heart is a dangerous spiritual pitfall where an individual ignores warnings, relies entirely on physical fixes, and operates as if they are accountable to no one."
+    }
+  ],
+  "title": "When Systems Collapse: Practical Steps to Protect Your Family and Faith in a Crisis",
+  "tags": [],
+  "description": "Feeling overwhelmed by a world in chaos? Learn the vital steps to upgrade your physical defenses and build unshakeable spiritual strength using timeless biblical principles.",
+  "scripture": "Psalm 142:4",
+  "includeQuiz": true,
+  "keyTakeaways": [
+    {
+      "item": "Widespread crises can cause complete systemic collapse, turning distant headlines into immediate, deeply isolating personal realities."
+    },
+    {
+      "item": "True biblical faith is never passive; it requires pairing our inner spiritual trust with proactive obedience and sound, practical wisdom."
+    },
+    {
+      "item": "A hardened heart is a dangerous spiritual condition that relies entirely on surface solutions while refusing to acknowledge accountability to God."
+    },
+    {
+      "item": "Channeling anxiety away from media consumption and into focused intercession allows us to actively support the sick and fearful in our community."
+    }
+  ]
+}

@@ -93,14 +93,41 @@
   }
 
   function getDecapSearchInput(root) {
-    var slot = $("admin-search-slot");
-    if (slot) {
-      var existing = slot.querySelector("input[type='search'], input[type='text']");
-      if (existing) return existing;
+    var ours = $("admin-search-input");
+    var candidates = root.querySelectorAll('input[type="search"], input[type="text"]');
+    for (var i = 0; i < candidates.length; i++) {
+      if (candidates[i] !== ours) return candidates[i];
     }
-    return root.querySelector(
-      'aside input[type="search"], aside input[type="text"], header input[type="search"], header input[type="text"], main input[type="search"], main input[type="text"]'
-    );
+    return null;
+  }
+
+  function mountSearch(root) {
+    var searchInput = $("admin-search-input");
+    if (!searchInput || searchInput.dataset.bound === "true") return;
+    searchInput.dataset.bound = "true";
+    searchInput.setAttribute("placeholder", "Search for an article");
+    searchInput.setAttribute("aria-label", "Search for an article");
+
+    var decapInput = getDecapSearchInput(root);
+    if (decapInput) {
+      decapInput.hidden = true;
+      decapInput.setAttribute("tabindex", "-1");
+      searchInput.addEventListener("input", function () {
+        decapInput.value = searchInput.value;
+        decapInput.dispatchEvent(new Event("input", { bubbles: true }));
+        decapInput.dispatchEvent(new Event("change", { bubbles: true }));
+      });
+      return;
+    }
+
+    searchInput.addEventListener("input", function () {
+      var q = normalize(searchInput.value);
+      var main = root.querySelector("main");
+      if (!main) return;
+      main.querySelectorAll("ul li").forEach(function (card) {
+        card.hidden = !!(q && normalize(card.textContent).indexOf(q) === -1);
+      });
+    });
   }
 
   function closeAllDropdowns() {
@@ -178,17 +205,7 @@
     bindShellDropdowns();
     wireViewSwitcher(root);
     markActiveNavLinks();
-
-    var searchSlot = $("admin-search-slot");
-    var searchInput = getDecapSearchInput(root);
-    if (searchSlot && searchInput) {
-      searchInput.classList.add("admin-search__input");
-      searchInput.setAttribute("placeholder", "Search for an article");
-      searchInput.setAttribute("aria-label", "Search for an article");
-      if (searchInput.parentElement !== searchSlot) {
-        searchSlot.appendChild(searchInput);
-      }
-    }
+    mountSearch(root);
 
     var profileSlot = $("admin-profile-slot");
     var headerImg = root.querySelector("header img");
@@ -242,10 +259,12 @@
     '<svg class="admin-create-article__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>';
 
   function styleCreateButton(createBtn) {
-    if (!createBtn || createBtn.dataset.adminCreateStyled === "true") return;
-    createBtn.dataset.adminCreateStyled = "true";
+    if (!createBtn) return;
     createBtn.classList.add("admin-create-article", "btn-primary");
-    createBtn.innerHTML = CREATE_ICON + "Create Article";
+    if (createBtn.dataset.adminCreateStyled !== "true") {
+      createBtn.dataset.adminCreateStyled = "true";
+      createBtn.innerHTML = CREATE_ICON + "Create Article";
+    }
   }
 
   function mountCreateButton(root) {
@@ -303,6 +322,9 @@
     if (controls) {
       controls.classList.add("admin-collection-toolbar");
       styleViewToggleButtons(controls);
+      if (controls.parentElement !== topBlock) {
+        topBlock.appendChild(controls);
+      }
     }
 
     var headerWrap = main.querySelector(".admin-collection-header");
@@ -313,15 +335,8 @@
       headerWrap.appendChild(topBlock);
     }
 
-    if (controls) {
-      var toolbarRow = headerWrap.querySelector(".admin-collection-toolbar-row");
-      if (!toolbarRow) {
-        toolbarRow = document.createElement("div");
-        toolbarRow.className = "admin-collection-toolbar-row";
-        headerWrap.appendChild(toolbarRow);
-      }
-      if (controls.parentElement !== toolbarRow) toolbarRow.appendChild(controls);
-    }
+    var staleRow = headerWrap.querySelector(".admin-collection-toolbar-row");
+    if (staleRow) staleRow.remove();
   }
 
   function styleViewToggleButtons(toolbar) {
@@ -340,13 +355,22 @@
     });
 
     var select = toolbar.querySelector("select");
-    if (select && !select.classList.contains("admin-sort-select")) {
-      select.classList.add("admin-sort-select");
-      if (!toolbar.querySelector(".admin-sort-label")) {
+    if (select) {
+      if (!select.classList.contains("admin-sort-select")) {
+        select.classList.add("admin-sort-select");
+      }
+      var sortWrap = toolbar.querySelector(".admin-sort-wrap");
+      if (!sortWrap) {
+        sortWrap = document.createElement("div");
+        sortWrap.className = "admin-sort-wrap";
+        select.parentElement.insertBefore(sortWrap, select);
+        sortWrap.appendChild(select);
+      }
+      if (!sortWrap.querySelector(".admin-sort-label")) {
         var sortLabel = document.createElement("span");
         sortLabel.className = "admin-sort-label";
         sortLabel.textContent = "Sort by";
-        select.parentElement.insertBefore(sortLabel, select);
+        sortWrap.insertBefore(sortLabel, select);
       }
     }
   }
@@ -424,7 +448,10 @@
       var body = link.children[0];
       var image = link.children[1];
       if (body) body.classList.add("admin-card-body");
-      if (image) image.classList.add("admin-card-image");
+      if (image) {
+        image.classList.add("admin-card-image");
+        image.hidden = true;
+      }
 
       /* Wireframe: text on top, image on bottom */
       if (body) body.style.order = "1";

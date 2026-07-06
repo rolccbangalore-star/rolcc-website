@@ -1,5 +1,5 @@
 {
-  "sermonSeries": "Everyday Faith",
+  "sermonSeries": "Repayment Series",
   "blocks": [
     {
       "type": "paragraph",
@@ -97,7 +97,7 @@
   "thumbnail": "https://images.squarespace-cdn.com/content/v1/66afb00c1b398675930f0e4a/3cc68767-42f4-4f0a-8c64-41349cd8a6b7/AdobeStock_459477114.jpg",
   "featured": false,
   "date": "2026-07-06",
-  "publish": false,
+  "publish": true,
   "quiz": [
     {
       "question": "According to the lesson of the biblical Passover, what was required for protection against the plague?",
@@ -225,10 +225,18 @@
     }
   ],
   "title": "When Systems Collapse: Practical Steps to Protect Your Family and Faith in a Crisis",
-  "tags": [],
+  "tags": [
+    {
+      "tag": "Anxiety & Stress"
+    },
+    {
+      "tag": "Family"
+    }
+  ],
   "description": "Feeling overwhelmed by a world in chaos? Learn the vital steps to upgrade your physical defenses and build unshakeable spiritual strength using timeless biblical principles.",
   "scripture": "Psalm 142:4",
   "includeQuiz": true,
+  "category": "Anxiety & Stress",
   "keyTakeaways": [
     {
       "item": "Widespread crises can cause complete systemic collapse, turning distant headlines into immediate, deeply isolating personal realities."

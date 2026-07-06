@@ -108,7 +108,7 @@
   "thumbnail": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT9qxR0CP51cX_WHhPTt6JUtxy45atodT4V6vs3MlimD9daj6hv08tEKSsP&s=10",
   "featured": false,
   "date": "2026-07-06",
-  "publish": false,
+  "publish": true,
   "quiz": [
     {
       "question": "What outward reason caused David's family to exclude him from the army and leave him in the wilderness?",
@@ -236,10 +236,18 @@
     }
   ],
   "title": "Why Am I So Anxious? How to Overcome Widespread Panic and Find Rest",
-  "tags": [],
+  "tags": [
+    {
+      "tag": "Anxiety & Stress"
+    },
+    {
+      "tag": "Everyday Life"
+    }
+  ],
   "description": "Struggling with panic in an out-of-control world? Discover how the wilderness training of David reveals a blueprint to trading anxiety for divine protection and peace.",
   "scripture": "Psalm 23:3–5",
   "includeQuiz": true,
+  "category": "Anxiety & Stress",
   "keyTakeaways": [
     {
       "item": "Constantly analyzing the data and severity of a crisis will blind you to the spiritual vision and purpose God has set before you."

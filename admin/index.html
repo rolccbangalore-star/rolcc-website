@@ -15,7 +15,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="/css/articles.css" />
-    <link rel="stylesheet" href="/admin/admin.css?v=20260706q" />
+    <link rel="stylesheet" href="/admin/admin.css?v=20260706r" />
   </head>
   <body class="admin-page">
     <header id="admin-topbar" class="admin-shell-topbar" hidden>
@@ -35,7 +35,7 @@
         </a>
       </div>
       <div class="admin-topbar__center">
-        <div class="admin-search">
+        <div class="admin-search" id="admin-search-wrap">
           <div class="admin-search__field" id="admin-search-slot">
             <svg class="admin-search__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
               <circle cx="11" cy="11" r="7" />
@@ -51,6 +51,17 @@
             />
           </div>
         </div>
+        <div class="admin-editor-title-block" id="admin-editor-title-block" hidden>
+          <input
+            type="text"
+            id="admin-editor-title-input"
+            class="admin-editor-title-input"
+            placeholder="Untitled"
+            aria-label="Article title"
+            autocomplete="off"
+          />
+          <p class="admin-editor-status" id="admin-editor-status" aria-live="polite"></p>
+        </div>
       </div>
       <div class="admin-topbar__right">
         <a
@@ -63,6 +74,8 @@
           aria-label="Open website"
           ><svg class="admin-website-link__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>Website</a
         >
+        <button type="button" class="btn-outline admin-import-btn" id="admin-import-btn" hidden>Import</button>
+        <div id="admin-publish-slot" class="admin-publish-slot"></div>
         <div id="admin-profile-slot" class="admin-profile-slot"></div>
       </div>
     </header>
@@ -114,7 +127,7 @@
     </noscript>
     <script>window.CMS_MANUAL_INIT = true;</script>
     <script src="https://unpkg.com/decap-cms@3.3.0/dist/decap-cms.js"></script>
-    <script src="/admin/admin-composer.js?v=20260706q"></script>
+    <script src="/admin/admin-composer.js?v=20260706r"></script>
     <script>
       (function () {
         var errorBox = document.getElementById("cms-error");

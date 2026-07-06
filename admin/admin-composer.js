@@ -1,5 +1,13 @@
 (function () {
-  var CONTENT_LABELS = ["article content", "sections"];
+  var CONTENT_LABELS = [
+    "article content",
+    "sections",
+    "key takeaways",
+    "discussion questions",
+    "activities",
+    "include quiz",
+    "quiz",
+  ];
   var COLLECTION_LABELS = {
     "everyday-faith": "Sermon Summary",
     "back-to-bible": "Back to the Bible",
@@ -7,7 +15,15 @@
   var entryCache = Object.create(null);
   var cardManifest = null;
   var cardManifestPromise = null;
+  var mediaManifest = null;
+  var mediaManifestPromise = null;
   var enhanceTimer = null;
+  var editorState = {
+    syncingTitle: false,
+    dirty: false,
+    snapshot: "",
+    formBound: false,
+  };
 
   function $(id) {
     return document.getElementById(id);
@@ -120,6 +136,69 @@
   function getManifestEntry(collection, slug) {
     if (!cardManifest || !cardManifest[collection]) return null;
     return cardManifest[collection][slug] || null;
+  }
+
+  function loadMediaManifest() {
+    if (mediaManifest) return Promise.resolve(mediaManifest);
+    if (mediaManifestPromise) return mediaManifestPromise;
+    mediaManifestPromise = fetch("/data/media/manifest.json")
+      .then(function (res) {
+        if (!res.ok) throw new Error("missing media manifest");
+        return res.json();
+      })
+      .then(function (data) {
+        mediaManifest = Array.isArray(data) ? data : [];
+        return mediaManifest;
+      })
+      .catch(function () {
+        mediaManifest = [];
+        return mediaManifest;
+      });
+    return mediaManifestPromise;
+  }
+
+  function getMediaFilter(root) {
+    root = root || getComposerRoot();
+    return (root && root.dataset.adminMediaFilter) || "all";
+  }
+
+  function setMediaFilter(root, filter) {
+    if (!root) return;
+    root.dataset.adminMediaFilter = filter;
+  }
+
+  function copyText(value) {
+    if (!value) return Promise.resolve();
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      return navigator.clipboard.writeText(value);
+    }
+    return new Promise(function (resolve) {
+      var input = document.createElement("textarea");
+      input.value = value;
+      input.setAttribute("readonly", "");
+      input.style.position = "absolute";
+      input.style.left = "-9999px";
+      document.body.appendChild(input);
+      input.select();
+      try {
+        document.execCommand("copy");
+      } catch (err) {
+        /* ignore */
+      }
+      document.body.removeChild(input);
+      resolve();
+    });
+  }
+
+  function preserveDecapMediaTab(root) {
+    var tabs = getHeaderTabs(root);
+    if (!tabs.media || tabs.media.dataset.adminPreserved === "true") return;
+    tabs.media.dataset.adminPreserved = "true";
+    tabs.media.classList.add("admin-decap-media-tab");
+    tabs.media.setAttribute("aria-hidden", "true");
+    tabs.media.setAttribute("tabindex", "-1");
+    tabs.media.style.cssText =
+      "position:absolute;left:-9999px;width:1px;height:1px;opacity:0;overflow:hidden;pointer-events:none;";
   }
 
   function scheduleEnhance(root, fn) {
@@ -296,26 +375,242 @@
     var topbar = $("admin-topbar");
     var sidebar = $("admin-sidebar");
     var body = document.body;
+    var onEditor = isEditorRoute();
 
     if (isLoginView(root)) {
-      body.classList.remove("admin-page--authed");
+      body.classList.remove("admin-page--authed", "admin-page--editor");
       if (topbar) topbar.hidden = true;
       if (sidebar) sidebar.hidden = true;
       return;
     }
 
     body.classList.add("admin-page--authed");
+    body.classList.toggle("admin-page--editor", onEditor);
     if (topbar) topbar.hidden = false;
-    if (sidebar) sidebar.hidden = false;
+    if (sidebar) sidebar.hidden = onEditor;
 
     bindShellDropdowns();
     bindShellTooltips();
     wireViewSwitcher(root);
     markActiveNavLinks();
-    mountSearch(root);
+    if (!onEditor) mountSearch(root);
     mountProfileButton(root);
+    mountEditorTopbar(root);
+    preserveDecapMediaTab(root);
 
     applyDecapLayoutFixes(root);
+  }
+
+  function findDecapTitleInput(root) {
+    if (!root) return null;
+    var main = root.querySelector("main");
+    if (!main) return null;
+    var controls = main.querySelectorAll("label");
+    for (var i = 0; i < controls.length; i++) {
+      var label = controls[i];
+      if (normalize(label.textContent) !== "title") continue;
+      var wrap = label.closest("div");
+      if (!wrap) continue;
+      var input = wrap.querySelector('input[type="text"], textarea');
+      if (input) return input;
+    }
+    return null;
+  }
+
+  function setInputValue(input, value) {
+    if (!input) return;
+    input.value = value;
+    input.dispatchEvent(new Event("input", { bubbles: true }));
+    input.dispatchEvent(new Event("change", { bubbles: true }));
+  }
+
+  function getEditorTitleValue(root) {
+    var decapTitle = findDecapTitleInput(root);
+    return decapTitle ? decapTitle.value.trim() : "";
+  }
+
+  function syncTitleFromHeader(root) {
+    var headerInput = $("admin-editor-title-input");
+    var decapTitle = findDecapTitleInput(root);
+    if (!headerInput || !decapTitle || editorState.syncingTitle) return;
+    editorState.syncingTitle = true;
+    setInputValue(decapTitle, headerInput.value);
+    editorState.syncingTitle = false;
+  }
+
+  function syncTitleFromDecap(root) {
+    var headerInput = $("admin-editor-title-input");
+    var decapTitle = findDecapTitleInput(root);
+    if (!headerInput || !decapTitle || editorState.syncingTitle) return;
+    editorState.syncingTitle = true;
+    headerInput.value = decapTitle.value;
+    editorState.syncingTitle = false;
+  }
+
+  function updateEditorStatusLabel() {
+    var status = $("admin-editor-status");
+    if (!status) return;
+    if (editorState.dirty) {
+      status.textContent = "Unsaved changes";
+      status.classList.add("admin-editor-status--dirty");
+    } else {
+      status.textContent = "";
+      status.classList.remove("admin-editor-status--dirty");
+    }
+  }
+
+  function captureEditorSnapshot(root) {
+    var form = root && root.querySelector("main form");
+    if (!form) return "";
+    return new FormData(form).toString();
+  }
+
+  function mountEditorDirtyWatcher(root) {
+    var form = root.querySelector("main form");
+    if (!form || form.dataset.adminDirtyBound === "true") return;
+    form.dataset.adminDirtyBound = "true";
+
+    function refreshSnapshot() {
+      editorState.snapshot = captureEditorSnapshot(root);
+      editorState.dirty = false;
+      updateEditorStatusLabel();
+    }
+
+    window.setTimeout(refreshSnapshot, 400);
+
+    form.addEventListener(
+      "input",
+      function () {
+        if (editorState.syncingTitle) return;
+        var current = captureEditorSnapshot(root);
+        editorState.dirty = current !== editorState.snapshot;
+        updateEditorStatusLabel();
+      },
+      true
+    );
+
+    form.addEventListener(
+      "change",
+      function () {
+        var current = captureEditorSnapshot(root);
+        editorState.dirty = current !== editorState.snapshot;
+        updateEditorStatusLabel();
+      },
+      true
+    );
+
+    form.addEventListener("click", function (event) {
+      var btn = event.target.closest("button");
+      if (!btn) return;
+      var label = normalize(btn.textContent);
+      if (label.indexOf("publish") !== -1 || label.indexOf("save") !== -1 || label.indexOf("saved") !== -1) {
+        window.setTimeout(refreshSnapshot, 800);
+      }
+    });
+  }
+
+  function findDecapPublishButton(root) {
+    if (!root) return null;
+    var candidates = root.querySelectorAll("main button, main a.btn, main a[class*='Button']");
+    for (var i = 0; i < candidates.length; i++) {
+      var btn = candidates[i];
+      var text = normalize(btn.textContent);
+      if (text === "publish" || text === "publish now" || text === "save" || text.indexOf("publish") === 0) {
+        return btn;
+      }
+    }
+    return null;
+  }
+
+  function relocatePublishButton(root) {
+    var slot = $("admin-publish-slot");
+    if (!slot) return;
+    var btn = findDecapPublishButton(root);
+    if (!btn) {
+      slot.hidden = true;
+      return;
+    }
+    btn.classList.add("btn-primary");
+    btn.classList.remove("btn-outline");
+    if (btn.parentElement !== slot) slot.appendChild(btn);
+    slot.hidden = false;
+  }
+
+  function hideDecapEditorChrome(root) {
+    var main = root.querySelector("main");
+    if (!main) return;
+
+    main.querySelectorAll("button").forEach(function (btn) {
+      var text = normalize(btn.textContent);
+      if (text === "delete" || text === "delete entry") {
+        btn.classList.add("admin-editor-controls-hidden");
+      }
+    });
+
+    main.querySelectorAll("a").forEach(function (link) {
+      var text = normalize(link.textContent);
+      if (text.indexOf("back") === 0 && link.getAttribute("href") && link.getAttribute("href").indexOf("collections") !== -1) {
+        link.classList.add("admin-editor-controls-hidden");
+      }
+    });
+  }
+
+  function mountEditorTopbar(root) {
+    var onEditor = isEditorRoute() && !isLoginView(root);
+    var searchWrap = $("admin-search-wrap");
+    var titleBlock = $("admin-editor-title-block");
+    var importBtn = $("admin-import-btn");
+    var websiteLink = document.querySelector(".admin-website-link");
+
+    if (searchWrap) searchWrap.hidden = onEditor;
+    if (titleBlock) titleBlock.hidden = !onEditor;
+    if (importBtn) importBtn.hidden = !onEditor;
+    if (websiteLink) websiteLink.hidden = onEditor;
+
+    if (!onEditor) return;
+
+    var headerInput = $("admin-editor-title-input");
+    if (headerInput && headerInput.dataset.bound !== "true") {
+      headerInput.dataset.bound = "true";
+      headerInput.addEventListener("input", function () {
+        syncTitleFromHeader(root);
+        editorState.dirty = true;
+        updateEditorStatusLabel();
+      });
+    }
+
+    syncTitleFromDecap(root);
+    relocatePublishButton(root);
+    mountEditorDirtyWatcher(root);
+    hideDecapEditorChrome(root);
+  }
+
+  function mountEditorSubheader(root) {
+    if (!isEditorRoute()) {
+      var stale = root.querySelector(".admin-editor-subheader");
+      if (stale) stale.remove();
+      return;
+    }
+
+    var main = root.querySelector("main");
+    if (!main) return;
+
+    var collection = getActiveCollection();
+    var sub = main.querySelector(".admin-editor-subheader");
+    if (!sub) {
+      sub = document.createElement("div");
+      sub.className = "admin-editor-subheader";
+      main.insertBefore(sub, main.firstChild);
+    }
+
+    var backHref = "#/collections/" + (collection || "everyday-faith");
+    sub.innerHTML =
+      '<a href="' +
+      backHref +
+      '" class="admin-editor-back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>Back</a>' +
+      '<span class="admin-editor-type-badge">' +
+      escapeHtml(COLLECTION_LABELS[collection] || "Article") +
+      "</span>";
   }
 
   function mountProfileButton(root) {
@@ -365,13 +660,16 @@
   function updateViewClass(root) {
     var body = document.body;
     root.classList.remove("admin-view--login", "admin-view--collection", "admin-view--editor", "admin-view--media");
-    body.classList.remove("admin-page--media");
+    body.classList.remove("admin-page--media", "admin-page--editor");
 
     if (isLoginView(root)) {
       root.classList.add("admin-view--login");
       return;
     }
-    if (isEditorRoute()) root.classList.add("admin-view--editor");
+    if (isEditorRoute()) {
+      root.classList.add("admin-view--editor");
+      body.classList.add("admin-page--editor");
+    }
     if (isMediaRoute()) {
       root.classList.add("admin-view--media");
       body.classList.add("admin-page--media");
@@ -1701,20 +1999,54 @@
       (main.querySelector("form") && main.querySelector("form").parentElement) ||
       main.querySelector(":scope > div > div") ||
       main.querySelector(":scope > div");
-    if (!pane || pane.dataset.adminLayout === "done") return;
+    if (!pane) return;
 
     var scroll = pane.querySelector(":scope > div") || pane;
     var controls = scroll.querySelectorAll(":scope > div");
     if (!controls.length) controls = pane.children;
 
     var tagged = false;
+    var contentLabeled = false;
+    var metaLabeled = false;
+
     Array.prototype.forEach.call(controls, function (control) {
       if (!control.querySelector("label")) return;
-      if (isContentField(getControlLabel(control))) {
+      var labelText = getControlLabel(control);
+      if (isContentField(labelText)) {
         control.classList.add("admin-field--content");
+        control.classList.remove("admin-field--meta");
+        if (!contentLabeled) {
+          contentLabeled = true;
+          if (!control.querySelector(".admin-editor-column-label")) {
+            var contentLabel = document.createElement("p");
+            contentLabel.className = "admin-editor-column-label";
+            contentLabel.textContent = "Blog Content";
+            control.insertBefore(contentLabel, control.firstChild);
+          }
+        }
         tagged = true;
       } else {
         control.classList.add("admin-field--meta");
+        control.classList.remove("admin-field--content");
+        if (labelText === "title") {
+          control.classList.add("admin-field--title-synced");
+          var decapTitle = control.querySelector('input[type="text"], textarea');
+          if (decapTitle && decapTitle.dataset.titleSyncBound !== "true") {
+            decapTitle.dataset.titleSyncBound = "true";
+            decapTitle.addEventListener("input", function () {
+              syncTitleFromDecap(root);
+            });
+          }
+        }
+        if (!metaLabeled) {
+          metaLabeled = true;
+          if (!control.querySelector(".admin-editor-column-label")) {
+            var metaLabel = document.createElement("p");
+            metaLabel.className = "admin-editor-column-label";
+            metaLabel.textContent = "Blog Info";
+            control.insertBefore(metaLabel, control.firstChild);
+          }
+        }
       }
     });
 
@@ -1722,6 +2054,20 @@
       pane.classList.add("admin-editor-split");
       pane.dataset.adminLayout = "done";
     }
+
+    syncTitleFromDecap(root);
+  }
+
+  function resetEditorState() {
+    editorState.dirty = false;
+    editorState.snapshot = "";
+    editorState.formBound = false;
+    editorState.syncingTitle = false;
+    var form = document.querySelector("#nc-root main form");
+    if (form) delete form.dataset.adminDirtyBound;
+    var headerInput = $("admin-editor-title-input");
+    if (headerInput) headerInput.value = "";
+    updateEditorStatusLabel();
   }
 
   function resetEditorLayout(root) {
@@ -1760,10 +2106,10 @@
   }
 
   function ensureMediaLibraryOpen(root) {
-    if (!isMediaRoute()) return;
-
+    if (!isMediaRoute() && root.dataset.adminMediaUploadOpen !== "true") return;
     if (root.querySelector(".ReactModal__Overlay--after-open")) return;
 
+    preserveDecapMediaTab(root);
     var tabs = getHeaderTabs(root);
     if (tabs.media) {
       tabs.media.click();
@@ -1775,60 +2121,258 @@
     }
   }
 
-  function mountMediaInline(root) {
-    var main = ensureMainWorkspace(root);
-    if (!main) return false;
-
+  function closeMediaUploadPanel(root) {
+    if (!root) return;
+    root.dataset.adminMediaUploadOpen = "";
+    var closeBtn = root.querySelector(
+      '.admin-media-panel button[aria-label*="Close"], .admin-media-panel button[aria-label*="close"], .admin-media-panel [class*="CloseButton"]'
+    );
+    if (closeBtn) closeBtn.click();
     var overlay = root.querySelector(".ReactModal__Overlay");
-    if (!overlay) return false;
+    if (overlay) {
+      overlay.classList.remove("admin-media-overlay");
+      var content = overlay.querySelector(".admin-media-panel");
+      if (content) content.classList.remove("admin-media-panel");
+    }
+    var workspace = root.querySelector(".admin-media-workspace");
+    if (workspace) {
+      var panel = workspace.querySelector(".admin-media-upload-panel");
+      if (panel) panel.hidden = true;
+    }
+  }
+
+  function mountMediaUploadPanel(root, workspace) {
+    if (!workspace) return;
+    var panel = workspace.querySelector(".admin-media-upload-panel");
+    if (!panel) {
+      panel = document.createElement("div");
+      panel.className = "admin-media-upload-panel";
+      panel.innerHTML =
+        '<div class="admin-media-upload-panel__head">' +
+        '<p class="admin-media-upload-panel__title">Upload article image</p>' +
+        '<button type="button" class="admin-media-upload-panel__close" aria-label="Close upload panel">Close</button>' +
+        "</div>" +
+        '<p class="admin-media-upload-panel__note">Files are saved to <code>assets/articles/</code>. New uploads appear in the library after publish.</p>' +
+        '<div class="admin-media-upload-panel__slot"></div>';
+      workspace.insertBefore(panel, workspace.querySelector(".admin-media-grid") || null);
+      panel.querySelector(".admin-media-upload-panel__close").addEventListener("click", function () {
+        closeMediaUploadPanel(root);
+        renderMediaWorkspace(root);
+      });
+    }
+
+    var open = root.dataset.adminMediaUploadOpen === "true";
+    panel.hidden = !open;
+    if (!open) return;
+
+    ensureMediaLibraryOpen(root);
+    var slot = panel.querySelector(".admin-media-upload-panel__slot");
+    var overlay = root.querySelector(".ReactModal__Overlay");
+    if (!overlay) {
+      window.setTimeout(function () {
+        ensureMediaLibraryOpen(root);
+        mountMediaUploadPanel(root, workspace);
+      }, 200);
+      return;
+    }
 
     overlay.classList.add("admin-media-overlay");
     var content = overlay.querySelector(".ReactModal__Content");
     if (content) content.classList.add("admin-media-panel");
-
-    var header = main.querySelector(".admin-media-header");
-    if (!header) {
-      header = document.createElement("div");
-      header.className = "admin-collection-header admin-media-header";
-      var head = document.createElement("div");
-      head.className = "admin-collection-head admin-media-head";
-      var h1 = document.createElement("h1");
-      h1.textContent = "Media";
-      head.appendChild(h1);
-      header.appendChild(head);
-      main.insertBefore(header, main.firstChild);
+    if (overlay.parentElement !== slot) {
+      slot.appendChild(overlay);
     }
-
-    if (overlay.parentElement !== main) {
-      safeAppend(main, overlay);
-    } else if (header.nextElementSibling !== overlay) {
-      main.insertBefore(overlay, header.nextElementSibling);
-    }
-
-    return true;
   }
 
-  function enhanceMediaView(root) {
+  function filterMediaItems(items, filter) {
+    if (filter === "articles") {
+      return items.filter(function (item) {
+        return item.source === "articles";
+      });
+    }
+    if (filter === "site") {
+      return items.filter(function (item) {
+        return item.source === "site";
+      });
+    }
+    return items;
+  }
+
+  function buildMediaCard(item) {
+    var card = document.createElement("button");
+    card.type = "button";
+    card.className = "admin-media-card";
+    card.dataset.path = item.path;
+    var badge = item.source === "articles" ? "Article" : "Site";
+    card.innerHTML =
+      '<span class="admin-media-card__thumb">' +
+      '<img src="' +
+      escapeHtml(item.path) +
+      '" alt="" loading="lazy" decoding="async" />' +
+      "</span>" +
+      '<span class="admin-media-card__body">' +
+      '<span class="admin-media-card__badge">' +
+      escapeHtml(badge) +
+      "</span>" +
+      '<span class="admin-media-card__name">' +
+      escapeHtml(item.name) +
+      "</span>" +
+      '<span class="admin-media-card__path">' +
+      escapeHtml(item.path) +
+      "</span>" +
+      "</span>";
+    card.addEventListener("click", function () {
+      copyText(item.path).then(function () {
+        card.classList.add("admin-media-card--copied");
+        window.setTimeout(function () {
+          card.classList.remove("admin-media-card--copied");
+        }, 1200);
+      });
+    });
+    return card;
+  }
+
+  function placeMediaWorkspace(main, workspace) {
+    if (workspace.parentElement !== main) {
+      main.appendChild(workspace);
+    }
+    if (workspace !== main.firstElementChild) {
+      main.insertBefore(workspace, main.firstElementChild);
+    }
+    Array.prototype.forEach.call(main.children, function (child) {
+      if (child === workspace) return;
+      child.classList.add("admin-decap-hidden");
+      child.hidden = true;
+    });
+  }
+
+  function removeMediaWorkspace(root) {
+    if (!root) return;
+    closeMediaUploadPanel(root);
+    delete root.dataset.adminMediaUploadOpen;
+    var main = root.querySelector("main");
+    if (!main) return;
+    var workspace = main.querySelector(".admin-media-workspace");
+    if (workspace) workspace.remove();
+    showDecapEntryLists(main);
+  }
+
+  function renderMediaWorkspace(root) {
     if (!isMediaRoute()) {
-      root.querySelectorAll(".admin-media-header").forEach(function (el) {
-        el.remove();
-      });
-      root.querySelectorAll(".admin-media-overlay").forEach(function (overlay) {
-        overlay.classList.remove("admin-media-overlay");
-        var content = overlay.querySelector(".admin-media-panel");
-        if (content) content.classList.remove("admin-media-panel");
-      });
+      removeMediaWorkspace(root);
       return;
     }
 
-    ensureMediaLibraryOpen(root);
+    var main = ensureMainWorkspace(root);
+    if (!main) return;
 
-    if (!mountMediaInline(root)) {
-      window.setTimeout(function () {
-        ensureMediaLibraryOpen(root);
-        mountMediaInline(root);
-      }, 150);
+    function run() {
+      preserveDecapMediaTab(root);
+      var filter = getMediaFilter(root);
+      var items = mediaManifest || [];
+      var filtered = filterMediaItems(items, filter);
+      var signature = filter + "|" + filtered.length + "|" + items.length;
+
+      var workspace = main.querySelector(".admin-media-workspace");
+      if (!workspace) {
+        workspace = document.createElement("div");
+        workspace.className = "admin-media-workspace";
+      }
+
+      if (workspace.dataset.adminSignature !== signature) {
+        workspace.dataset.adminSignature = signature;
+        workspace.textContent = "";
+
+        var header = document.createElement("div");
+        header.className = "admin-media-header";
+
+        var head = document.createElement("div");
+        head.className = "admin-media-head";
+
+        var titleWrap = document.createElement("div");
+        titleWrap.className = "admin-media-head__titles";
+        var h1 = document.createElement("h1");
+        h1.textContent = "Media";
+        var subtitle = document.createElement("p");
+        subtitle.className = "admin-media-head__subtitle";
+        subtitle.textContent = "Browse site images and upload new ones for articles.";
+        titleWrap.appendChild(h1);
+        titleWrap.appendChild(subtitle);
+
+        var actions = document.createElement("div");
+        actions.className = "admin-media-head__actions";
+
+        var filters = document.createElement("div");
+        filters.className = "admin-media-filters";
+        [
+          { key: "all", label: "All" },
+          { key: "articles", label: "Article uploads" },
+          { key: "site", label: "Site assets" },
+        ].forEach(function (opt) {
+          var btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "admin-media-filter";
+          btn.dataset.filter = opt.key;
+          btn.textContent = opt.label;
+          if (opt.key === filter) btn.classList.add("admin-media-filter--active");
+          btn.addEventListener("click", function (event) {
+            event.stopPropagation();
+            setMediaFilter(root, opt.key);
+            renderMediaWorkspace(root);
+          });
+          filters.appendChild(btn);
+        });
+
+        var uploadBtn = document.createElement("button");
+        uploadBtn.type = "button";
+        uploadBtn.className = "btn-primary admin-media-upload-btn";
+        uploadBtn.textContent = "Upload image";
+        uploadBtn.addEventListener("click", function (event) {
+          event.stopPropagation();
+          root.dataset.adminMediaUploadOpen = "true";
+          renderMediaWorkspace(root);
+        });
+
+        actions.appendChild(filters);
+        actions.appendChild(uploadBtn);
+        head.appendChild(titleWrap);
+        head.appendChild(actions);
+        header.appendChild(head);
+        workspace.appendChild(header);
+
+        mountMediaUploadPanel(root, workspace);
+
+        if (!filtered.length) {
+          var empty = document.createElement("div");
+          empty.className = "admin-media-empty";
+          empty.innerHTML =
+            "<p><strong>No images in this view.</strong></p>" +
+            '<p class="admin-media-empty__hint">Try another filter, or upload a new image for your articles.</p>';
+          workspace.appendChild(empty);
+        } else {
+          var grid = document.createElement("div");
+          grid.className = "admin-media-grid";
+          filtered.forEach(function (item) {
+            grid.appendChild(buildMediaCard(item));
+          });
+          workspace.appendChild(grid);
+        }
+      } else {
+        workspace.querySelectorAll(".admin-media-filter").forEach(function (btn) {
+          btn.classList.toggle("admin-media-filter--active", btn.dataset.filter === filter);
+        });
+        mountMediaUploadPanel(root, workspace);
+      }
+
+      placeMediaWorkspace(main, workspace);
     }
+
+    loadMediaManifest().then(run);
+    if (mediaManifest) run();
+  }
+
+  function enhanceMediaView(root) {
+    renderMediaWorkspace(root);
   }
 
   function enhance(root) {
@@ -1840,6 +2384,7 @@
     mountCreateButton(root);
     renderCustomCollectionCards(root);
     enhanceMediaView(root);
+    mountEditorSubheader(root);
     tagEditorLayout(root);
   }
 
@@ -1861,7 +2406,10 @@
 
     window.addEventListener("hashchange", function () {
       resetEditorLayout(root);
+      resetEditorState();
       resetCollectionLayout(root);
+      closeMediaUploadPanel(root);
+      delete root.dataset.adminMediaUploadOpen;
       closeAllDropdowns();
       scheduleEnhance(root, enhance);
     });
@@ -1888,4 +2436,18 @@
   } else {
     watch();
   }
+
+  window.AdminComposer = {
+    getRoot: getComposerRoot,
+    getActiveCollection: getActiveCollection,
+    findDecapTitleInput: findDecapTitleInput,
+    setInputValue: setInputValue,
+    syncTitleFromDecap: syncTitleFromDecap,
+    resetEditorSnapshot: function (root) {
+      root = root || getComposerRoot();
+      editorState.snapshot = captureEditorSnapshot(root);
+      editorState.dirty = false;
+      updateEditorStatusLabel();
+    },
+  };
 })();

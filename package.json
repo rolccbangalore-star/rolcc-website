@@ -2,9 +2,10 @@
   "name": "rolcc-website",
   "private": true,
   "scripts": {
-    "build": "node scripts/build-composer-cards.js && node scripts/build-articles.js",
+    "build": "node scripts/build-composer-cards.js && node scripts/build-media-manifest.js && node scripts/build-articles.js",
     "build:articles": "node scripts/build-articles.js",
     "build:composer-cards": "node scripts/build-composer-cards.js",
+    "build:media-manifest": "node scripts/build-media-manifest.js",
     "preview": "node scripts/local-preview.js",
     "start": "npm run build:articles && npm run preview"
   },

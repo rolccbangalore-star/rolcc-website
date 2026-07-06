@@ -254,7 +254,8 @@ document.addEventListener("DOMContentLoaded", function () {
         var viewHeight = window.innerHeight;
         var bottomBandTop = viewHeight * 0.62;
         var inUnveilZone = rect.top < bottomBandTop && rect.bottom > 0;
-        setFooterInView(inUnveilZone);
+        var footerFullyRevealed = rect.bottom <= 0;
+        setFooterInView(inUnveilZone || footerFullyRevealed);
       }
       window.addEventListener("scroll", updateFooterLinks, { passive: true });
       window.addEventListener("resize", updateFooterLinks);

@@ -32,7 +32,7 @@ collections:
     fields:
       - { label: Tag name, name: name, widget: string, hint: "Use Title Case, e.g. Faith & Peace" }
 
-  - name: everyday-faith
+  - name: articles
     label: Sermon Summary
     folder: data/articles/everyday-faith
     create: true
@@ -166,7 +166,7 @@ collections:
       - { label: Main Scripture, name: scripture, widget: string, required: false, hint: "e.g. Matthew 11:28-30" }
       - { label: Sermon series, name: sermonSeries, widget: string, required: false }
 
-  - name: back-to-bible
+  - name: bible-study
     label: Back to the Bible
     folder: data/articles/back-to-bible
     create: true

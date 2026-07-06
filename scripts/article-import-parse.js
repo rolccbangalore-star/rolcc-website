@@ -16,6 +16,22 @@
     return String(value || "").trim();
   }
 
+  function normalizeCollectionId(id) {
+    var aliases = {
+      "everyday-faith": "articles",
+      "back-to-bible": "bible-study",
+    };
+    return aliases[id] || id || "";
+  }
+
+  function isArticlesCollection(collection) {
+    return normalizeCollectionId(collection) === "articles";
+  }
+
+  function isBibleStudyCollection(collection) {
+    return normalizeCollectionId(collection) === "bible-study";
+  }
+
   function parseFrontmatter(raw) {
     var match = /^---\r?\n([\s\S]*?)\r?\n---\r?\n([\s\S]*)$/.exec(raw);
     if (!match) return { meta: {}, body: trim(raw) };
@@ -182,6 +198,16 @@
     return { title: title, sections: sections, discussionQuestions: questions };
   }
 
+  function stripInternalKeys(data) {
+    if (!data || typeof data !== "object" || Array.isArray(data)) return data;
+    var entry = {};
+    Object.keys(data).forEach(function (key) {
+      if (key.charAt(0) === "_") return;
+      entry[key] = data[key];
+    });
+    return entry;
+  }
+
   function normalizeQuizItem(item) {
     if (!item || typeof item !== "object") return null;
     return {
@@ -192,6 +218,16 @@
       correctIndex: typeof item.correctIndex === "number" ? item.correctIndex : 0,
       explanation: trim(item.explanation),
     };
+  }
+
+  function prepareQuizEntry(entry) {
+    if ((entry.quiz || []).length && entry.includeQuiz !== true) {
+      entry.includeQuiz = true;
+    }
+    if (entry.quiz && entry.quiz.length) {
+      entry.quiz = entry.quiz.map(normalizeQuizItem).filter(Boolean);
+    }
+    return entry;
   }
 
   function normalizeBlocks(blocks) {
@@ -210,23 +246,20 @@
     var data = JSON.parse(text);
     if (!data || typeof data !== "object") throw new Error("Invalid JSON object");
 
-    var entry = Object.assign({}, data);
-    if (collection === "everyday-faith") {
+    collection = normalizeCollectionId(collection);
+    var entry = stripInternalKeys(Object.assign({}, data));
+    if (isArticlesCollection(collection)) {
       entry.blocks = normalizeBlocks(entry.blocks || []);
       entry.keyTakeaways = (entry.keyTakeaways || []).map(function (k) {
         return typeof k === "string" ? k : trim(k.item || k.text || "");
       }).filter(Boolean);
-      if (entry.includeQuiz && entry.quiz) {
-        entry.quiz = entry.quiz.map(normalizeQuizItem).filter(Boolean);
-      }
-    } else if (collection === "back-to-bible") {
+      prepareQuizEntry(entry);
+    } else if (isBibleStudyCollection(collection)) {
       entry.sections = entry.sections || [];
       entry.discussionQuestions = (entry.discussionQuestions || []).map(function (q) {
         return typeof q === "string" ? q : trim(q.question || "");
       }).filter(Boolean);
-      if (entry.includeQuiz && entry.quiz) {
-        entry.quiz = entry.quiz.map(normalizeQuizItem).filter(Boolean);
-      }
+      prepareQuizEntry(entry);
     }
     return entry;
   }
@@ -234,8 +267,9 @@
   function parseMarkdownToEntry(md, collection) {
     var parsed = parseFrontmatter(md);
     var entry = Object.assign({}, parsed.meta);
+    collection = normalizeCollectionId(collection);
 
-    if (collection === "back-to-bible") {
+    if (isBibleStudyCollection(collection)) {
       var btb = parseMarkdownSections(parsed.body);
       if (btb.title) entry.title = btb.title;
       entry.sections = btb.sections;
@@ -247,7 +281,7 @@
     }
 
     if (!entry.author) {
-      entry.author = collection === "back-to-bible" ? "ROLCC Fellowship Team" : "ROLCC Pastoral Team";
+      entry.author = isBibleStudyCollection(collection) ? "ROLCC Fellowship Team" : "ROLCC Pastoral Team";
     }
     return entry;
   }
@@ -267,6 +301,7 @@
   }
 
   function summarizeEntry(entry, collection) {
+    collection = normalizeCollectionId(collection);
     var summary = {
       title: entry.title || "Untitled",
       blockCount: 0,
@@ -275,7 +310,7 @@
       questionCount: 0,
       hasQuiz: entry.includeQuiz === true && (entry.quiz || []).length > 0,
     };
-    if (collection === "everyday-faith") {
+    if (isArticlesCollection(collection)) {
       summary.blockCount = (entry.blocks || []).length;
       summary.takeawayCount = (entry.keyTakeaways || []).length;
     } else {
@@ -284,6 +319,77 @@
     }
     return summary;
   }
+
+  function summarizeContentEntry(entry, collection) {
+    collection = normalizeCollectionId(collection);
+    var summary = {
+      title: entry.title || "",
+      blockCount: 0,
+      sectionCount: 0,
+      takeawayCount: 0,
+      questionCount: 0,
+      quizCount: (entry.quiz || []).length,
+      hasQuiz: entry.includeQuiz === true && (entry.quiz || []).length > 0,
+    };
+    if (isArticlesCollection(collection)) {
+      summary.blockCount = (entry.blocks || []).length;
+      summary.takeawayCount = (entry.keyTakeaways || []).length;
+    } else {
+      summary.sectionCount = (entry.sections || []).length;
+      summary.questionCount = (entry.discussionQuestions || []).length;
+    }
+    return summary;
+  }
+
+  var CONTENT_JSON_EXAMPLE = {
+    articles: {
+      title: "Article title here",
+      summary: "Short intro shown on the article page.",
+      description: "One or two sentences for Google and social previews.",
+      author: "ROLCC Pastoral Team",
+      scripture: "Matthew 11:28-30",
+      sermonSeries: "Everyday Faith",
+      blocks: [
+        { type: "paragraph", text: "Opening paragraph." },
+        { type: "heading", level: "2", text: "Section heading" },
+        { type: "quote", text: "Verse or quote text.", attribution: "Matthew 11:28" },
+      ],
+      keyTakeaways: ["First takeaway", "Second takeaway"],
+      includeQuiz: true,
+      quiz: [
+        {
+          question: "Sample question?",
+          options: ["Correct answer", "Plausible wrong 1", "Plausible wrong 2", "Plausible wrong 3"],
+          correctIndex: 0,
+          explanation: "Brief explanation.",
+        },
+      ],
+    },
+    "bible-study": {
+      title: "Study title",
+      description: "Short description for search previews.",
+      passage: "John 3:1-21",
+      author: "ROLCC Fellowship Team",
+      sections: [
+        { heading: "Read the passage", body: "Notes for this section." },
+        { heading: "Discuss together", body: "Group discussion prompts." },
+      ],
+      discussionQuestions: ["What stands out to you?", "How does this apply today?"],
+      includeQuiz: true,
+      quiz: [
+        {
+          question: "Sample review question?",
+          options: ["Correct answer", "Plausible wrong 1", "Plausible wrong 2", "Plausible wrong 3"],
+          correctIndex: 0,
+          explanation: "Brief explanation.",
+        },
+      ],
+    },
+    "everyday-faith": null,
+    "back-to-bible": null,
+  };
+  CONTENT_JSON_EXAMPLE["everyday-faith"] = CONTENT_JSON_EXAMPLE.articles;
+  CONTENT_JSON_EXAMPLE["back-to-bible"] = CONTENT_JSON_EXAMPLE["bible-study"];
 
   var JSON_EXAMPLE = {
     title: "Article title here",
@@ -305,11 +411,14 @@
   };
 
   return {
+    stripInternalKeys: stripInternalKeys,
     parseFrontmatter: parseFrontmatter,
     parseArticleJson: parseArticleJson,
     parseMarkdownToEntry: parseMarkdownToEntry,
     parseImportFile: parseImportFile,
     summarizeEntry: summarizeEntry,
+    summarizeContentEntry: summarizeContentEntry,
     JSON_EXAMPLE: JSON_EXAMPLE,
+    CONTENT_JSON_EXAMPLE: CONTENT_JSON_EXAMPLE,
   };
 });

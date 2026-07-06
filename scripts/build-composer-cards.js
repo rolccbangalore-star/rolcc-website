@@ -5,7 +5,10 @@ const ROOT = path.join(__dirname, "..");
 const ARTICLES_DIR = path.join(ROOT, "data", "articles");
 const OUT_FILE = path.join(ARTICLES_DIR, "composer-cards.json");
 
-const COLLECTIONS = ["everyday-faith", "back-to-bible"];
+const COLLECTIONS = [
+  { id: "articles", folder: "everyday-faith" },
+  { id: "bible-study", folder: "back-to-bible" },
+];
 
 const CARD_FIELDS = ["title", "author", "category", "date", "modified", "thumbnail", "publish"];
 
@@ -36,10 +39,10 @@ function buildManifest() {
   const manifest = {};
 
   COLLECTIONS.forEach((collection) => {
-    const dir = path.join(ARTICLES_DIR, collection);
+    const dir = path.join(ARTICLES_DIR, collection.folder);
     if (!fs.existsSync(dir)) return;
 
-    manifest[collection] = {};
+    manifest[collection.id] = {};
 
     fs.readdirSync(dir).forEach((fileName) => {
       if (!fileName.endsWith(".json") || fileName === "composer-cards.json") return;
@@ -47,9 +50,9 @@ function buildManifest() {
       const filePath = path.join(dir, fileName);
       const raw = fs.readFileSync(filePath, "utf8");
       try {
-        manifest[collection][slug] = cardPreviewFromArticle(JSON.parse(raw), filePath);
+        manifest[collection.id][slug] = cardPreviewFromArticle(JSON.parse(raw), filePath);
       } catch (err) {
-        console.warn("Skipping invalid article JSON:", path.join(collection, fileName), err.message);
+        console.warn("Skipping invalid article JSON:", path.join(collection.folder, fileName), err.message);
       }
     });
   });
@@ -60,7 +63,7 @@ function buildManifest() {
 function main() {
   const manifest = buildManifest();
   fs.writeFileSync(OUT_FILE, JSON.stringify(manifest, null, 2) + "\n", "utf8");
-  const count = COLLECTIONS.reduce((sum, name) => sum + Object.keys(manifest[name] || {}).length, 0);
+  const count = COLLECTIONS.reduce((sum, entry) => sum + Object.keys(manifest[entry.id] || {}).length, 0);
   console.log("Wrote " + count + " composer card previews to data/articles/composer-cards.json");
 }
 

@@ -3,7 +3,101 @@
 
   var LABEL_ALIASES = {
     scripture: ["scripture", "main scripture"],
+    "correct option index": ["correct option index", "correct option index (0-based)"],
+    "include quiz": ["include quiz", "include quiz?"],
+    "article content": ["article content", "blocks"],
+    "key takeaways": ["key takeaways", "key takeaways"],
+    "search preview": ["search preview", "description"],
   };
+
+  function labelMatches(labelNorm, target) {
+    if (!labelNorm || !target) return false;
+    if (labelNorm === target) return true;
+    if (labelNorm.indexOf(target) === 0) {
+      var next = labelNorm.charAt(target.length);
+      return !next || next === " " || next === "?";
+    }
+    return false;
+  }
+
+  function getEditorScopes(root) {
+    var scopes = [];
+    var main = root.querySelector("main");
+    var pane = root.querySelector('[class*="EditorControlPane"]');
+    var form = root.querySelector("form");
+    if (main) scopes.push(main);
+    if (pane && scopes.indexOf(pane) === -1) scopes.push(pane);
+    if (form && scopes.indexOf(form) === -1) scopes.push(form);
+    if (scopes.indexOf(root) === -1) scopes.push(root);
+    return scopes;
+  }
+
+  function getFieldWrap(labelEl) {
+    if (!labelEl) return null;
+    return (
+      labelEl.closest('[class*="EditorControl"]') ||
+      labelEl.closest('[class*="ListControl"]') ||
+      labelEl.closest("fieldset") ||
+      labelEl.closest("div")
+    );
+  }
+
+  function findFieldByLabel(root, labelText) {
+    var target = normalizeLabel(labelText);
+    var targets = LABEL_ALIASES[target] || [target];
+    var scopes = getEditorScopes(root);
+
+    for (var s = 0; s < scopes.length; s++) {
+      var labels = scopes[s].querySelectorAll("label, legend, [class*='FieldLabel']");
+      for (var i = 0; i < labels.length; i++) {
+        var labelNorm = normalizeLabel(labels[i].textContent);
+        for (var j = 0; j < targets.length; j++) {
+          if (labelMatches(labelNorm, targets[j])) {
+            var wrap = getFieldWrap(labels[i]);
+            if (wrap) return wrap;
+          }
+        }
+      }
+    }
+
+    return findListFieldWrap(root, labelText);
+  }
+
+  function findListFieldWrap(root, labelText) {
+    var target = normalizeLabel(labelText);
+    var scopes = getEditorScopes(root);
+    for (var s = 0; s < scopes.length; s++) {
+      var buttons = scopes[s].querySelectorAll("button");
+      for (var i = 0; i < buttons.length; i++) {
+        var btnText = normalize(buttons[i].textContent);
+        if (btnText.indexOf("add") === -1) continue;
+        if (labelMatches(btnText, "add " + target) || btnText.indexOf(target) !== -1) {
+          return (
+            buttons[i].closest('[class*="EditorControl"]') ||
+            buttons[i].closest('[class*="ListControl"]') ||
+            buttons[i].closest("div")
+          );
+        }
+      }
+    }
+    return null;
+  }
+
+  function findFieldInContainer(container, labelText) {
+    if (!container) return null;
+    var target = normalizeLabel(labelText);
+    var targets = LABEL_ALIASES[target] || [target];
+    var labels = container.querySelectorAll("label, legend, [class*='FieldLabel']");
+    for (var i = 0; i < labels.length; i++) {
+      var labelNorm = normalizeLabel(labels[i].textContent);
+      for (var j = 0; j < targets.length; j++) {
+        if (labelMatches(labelNorm, targets[j])) {
+          return getFieldWrap(labels[i]);
+        }
+      }
+    }
+    return null;
+  }
 
   function $(id) {
     return document.getElementById(id);
@@ -28,12 +122,43 @@
     return window.AdminComposer && window.AdminComposer.getRoot ? window.AdminComposer.getRoot() : $("nc-root");
   }
 
+  function normalizeCollectionId(id) {
+    if (!id) return "";
+    if (window.AdminComposer && window.AdminComposer.normalizeCollectionId) {
+      return window.AdminComposer.normalizeCollectionId(id);
+    }
+    var aliases = {
+      "everyday-faith": "articles",
+      "back-to-bible": "bible-study",
+    };
+    return aliases[id] || id;
+  }
+
+  function isArticlesCollection(collection) {
+    if (window.AdminComposer && window.AdminComposer.isArticlesCollection) {
+      return window.AdminComposer.isArticlesCollection(collection);
+    }
+    return normalizeCollectionId(collection) === "articles";
+  }
+
+  function isBibleStudyCollection(collection) {
+    if (window.AdminComposer && window.AdminComposer.isBibleStudyCollection) {
+      return window.AdminComposer.isBibleStudyCollection(collection);
+    }
+    return normalizeCollectionId(collection) === "bible-study";
+  }
+
   function getCollection() {
     if (window.AdminComposer && window.AdminComposer.getActiveCollection) {
-      return window.AdminComposer.getActiveCollection();
+      var active = window.AdminComposer.getActiveCollection();
+      if (active) return active;
     }
     var match = (location.hash || "").match(/\/collections\/([^/?]+)/);
-    return match ? match[1] : "everyday-faith";
+    if (match) return normalizeCollectionId(match[1]);
+    if (window.AdminComposer && window.AdminComposer.getPreferredCollection) {
+      return window.AdminComposer.getPreferredCollection();
+    }
+    return "articles";
   }
 
   function setInputValue(input, value) {
@@ -47,20 +172,62 @@
     input.dispatchEvent(new Event("change", { bubbles: true }));
   }
 
-  function findFieldByLabel(root, labelText) {
-    var target = normalizeLabel(labelText);
-    var targets = LABEL_ALIASES[target] || [target];
+  function applyScalarInContainer(container, labelText, value) {
+    if (value === undefined || value === null || value === "") return false;
+    var wrap = findFieldInContainer(container, labelText);
+    if (!wrap) return false;
 
-    var labels = root.querySelectorAll("main label, main [class*='FieldLabel']");
-    for (var i = 0; i < labels.length; i++) {
-      var labelNorm = normalizeLabel(labels[i].textContent);
-      for (var j = 0; j < targets.length; j++) {
-        if (labelNorm === targets[j]) {
-          return labels[i].closest("div");
-        }
-      }
+    var checkbox = wrap.querySelector('input[type="checkbox"]');
+    if (checkbox && typeof value === "boolean") {
+      if (checkbox.checked !== value) checkbox.click();
+      return true;
     }
-    return null;
+
+    var input =
+      wrap.querySelector("textarea") ||
+      wrap.querySelector('input[type="text"]') ||
+      wrap.querySelector('input[type="number"]') ||
+      wrap.querySelector("input:not([type='checkbox']):not([type='hidden'])");
+    if (!input) return false;
+    setInputValue(input, String(value));
+    return true;
+  }
+
+  function getLatestListEntry(wrap) {
+    if (!wrap) return null;
+    var candidates = wrap.querySelectorAll(
+      '[class*="ListItem"], [class*="ObjectControl"], [class*="NestedObjectControl"]'
+    );
+    if (candidates.length) return candidates[candidates.length - 1];
+    return wrap;
+  }
+
+  function shouldApplyField(root, label, options) {
+    if (!options.fillEmptyOnly) return true;
+    var existing = findFieldByLabel(root, label);
+    if (!existing) return true;
+    var checkbox = existing.querySelector('input[type="checkbox"]');
+    if (checkbox) return !checkbox.checked;
+    var input = existing.querySelector("input, textarea");
+    return !input || !input.value || !String(input.value).trim();
+  }
+
+  function entryHasImportData(entry) {
+    if (!entry) return false;
+    return !!(
+      entry.title ||
+      entry.summary ||
+      entry.description ||
+      entry.author ||
+      entry.scripture ||
+      entry.sermonSeries ||
+      entry.passage ||
+      (entry.blocks && entry.blocks.length) ||
+      (entry.keyTakeaways && entry.keyTakeaways.length) ||
+      (entry.sections && entry.sections.length) ||
+      (entry.discussionQuestions && entry.discussionQuestions.length) ||
+      (entry.quiz && entry.quiz.length)
+    );
   }
 
   function applyScalarField(root, labelText, value) {
@@ -176,61 +343,112 @@
     return applied;
   }
 
-  var META_FIELDS_EF = [
+  function applyQuiz(root, quiz, options) {
+    if (!quiz || !quiz.length) return 0;
+    options = options || {};
+
+    if (options.fillEmptyOnly) {
+      var quizWrap = findFieldByLabel(root, "quiz");
+      var existingItems = quizWrap && quizWrap.querySelectorAll('[class*="ListItem"]');
+      if (existingItems && existingItems.length) return 0;
+    }
+
+    if (options.includeQuiz !== false) {
+      applyScalarField(root, "include quiz", true);
+    }
+
+    var wrap = findFieldByLabel(root, "quiz");
+    if (!wrap) return 0;
+
+    var applied = 0;
+    quiz.forEach(function (item, index) {
+      if (!item || !item.question) return;
+
+      window.setTimeout(function () {
+        var addBtn = clickButtonMatching(wrap, "add");
+        if (!addBtn) return;
+        addBtn.click();
+
+        window.setTimeout(function () {
+          var entry = getLatestListEntry(wrap);
+          if (!entry) return;
+
+          applyScalarInContainer(entry, "question", item.question);
+
+          var optionsWrap = findFieldInContainer(entry, "options");
+          if (optionsWrap && item.options && item.options.length) {
+            item.options.forEach(function (opt, optIndex) {
+              window.setTimeout(function () {
+                var optAdd = clickButtonMatching(optionsWrap, "add");
+                if (optAdd) optAdd.click();
+                window.setTimeout(function () {
+                  var optInputs = optionsWrap.querySelectorAll('input[type="text"]');
+                  var lastOpt = optInputs[optInputs.length - 1];
+                  if (lastOpt) setInputValue(lastOpt, opt);
+                }, 40);
+              }, optIndex * 60);
+            });
+          }
+
+          window.setTimeout(function () {
+            if (typeof item.correctIndex === "number") {
+              applyScalarInContainer(entry, "correct option index", item.correctIndex);
+            }
+            if (item.explanation) {
+              applyScalarInContainer(entry, "explanation", item.explanation);
+            }
+          }, (item.options || []).length * 60 + 80);
+        }, 100);
+      }, index * 400);
+
+      applied += 1;
+    });
+
+    return applied;
+  }
+
+  var IMPORT_META_EF = [
     ["title", "title"],
     ["summary", "summary"],
     ["search preview", "description"],
     ["author", "author"],
-    ["tag", "category"],
     ["main scripture", "scripture"],
     ["sermon series", "sermonSeries"],
   ];
 
-  var META_FIELDS_BTB = [
+  var IMPORT_META_BTB = [
     ["title", "title"],
     ["description", "description"],
     ["passage", "passage"],
     ["author", "author"],
-    ["tag", "category"],
   ];
 
   function applyEntryImport(root, entry, options) {
     options = options || {};
-    var contentOnly = options.contentOnly !== false;
     var collection = getCollection();
-    var metaFields = collection === "back-to-bible" ? META_FIELDS_BTB : META_FIELDS_EF;
-    var results = { meta: 0, content: 0, warnings: [] };
+    var metaFields = isBibleStudyCollection(collection) ? IMPORT_META_BTB : IMPORT_META_EF;
+    var results = { meta: 0, content: 0, quiz: 0, warnings: [] };
 
-    if (!contentOnly) {
-      metaFields.forEach(function (pair) {
-        var label = pair[0];
-        var key = pair[1];
-        if (options.fillEmptyOnly) {
-          var existing = findFieldByLabel(root, label);
-          var input = existing && existing.querySelector("input, textarea");
-          if (input && input.value && input.value.trim()) return;
-        }
-        if (applyScalarField(root, label, entry[key])) results.meta += 1;
-      });
+    metaFields.forEach(function (pair) {
+      var label = pair[0];
+      var key = pair[1];
+      if (entry[key] === undefined || entry[key] === null || entry[key] === "") return;
+      if (!shouldApplyField(root, label, options)) return;
+      if (applyScalarField(root, label, entry[key])) results.meta += 1;
+    });
 
-      if (entry.date) applyScalarField(root, "date", entry.date);
-      if (typeof entry.featured === "boolean") applyScalarField(root, "featured", entry.featured);
-      if (typeof entry.publish === "boolean") applyScalarField(root, "published", entry.publish);
-      if (typeof entry.includeQuiz === "boolean") applyScalarField(root, "include quiz", entry.includeQuiz);
-
-      if (entry.title) {
-        var headerInput = $("admin-editor-title-input");
-        if (headerInput && (!options.fillEmptyOnly || !headerInput.value.trim())) {
-          setInputValue(headerInput, entry.title);
-        }
-        if (window.AdminComposer && window.AdminComposer.syncTitleFromDecap) {
-          window.AdminComposer.syncTitleFromDecap(root);
-        }
+    if (entry.title && shouldApplyField(root, "title", options)) {
+      var headerInput = $("admin-editor-title-input");
+      if (headerInput) setInputValue(headerInput, entry.title);
+      if (window.AdminComposer && window.AdminComposer.syncTitleFromDecap) {
+        window.AdminComposer.syncTitleFromDecap(root);
       }
     }
 
-    if (collection === "everyday-faith") {
-      results.content += applySimpleList(root, "key takeaways", entry.keyTakeaways || []);
+    if (isArticlesCollection(collection)) {
+      if (!options.fillEmptyOnly || shouldApplyField(root, "key takeaways", options)) {
+        results.content += applySimpleList(root, "key takeaways", entry.keyTakeaways || []);
+      }
       var blockCount = applyBlocks(root, entry.blocks || []);
       results.content += blockCount;
       if ((entry.blocks || []).length && blockCount < (entry.blocks || []).length) {
@@ -241,10 +459,20 @@
       results.content += applySimpleList(root, "discussion questions", entry.discussionQuestions || []);
     }
 
+    if (entry.quiz && entry.quiz.length) {
+      results.quiz = applyQuiz(root, entry.quiz, {
+        fillEmptyOnly: options.fillEmptyOnly,
+        includeQuiz: entry.includeQuiz !== false,
+      });
+      if (results.quiz < entry.quiz.length) {
+        results.warnings.push("Some quiz questions may need manual review after import.");
+      }
+    }
+
     if (window.AdminComposer && window.AdminComposer.resetEditorSnapshot) {
       window.setTimeout(function () {
         window.AdminComposer.resetEditorSnapshot(root);
-      }, 500);
+      }, 1200);
     }
 
     return results;
@@ -267,26 +495,25 @@
     }, 4500);
   }
 
-  function formatImportSummary(results, contentOnly) {
-    var msg;
-    if (contentOnly) {
-      msg =
-        results.content === 0
-          ? "No blog content fields were filled."
-          : "Imported " + results.content + " blog content item" + (results.content === 1 ? "" : "s");
-    } else {
-      msg = "Imported " + results.meta + " info field" + (results.meta === 1 ? "" : "s");
-      if (results.content) {
-        msg += " and " + results.content + " content item" + (results.content === 1 ? "" : "s");
-      }
+  function formatImportSummary(results) {
+    var parts = [];
+    if (results.meta) {
+      parts.push(results.meta + " info field" + (results.meta === 1 ? "" : "s"));
     }
+    if (results.content) {
+      parts.push(results.content + " content item" + (results.content === 1 ? "" : "s"));
+    }
+    if (results.quiz) {
+      parts.push(results.quiz + " quiz question" + (results.quiz === 1 ? "" : "s"));
+    }
+    var msg = parts.length ? "Imported " + parts.join(", ") : "No matching empty fields found to fill.";
     if (results.warnings.length) msg += ". " + results.warnings.join(" ");
     return msg;
   }
 
-  function runAutoImport(entry, options) {
+  function runAutoImport(entry, options, attempt) {
     options = options || {};
-    if (options.contentOnly === undefined) options.contentOnly = true;
+    attempt = attempt || 0;
     if (!entry) {
       showToast("Nothing to import.", "error");
       return { ok: false };
@@ -298,16 +525,30 @@
       return { ok: false };
     }
 
+    if (!isEditorRoute()) {
+      showToast("Open an article in the editor, then drop the JSON file again.", "error");
+      return { ok: false };
+    }
+
     try {
       var results = applyEntryImport(root, entry, options);
-      if (!results.meta && !results.content) {
+      if (!results.meta && !results.content && !results.quiz) {
+        if (entryHasImportData(entry) && attempt < 5) {
+          window.setTimeout(function () {
+            runAutoImport(entry, options, attempt + 1);
+          }, attempt === 0 ? 400 : 700);
+          if (attempt === 0) {
+            showToast("Waiting for editor fields…", "info");
+          }
+          return { ok: true, results: results, pending: true };
+        }
         showToast(
-          options.contentOnly ? "No blog content fields found to fill." : "No matching empty fields found to fill.",
+          "Could not fill any fields. Wait for the form to load fully, or check Replace fields in the import dialog.",
           "info"
         );
         return { ok: true, results: results, empty: true };
       }
-      showToast(formatImportSummary(results, options.contentOnly), "success");
+      showToast(formatImportSummary(results), "success");
       return { ok: true, results: results };
     } catch (err) {
       showToast("Import failed: " + (err.message || err), "error");
@@ -330,10 +571,12 @@
     }
 
     return (
+      /"title"\s*:/.test(trimmed) ||
       /"blocks"\s*:/.test(trimmed) ||
       /"sections"\s*:/.test(trimmed) ||
       /"keyTakeaways"\s*:/.test(trimmed) ||
       /"discussionQuestions"\s*:/.test(trimmed) ||
+      /"quiz"\s*:/.test(trimmed) ||
       /^#\s+.+/m.test(trimmed)
     );
   }
@@ -351,9 +594,9 @@
       '<div class="admin-import-modal__panel" role="dialog" aria-labelledby="admin-import-title">' +
       '<h2 id="admin-import-title" class="admin-import-modal__title">Import article</h2>' +
       '<p class="admin-import-modal__summary" id="admin-import-summary"></p>' +
-      '<label class="admin-import-modal__label"><input type="checkbox" id="admin-import-replace" /> Replace blog content that already has text</label>' +
-      '<p class="admin-import-modal__hint">Imports article body only — set title, tag, date, and other info manually in the editor.</p>' +
-      '<details class="admin-import-modal__help"><summary>Blog content JSON template</summary><pre id="admin-import-example"></pre></details>' +
+      '<label class="admin-import-modal__label"><input type="checkbox" id="admin-import-replace" /> Replace fields that already have content</label>' +
+      '<p class="admin-import-modal__hint">Imports title, summary, content, and quiz. Set tag, date, hero image, featured, and published manually in the editor.</p>' +
+      '<details class="admin-import-modal__help"><summary>Article import JSON template</summary><pre id="admin-import-example"></pre></details>' +
       '<div class="admin-import-modal__actions">' +
       '<button type="button" class="btn-outline" data-import-close>Cancel</button>' +
       '<button type="button" class="btn-primary" id="admin-import-confirm">Import</button>' +
@@ -372,7 +615,7 @@
       confirmBtn.addEventListener("click", function () {
         if (!pendingEntry) return;
         var replace = $("admin-import-replace") && $("admin-import-replace").checked;
-        runAutoImport(pendingEntry, { fillEmptyOnly: !replace, contentOnly: true });
+        runAutoImport(pendingEntry, { fillEmptyOnly: !replace });
         pendingEntry = null;
         modal.hidden = true;
       });
@@ -391,8 +634,8 @@
     zone.hidden = true;
     zone.innerHTML =
       '<div class="admin-import-dropzone__inner">' +
-      "<p><strong>Drop blog content</strong></p>" +
-      "<p>JSON with blocks, takeaways, or sections</p>" +
+      "<p><strong>Drop article JSON</strong></p>" +
+      "<p>Title, content, quiz, and more</p>" +
       "</div>";
     document.body.appendChild(zone);
     return zone;
@@ -409,7 +652,7 @@
     var example = $("admin-import-example");
     if (example) {
       example.textContent = JSON.stringify(
-        parseApi.CONTENT_JSON_EXAMPLE[getCollection()] || parseApi.CONTENT_JSON_EXAMPLE["everyday-faith"],
+        parseApi.CONTENT_JSON_EXAMPLE[getCollection()] || parseApi.CONTENT_JSON_EXAMPLE.articles,
         null,
         2
       );
@@ -420,11 +663,14 @@
   function summarizeText(entry) {
     if (!parseApi) return "";
     var s = parseApi.summarizeContentEntry(entry, getCollection());
-    var parts = ["Blog content"];
+    var parts = [];
+    if (s.title) parts.push('"' + s.title + '"');
+    else parts.push("Article import");
     if (s.blockCount) parts.push(s.blockCount + " blocks");
     if (s.sectionCount) parts.push(s.sectionCount + " sections");
     if (s.takeawayCount) parts.push(s.takeawayCount + " takeaways");
-    if (s.questionCount) parts.push(s.questionCount + " questions");
+    if (s.questionCount) parts.push(s.questionCount + " discussion questions");
+    if (s.quizCount) parts.push(s.quizCount + " quiz questions");
     return parts.join(" · ");
   }
 

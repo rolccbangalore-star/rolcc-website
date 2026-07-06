@@ -1,8 +1,20 @@
 (function () {
-  var COLLECTION_LABELS = {
-    "everyday-faith": "Sermon Summary",
-    "back-to-bible": "Back to the Bible",
-  };
+  var COLLECTIONS = [
+    { id: "articles", label: "Sermon Summary", legacyIds: ["everyday-faith"] },
+    { id: "bible-study", label: "Back to the Bible", legacyIds: ["back-to-bible"] },
+  ];
+  var DEFAULT_COLLECTION = "articles";
+  var COLLECTION_LABELS = {};
+  var COLLECTION_ALIASES = {};
+
+  COLLECTIONS.forEach(function (entry) {
+    COLLECTION_LABELS[entry.id] = entry.label;
+    COLLECTION_ALIASES[entry.id] = entry.id;
+    (entry.legacyIds || []).forEach(function (legacyId) {
+      COLLECTION_ALIASES[legacyId] = entry.id;
+    });
+  });
+
   var entryCache = Object.create(null);
   var cardManifest = null;
   var cardManifestPromise = null;
@@ -34,6 +46,54 @@
     return (href || "").replace(/^#/, "");
   }
 
+  function normalizeCollectionId(id) {
+    if (!id) return "";
+    return COLLECTION_ALIASES[id] || id;
+  }
+
+  function isArticlesCollection(collection) {
+    return normalizeCollectionId(collection) === "articles";
+  }
+
+  function isBibleStudyCollection(collection) {
+    return normalizeCollectionId(collection) === "bible-study";
+  }
+
+  function rememberCollection(collection) {
+    collection = normalizeCollectionId(collection);
+    if (!collection || !COLLECTION_LABELS[collection]) return;
+    try {
+      sessionStorage.setItem("rolcc.admin.collection", collection);
+    } catch (err) {
+      /* ignore */
+    }
+  }
+
+  function getPreferredCollection() {
+    var active = getActiveCollection();
+    if (active) return active;
+    try {
+      var stored = sessionStorage.getItem("rolcc.admin.collection");
+      if (stored && COLLECTION_LABELS[normalizeCollectionId(stored)]) {
+        return normalizeCollectionId(stored);
+      }
+    } catch (err) {
+      /* ignore */
+    }
+    return DEFAULT_COLLECTION;
+  }
+
+  function migrateLegacyCollectionHash() {
+    var hash = getHash();
+    if (hash.indexOf("/collections/") === -1) return false;
+    var match = hash.match(/\/collections\/([^/?]+)/);
+    if (!match) return false;
+    var normalized = normalizeCollectionId(match[1]);
+    if (normalized === match[1]) return false;
+    location.replace("#" + hash.replace("/collections/" + match[1], "/collections/" + normalized));
+    return true;
+  }
+
   function isEditorRoute() {
     return /\/entries\/|\/new$/.test(getHash());
   }
@@ -48,7 +108,11 @@
 
   function getActiveCollection() {
     var match = getHash().match(/\/collections\/([^/?]+)/);
-    return match ? match[1] : "";
+    return match ? normalizeCollectionId(match[1]) : "";
+  }
+
+  function getCollectionBackHref(collection) {
+    return "#/collections/" + (normalizeCollectionId(collection) || getPreferredCollection());
   }
 
   function isLoginView(root) {
@@ -160,6 +224,7 @@
   }
 
   function getManifestEntry(collection, slug) {
+    collection = normalizeCollectionId(collection);
     if (!cardManifest || !cardManifest[collection]) return null;
     return cardManifest[collection][slug] || null;
   }
@@ -442,7 +507,7 @@
       if (label) label.textContent = "Contents";
       tabs = getHeaderTabs(root);
       if (tabs.contents) tabs.contents.click();
-      else location.hash = "#/collections/everyday-faith";
+      else location.hash = getCollectionBackHref(getPreferredCollection());
       scheduleEnhance(root, enhance);
     };
 
@@ -723,6 +788,22 @@
     if (importBtn) importBtn.hidden = !onEditor;
     if (websiteLink) websiteLink.hidden = onEditor;
 
+    if (onEditor) {
+      var backBtn = $("admin-editor-back");
+      if (backBtn) {
+        var collection = getActiveCollection() || getPreferredCollection();
+        var collectionLabel = COLLECTION_LABELS[collection] || "Contents";
+        backBtn.hidden = false;
+        backBtn.href = getCollectionBackHref(collection);
+        backBtn.title = "Back to " + collectionLabel;
+        var label = backBtn.querySelector(".admin-editor-back__label");
+        if (label) label.textContent = collectionLabel;
+      }
+    } else {
+      var editorBack = $("admin-editor-back");
+      if (editorBack) editorBack.hidden = true;
+    }
+
     if (!onEditor) return;
 
     var headerInput = $("admin-editor-title-input");
@@ -751,7 +832,6 @@
     var main = root.querySelector("main");
     if (!main) return;
 
-    var collection = getActiveCollection();
     var sub = main.querySelector(".admin-editor-subheader");
     if (!sub) {
       sub = document.createElement("div");
@@ -759,11 +839,8 @@
       main.insertBefore(sub, main.firstChild);
     }
 
-    var backHref = "#/collections/" + (collection || "everyday-faith");
+    var collection = getActiveCollection() || getPreferredCollection();
     sub.innerHTML =
-      '<a href="' +
-      backHref +
-      '" class="admin-editor-back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>Back</a>' +
       '<span class="admin-editor-type-badge">' +
       escapeHtml(COLLECTION_LABELS[collection] || "Article") +
       "</span>";
@@ -840,6 +917,9 @@
       body.classList.add("admin-page--media");
       cleanupLegacyEditorShell(root);
     }
+    if (isCollectionRoute() || isEditorRoute()) {
+      rememberCollection(getActiveCollection() || getPreferredCollection());
+    }
     if (isCollectionRoute()) root.classList.add("admin-view--collection");
     syncMediaPaneLayout(root);
     syncMediaSidebarPages();
@@ -891,10 +971,7 @@
       menu.className = "admin-create-dropdown__menu admin-dropdown__menu";
       menu.setAttribute("role", "menu");
 
-      [
-        { id: "everyday-faith", label: "Sermon Summary" },
-        { id: "back-to-bible", label: "Back to the Bible" },
-      ].forEach(function (opt) {
+      COLLECTIONS.forEach(function (opt) {
         var btn = document.createElement("button");
         btn.type = "button";
         btn.className = "admin-create-dropdown__option";
@@ -1352,8 +1429,8 @@
     var heading = link.querySelector("h2, h3");
     return {
       title: heading ? heading.textContent.trim() : link.textContent.trim() || "Untitled article",
-      author: collection === "back-to-bible" ? "ROLCC Fellowship Team" : "ROLCC Pastoral Team",
-      category: collection === "back-to-bible" ? "Bible Study" : "General",
+      author: isBibleStudyCollection(collection) ? "ROLCC Fellowship Team" : "ROLCC Pastoral Team",
+      category: isBibleStudyCollection(collection) ? "Bible Study" : "General",
       publish: true,
       date: "",
       thumbnail: "",
@@ -2827,7 +2904,10 @@
     });
     enhance(root);
 
+    if (migrateLegacyCollectionHash()) return;
+
     window.addEventListener("hashchange", function () {
+      if (migrateLegacyCollectionHash()) return;
       cleanupLegacyEditorShell(root);
       resetEditorState();
       resetCollectionLayout(root);
@@ -2863,6 +2943,10 @@
   window.AdminComposer = {
     getRoot: getComposerRoot,
     getActiveCollection: getActiveCollection,
+    getPreferredCollection: getPreferredCollection,
+    normalizeCollectionId: normalizeCollectionId,
+    isArticlesCollection: isArticlesCollection,
+    isBibleStudyCollection: isBibleStudyCollection,
     findDecapTitleInput: findDecapTitleInput,
     setInputValue: setInputValue,
     syncTitleFromDecap: syncTitleFromDecap,

@@ -15,11 +15,24 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="/css/articles.css" />
-    <link rel="stylesheet" href="/admin/admin.css?v=20260707media4" />
+    <link rel="stylesheet" href="/admin/admin.css?v=20260707editor2" />
   </head>
   <body class="admin-page">
     <header id="admin-topbar" class="admin-shell-topbar" hidden>
       <div class="admin-topbar__left">
+        <a
+          href="#/collections/articles"
+          id="admin-editor-back"
+          class="admin-editor-back admin-editor-back--topbar"
+          hidden
+          title="Back to collection"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
+            <path d="m15 18-6-6 6-6" />
+          </svg>
+          <span class="admin-editor-back__text">Back</span>
+          <span class="admin-editor-back__label">Contents</span>
+        </a>
         <a href="https://www.rolcc.in/" class="admin-topbar-brand" target="_blank" rel="noopener noreferrer">
           <img
             class="admin-topbar-brand__logo"
@@ -104,13 +117,13 @@
 
       <p class="admin-sidebar-section-label admin-sidebar-section-label--collections">Collections</p>
       <nav class="admin-sidebar-nav admin-sidebar-nav--collections" aria-label="Article collections">
-        <a href="#/collections/everyday-faith" class="admin-sidebar-link" data-collection="everyday-faith">
+        <a href="#/collections/articles" class="admin-sidebar-link" data-collection="articles">
           <svg class="admin-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
             <path d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
           </svg>
           <span class="admin-sidebar-link__text">Sermon Summary</span>
         </a>
-        <a href="#/collections/back-to-bible" class="admin-sidebar-link" data-collection="back-to-bible">
+        <a href="#/collections/bible-study" class="admin-sidebar-link" data-collection="bible-study">
           <svg class="admin-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
             <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
             <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
@@ -131,9 +144,9 @@
     </noscript>
     <script>window.CMS_MANUAL_INIT = true;</script>
     <script src="https://unpkg.com/decap-cms@3.3.0/dist/decap-cms.js"></script>
-    <script src="/scripts/article-import-parse.js?v=20260707import"></script>
-    <script src="/admin/admin-composer.js?v=20260707media4"></script>
-    <script src="/admin/admin-import.js?v=20260707import"></script>
+    <script src="/scripts/article-import-parse.js?v=20260707editor2"></script>
+    <script src="/admin/admin-composer.js?v=20260707editor2"></script>
+    <script src="/admin/admin-import.js?v=20260707editor2"></script>
     <script>
       (function () {
         var errorBox = document.getElementById("cms-error");

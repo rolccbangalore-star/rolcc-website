@@ -2101,7 +2101,7 @@ body.admin-composer-dropdown-open #nc-root .admin-custom-grid {
   max-width: none !important;
 }
 
-#nc-root.admin-view--editor form > div > :not(.admin-editor-columns) {
+#nc-root.admin-view--editor form > div:has(.admin-editor-columns) > :not(.admin-editor-columns) {
   display: none !important;
 }
 

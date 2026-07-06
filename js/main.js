@@ -227,39 +227,16 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // Footer: fixed at bottom; Serve section unveils it on scroll (footer-reveal in BG, Serve scrolls up to reveal)
-  // When footer nav is visible, raise footer z-index and let clicks pass through main.
+  // When user scrolls to bottom, raise footer z-index so nav links are clickable (main otherwise covers footer).
   (function footerInView() {
     var footerSection = document.getElementById("footer-section");
     if (!footerSection) return;
-
-    function setFooterInView(active) {
-      document.body.classList.toggle("footer-in-view", active);
-    }
-
-    var footerNav =
-      footerSection.querySelector('a[href="/articles"]') ||
-      footerSection.querySelector('a[href="/contact"]') ||
-      footerSection.querySelector(".footer-link");
-    var observeTarget = footerNav ? footerNav.closest(".border-t") || footerSection : footerSection;
-
-    if ("IntersectionObserver" in window) {
-      var observer = new IntersectionObserver(
-        function (entries) {
-          setFooterInView(entries.some(function (entry) {
-            return entry.isIntersecting;
-          }));
-        },
-        { threshold: 0.15 }
-      );
-      observer.observe(observeTarget);
-      return;
-    }
 
     var threshold = 80;
     function update() {
       var nearBottom =
         window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - threshold;
-      setFooterInView(nearBottom);
+      document.body.classList.toggle("footer-in-view", nearBottom);
     }
     window.addEventListener("scroll", update, { passive: true });
     window.addEventListener("resize", update);

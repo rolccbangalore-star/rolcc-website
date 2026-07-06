@@ -5,6 +5,8 @@
     "back-to-bible": "Back to the Bible",
   };
   var entryCache = Object.create(null);
+  var cardManifest = null;
+  var cardManifestPromise = null;
   var enhanceTimer = null;
 
   function $(id) {
@@ -73,6 +75,30 @@
       .replace(/</g, "&lt;")
       .replace(/>/g, "&gt;")
       .replace(/"/g, "&quot;");
+  }
+
+  function loadCardManifest() {
+    if (cardManifest) return Promise.resolve(cardManifest);
+    if (cardManifestPromise) return cardManifestPromise;
+    cardManifestPromise = fetch("/data/articles/composer-cards.json")
+      .then(function (res) {
+        if (!res.ok) throw new Error("missing manifest");
+        return res.json();
+      })
+      .then(function (data) {
+        cardManifest = data || {};
+        return cardManifest;
+      })
+      .catch(function () {
+        cardManifest = {};
+        return cardManifest;
+      });
+    return cardManifestPromise;
+  }
+
+  function getManifestEntry(collection, slug) {
+    if (!cardManifest || !cardManifest[collection]) return null;
+    return cardManifest[collection][slug] || null;
   }
 
   function scheduleEnhance(root, fn) {
@@ -316,14 +342,10 @@
 
     styleCreateButton(createBtn);
 
-    createSlot.querySelectorAll(".admin-create-article, a[href*='new']").forEach(function (link) {
-      if (link !== createBtn) link.remove();
-    });
-
-    if (createBtn.parentElement !== createSlot) {
-      createSlot.appendChild(createBtn);
+    while (createSlot.firstChild) {
+      createSlot.removeChild(createSlot.firstChild);
     }
-
+    createSlot.appendChild(createBtn);
     createSlot.hidden = false;
   }
 
@@ -392,6 +414,84 @@
     if (staleRow) staleRow.remove();
   }
 
+  function styleSortControl(toolbar) {
+    var select = toolbar.querySelector("select");
+    if (!select) return;
+
+    if (!select.classList.contains("admin-sort-select")) {
+      select.classList.add("admin-sort-select");
+    }
+
+    var sortWrap = toolbar.querySelector(".admin-sort-wrap");
+    if (!sortWrap) {
+      sortWrap = document.createElement("div");
+      sortWrap.className = "admin-sort-wrap";
+      select.parentElement.insertBefore(sortWrap, select);
+      sortWrap.appendChild(select);
+    }
+
+    if (!sortWrap.querySelector(".admin-sort-label")) {
+      var sortLabel = document.createElement("span");
+      sortLabel.className = "admin-sort-label";
+      sortLabel.textContent = "Sort by";
+      sortWrap.insertBefore(sortLabel, select);
+    }
+
+    if (!sortWrap.querySelector(".admin-sort-chevron")) {
+      var chevron = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+      chevron.setAttribute("class", "admin-sort-chevron");
+      chevron.setAttribute("viewBox", "0 0 24 24");
+      chevron.setAttribute("fill", "none");
+      chevron.setAttribute("stroke", "currentColor");
+      chevron.setAttribute("stroke-width", "1.75");
+      chevron.setAttribute("aria-hidden", "true");
+      var path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      path.setAttribute("d", "m6 9 6 6 6-6");
+      chevron.appendChild(path);
+      sortWrap.appendChild(chevron);
+    }
+
+    if (select.parentElement !== sortWrap) {
+      sortWrap.appendChild(select);
+    }
+
+    var valueEl = sortWrap.querySelector(".admin-sort-value");
+    if (!valueEl) {
+      valueEl = document.createElement("span");
+      valueEl.className = "admin-sort-value";
+      var chevron = sortWrap.querySelector(".admin-sort-chevron");
+      sortWrap.insertBefore(valueEl, chevron || select);
+    }
+
+    function updateSortValue() {
+      var option = select.options[select.selectedIndex];
+      valueEl.textContent = option ? option.textContent.trim() : "";
+    }
+
+    if (select.dataset.sortBound !== "true") {
+      select.dataset.sortBound = "true";
+      select.addEventListener("change", updateSortValue);
+    }
+    updateSortValue();
+  }
+
+  function bindViewModeButtons(root) {
+    root.querySelectorAll(".admin-view-btn").forEach(function (btn) {
+      if (btn.dataset.viewBound === "true") return;
+      btn.dataset.viewBound = "true";
+      btn.addEventListener("click", function () {
+        window.setTimeout(function () {
+          syncCollectionViewMode(root);
+          root.querySelectorAll("[data-admin-card]").forEach(function (el) {
+            delete el.dataset.adminCard;
+            delete el.dataset.adminCardView;
+          });
+          enhanceGridCards(root);
+        }, 0);
+      });
+    });
+  }
+
   function styleViewToggleButtons(toolbar) {
     var viewButtons = [];
 
@@ -424,30 +524,12 @@
       });
     }
 
-    var select = toolbar.querySelector("select");
-    if (select) {
-      if (!select.classList.contains("admin-sort-select")) {
-        select.classList.add("admin-sort-select");
-      }
-      var sortWrap = toolbar.querySelector(".admin-sort-wrap");
-      if (!sortWrap) {
-        sortWrap = document.createElement("div");
-        sortWrap.className = "admin-sort-wrap";
-        select.parentElement.insertBefore(sortWrap, select);
-        sortWrap.appendChild(select);
-      }
-      if (!sortWrap.querySelector(".admin-sort-label")) {
-        var sortLabel = document.createElement("span");
-        sortLabel.className = "admin-sort-label";
-        sortLabel.textContent = "Sort by";
-        sortWrap.insertBefore(sortLabel, select);
-      }
-    }
+    styleSortControl(toolbar);
   }
 
   function parseEntryPath(href) {
-    var match = normalizePath(href).match(/\/collections\/([^/]+)\/entries\/([^/?#]+)/);
-    return match ? { collection: match[1], slug: match[2] } : null;
+    var match = normalizePath(href).match(/collections\/([^/]+)\/entries\/([^/?#]+)/);
+    return match ? { collection: match[1], slug: decodeURIComponent(match[2]) } : null;
   }
 
   function fetchEntry(collection, slug) {
@@ -482,7 +564,84 @@
     return escapeHtml(author) + (date ? " · " + escapeHtml(date) : "");
   }
 
-  function renderCard(link, data, collection, imageEl) {
+  function buildFallbackCardData(link, collection, slug) {
+    var manifest = getManifestEntry(collection, slug);
+    if (manifest) return manifest;
+
+    var heading = link.querySelector("h2, h3");
+    return {
+      title: heading ? heading.textContent.trim() : link.textContent.trim() || "Untitled article",
+      author: collection === "back-to-bible" ? "ROLCC Fellowship Team" : "ROLCC Pastoral Team",
+      category: collection === "back-to-bible" ? "Bible Study" : "General",
+      publish: true,
+      date: "",
+      thumbnail: "",
+    };
+  }
+
+  function isListView(root) {
+    return !!root.querySelector(".admin-view-btn--list[aria-pressed='true']");
+  }
+
+  function syncCollectionViewMode(root) {
+    var list = isListView(root);
+    root.classList.toggle("admin-view--list", list);
+    root.classList.toggle("admin-view--grid", !list);
+  }
+
+  function ensureListHeader(main, show) {
+    var header = main.querySelector(".admin-list-header");
+    if (!show) {
+      if (header) header.hidden = true;
+      return null;
+    }
+    if (!header) {
+      header = document.createElement("div");
+      header.className = "admin-list-header";
+      header.innerHTML =
+        '<span class="admin-list-header__cell admin-list-header__name">Title</span>' +
+        '<span class="admin-list-header__cell admin-list-header__collection">Collection</span>' +
+        '<span class="admin-list-header__cell admin-list-header__author">Author</span>' +
+        '<span class="admin-list-header__cell admin-list-header__date">Date</span>' +
+        '<span class="admin-list-header__cell admin-list-header__status">Status</span>';
+      var list = main.querySelector("ul");
+      if (list) main.insertBefore(header, list);
+    }
+    header.hidden = false;
+    return header;
+  }
+
+  var LIST_DOC_ICON =
+    '<svg class="admin-list-row__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h8"/></svg>';
+
+  function renderListRow(link, data, collection) {
+    var typeLabel = COLLECTION_LABELS[collection] || collection;
+    var isDraft = data.publish === false;
+    link.textContent = "";
+    link.className = "admin-list-row__link";
+    link.innerHTML =
+      '<span class="admin-list-row__cell admin-list-row__name">' +
+      LIST_DOC_ICON +
+      '<span class="admin-list-row__title">' +
+      escapeHtml(data.title || "Untitled article") +
+      "</span></span>" +
+      '<span class="admin-list-row__cell admin-list-row__collection">' +
+      escapeHtml(typeLabel) +
+      "</span>" +
+      '<span class="admin-list-row__cell admin-list-row__author">' +
+      escapeHtml(data.author || "ROLCC") +
+      "</span>" +
+      '<span class="admin-list-row__cell admin-list-row__date">' +
+      escapeHtml(formatDate(data.date) || "—") +
+      "</span>" +
+      '<span class="admin-list-row__cell admin-list-row__status' +
+      (isDraft ? " admin-list-row__status--draft" : "") +
+      '">' +
+      (isDraft ? "Draft" : "Published") +
+      "</span>";
+  }
+
+  function renderGridCard(link, data, collection, imageEl) {
     var typeLabel = COLLECTION_LABELS[collection] || collection;
     var thumbUrl = getThumbUrl(data, imageEl);
 
@@ -530,23 +689,51 @@
     var main = root.querySelector("main");
     if (!main) return;
 
-    main.querySelectorAll("ul li").forEach(function (card) {
-      card.classList.add("admin-grid-card");
-      var link = card.querySelector("a");
-      if (!link) return;
+    loadCardManifest().then(function () {
+      var listView = isListView(root);
+      syncCollectionViewMode(root);
+      ensureListHeader(main, listView);
+      bindViewModeButtons(root);
 
-      var parsed = parseEntryPath(link.getAttribute("href") || "");
-      if (!parsed) return;
+      main.querySelectorAll("ul li").forEach(function (card) {
+        card.classList.add("admin-grid-card");
+        card.classList.toggle("admin-list-item", listView);
+        var link = card.querySelector("a");
+        if (!link) return;
 
-      var imageEl = link.querySelector(".admin-card-image") || link.children[1];
-      if (imageEl) imageEl.classList.add("admin-card-image");
+        var parsed = parseEntryPath(link.getAttribute("href") || "");
+        if (!parsed) return;
 
-      if (link.dataset.adminCard === "done") return;
+        var imageEl = link.querySelector(".admin-card-image") || link.children[1];
+        if (imageEl) imageEl.classList.add("admin-card-image");
 
-      fetchEntry(parsed.collection, parsed.slug).then(function (data) {
-        if (link.dataset.adminCard === "done") return;
-        renderCard(link, data || { title: link.textContent.trim() }, parsed.collection, imageEl);
-        link.dataset.adminCard = "done";
+        var viewMode = listView ? "list" : "grid";
+        if (link.dataset.adminCard === "done" && link.dataset.adminCardView === viewMode) return;
+
+        var cacheKey = parsed.collection + "/" + parsed.slug;
+        var manifestData = getManifestEntry(parsed.collection, parsed.slug);
+
+        function paint(data) {
+          if (isListView(root)) {
+            renderListRow(link, data, parsed.collection);
+          } else {
+            renderGridCard(link, data, parsed.collection, imageEl);
+          }
+          link.dataset.adminCard = "done";
+          link.dataset.adminCardView = isListView(root) ? "list" : "grid";
+          entryCache[cacheKey] = data;
+        }
+
+        if (manifestData) {
+          paint(manifestData);
+          return;
+        }
+
+        paint(buildFallbackCardData(link, parsed.collection, parsed.slug));
+
+        fetchEntry(parsed.collection, parsed.slug).then(function (data) {
+          if (data) paint(data);
+        });
       });
     });
   }
@@ -597,6 +784,7 @@
   function resetCollectionLayout(root) {
     root.querySelectorAll("[data-admin-card]").forEach(function (el) {
       delete el.dataset.adminCard;
+      delete el.dataset.adminCardView;
     });
     entryCache = Object.create(null);
   }

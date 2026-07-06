@@ -561,6 +561,11 @@ body {
   display: none;
 }
 
+.admin-page--authed:not(.admin-page--media) .admin-sidebar-nav--pages,
+.admin-page--authed:not(.admin-page--media) .admin-sidebar-section-label--pages {
+  display: none !important;
+}
+
 .admin-sidebar-link--page {
   width: 100%;
   border: none;
@@ -826,27 +831,53 @@ body {
 .admin-media-pane .admin-media-list {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
   width: 100%;
-}
-
-.admin-media-pane .admin-media-list-row {
-  display: grid;
-  grid-template-columns: 4.5rem minmax(0, 1fr);
-  gap: 0.85rem;
-  width: 100%;
-  padding: 0.65rem 0.75rem;
   border: 1px solid var(--rolcc-slate-200);
   border-radius: var(--rolcc-radius-xl);
   background: var(--rolcc-primary);
+  overflow: hidden;
+}
+
+.admin-media-pane .admin-media-list-head,
+.admin-media-pane .admin-media-list-row {
+  display: grid;
+  grid-template-columns: 3.25rem minmax(0, 1.5fr) 6.5rem 5.5rem minmax(9.5rem, auto);
+  gap: 0.75rem;
+  align-items: center;
+  padding: 0.6rem 0.85rem;
+}
+
+.admin-media-pane .admin-media-list-head {
+  background: var(--rolcc-slate-50);
+  border-bottom: 1px solid var(--rolcc-slate-200);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--rolcc-slate-600);
+}
+
+.admin-media-pane .admin-media-list-head__actions {
+  text-align: right;
+}
+
+.admin-media-pane .admin-media-list-row {
+  width: 100%;
+  border: none;
+  border-bottom: 1px solid var(--rolcc-slate-200);
+  border-radius: 0;
+  background: var(--rolcc-primary);
   text-align: left;
-  cursor: pointer;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  transition: background 0.15s ease;
+}
+
+.admin-media-pane .admin-media-list-row:last-child {
+  border-bottom: none;
 }
 
 .admin-media-pane .admin-media-list-row:hover {
-  border-color: var(--rolcc-slate-300);
-  box-shadow: var(--rolcc-shadow-md);
+  background: var(--rolcc-slate-50);
+  box-shadow: none;
 }
 
 .admin-media-pane .admin-media-list-row--copied {
@@ -858,8 +889,8 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 4.5rem;
-  height: 4.5rem;
+  width: 3.25rem;
+  height: 3.25rem;
   border-radius: var(--rolcc-radius-lg);
   background: var(--rolcc-slate-100);
   overflow: hidden;
@@ -871,19 +902,11 @@ body {
   object-fit: cover;
 }
 
-.admin-media-pane .admin-media-list-row__main {
+.admin-media-pane .admin-media-list-row__name-col {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  gap: 0.2rem;
+  gap: 0.15rem;
   min-width: 0;
-}
-
-.admin-media-pane .admin-media-list-row__top {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.4rem;
 }
 
 .admin-media-pane .admin-media-list-row__name {
@@ -893,6 +916,26 @@ body {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.admin-media-pane .admin-media-list-row__dims {
+  font-size: 0.8125rem;
+  color: var(--rolcc-slate-700);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.admin-media-pane .admin-media-list-row__usage {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--rolcc-accent);
+  white-space: nowrap;
+}
+
+.admin-media-pane .admin-media-list-row__usage--none {
+  font-weight: 500;
+  color: var(--rolcc-slate-500);
 }
 
 
@@ -1065,10 +1108,11 @@ body {
   color: var(--rolcc-slate-500);
 }
 
-.admin-media-pane .admin-media-list-row__dims {
-  font-size: 0.75rem;
-  color: var(--rolcc-slate-600);
-  font-variant-numeric: tabular-nums;
+.admin-media-pane .admin-media-list-row__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.35rem;
 }
 
 .admin-media-pane .admin-media-list-row__path {
@@ -1088,12 +1132,6 @@ body {
 .admin-media-pane .admin-media-list-row__path:hover {
   color: var(--rolcc-accent);
   text-decoration: underline;
-}
-
-.admin-media-pane .admin-media-list-row__actions {
-  display: flex;
-  gap: 0.35rem;
-  margin-top: 0.35rem;
 }
 
 .admin-media-pane .admin-media-empty {

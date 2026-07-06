@@ -842,6 +842,7 @@
     }
     if (isCollectionRoute()) root.classList.add("admin-view--collection");
     syncMediaPaneLayout(root);
+    syncMediaSidebarPages();
   }
 
   var CREATE_ICON =
@@ -2346,6 +2347,12 @@
     return "—";
   }
 
+  function formatMediaUsageLabel(item) {
+    var count = item.usageCount || 0;
+    if (!count) return "Not used";
+    return count === 1 ? "1×" : count + "×";
+  }
+
   function buildMediaUsageMeta(item) {
     var count = item.usageCount || 0;
     if (!count) {
@@ -2556,33 +2563,52 @@
     return card;
   }
 
+  function buildMediaListHeader() {
+    var head = document.createElement("div");
+    head.className = "admin-media-list-head";
+    head.setAttribute("role", "row");
+    head.innerHTML =
+      '<span class="admin-media-list-head__thumb" aria-hidden="true"></span>' +
+      '<span class="admin-media-list-head__name">Name</span>' +
+      '<span class="admin-media-list-head__size">Size</span>' +
+      '<span class="admin-media-list-head__usage">Times used</span>' +
+      '<span class="admin-media-list-head__actions">Actions</span>';
+    return head;
+  }
+
   function buildMediaListRow(item, root) {
     var row = document.createElement("article");
     row.className = "admin-media-list-row";
     row.dataset.path = item.path;
+    var usageTitle =
+      item.usedOn && item.usedOn.length ? "Used on: " + item.usedOn.join(", ") : "";
     row.innerHTML =
       '<span class="admin-media-list-row__thumb">' +
       '<img src="' +
       escapeHtml(item.path) +
       '" alt="" loading="lazy" decoding="async" />' +
       "</span>" +
-      '<span class="admin-media-list-row__main">' +
-      '<span class="admin-media-list-row__top">' +
+      '<div class="admin-media-list-row__name-col">' +
       '<span class="admin-media-list-row__name">' +
       escapeHtml(item.name) +
-      "</span>" +
-      '<span class="admin-media-list-row__dims">' +
-      escapeHtml(formatMediaDimensions(item)) +
-      "</span>" +
-      buildMediaUsageMeta(item) +
       "</span>" +
       '<button type="button" class="admin-media-list-row__path">' +
       escapeHtml(item.path) +
       "</button>" +
+      "</div>" +
+      '<span class="admin-media-list-row__dims">' +
+      escapeHtml(formatMediaDimensions(item)) +
+      "</span>" +
+      '<span class="admin-media-list-row__usage' +
+      (!item.usageCount ? " admin-media-list-row__usage--none" : "") +
+      '"' +
+      (usageTitle ? ' title="' + escapeHtml(usageTitle) + '"' : "") +
+      ">" +
+      escapeHtml(formatMediaUsageLabel(item)) +
+      "</span>" +
       '<span class="admin-media-list-row__actions">' +
       '<button type="button" class="admin-media-card__action" data-action="preview">Preview</button>' +
       '<button type="button" class="admin-media-card__action" data-action="replace">Replace</button>' +
-      "</span>" +
       "</span>";
     bindMediaCardActions(row, item, root);
     return row;
@@ -2599,6 +2625,7 @@
     }
     root.classList.remove("admin-workspace--media-background", "admin-workspace--media-upload");
     syncMediaPaneLayout(root);
+    syncMediaSidebarPages();
   }
 
   function renderMediaWorkspace(root) {
@@ -2736,6 +2763,8 @@
         } else if (listView) {
           var list = document.createElement("div");
           list.className = "admin-media-list";
+          list.setAttribute("role", "table");
+          list.appendChild(buildMediaListHeader());
           filtered.forEach(function (item) {
             list.appendChild(buildMediaListRow(item, root));
           });

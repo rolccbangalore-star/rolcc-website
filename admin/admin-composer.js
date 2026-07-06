@@ -41,7 +41,11 @@
   }
 
   function isLoginView(root) {
-    return root && root.querySelector("button") && root.textContent.indexOf("Login with GitHub") !== -1;
+    if (!root) return true;
+    if (root.querySelector('[class*="AuthenticationPage"], [class*="StyledAuthenticationPage"]')) return true;
+    var loginBtn = root.querySelector('button[class*="LoginButton"]');
+    if (loginBtn && normalize(loginBtn.textContent).indexOf("github") !== -1) return true;
+    return false;
   }
 
   function getControlLabel(control) {
@@ -172,7 +176,7 @@
     var searchInput = getDecapSearchInput(root);
     if (searchSlot && searchInput && searchInput.parentElement !== searchSlot) {
       searchInput.classList.add("admin-search__input");
-      searchInput.setAttribute("placeholder", "Title, author, or passage…");
+      searchInput.setAttribute("placeholder", "Search for an article");
       searchInput.setAttribute("aria-label", "Search for an article");
       searchSlot.appendChild(searchInput);
     }
@@ -259,17 +263,54 @@
     }
 
     topBlock.classList.add("admin-collection-head");
-    if (controls) controls.classList.add("admin-collection-toolbar");
+    if (controls) {
+      controls.classList.add("admin-collection-toolbar");
+      styleViewToggleButtons(controls);
+    }
 
-    if (!main.querySelector(".admin-collection-header")) {
-      var headerWrap = document.createElement("div");
+    var headerWrap = main.querySelector(".admin-collection-header");
+    if (!headerWrap) {
+      headerWrap = document.createElement("div");
       headerWrap.className = "admin-collection-header";
       main.insertBefore(headerWrap, topBlock);
       headerWrap.appendChild(topBlock);
-      if (controls) headerWrap.appendChild(controls);
-    } else if (controls) {
-      var existing = main.querySelector(".admin-collection-header");
-      if (controls.parentElement !== existing) existing.appendChild(controls);
+    }
+
+    if (controls) {
+      var toolbarRow = headerWrap.querySelector(".admin-collection-toolbar-row");
+      if (!toolbarRow) {
+        toolbarRow = document.createElement("div");
+        toolbarRow.className = "admin-collection-toolbar-row";
+        headerWrap.appendChild(toolbarRow);
+      }
+      if (controls.parentElement !== toolbarRow) toolbarRow.appendChild(controls);
+    }
+  }
+
+  function styleViewToggleButtons(toolbar) {
+    var buttons = toolbar.querySelectorAll("button");
+    Array.prototype.forEach.call(buttons, function (btn) {
+      if (btn.classList.contains("admin-view-btn")) return;
+      var label = normalize(btn.getAttribute("aria-label") || btn.textContent || "");
+      var isGrid = label.indexOf("grid") !== -1;
+      var isList = label.indexOf("list") !== -1;
+      if (!isGrid && !isList) return;
+
+      btn.classList.add("admin-view-btn", isGrid ? "admin-view-btn--grid" : "admin-view-btn--list");
+      btn.innerHTML = isGrid
+        ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>'
+        : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>';
+    });
+
+    var select = toolbar.querySelector("select");
+    if (select && !select.classList.contains("admin-sort-select")) {
+      select.classList.add("admin-sort-select");
+      if (!toolbar.querySelector(".admin-sort-label")) {
+        var sortLabel = document.createElement("span");
+        sortLabel.className = "admin-sort-label";
+        sortLabel.textContent = "Sort by";
+        select.parentElement.insertBefore(sortLabel, select);
+      }
     }
   }
 
@@ -347,6 +388,10 @@
       var image = link.children[1];
       if (body) body.classList.add("admin-card-body");
       if (image) image.classList.add("admin-card-image");
+
+      /* Wireframe: text on top, image on bottom */
+      if (body) body.style.order = "1";
+      if (image) image.style.order = "2";
 
       var headings = body ? body.querySelectorAll("h2") : [];
       if (headings.length > 1) headings[0].hidden = true;

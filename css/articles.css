@@ -1208,6 +1208,8 @@ body.footer-in-view .article-action-dock .article-quiz-fab__ring {
 /* Quick Quiz FAB */
 #article-quiz {
   scroll-margin-top: 5.5rem;
+  margin-top: 3.25rem;
+  padding-top: 2rem;
 }
 
 .article-quiz-section--highlight .article-quiz {

@@ -28,8 +28,11 @@ const {
   renderSummaryBox,
   renderKeyTakeaways,
   selectRelatedArticles,
+  articleImageAlt,
+  collectFaqItemsFromBlocks,
 } = require("./article-config");
 const { parseCsv } = require("./csv-parse");
+const { writeSitemap } = require("./build-sitemap");
 const {
   isApprovedFaq,
   confidenceScore,
@@ -149,7 +152,7 @@ function readHubFooterTemplate() {
 
 const ROOT = path.join(__dirname, "..");
 const TODAY = new Date().toISOString().slice(0, 10);
-const ASSET_CACHE_VERSION = "dock-footer-fix";
+const ASSET_CACHE_VERSION = "quiz-spacing";
 const DATA_DIR = path.join(ROOT, "data");
 const EF_DIR = path.join(DATA_DIR, "articles", "everyday-faith");
 const BTB_DIR = path.join(DATA_DIR, "articles", "back-to-bible");
@@ -311,6 +314,9 @@ function readHeaderNavTemplate(assetRoot) {
     <meta name="twitter:title" content="{{TITLE}}" />
     <meta name="twitter:description" content="{{DESCRIPTION}}" />
     <meta name="twitter:image" content="{{OG_IMAGE}}" />
+    <meta property="og:site_name" content="River of Life Christian Church" />
+    <meta property="og:locale" content="en_IN" />
+    {{ARTICLE_META}}
     <link rel="icon" href="/favicon.ico" sizes="48x48" />
     <link rel="icon" type="image/png" sizes="48x48" href="/images/favicon-48x48.png" />
     <link rel="icon" type="image/png" sizes="96x96" href="/images/favicon-96x96.png" />
@@ -399,7 +405,7 @@ function renderArticleCard(article, options = {}) {
 
   return `<a href="${href}" class="articles-card articles-card--tall" data-article-type="${escapeHtml(article.type)}" data-article-category="${escapeHtml(article.category || "")}">
     <div class="articles-card__media-wrap">
-      <img class="articles-card__media" src="${escapeHtml(article.thumbnail)}" alt="" loading="lazy" width="640" height="800" />
+      <img class="articles-card__media" src="${escapeHtml(article.thumbnail)}" alt="${escapeHtml(articleImageAlt(article))}" loading="lazy" width="640" height="800" />
       ${badgeHtml}
     </div>
     <div class="articles-card__body">
@@ -502,7 +508,7 @@ function sortHubArticles(articles, sort, featuredSlug) {
   return sorted;
 }
 
-function buildPageShell({ title, description, canonical, ogType, ogImage, headExtra, bodyMain, assetRoot, scripts, hubPage, siteFooter }) {
+function buildPageShell({ title, description, canonical, ogType, ogImage, headExtra, bodyMain, assetRoot, scripts, hubPage, siteFooter, articleMeta }) {
   const footer = hubPage || siteFooter ? readHubFooterTemplate() : readFooterTemplate();
   return `${readHeaderNavTemplate(assetRoot)
     .replaceAll("{{TITLE}}", escapeHtml(title))
@@ -510,6 +516,7 @@ function buildPageShell({ title, description, canonical, ogType, ogImage, headEx
     .replaceAll("{{OG_TYPE}}", ogType || "website")
     .replaceAll("{{CANONICAL}}", canonical)
     .replaceAll("{{OG_IMAGE}}", ogImage || `${SITE_ORIGIN}/images/og-image.jpg`)
+    .replace("{{ARTICLE_META}}", articleMeta || "")
     .replace("{{HEAD_EXTRA}}", headExtra)}
     <main class="main-no-top-gap relative z-10">${bodyMain}</main>
 ${footer}
@@ -528,9 +535,20 @@ function buildHubPage(articles, faqs) {
   const description =
     "Everyday Faith sermon summaries and Back to the Bible cell fellowship studies from River of Life Christian Church in Bangalore.";
 
+  const hubFaqs = selectRelatedFaqs(faqs, "articles");
+  const hubSchemaScripts = [
+    renderHubCollectionSchema(articles, canonical),
+    hubFaqs.length ? renderFaqPageSchema(hubFaqs, canonical) : "",
+    renderHubBreadcrumbSchema(),
+  ]
+    .filter(Boolean)
+    .map((json) => `<script type="application/ld+json">${json}</script>`)
+    .join("\n    ");
+
   const headExtra = `<link rel="stylesheet" href="/css/articles.css?v=${ASSET_CACHE_VERSION}" />
     <link rel="stylesheet" href="/css/faq.css" />
-    <link rel="canonical" href="${canonical}" />`;
+    <link rel="canonical" href="${canonical}" />
+    ${hubSchemaScripts}`;
 
   const initialCards = sortHubArticles(articles, "newest", featuredSlug)
     .slice(0, ARTICLES_PER_PAGE)
@@ -606,6 +624,207 @@ function buildHubPage(articles, faqs) {
   };
 }
 
+function schemaAuthor(authorName) {
+  const name = String(authorName || "River of Life Christian Church").trim();
+  if (/team|church|rolcc/i.test(name)) {
+    return { "@type": "Organization", name };
+  }
+  return { "@type": "Person", name };
+}
+
+function articleWordCount(article) {
+  const parts = [article.title, article.description, article.summary || ""];
+  if (article.blocks?.length) parts.push(collectBlockText(article.blocks));
+  if (article.keyTakeaways?.length) {
+    article.keyTakeaways.forEach((k) => parts.push(typeof k === "string" ? k : k.item || ""));
+  }
+  if (article.sections?.length) {
+    article.sections.forEach((s) => parts.push(`${s.heading} ${s.body}`));
+  }
+  return parts.join(" ").split(/\s+/).filter(Boolean).length;
+}
+
+function articleSchemaObject(article, canonical) {
+  const image = article.thumbnail.startsWith("http") ? article.thumbnail : `${SITE_ORIGIN}${article.thumbnail}`;
+  const keywords = normalizeArticleTags(article).join(", ");
+  const schema = {
+    "@type": article.type === "everyday-faith" ? "BlogPosting" : "Article",
+    headline: article.title,
+    description: article.description,
+    datePublished: article.date,
+    dateModified: article.date,
+    author: schemaAuthor(article.author),
+    image,
+    url: canonical,
+    mainEntityOfPage: { "@type": "WebPage", "@id": canonical },
+    wordCount: articleWordCount(article),
+    publisher: {
+      "@type": "Organization",
+      name: "River of Life Christian Church",
+      logo: { "@type": "ImageObject", url: `${SITE_ORIGIN}/images/og-image.jpg` },
+    },
+  };
+  if (keywords) schema.keywords = keywords;
+  if (article.category) schema.articleSection = article.category;
+  if (article.scripture) schema.about = article.scripture;
+  return schema;
+}
+
+function renderArticleBreadcrumbSchema(article, canonical) {
+  return JSON.stringify(
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Home", item: `${SITE_ORIGIN}/` },
+        { "@type": "ListItem", position: 2, name: "Articles", item: `${SITE_ORIGIN}/articles` },
+        {
+          "@type": "ListItem",
+          position: 3,
+          name: article.typeLabel,
+          item: `${SITE_ORIGIN}/articles?type=${encodeURIComponent(article.type)}`,
+        },
+        { "@type": "ListItem", position: 4, name: article.title, item: canonical },
+      ],
+    },
+    null,
+    2
+  );
+}
+
+function renderFaqPageSchema(faqItems, pageUrl) {
+  if (!faqItems.length) return "";
+  return JSON.stringify(
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: faqItems.map((faq) => ({
+        "@type": "Question",
+        name: faq.question,
+        acceptedAnswer: { "@type": "Answer", text: faq.answer },
+      })),
+      url: pageUrl,
+    },
+    null,
+    2
+  );
+}
+
+function renderHubCollectionSchema(articles, canonical) {
+  return JSON.stringify(
+    {
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      name: "Articles & Bible Studies",
+      description:
+        "Everyday Faith sermon summaries and Back to the Bible cell fellowship studies from River of Life Christian Church in Bangalore.",
+      url: canonical,
+      isPartOf: { "@type": "WebSite", name: "River of Life Christian Church", url: SITE_ORIGIN },
+      mainEntity: {
+        "@type": "ItemList",
+        itemListElement: articles.map((article, index) => ({
+          "@type": "ListItem",
+          position: index + 1,
+          name: article.title,
+          url: articleCanonical(article),
+        })),
+      },
+    },
+    null,
+    2
+  );
+}
+
+function renderHubBreadcrumbSchema() {
+  return JSON.stringify(
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Home", item: `${SITE_ORIGIN}/` },
+        { "@type": "ListItem", position: 2, name: "Articles", item: `${SITE_ORIGIN}/articles` },
+      ],
+    },
+    null,
+    2
+  );
+}
+
+function parseSchemaForGraph(json) {
+  const obj = JSON.parse(json);
+  delete obj["@context"];
+  return obj;
+}
+
+function renderArticleJsonLd(article, canonical) {
+  const graph = [
+    articleSchemaObject(article, canonical),
+    parseSchemaForGraph(renderArticleBreadcrumbSchema(article, canonical)),
+  ];
+  const faqItems = collectFaqItemsFromBlocks(article.blocks);
+  if (faqItems.length) {
+    graph.push(parseSchemaForGraph(renderFaqPageSchema(faqItems, canonical)));
+  }
+  return JSON.stringify({ "@context": "https://schema.org", "@graph": graph }, null, 2);
+}
+
+function renderArticleHeadMeta(article) {
+  if (!article.date) return "";
+  return `<meta property="article:published_time" content="${escapeHtml(article.date)}" />
+    <meta property="article:modified_time" content="${escapeHtml(article.date)}" />`;
+}
+
+function articleSchema(article, canonical) {
+  return renderArticleJsonLd(article, canonical);
+}
+
+function validateArticlesSeo(articles) {
+  const slugs = new Set();
+  articles.forEach((article) => {
+    const key = `${article.type}/${article.slug}`;
+    if (!article.description?.trim()) {
+      console.warn(`SEO warning: missing meta description for ${key}`);
+    }
+    if ((article.title || "").length > 65) {
+      console.warn(`SEO warning: long title (${article.title.length} chars) for ${key}`);
+    }
+    if ((article.description || "").length > 165) {
+      console.warn(`SEO warning: long meta description (${article.description.length} chars) for ${key}`);
+    }
+    if (slugs.has(key)) {
+      console.warn(`SEO warning: duplicate slug ${key}`);
+    }
+    slugs.add(key);
+    if (
+      article.thumbnail?.startsWith("http") &&
+      !article.thumbnail.includes("rolcc.in") &&
+      !article.thumbnail.startsWith(SITE_ORIGIN)
+    ) {
+      console.warn(`SEO warning: external OG image for ${key}`);
+    }
+  });
+}
+
+function pruneStaleArticleHtml(articles) {
+  const expected = new Set(articles.map((a) => `${a.type}/${a.slug}`));
+  [
+    [OUT_EF, "everyday-faith"],
+    [OUT_BTB, "back-to-bible"],
+  ].forEach(([dir, type]) => {
+    if (!fs.existsSync(dir)) return;
+    fs.readdirSync(dir)
+      .filter((name) => name.endsWith(".html"))
+      .forEach((name) => {
+        const slug = name.replace(/\.html$/, "");
+        const key = `${type}/${slug}`;
+        if (!expected.has(key)) {
+          fs.unlinkSync(path.join(dir, name));
+          console.log(`Removed stale articles/${key}.html`);
+        }
+      });
+  });
+}
+
 function renderRelated(articles, current) {
   const related = selectRelatedArticles(articles, current);
   if (!related.length) return "";
@@ -613,25 +832,6 @@ function renderRelated(articles, current) {
     <h2 id="related-articles-heading" class="text-xl font-semibold text-slate-900">More to read</h2>
     <div class="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">${related.map(renderArticleCard).join("")}</div>
   </section>`;
-}
-
-function articleSchema(article, canonical) {
-  const base = {
-    "@context": "https://schema.org",
-    "@type": article.type === "everyday-faith" ? "BlogPosting" : "Article",
-    headline: article.title,
-    description: article.description,
-    datePublished: article.date,
-    author: { "@type": "Organization", name: article.author },
-    image: article.thumbnail.startsWith("http") ? article.thumbnail : `${SITE_ORIGIN}${article.thumbnail}`,
-    url: canonical,
-    publisher: {
-      "@type": "Organization",
-      name: "River of Life Christian Church",
-      logo: { "@type": "ImageObject", url: `${SITE_ORIGIN}/images/og-image.jpg` },
-    },
-  };
-  return JSON.stringify(base, null, 2);
 }
 
 function renderClapScripts(article) {
@@ -690,7 +890,19 @@ function buildEverydayFaithPage(article, allArticles) {
       <div class="serve-unveil-spacer min-h-screen" aria-hidden="true"></div>`;
 
   const scripts = `${renderClapScripts(article)}${renderQuizScripts(article)}`;
-  return buildPageShell({ title, description: article.description, canonical, ogType: "article", ogImage: article.thumbnail.startsWith("http") ? article.thumbnail : `${SITE_ORIGIN}${article.thumbnail}`, headExtra, bodyMain, assetRoot, scripts, siteFooter: true });
+  return buildPageShell({
+    title,
+    description: article.description,
+    canonical,
+    ogType: "article",
+    ogImage: article.thumbnail.startsWith("http") ? article.thumbnail : `${SITE_ORIGIN}${article.thumbnail}`,
+    headExtra,
+    bodyMain,
+    assetRoot,
+    scripts,
+    siteFooter: true,
+    articleMeta: renderArticleHeadMeta(article),
+  });
 }
 
 function buildBackToBiblePage(article, allArticles) {
@@ -739,7 +951,7 @@ function buildBackToBiblePage(article, allArticles) {
         <h1 class="mt-3 text-balance text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">${escapeHtml(article.title)}</h1>
         <p class="mt-4 text-sm text-slate-500">${escapeHtml(article.dateFormatted)} · ${article.readTime} min read</p>
         ${article.passage ? `<p class="mt-2 text-sm font-medium text-slate-700">Passage: ${escapeHtml(article.passage)}</p>` : ""}
-        <img class="mt-8 w-full rounded-2xl border border-slate-200" src="${escapeHtml(article.thumbnail)}" alt="" width="960" height="540" loading="lazy" />
+        <img class="mt-8 w-full rounded-2xl border border-slate-200" src="${escapeHtml(article.thumbnail)}" alt="${escapeHtml(articleImageAlt(article))}" width="960" height="540" loading="lazy" />
         ${sectionsHtml}
         ${questionsHtml}
         ${activitiesHtml}
@@ -751,52 +963,19 @@ function buildBackToBiblePage(article, allArticles) {
       <div class="serve-unveil-spacer min-h-screen" aria-hidden="true"></div>`;
 
   const scripts = `${renderClapScripts(article)}${renderQuizScripts(article)}`;
-  return buildPageShell({ title, description: article.description, canonical, ogType: "article", ogImage: article.thumbnail.startsWith("http") ? article.thumbnail : `${SITE_ORIGIN}${article.thumbnail}`, headExtra, bodyMain, assetRoot: "/", scripts, siteFooter: true });
-}
-
-function updateSitemap(articles, faqTotalPages) {
-  const staticPages = [
-    ["/", "weekly", "1.0"],
-    ["/about", "monthly", "0.9"],
-    ["/services", "monthly", "0.9"],
-    ["/contact", "monthly", "0.9"],
-    ["/giving", "monthly", "0.8"],
-    ["/events", "weekly", "0.8"],
-    ["/membership", "monthly", "0.8"],
-    ["/river-kids", "monthly", "0.8"],
-    ["/fellowship", "monthly", "0.8"],
-    ["/pmd", "monthly", "0.7"],
-    ["/counselling", "monthly", "0.7"],
-    ["/rolf", "monthly", "0.7"],
-    ["/articles", "weekly", "0.85"],
-  ];
-  const urls = staticPages.map(
-    ([loc, changefreq, priority]) =>
-      `  <url>\n    <loc>${SITE_ORIGIN}${loc === "/" ? "/" : loc}</loc>\n    <lastmod>${TODAY}</lastmod>\n    <changefreq>${changefreq}</changefreq>\n    <priority>${priority}</priority>\n  </url>`
-  );
-
-  for (let i = 1; i <= faqTotalPages; i++) {
-    const loc = i === 1 ? "/faq" : `/faq/${i}`;
-    urls.push(
-      `  <url>\n    <loc>${SITE_ORIGIN}${loc}</loc>\n    <lastmod>${TODAY}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>${i === 1 ? "0.8" : "0.6"}</priority>\n  </url>`
-    );
-  }
-
-  const articleHubPages = Math.max(1, Math.ceil(articles.length / ARTICLES_PER_PAGE));
-  for (let i = 2; i <= articleHubPages; i++) {
-    urls.push(
-      `  <url>\n    <loc>${SITE_ORIGIN}/articles/${i}</loc>\n    <lastmod>${TODAY}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>0.65</priority>\n  </url>`
-    );
-  }
-
-  articles.forEach((a) => {
-    urls.push(
-      `  <url>\n    <loc>${articleCanonical(a)}</loc>\n    <lastmod>${a.date || TODAY}</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.7</priority>\n  </url>`
-    );
+  return buildPageShell({
+    title,
+    description: article.description,
+    canonical,
+    ogType: "article",
+    ogImage: article.thumbnail.startsWith("http") ? article.thumbnail : `${SITE_ORIGIN}${article.thumbnail}`,
+    headExtra,
+    bodyMain,
+    assetRoot: "/",
+    scripts,
+    siteFooter: true,
+    articleMeta: renderArticleHeadMeta(article),
   });
-
-  const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.join("\n")}\n</urlset>\n`;
-  fs.writeFileSync(path.join(ROOT, "sitemap.xml"), xml, "utf8");
 }
 
 function getFaqTotalPages() {
@@ -960,6 +1139,8 @@ function main() {
   const articles = loadArticles();
   const faqs = loadApprovedFaqs();
 
+  validateArticlesSeo(articles);
+
   fs.mkdirSync(OUT_EF, { recursive: true });
   fs.mkdirSync(OUT_BTB, { recursive: true });
   fs.mkdirSync(DATA_DIR, { recursive: true });
@@ -991,7 +1172,8 @@ function main() {
     console.log(`Wrote articles/${article.type}/${article.slug}.html`);
   });
 
-  updateSitemap(articles, getFaqTotalPages());
+  pruneStaleArticleHtml(articles);
+  writeSitemap({ articles, faqTotalPages: getFaqTotalPages(), today: TODAY });
   syncSiteNav();
 
   console.log(`Built ${articles.length} articles.`);

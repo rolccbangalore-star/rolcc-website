@@ -669,8 +669,9 @@ function renderBlogSection(articles, pageConfig) {
     .map(({ article, featured, latest }) => renderArticleCard(article, { featured, latest }))
     .join("\n");
 
-  return `      <!-- Blog spotlight (auto-generated) -->
-      <section class="home-blog border-b border-slate-200 bg-white" aria-labelledby="home-blog-heading-${pageConfig.slug}">
+  return `      <!-- @blog-section:start -->
+      <!-- Blog spotlight (auto-generated) -->
+      <section id="articles-spotlight" class="home-blog border-b border-slate-200 bg-white" aria-labelledby="home-blog-heading-${pageConfig.slug}">
         <div class="mx-auto max-w-6xl px-4 py-14 sm:px-6 md:py-16 lg:px-8">
           <div class="scroll-reveal max-w-2xl">
             <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-accent">${escapeHtml(pageConfig.eyebrow)}</p>
@@ -685,28 +686,55 @@ function renderBlogSection(articles, pageConfig) {
           </div>
         </div>
       </section>
+      <!-- @blog-section:end -->
 `;
 }
 
-function injectBlogSections(articles) {
-  const blogPattern = /      <!-- Blog spotlight \(auto-generated\) -->[\s\S]*?      <\/section>\r?\n/;
+function replaceBlogSection(html, section) {
+  const markerPattern = /<!-- @blog-section:start -->[\s\S]*?<!-- @blog-section:end -->\r?\n?/;
+  if (markerPattern.test(html)) {
+    return html.replace(markerPattern, section.trimEnd() + "\n");
+  }
 
+  const legacyPattern = /[ \t]*<!-- Blog spotlight \(auto-generated\) -->[\s\S]*?<section class="home-blog[\s\S]*?<\/section>\r?\n?/;
+  if (legacyPattern.test(html)) {
+    return html.replace(legacyPattern, section);
+  }
+
+  const faqMarker = "      <!-- Related FAQs (auto-generated) -->";
+  if (html.includes(faqMarker)) {
+    return html.replace(faqMarker, `${section}${faqMarker}`);
+  }
+
+  return html;
+}
+
+function verifyBlogSections() {
+  Object.keys(BLOG_SECTION_PAGES).forEach((fileName) => {
+    const filePath = path.join(ROOT, fileName);
+    if (!fs.existsSync(filePath)) {
+      throw new Error(`Blog spotlight missing: ${fileName} not found after build`);
+    }
+
+    const html = fs.readFileSync(filePath, "utf8");
+    if (!html.includes("home-blog") || !html.includes("<!-- @blog-section:end -->")) {
+      throw new Error(`Blog spotlight was not injected into ${fileName}`);
+    }
+  });
+}
+
+function injectBlogSections(articles) {
   Object.entries(BLOG_SECTION_PAGES).forEach(([fileName, pageConfig]) => {
     const filePath = path.join(ROOT, fileName);
     if (!fs.existsSync(filePath)) return;
 
     let html = fs.readFileSync(filePath, "utf8");
     const section = renderBlogSection(articles, pageConfig);
-    if (!section) return;
-
-    if (blogPattern.test(html)) {
-      html = html.replace(blogPattern, section);
-    } else {
-      const faqMarker = "      <!-- Related FAQs (auto-generated) -->";
-      if (html.includes(faqMarker)) {
-        html = html.replace(faqMarker, `${section}${faqMarker}`);
-      }
+    if (!section) {
+      throw new Error(`Blog spotlight has no articles to show for ${fileName}`);
     }
+
+    html = replaceBlogSection(html, section);
 
     if (!html.includes("css/articles.css")) {
       html = html.replace(
@@ -718,6 +746,8 @@ function injectBlogSections(articles) {
     fs.writeFileSync(filePath, html, "utf8");
     console.log(`Injected blog spotlight into ${fileName}`);
   });
+
+  verifyBlogSections();
 }
 
 function sortHubArticles(articles, sort, featuredSlug) {

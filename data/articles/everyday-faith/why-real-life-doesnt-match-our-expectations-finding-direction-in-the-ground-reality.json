@@ -1,5 +1,5 @@
 {
-  "sermonSeries": "Everyday Faith",
+  "sermonSeries": "Transformation Series",
   "blocks": [
     {
       "type": "paragraph",
@@ -102,7 +102,7 @@
   "thumbnail": "https://live.staticflickr.com/4042/4305366199_24617050de_b.jpg",
   "featured": true,
   "date": "2026-07-06",
-  "publish": false,
+  "publish": true,
   "quiz": [
     {
       "question": "What does Jesus state will happen to those who actively follow Him according to John 8:12?",
@@ -230,10 +230,18 @@
     }
   ],
   "title": "Why Real Life Doesn't Match Our Expectations: Finding Direction in the Ground Reality",
-  "tags": [],
+  "tags": [
+    {
+      "tag": "Everyday Life"
+    },
+    {
+      "tag": "Faith"
+    }
+  ],
   "description": "Tired of the frustration that comes from unrealistic life expectations? Discover how letting Jesus' true light expose your blind spots can bring genuine perspective and peace.",
   "scripture": "John 8:12",
   "includeQuiz": true,
+  "category": "Everyday Life",
   "keyTakeaways": [
     {
       "item": "Unrealistic fantasies about career, marriage, and business will always cause frustration until we allow ground reality to teach us true wisdom."

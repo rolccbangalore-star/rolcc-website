@@ -2098,11 +2098,16 @@ body.admin-composer-dropdown-open #nc-root .admin-custom-grid {
   width: 100% !important;
 }
 
+#nc-root.admin-view--editor [class*="EditorControlPane"],
+#nc-root.admin-view--editor [class*="ControlPane"],
+#nc-root.admin-view--editor [class*="PaneContainer"],
 #nc-root.admin-view--editor form,
 #nc-root.admin-view--editor .admin-editor-form,
 #nc-root.admin-view--editor .admin-editor-mount {
   width: 100% !important;
   max-width: none !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
 }
 
 #nc-root.admin-view--editor form > div,

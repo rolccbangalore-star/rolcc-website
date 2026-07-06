@@ -66,9 +66,42 @@
     return false;
   }
 
+  function getFieldLabelElements(scope) {
+    return scope.querySelectorAll('label, [class*="FieldLabel-fieldLabel"], [class*="FieldLabel"]');
+  }
+
   function getControlLabel(control) {
-    var label = control.querySelector("label");
-    return normalize(label ? label.textContent : "");
+    var label = control.querySelector('label, [class*="FieldLabel-fieldLabel"], [class*="FieldLabel"]');
+    if (!label) return "";
+    return normalize(label.textContent)
+      .replace(/\?$/, "")
+      .replace(/\s*\(optional\)$/i, "")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
+  function normalizeFieldLabel(text) {
+    return normalize(text).replace(/\?$/, "").replace(/\s*\(optional\)$/i, "").trim();
+  }
+
+  function findRootForLabel(labelEl, form) {
+    var editorControl = labelEl.closest('[class*="EditorControl"]');
+    if (editorControl && form.contains(editorControl)) return editorControl;
+
+    var el = labelEl.parentElement;
+    while (el && el !== form) {
+      var parent = el.parentElement;
+      if (!parent || parent === form) return el;
+      var labeledSiblings = 0;
+      for (var i = 0; i < parent.children.length; i++) {
+        var child = parent.children[i];
+        if (child.classList.contains("admin-editor-columns")) continue;
+        if (getFieldLabelElements(child).length) labeledSiblings++;
+      }
+      if (labeledSiblings >= 2) return el;
+      el = parent;
+    }
+    return labelEl.parentElement;
   }
 
   var META_LABELS = [
@@ -104,23 +137,6 @@
     });
   }
 
-  function findRootForLabel(label, form) {
-    var el = label.parentElement;
-    while (el && el !== form) {
-      var parent = el.parentElement;
-      if (!parent || parent === form) return el;
-      var labeledSiblings = 0;
-      for (var i = 0; i < parent.children.length; i++) {
-        var child = parent.children[i];
-        if (child.classList.contains("admin-editor-columns")) continue;
-        if (child.querySelector("label")) labeledSiblings++;
-      }
-      if (labeledSiblings >= 2) return el;
-      el = parent;
-    }
-    return label.parentElement;
-  }
-
   function isKnownTopLevelField(labelText) {
     return isContentField(labelText) || isMetaField(labelText);
   }
@@ -137,25 +153,26 @@
       return Array.prototype.slice
         .call(form.querySelectorAll(".admin-editor-col__fields > div"))
         .filter(function (node) {
-          return node.querySelector("label");
+          return getFieldLabelElements(node).length > 0;
         });
     }
 
     var roots = [];
-    var claimed = new Set();
-    var labels = form.querySelectorAll("label");
+    var claimed = [];
+    var labels = getFieldLabelElements(form);
 
     for (var i = 0; i < labels.length; i++) {
       var label = labels[i];
       if (label.closest(".admin-editor-columns")) continue;
+      if (label.closest(".admin-editor-col__fields")) continue;
 
-      var labelText = normalize(label.textContent).replace(/\?$/, "").replace(/\s*\(optional\)$/, "").trim();
+      var labelText = normalizeFieldLabel(label.textContent);
       if (!isKnownTopLevelField(labelText)) continue;
 
       var rootEl = findRootForLabel(label, form);
-      if (!rootEl || claimed.has(rootEl)) continue;
+      if (!rootEl || claimed.indexOf(rootEl) !== -1) continue;
 
-      claimed.add(rootEl);
+      claimed.push(rootEl);
       roots.push(rootEl);
     }
 
@@ -163,23 +180,40 @@
   }
 
   function findEditorFieldMount(form, controls) {
-    if (!form || !controls.length) return form;
+    if (!form) return null;
 
-    var counts = new Map();
+    var pane =
+      form.querySelector('[class*="EditorControlPane"]') ||
+      form.querySelector('[class*="ControlPane"]') ||
+      form.querySelector(":scope > div");
+
+    if (pane) return pane;
+
+    if (!controls || !controls.length) return form;
+
+    var counts = [];
     controls.forEach(function (control) {
       var node = control.parentElement;
       while (node && node !== form) {
-        counts.set(node, (counts.get(node) || 0) + 1);
+        var found = false;
+        for (var j = 0; j < counts.length; j++) {
+          if (counts[j].node === node) {
+            counts[j].score += 1;
+            found = true;
+            break;
+          }
+        }
+        if (!found) counts.push({ node: node, score: 1 });
         node = node.parentElement;
       }
     });
 
     var best = form;
     var bestScore = 0;
-    counts.forEach(function (score, node) {
-      if (score > bestScore && score >= controls.length - 1) {
-        bestScore = score;
-        best = node;
+    counts.forEach(function (entry) {
+      if (entry.score > bestScore) {
+        bestScore = entry.score;
+        best = entry.node;
       }
     });
 
@@ -199,6 +233,7 @@
     if (!controls.length) return;
 
     var mount = findEditorFieldMount(form, controls);
+    if (!mount) return;
     var columns = form.querySelector(".admin-editor-columns");
 
     if (!columns) {
@@ -2509,12 +2544,11 @@
     mountEditorSubheader(root);
     tagEditorLayout(root);
     if (isEditorRoute() && !root.querySelector(".admin-editor-columns")) {
-      window.setTimeout(function () {
-        tagEditorLayout(root);
-      }, 150);
-      window.setTimeout(function () {
-        tagEditorLayout(root);
-      }, 500);
+      [150, 500, 1000, 2000].forEach(function (delay) {
+        window.setTimeout(function () {
+          tagEditorLayout(root);
+        }, delay);
+      });
     }
   }
 

@@ -570,9 +570,13 @@ body {
 }
 
 /* ——— Collection header (Google Drive-style toolbar row) ——— */
+#nc-root.admin-view--collection .admin-main {
+  padding-top: 2.75rem !important;
+}
+
 #nc-root .admin-collection-header {
-  padding: 3rem 0 0;
-  margin-top: 1.75rem;
+  padding: 0;
+  margin-top: 0;
   max-width: none;
   width: 100%;
   box-sizing: border-box;
@@ -689,25 +693,35 @@ body {
   opacity: 0;
 }
 #nc-root .admin-sort-select--composer {
-  position: static;
-  width: auto;
-  height: auto;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   margin: 0;
-  padding: 0 0.15rem;
+  padding: 0;
   border: none;
-  border-radius: 0;
+  border-radius: var(--rolcc-radius-lg);
   background: transparent;
   font-family: var(--rolcc-font);
   font-size: 0.8125rem;
   font-weight: 500;
-  color: var(--rolcc-slate-800);
+  color: transparent;
   cursor: pointer;
-  appearance: auto;
-  opacity: 1;
+  appearance: none;
+  opacity: 0;
 }
 
 #nc-root .admin-sort-wrap--composer {
-  cursor: default;
+  position: relative;
+  cursor: pointer;
+}
+
+#nc-root .admin-sort-wrap--composer .admin-sort-value {
+  max-width: 7rem;
+}
+
+#nc-root .admin-decap-toolbar {
+  display: none !important;
 }
 
 #nc-root .admin-composer-toolbar {
@@ -978,6 +992,8 @@ body {
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  min-height: calc(0.9375rem * 1.45 * 2);
+  max-height: calc(0.9375rem * 1.45 * 2);
 }
 
 #nc-root .admin-card-meta {

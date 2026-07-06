@@ -485,11 +485,9 @@
       node.hidden = true;
     });
 
-    if (controls) {
-      controls.classList.add("admin-collection-toolbar");
-      styleViewToggleButtons(controls);
-      safeAppend(topBlock, controls);
-      controls.hidden = false;
+    if (controls && !topBlock.querySelector(".admin-composer-toolbar")) {
+      controls.classList.add("admin-collection-toolbar", "admin-decap-toolbar");
+      controls.hidden = true;
     }
 
     applyCollectionTitle(main, getActiveCollection());
@@ -1003,6 +1001,10 @@
       sortLabel.textContent = "Sort by";
       sortWrap.appendChild(sortLabel);
 
+      var valueEl = document.createElement("span");
+      valueEl.className = "admin-sort-value";
+      sortWrap.appendChild(valueEl);
+
       var select = document.createElement("select");
       select.className = "admin-sort-select admin-sort-select--composer";
       select.setAttribute("aria-label", "Sort articles");
@@ -1013,10 +1015,20 @@
         select.appendChild(option);
       });
       select.value = getSortField(root);
+
+      function updateSortValue() {
+        var current = SORT_OPTIONS.find(function (opt) {
+          return opt.key === select.value;
+        });
+        valueEl.textContent = current ? current.label : "";
+      }
+
       select.addEventListener("change", function () {
         root.dataset.adminSortField = select.value;
+        updateSortValue();
         refreshCollectionCards(root);
       });
+      updateSortValue();
       sortWrap.appendChild(select);
 
       var chevron = document.createElementNS("http://www.w3.org/2000/svg", "svg");
@@ -1055,7 +1067,16 @@
     }
 
     var sortSelect = toolbar.querySelector(".admin-sort-select--composer");
-    if (sortSelect) sortSelect.value = getSortField(root);
+    if (sortSelect) {
+      sortSelect.value = getSortField(root);
+      var valueEl = toolbar.querySelector(".admin-sort-value");
+      if (valueEl) {
+        var current = SORT_OPTIONS.find(function (opt) {
+          return opt.key === sortSelect.value;
+        });
+        valueEl.textContent = current ? current.label : "";
+      }
+    }
 
     var listMode = isListView(root);
     toolbar.querySelector(".admin-view-btn--list").classList.toggle("admin-view-btn--active", listMode);
@@ -1092,8 +1113,6 @@
   }
 
   function hideDecapEntryLists(main) {
-    ensureToolbarInHeader(main);
-
     Array.prototype.forEach.call(main.children, function (child) {
       if (child.classList.contains("admin-collection-header")) return;
       if (child.classList.contains("admin-custom-entries")) return;

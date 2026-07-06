@@ -1,0 +1,255 @@
+{
+  "sermonSeries": "Everyday Faith",
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "Many of us begin new seasons of life with exciting expectations. Whether it is a career, business, marriage, or ministry, we often imagine everything falling perfectly into place. When reality looks different, discouragement quickly follows."
+    },
+    {
+      "type": "paragraph",
+      "text": "The disappointment is often not because God has failed us, but because our expectations were built on an incomplete perspective. Jesus invites us out of darkness and into His light, where we begin to see life through God's truth rather than our assumptions."
+    },
+    {
+      "type": "heading",
+      "level": "2",
+      "text": "Jesus Is the Light of the World"
+    },
+    {
+      "type": "quote",
+      "text": "I am the light of the world. He who follows Me shall not walk in darkness, but have the light of life.",
+      "attribution": "John 8:12"
+    },
+    {
+      "type": "paragraph",
+      "text": "Before Jesus came, people lived under spiritual darkness, distorted teaching, and social division. His ministry revealed the true heart of God by bringing hope to the broken, welcoming the rejected, and demonstrating love instead of condemnation."
+    },
+    {
+      "type": "scriptureCallout",
+      "reference": "John 8:12",
+      "text": "Jesus calls everyone who follows Him to leave darkness behind and walk in the light of life."
+    },
+    {
+      "type": "heading",
+      "level": "2",
+      "text": "Living in the Light"
+    },
+    {
+      "type": "paragraph",
+      "text": "Walking in God's light means allowing Him to correct our thinking, reveal our blind spots, and transform our attitudes. Spiritual growth happens when we welcome His truth, even when it challenges us."
+    },
+    {
+      "type": "bulletList",
+      "items": [
+        {
+          "item": "Stop using personality or preference as an excuse for selfishness. Choose to love and engage with people around you."
+        },
+        {
+          "item": "Come to God's Word expecting correction as well as encouragement. Let Scripture shape your perspective."
+        },
+        {
+          "item": "Move beyond asking others to pray for you alone. Carry the burdens of your community and nation through prayer."
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "level": "2",
+      "text": "Practical Applications"
+    },
+    {
+      "type": "bulletList",
+      "items": [
+        {
+          "item": "Do not give up when life becomes harder than expected. Allow God to build wisdom through the process."
+        },
+        {
+          "item": "Take intentional steps to care for the people around you each day."
+        },
+        {
+          "item": "Measure your beliefs and decisions against God's Word instead of popular opinion."
+        },
+        {
+          "item": "Pray faithfully for your family, church, community, and nation."
+        }
+      ]
+    },
+    {
+      "type": "faq",
+      "items": [
+        {
+          "question": "Why do new seasons of life often feel disappointing?",
+          "answer": "We often begin with unrealistic expectations. God uses real-life experiences to replace our assumptions with wisdom, maturity, and dependence on Him."
+        },
+        {
+          "question": "What does it mean that Jesus is the Light of the World?",
+          "answer": "Jesus reveals God's truth, love, and wisdom. Following Him helps us move away from spiritual darkness and live according to God's heart."
+        },
+        {
+          "question": "How can I begin walking in God's light?",
+          "answer": "Spend time in God's Word, welcome correction, love the people around you, and make prayer a regular part of caring for others."
+        }
+      ]
+    },
+    {
+      "type": "cta",
+      "label": "Plan Your Visit",
+      "url": "/contact",
+      "text": "We would love to help you grow in your relationship with Jesus and experience authentic Christian community.",
+      "style": "primary"
+    }
+  ],
+  "summary": "Life often feels disappointing when reality does not match our expectations. This message explores how Jesus, the Light of the World, replaces false perspectives with truth, helping us grow in wisdom, love, and genuine faith.",
+  "author": "ROLCC Pastoral Team",
+  "thumbnail": "/images/og-image.jpg",
+  "featured": false,
+  "date": "2026-07-06",
+  "publish": false,
+  "quiz": [
+    {
+      "question": "According to the sermon, what often causes disappointment in life?",
+      "options": [
+        {
+          "option": "Unrealistic expectations"
+        },
+        {
+          "option": "A lack of natural talent"
+        },
+        {
+          "option": "Unexpected opportunities"
+        },
+        {
+          "option": "Having too many friends"
+        },
+        {
+          "option": "Unrealistic expectations"
+        },
+        {
+          "option": "A lack of natural talent"
+        },
+        {
+          "option": "Unexpected opportunities"
+        },
+        {
+          "option": "Having too many friends"
+        }
+      ],
+      "correctIndex": 0,
+      "explanation": "The message teaches that disappointment often comes when reality does not match our false expectations."
+    },
+    {
+      "question": "How does Jesus describe Himself in John 8:12?",
+      "options": [
+        {
+          "option": "The Light of the World"
+        },
+        {
+          "option": "The Good Shepherd"
+        },
+        {
+          "option": "The Bread of Life"
+        },
+        {
+          "option": "The True Vine"
+        },
+        {
+          "option": "The Light of the World"
+        },
+        {
+          "option": "The Good Shepherd"
+        },
+        {
+          "option": "The Bread of Life"
+        },
+        {
+          "option": "The True Vine"
+        }
+      ],
+      "correctIndex": 0,
+      "explanation": "John 8:12 records Jesus declaring that He is the Light of the World."
+    },
+    {
+      "question": "What attitude should believers have when reading God's Word?",
+      "options": [
+        {
+          "option": "A willingness to be corrected"
+        },
+        {
+          "option": "Looking only for encouragement"
+        },
+        {
+          "option": "Comparing themselves with others"
+        },
+        {
+          "option": "Reading only familiar passages"
+        },
+        {
+          "option": "A willingness to be corrected"
+        },
+        {
+          "option": "Looking only for encouragement"
+        },
+        {
+          "option": "Comparing themselves with others"
+        },
+        {
+          "option": "Reading only familiar passages"
+        }
+      ],
+      "correctIndex": 0,
+      "explanation": "The sermon encourages believers to let Scripture challenge and transform their lives."
+    },
+    {
+      "question": "What change in prayer life does the sermon encourage?",
+      "options": [
+        {
+          "option": "Praying for others and the nation"
+        },
+        {
+          "option": "Praying only during difficult times"
+        },
+        {
+          "option": "Depending only on church leaders to pray"
+        },
+        {
+          "option": "Focusing only on personal needs"
+        },
+        {
+          "option": "Praying for others and the nation"
+        },
+        {
+          "option": "Praying only during difficult times"
+        },
+        {
+          "option": "Depending only on church leaders to pray"
+        },
+        {
+          "option": "Focusing only on personal needs"
+        }
+      ],
+      "correctIndex": 0,
+      "explanation": "Followers of Christ are encouraged to carry the burdens of others through faithful intercession."
+    }
+  ],
+  "title": "Moving From False Expectations to the Light of Christ",
+  "description": "Discover how Jesus' light exposes unhealthy expectations, reshapes your perspective, and leads you into a life marked by truth, love, and spiritual maturity.",
+  "scripture": "John 8:12",
+  "includeQuiz": true,
+  "category": "General",
+  "keyTakeaways": [
+    {
+      "item": "False expectations often create unnecessary disappointment."
+    },
+    {
+      "item": "Jesus is the Light who reveals truth and transforms our perspective."
+    },
+    {
+      "item": "Spiritual maturity requires welcoming God's correction."
+    },
+    {
+      "item": "Love for others is evidence of walking in God's light."
+    },
+    {
+      "item": "Prayer should extend beyond our own needs to the needs of others."
+    }
+  ]
+}

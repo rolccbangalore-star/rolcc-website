@@ -395,16 +395,23 @@
   }
 
   function findTagMountPoint(root) {
-    var anchor =
-      findFieldWrap(root, "author") ||
-      findFieldWrap(root, "date") ||
-      findFieldWrap(root, "tags") ||
-      findFieldWrap(root, "tag");
-    if (!anchor) {
-      var main = root.querySelector("main");
-      return main || root;
+    if (!isEditorRoute()) return null;
+    var pane = root.querySelector('[class*="EditorControlPane"]');
+    if (!pane) return null;
+    var anchor = findFieldWrap(root, "author") || findFieldWrap(root, "date");
+    if (!anchor || !pane.contains(anchor)) return null;
+    return anchor.parentElement || pane;
+  }
+
+  function unmountEditorFields(root) {
+    if (!root) return;
+    if (mountRetryTimer) {
+      window.clearTimeout(mountRetryTimer);
+      mountRetryTimer = null;
     }
-    return anchor.closest('[class*="EditorControlPane"]') || anchor.parentElement || anchor;
+    root.querySelectorAll(".admin-field--tags-wired").forEach(function (el) {
+      el.remove();
+    });
   }
 
   function renderTagChips(container, tags, onRemove) {
@@ -441,6 +448,7 @@
   }
 
   function wireTagField(root) {
+    if (!isEditorRoute()) return;
     var mount = findTagMountPoint(root);
     if (!mount) return;
 
@@ -1075,7 +1083,11 @@
   }
 
   function mountEditorFields(root) {
-    if (!root || !isEditorRoute()) return;
+    if (!root) return;
+    if (!isEditorRoute()) {
+      unmountEditorFields(root);
+      return;
+    }
     wireTagField(root);
     wireAuthorField(root);
     wireQuizToggle(root);
@@ -1086,7 +1098,11 @@
 
   var mountRetryTimer = null;
   function scheduleFieldMounts(root) {
-    if (!root || !isEditorRoute()) return;
+    if (!root) return;
+    if (!isEditorRoute()) {
+      unmountEditorFields(root);
+      return;
+    }
     mountEditorFields(root);
     if (mountRetryTimer) window.clearTimeout(mountRetryTimer);
     var attempts = 0;

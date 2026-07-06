@@ -413,21 +413,11 @@ function renderArticleCardMeta(article) {
 
 function renderArticleCard(article, options = {}) {
   const href = articleUrl(article);
-  const isFeaturedHub = options.featured && options.featuredHub;
-  const cardClass = [
-    "articles-card",
-    isFeaturedHub ? "articles-card--featured-hub" : "articles-card--tall",
-  ]
-    .filter(Boolean)
-    .join(" ");
+  const badgeHtml = options.latest
+    ? '<span class="articles-card__badge articles-card__badge--latest">Latest</span>'
+    : "";
 
-  const badgeHtml = options.featured
-    ? '<span class="articles-card__badge articles-card__badge--featured">Featured</span>'
-    : options.latest
-      ? '<span class="articles-card__badge articles-card__badge--latest">Latest</span>'
-      : "";
-
-  return `<a href="${href}" class="${cardClass}" data-article-type="${escapeHtml(article.type)}" data-article-category="${escapeHtml(article.category || "")}">
+  return `<a href="${href}" class="articles-card articles-card--tall" data-article-type="${escapeHtml(article.type)}" data-article-category="${escapeHtml(article.category || "")}">
     <div class="articles-card__media-wrap">
       <img class="articles-card__media" src="${escapeHtml(article.thumbnail)}" alt="" loading="lazy" width="640" height="800" />
       ${badgeHtml}
@@ -524,7 +514,7 @@ function buildHubPage(articles, faqs) {
           ? `<section class="articles-featured-wrap" aria-label="Featured article">
         <div class="relative z-10 mx-auto max-w-6xl px-4 pb-10 sm:px-6 sm:pb-12 lg:px-8">
           <h2 class="text-lg font-semibold text-slate-900">Featured</h2>
-          <div class="articles-featured articles-featured--single mt-5">${renderArticleCard(featuredArticle, { featured: true, featuredHub: true })}</div>
+          <div class="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">${renderArticleCard(featuredArticle)}</div>
         </div>
       </section>`
           : ""

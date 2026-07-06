@@ -71,6 +71,9 @@
   var holdStarted = false;
   var pointerActive = false;
   var hintHideTimer = null;
+  var personalHintActive = false;
+  var HINT_VISIBLE_MS = 4000;
+  var HINT_FADE_MS = 300;
 
   function formatCount(value) {
     var n = Number(value) || 0;
@@ -80,31 +83,42 @@
     return String(n).padStart(2, "0");
   }
 
+  function hidePersonalHint() {
+    if (!hintEl) return;
+    personalHintActive = false;
+    hintEl.classList.add("is-hidden");
+    hintEl.classList.remove("is-visible");
+    window.setTimeout(function () {
+      if (!personalHintActive) {
+        hintEl.textContent = "";
+        hintEl.classList.remove("is-personal");
+      }
+    }, HINT_FADE_MS);
+  }
+
   function showPersonalHint() {
     if (!hintEl || userClaps <= 0) return;
+    personalHintActive = true;
     hintEl.textContent = "You gave " + userClaps + "x";
-    hintEl.classList.add("is-personal");
+    hintEl.classList.add("is-personal", "is-visible");
     hintEl.classList.remove("is-hidden");
-    hintEl.hidden = false;
     if (hintHideTimer) window.clearTimeout(hintHideTimer);
     hintHideTimer = window.setTimeout(function () {
-      hintEl.hidden = true;
-      hintEl.classList.add("is-hidden");
+      hidePersonalHint();
       hintHideTimer = null;
-    }, 4000);
+    }, HINT_VISIBLE_MS);
   }
 
   function updateHintDefault() {
-    if (!hintEl || hintHideTimer) return;
+    if (!hintEl || personalHintActive || hintHideTimer) return;
     if (userClaps > 0) {
-      hintEl.hidden = true;
-      hintEl.classList.add("is-hidden");
-      hintEl.classList.remove("is-personal");
       hintEl.textContent = "";
+      hintEl.classList.add("is-hidden");
+      hintEl.classList.remove("is-personal", "is-visible");
     } else {
-      hintEl.hidden = false;
-      hintEl.classList.remove("is-hidden", "is-personal");
       hintEl.textContent = "Give Kudos";
+      hintEl.classList.remove("is-hidden", "is-personal");
+      hintEl.classList.add("is-visible");
     }
   }
 
@@ -113,7 +127,7 @@
     if (countEl) countEl.textContent = formatCount(totalCount);
     if (options.showPersonal && userClaps > 0) {
       showPersonalHint();
-    } else {
+    } else if (!personalHintActive && !hintHideTimer) {
       updateHintDefault();
     }
     widget.classList.toggle("is-active", userClaps > 0);
@@ -289,7 +303,11 @@
 
   window.addEventListener("pagehide", function () {
     stopHold();
-    if (hintHideTimer) window.clearTimeout(hintHideTimer);
+    if (hintHideTimer) {
+      window.clearTimeout(hintHideTimer);
+      hintHideTimer = null;
+    }
+    personalHintActive = false;
     if (pendingSync > 0) flushSync();
   });
 

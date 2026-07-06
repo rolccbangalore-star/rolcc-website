@@ -544,9 +544,28 @@
     return true;
   }
 
+  function applyMergedEntryToStore(store, entryObj, mergedData) {
+    var updatedEntry = JSON.parse(JSON.stringify(entryObj));
+    updatedEntry.data = Object.assign({}, updatedEntry.data || {}, mergedData);
+    store.dispatch({
+      type: "DRAFT_CREATE_FROM_ENTRY",
+      payload: { entry: updatedEntry },
+    });
+    if (mergedData.title) {
+      changeDraftFieldValue(store, "title", mergedData.title);
+    }
+  }
+
   function readDraftData() {
     var entryObj = getDraftEntryJs();
     return entryObj && entryObj.data ? entryObj.data : {};
+  }
+
+  function countImportedList(actual, expected) {
+    var actualLen = (actual || []).length;
+    var expectedLen = (expected || []).length;
+    if (!actualLen) return 0;
+    return Math.min(actualLen, expectedLen);
   }
 
   function verifyStoreImport(importData) {
@@ -562,12 +581,12 @@
     if (importData.passage && data.passage === importData.passage) verified.meta += 1;
 
     if (importData.blocks && importData.blocks.length) {
-      var blockLen = (data.blocks || []).length;
+      var blockLen = countImportedList(data.blocks, importData.blocks);
       if (blockLen > 0) verified.content += blockLen;
       else verified.warnings.push("Article content blocks did not apply.");
     }
     if (importData.keyTakeaways && importData.keyTakeaways.length) {
-      var takeLen = (data.keyTakeaways || []).length;
+      var takeLen = countImportedList(data.keyTakeaways, importData.keyTakeaways);
       if (takeLen > 0) verified.content += takeLen;
       else verified.warnings.push("Key takeaways did not apply.");
     }
@@ -619,21 +638,9 @@
 
     var currentData = readDraftData();
     var mergedData = mergeImportIntoData(currentData, importData, options.fillEmptyOnly !== false);
+    var entryObj = getDraftEntryJs();
 
-    var fieldOrder = isArticlesCollection(collection)
-      ? ["title", "summary", "description", "author", "scripture", "sermonSeries", "blocks", "keyTakeaways", "includeQuiz", "quiz"]
-      : ["title", "description", "passage", "author", "sections", "discussionQuestions", "includeQuiz", "quiz"];
-
-    var quizPending = mergedData.includeQuiz === true && mergedData.quiz && mergedData.quiz.length;
-
-    fieldOrder.forEach(function (key) {
-      if (key === "quiz" && quizPending) return;
-      if (mergedData[key] === undefined) return;
-      if (options.fillEmptyOnly !== false && !isEmptyImportValue(key, currentData[key]) && currentData[key] !== undefined) {
-        return;
-      }
-      changeDraftFieldValue(store, key, mergedData[key]);
-    });
+    applyMergedEntryToStore(store, entryObj, mergedData);
 
     if (mergedData.title) {
       var headerInput = $("admin-editor-title-input");
@@ -656,15 +663,8 @@
       return verified;
     }
 
-    if (quizPending) {
-      window.setTimeout(function () {
-        changeDraftFieldValue(store, "quiz", mergedData.quiz);
-        window.setTimeout(finish, 80);
-      }, 120);
-      return null;
-    }
-
-    return finish();
+    window.setTimeout(finish, 150);
+    return null;
   }
 
   function applyEntryImport(root, entry, options, done) {

@@ -28,7 +28,10 @@
             width="36"
             height="36"
           />
-          <span class="admin-topbar-brand__name">River of Life Christian Church</span>
+          <div class="admin-topbar-brand__text">
+            <span class="admin-topbar-brand__name">River of Life Christian Church</span>
+            <p class="admin-topbar-brand__sub">Article Composer</p>
+          </div>
         </a>
       </div>
       <div class="admin-topbar__center">
@@ -54,19 +57,7 @@
     </header>
 
     <aside id="admin-sidebar" class="admin-shell-sidebar" hidden>
-      <div class="admin-sidebar-brand">
-        <img
-          class="admin-sidebar-brand__logo"
-          src="/images/favicon-96x96.png"
-          alt="River of Life Christian Church"
-          width="40"
-          height="40"
-        />
-        <div class="admin-sidebar-brand__text">
-          <p class="admin-sidebar-brand__name">River of Life Christian Church</p>
-          <p class="admin-sidebar-brand__sub">Article Composer</p>
-        </div>
-      </div>
+      <div id="admin-create-slot" class="admin-sidebar-create"></div>
 
       <div class="admin-view-switcher admin-dropdown" id="admin-view-switcher">
         <button type="button" class="admin-view-switcher__trigger" aria-haspopup="true" aria-expanded="false">

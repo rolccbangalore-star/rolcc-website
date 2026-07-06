@@ -93,7 +93,14 @@
   }
 
   function getDecapSearchInput(root) {
-    return root.querySelector('aside input[type="search"], aside input[type="text"], header input[type="search"], header input[type="text"]');
+    var slot = $("admin-search-slot");
+    if (slot) {
+      var existing = slot.querySelector("input[type='search'], input[type='text']");
+      if (existing) return existing;
+    }
+    return root.querySelector(
+      'aside input[type="search"], aside input[type="text"], header input[type="search"], header input[type="text"], main input[type="search"], main input[type="text"]'
+    );
   }
 
   function closeAllDropdowns() {
@@ -174,11 +181,13 @@
 
     var searchSlot = $("admin-search-slot");
     var searchInput = getDecapSearchInput(root);
-    if (searchSlot && searchInput && searchInput.parentElement !== searchSlot) {
+    if (searchSlot && searchInput) {
       searchInput.classList.add("admin-search__input");
       searchInput.setAttribute("placeholder", "Search for an article");
       searchInput.setAttribute("aria-label", "Search for an article");
-      searchSlot.appendChild(searchInput);
+      if (searchInput.parentElement !== searchSlot) {
+        searchSlot.appendChild(searchInput);
+      }
     }
 
     var profileSlot = $("admin-profile-slot");
@@ -229,7 +238,40 @@
     if (isCollectionRoute()) root.classList.add("admin-view--collection");
   }
 
+  var CREATE_ICON =
+    '<svg class="admin-create-article__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>';
+
+  function styleCreateButton(createBtn) {
+    if (!createBtn || createBtn.dataset.adminCreateStyled === "true") return;
+    createBtn.dataset.adminCreateStyled = "true";
+    createBtn.classList.add("admin-create-article", "btn-primary");
+    createBtn.innerHTML = CREATE_ICON + "Create Article";
+  }
+
+  function mountCreateButton(root) {
+    var createSlot = $("admin-create-slot");
+    if (!createSlot) return;
+
+    var main = root.querySelector("main");
+    var createBtn = null;
+    if (main) {
+      createBtn = findCreateButton(main.querySelector(".admin-collection-head") || main) || findCreateButton(main);
+    }
+
+    if (createBtn) {
+      styleCreateButton(createBtn);
+      if (createBtn.parentElement !== createSlot) {
+        createSlot.appendChild(createBtn);
+      }
+      createSlot.hidden = false;
+      return;
+    }
+
+    createSlot.hidden = !isCollectionRoute();
+  }
+
   function findCreateButton(main) {
+    if (!main) return null;
     return main.querySelector('a[href*="/new"]') || main.querySelector("a[href*='new']");
   }
 
@@ -255,14 +297,9 @@
     if (!topBlock) return;
 
     var controls = findControls(main);
-    var createBtn = findCreateButton(topBlock) || findCreateButton(main);
-
-    if (createBtn) {
-      createBtn.textContent = "Create Article";
-      createBtn.classList.add("admin-create-article", "btn-primary");
-    }
 
     topBlock.classList.add("admin-collection-head");
+    mountCreateButton(root);
     if (controls) {
       controls.classList.add("admin-collection-toolbar");
       styleViewToggleButtons(controls);
@@ -467,6 +504,7 @@
     updateViewClass(root);
     mountCustomShell(root);
     restructureCollectionHeader(root);
+    mountCreateButton(root);
     enhanceGridCards(root);
     tagEditorLayout(root);
   }

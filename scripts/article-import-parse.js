@@ -242,6 +242,59 @@
       .filter(Boolean);
   }
 
+  function normalizeBlockForDisk(block) {
+    if (!block || typeof block !== "object") return null;
+    var out = Object.assign({}, block);
+    if (out.type === "bulletList") out.type = "list";
+    if (out.type === "scriptureCallout") out.type = "scripture";
+    if (out.type === "list" && Array.isArray(out.items)) {
+      out.items = out.items
+        .map(function (item) {
+          if (typeof item === "string") return item;
+          if (item && typeof item === "object") return trim(item.item || item.text || "");
+          return "";
+        })
+        .filter(Boolean);
+    }
+    return out;
+  }
+
+  function slugifyTitle(title) {
+    return trim(title || "untitled")
+      .toLowerCase()
+      .replace(/['']/g, "")
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "") || "untitled";
+  }
+
+  function normalizeEntryForDisk(entry, collection) {
+    collection = normalizeCollectionId(collection);
+    var out = stripInternalKeys(Object.assign({}, entry || {}));
+    prepareQuizEntry(out);
+
+    if (isArticlesCollection(collection)) {
+      out.blocks = normalizeBlocks(out.blocks || []).map(normalizeBlockForDisk).filter(Boolean);
+      out.keyTakeaways = (out.keyTakeaways || [])
+        .map(function (k) {
+          return typeof k === "string" ? k : trim(k.item || k.text || "");
+        })
+        .filter(Boolean);
+    } else if (isBibleStudyCollection(collection)) {
+      out.sections = out.sections || [];
+      out.discussionQuestions = (out.discussionQuestions || [])
+        .map(function (q) {
+          return typeof q === "string" ? q : trim(q.question || "");
+        })
+        .filter(Boolean);
+    }
+
+    if (!out.thumbnail) out.thumbnail = "/images/og-image.jpg";
+    if (out.publish === undefined) out.publish = false;
+    if (out.featured === undefined) out.featured = false;
+
+    return out;
+  }
+
   function normalizeBlockForCms(block) {
     if (!block || typeof block !== "object") return null;
     var out = Object.assign({}, block);
@@ -487,6 +540,8 @@
   return {
     stripInternalKeys: stripInternalKeys,
     normalizeEntryForCms: normalizeEntryForCms,
+    normalizeEntryForDisk: normalizeEntryForDisk,
+    slugifyTitle: slugifyTitle,
     pickImportFields: pickImportFields,
     normalizeCollectionId: normalizeCollectionId,
     parseFrontmatter: parseFrontmatter,

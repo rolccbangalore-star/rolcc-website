@@ -424,9 +424,45 @@
   ];
 
   var AUTHOR_DEFAULTS = ["ROLCC Pastoral Team", "ROLCC Fellowship Team"];
+  var cachedCmsStore = null;
+
+  function findDecapStoreFromReact() {
+    var roots = [document.getElementById("nc-root"), document.getElementById("admin-workspace")].filter(Boolean);
+    for (var r = 0; r < roots.length; r++) {
+      var root = roots[r];
+      var fiberKey = Object.keys(root).find(function (k) {
+        return k.indexOf("__reactFiber$") === 0 || k.indexOf("__reactContainer$") === 0;
+      });
+      if (!fiberKey) continue;
+      var seen = new Set();
+      var queue = [root[fiberKey]];
+      while (queue.length) {
+        var node = queue.shift();
+        if (!node || seen.has(node)) continue;
+        seen.add(node);
+        var props = node.memoizedProps || node.pendingProps;
+        if (props && props.store && typeof props.store.dispatch === "function") {
+          return props.store;
+        }
+        if (node.child) queue.push(node.child);
+        if (node.sibling) queue.push(node.sibling);
+      }
+    }
+    return null;
+  }
 
   function getCmsStore() {
-    return window.CMS && window.CMS.store ? window.CMS.store : null;
+    if (cachedCmsStore) return cachedCmsStore;
+    if (window.CMS && window.CMS.store) {
+      cachedCmsStore = window.CMS.store;
+      return cachedCmsStore;
+    }
+    var store = findDecapStoreFromReact();
+    if (store) {
+      cachedCmsStore = store;
+      if (window.CMS) window.CMS.store = store;
+    }
+    return store;
   }
 
   function getDraftEntryJs() {
@@ -465,6 +501,9 @@
     if (!state || !state.collections) return null;
     var name = getCollection();
     var collections = state.collections;
+    if (collections.get) {
+      return collections.get(name);
+    }
     var list = collections.toArray ? collections.toArray() : collections;
     if (!list || !list.length) return null;
     for (var i = 0; i < list.length; i++) {
@@ -722,6 +761,29 @@
     }, 4500);
   }
 
+  function downloadRepoReadyJson(entry) {
+    if (!parseApi || !entry) return "";
+    var collection = getCollection();
+    var disk = parseApi.normalizeEntryForDisk(entry, collection);
+    var slug = parseApi.slugifyTitle(disk.title);
+    var text = JSON.stringify(disk, null, 2) + "\n";
+    var blob = new Blob([text], { type: "application/json" });
+    var link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = slug + ".json";
+    document.body.appendChild(link);
+    link.click();
+    window.setTimeout(function () {
+      URL.revokeObjectURL(link.href);
+      link.remove();
+    }, 0);
+    return slug + ".json";
+  }
+
+  function getRepoImportFolder(collection) {
+    return isBibleStudyCollection(collection) ? "data/articles/back-to-bible" : "data/articles/everyday-faith";
+  }
+
   function formatImportSummary(results) {
     var parts = [];
     if (results.meta) {
@@ -760,18 +822,22 @@
     try {
       applyEntryImport(root, entry, options, function (results) {
         if (!results.meta && !results.content && !results.quiz) {
-          if (entryHasImportData(entry) && attempt < 5) {
+          if (entryHasImportData(entry) && attempt < 8) {
             window.setTimeout(function () {
               runAutoImport(entry, options, attempt + 1);
-            }, attempt === 0 ? 400 : 700);
+            }, attempt === 0 ? 400 : 600);
             if (attempt === 0) {
-              showToast("Waiting for editor fields…", "info");
+              showToast("Waiting for editor…", "info");
             }
             return;
           }
-          var failMsg = results.warnings.length
-            ? results.warnings.join(" ")
-            : "Could not fill any fields. Wait for the form to load fully, then try again.";
+          var folder = getRepoImportFolder(getCollection());
+          var filename = downloadRepoReadyJson(entry);
+          var failMsg = filename
+            ? "Editor import failed. Downloaded " + filename + " — save to " + folder + "/ and open in the CMS."
+            : results.warnings.length
+              ? results.warnings.join(" ")
+              : "Could not fill fields. Download repo JSON from the import dialog instead.";
           showToast(failMsg, "info");
           return;
         }
@@ -828,6 +894,7 @@
       '<details class="admin-import-modal__help"><summary>Article import JSON template</summary><pre id="admin-import-example"></pre></details>' +
       '<div class="admin-import-modal__actions">' +
       '<button type="button" class="btn-outline" data-import-close>Cancel</button>' +
+      '<button type="button" class="btn-outline" id="admin-import-download">Download repo JSON</button>' +
       '<button type="button" class="btn-primary" id="admin-import-confirm">Import</button>' +
       "</div></div>";
     document.body.appendChild(modal);
@@ -847,6 +914,20 @@
         runAutoImport(pendingEntry, { fillEmptyOnly: !replace });
         pendingEntry = null;
         modal.hidden = true;
+      });
+    }
+
+    var downloadBtn = modal.querySelector("#admin-import-download");
+    if (downloadBtn && downloadBtn.dataset.bound !== "true") {
+      downloadBtn.dataset.bound = "true";
+      downloadBtn.addEventListener("click", function () {
+        if (!pendingEntry) return;
+        var filename = downloadRepoReadyJson(pendingEntry);
+        var folder = getRepoImportFolder(getCollection());
+        showToast(
+          "Downloaded " + filename + ". Save to " + folder + "/ then open it in the CMS.",
+          "info"
+        );
       });
     }
 

@@ -529,6 +529,15 @@
     return null;
   }
 
+  function toStoreValue(value) {
+    if (value === undefined || value === null) return value;
+    if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") return value;
+    if (window.Immutable && typeof window.Immutable.fromJS === "function") {
+      return window.Immutable.fromJS(value);
+    }
+    return value;
+  }
+
   function changeDraftFieldValue(store, fieldName, value) {
     var field = getFieldSchema(store, fieldName);
     if (!field) return false;
@@ -544,15 +553,31 @@
     return true;
   }
 
-  function applyMergedEntryToStore(store, entryObj, mergedData) {
-    var updatedEntry = JSON.parse(JSON.stringify(entryObj));
-    updatedEntry.data = Object.assign({}, updatedEntry.data || {}, mergedData);
-    store.dispatch({
-      type: "DRAFT_CREATE_FROM_ENTRY",
-      payload: { entry: updatedEntry },
+  function applyImportFieldsToStore(store, mergedData, collection) {
+    var scalars = ["title", "summary", "description", "author", "scripture", "sermonSeries", "passage"];
+    var lists = isArticlesCollection(collection) ? ["blocks", "keyTakeaways"] : ["sections", "discussionQuestions"];
+
+    scalars.forEach(function (key) {
+      if (mergedData[key] !== undefined) changeDraftFieldValue(store, key, mergedData[key]);
     });
-    if (mergedData.title) {
-      changeDraftFieldValue(store, "title", mergedData.title);
+
+    lists.forEach(function (key) {
+      if (mergedData[key] !== undefined) changeDraftFieldValue(store, key, toStoreValue(mergedData[key]));
+    });
+
+    if (mergedData.includeQuiz !== undefined) {
+      changeDraftFieldValue(store, "includeQuiz", mergedData.includeQuiz);
+    }
+
+    if (mergedData.quiz !== undefined) {
+      var quizValue = toStoreValue(mergedData.quiz);
+      if (mergedData.includeQuiz) {
+        window.setTimeout(function () {
+          changeDraftFieldValue(store, "quiz", quizValue);
+        }, 80);
+      } else {
+        changeDraftFieldValue(store, "quiz", quizValue);
+      }
     }
   }
 
@@ -638,9 +663,8 @@
 
     var currentData = readDraftData();
     var mergedData = mergeImportIntoData(currentData, importData, options.fillEmptyOnly !== false);
-    var entryObj = getDraftEntryJs();
 
-    applyMergedEntryToStore(store, entryObj, mergedData);
+    applyImportFieldsToStore(store, mergedData, collection);
 
     if (mergedData.title) {
       var headerInput = $("admin-editor-title-input");
@@ -663,7 +687,7 @@
       return verified;
     }
 
-    window.setTimeout(finish, 150);
+    window.setTimeout(finish, mergedData.quiz && mergedData.includeQuiz ? 200 : 80);
     return null;
   }
 

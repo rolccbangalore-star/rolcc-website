@@ -424,18 +424,16 @@ function renderArticleHeroHeader(article) {
     ? `<span class="article-meta__item article-meta__scripture">${escapeHtml(article.scripture)}</span>`
     : "";
   return `<div class="article-hero">
-    <div class="article-hero__above">
-      <div class="article-meta article-meta--tags"><div class="article-meta__tags">${tagHtml}</div></div>
-      <div class="article-meta article-meta--byline">
-        ${author}
-        <div class="article-meta__details">
-          <span class="article-meta__item">${escapeHtml(article.dateFormatted)}</span>
-          <span class="article-meta__item">${article.readTime} min read</span>
-          ${scripture}
-        </div>
+    <div class="article-meta article-meta--tags"><div class="article-meta__tags">${tagHtml}</div></div>
+    <img class="article-hero__image w-full rounded-2xl border border-slate-200" src="${escapeHtml(article.thumbnail)}" alt="" width="960" height="540" loading="lazy" />
+    <div class="article-meta article-meta--byline">
+      ${author}
+      <div class="article-meta__details">
+        <span class="article-meta__item">${escapeHtml(article.dateFormatted)}</span>
+        <span class="article-meta__item">${article.readTime} min read</span>
+        ${scripture}
       </div>
     </div>
-    <img class="article-hero__image w-full rounded-2xl border border-slate-200" src="${escapeHtml(article.thumbnail)}" alt="" width="960" height="540" loading="lazy" />
   </div>`;
 }
 

@@ -385,22 +385,15 @@
   flex-direction: column;
 }
 
-.article-hero__above {
-  display: contents;
-}
-
 .article-meta--tags {
-  order: 1;
   margin-top: 1rem;
 }
 
 .article-meta--byline {
-  order: 3;
   margin-top: 0.75rem;
 }
 
 .article-hero__image {
-  order: 2;
   margin-top: 1rem;
 }
 
@@ -453,35 +446,24 @@
     display: inline-flex;
   }
 
-  .article-hero__above {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.35rem 0.65rem;
+  .article-meta--tags {
     order: 1;
+    display: flex;
+    align-items: center;
     margin-top: 1rem;
   }
 
-  .article-meta--tags,
   .article-meta--byline {
-    order: unset;
-    margin-top: 0;
-  }
-
-  .article-meta--tags {
-    display: flex;
-    align-items: center;
-  }
-
-  .article-meta--byline {
+    order: 2;
     flex-direction: row;
     flex-wrap: wrap;
     align-items: center;
     gap: 0.35rem 0.65rem;
+    margin-top: 0;
   }
 
   .article-hero__image {
-    order: 2;
+    order: 3;
     margin-top: 2rem;
   }
 }
@@ -834,8 +816,8 @@
 .article-clap {
   display: inline-flex;
   align-items: center;
-  gap: 0.15rem;
-  padding: 0.3rem 0.85rem 0.3rem 0.3rem;
+  gap: 0.35rem;
+  padding: 0.35rem 0.9rem 0.35rem 0.35rem;
   border-radius: 9999px;
   border: 1px solid #e2e8f0;
   background: #fff;
@@ -895,15 +877,33 @@
   animation: article-clap-pulse 0.35s ease;
 }
 
-.article-clap__count {
-  min-width: 1.35rem;
-  padding-right: 0.15rem;
-  font-size: 1.125rem;
+.article-clap__meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.1rem;
+  padding-right: 0.1rem;
+  line-height: 1.15;
+}
+
+.article-clap__total {
+  font-size: 0.9375rem;
   font-weight: 700;
-  line-height: 1;
   color: #0f172a;
   letter-spacing: -0.02em;
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.article-clap__hint {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: #64748b;
+  white-space: nowrap;
+}
+
+.article-clap__hint.is-personal {
+  color: #ea580c;
 }
 
 @keyframes article-clap-pulse {
@@ -1225,12 +1225,9 @@
   }
 
   .article-quiz-fab {
-    padding: 0.75rem;
+    padding: 0.72rem 1rem;
     order: -1;
-  }
-
-  .article-quiz-fab__label {
-    display: none;
+    font-size: 0.8125rem;
   }
 }
 

@@ -381,33 +381,7 @@ function readHeaderNavTemplate(assetRoot) {
 }
 
 function readFooterTemplate() {
-  return `
-    <footer id="footer-section" class="footer-reveal relative z-10 border-t border-slate-200 bg-slate-900 text-slate-300">
-      <div class="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
-        <div class="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
-          <div>
-            <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-400">Resources</p>
-            <ul class="mt-4 space-y-2 text-sm">
-              <li><a href="/faq" class="hover:text-white">FAQ</a></li>
-              <li><a href="/articles" class="hover:text-white">Articles</a></li>
-              <li><a href="/#latest-sermon" class="hover:text-white">Latest Sermon</a></li>
-            </ul>
-          </div>
-          <div>
-            <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-400">Ministries</p>
-            <ul class="mt-4 space-y-2 text-sm">
-              <li><a href="/services" class="hover:text-white">Worship Services</a></li>
-              <li><a href="/fellowship" class="hover:text-white">Cell Fellowship</a></li>
-              <li><a href="/river-kids" class="hover:text-white">River Kids</a></li>
-            </ul>
-          </div>
-        </div>
-        <div class="mt-10 border-t border-white/10 pt-6 text-center text-[11px] text-slate-400">
-          <p>© <span id="year"></span> River of Life Christian Church. All rights reserved.</p>
-        </div>
-      </div>
-    </footer>
-    <button id="scroll-top-btn" class="scroll-to-top hidden fixed bottom-5 right-4 z-40 rounded-full bg-slate-900/90 p-2 text-xs text-slate-100 shadow-lg ring-1 ring-slate-600 hover:bg-slate-800 sm:bottom-6 sm:right-6" aria-label="Scroll to top" type="button">↑</button>`;
+  return readHubFooterTemplate();
 }
 
 function renderArticleCardMeta(article) {
@@ -866,6 +840,55 @@ function collectSiteHtmlFiles() {
   return files;
 }
 
+function syncFooterColumnOrder() {
+  const wrongOrder =
+    /(<div>\s*<p class="text-\[11px\] font-semibold uppercase tracking-\[0\.22em\] text-slate-400">Connect<\/p>\s*<div class="mt-4 flex flex-wrap gap-3">[\s\S]*?<\/div>\s*<\/div>)\s*(<div>\s*<p class="text-\[11px\] font-semibold uppercase tracking-\[0\.22em\] text-slate-400">Resources<\/p>\s*<ul class="mt-4 space-y-2\.5 text-sm text-slate-300">[\s\S]*?<\/ul>\s*<\/div>)/g;
+
+  collectSiteHtmlFiles().forEach((filePath) => {
+    if (filePath.includes(`${path.sep}admin${path.sep}`)) return;
+
+    let html = fs.readFileSync(filePath, "utf8");
+    if (!wrongOrder.test(html)) return;
+
+    html = html.replace(wrongOrder, "$2\n$1");
+    fs.writeFileSync(filePath, html, "utf8");
+  });
+}
+
+function syncLegacyFooters() {
+  const hubFooter = readHubFooterTemplate();
+  if (!hubFooter) return;
+
+  collectSiteHtmlFiles().forEach((filePath) => {
+    if (filePath.includes(`${path.sep}admin${path.sep}`)) return;
+
+    let html = fs.readFileSync(filePath, "utf8");
+    if (!html.includes('footer-reveal relative z-10')) return;
+
+    let changed = false;
+
+    if (!html.includes("serve-unveil-spacer")) {
+      const mainClosePattern = /<\/article>\s*<\/main>/;
+      if (mainClosePattern.test(html)) {
+        html = html.replace(
+          mainClosePattern,
+          '</article>\n      </div>\n      <div class="serve-unveil-spacer min-h-screen" aria-hidden="true"></div></main>'
+        );
+        changed = true;
+      }
+    }
+
+    const legacyFooterPattern =
+      /<footer id="footer-section" class="footer-reveal relative[\s\S]*?<\/footer>\s*(?:<!-- Scroll to Top Button -->[\s\S]*?<\/button>\s*)?/;
+    if (legacyFooterPattern.test(html)) {
+      html = html.replace(legacyFooterPattern, `${hubFooter.trim()}\n\n`);
+      changed = true;
+    }
+
+    if (changed) fs.writeFileSync(filePath, html, "utf8");
+  });
+}
+
 function syncSiteNav() {
   const headerFaqPatterns = [
     /\s*<a href="\/faq" class="header-top__link"[^>]*data-nav="faq"[^>]*>FAQs<\/a>/g,
@@ -928,6 +951,9 @@ function syncSiteNav() {
 
     if (changed) fs.writeFileSync(filePath, html, "utf8");
   });
+
+  syncFooterColumnOrder();
+  syncLegacyFooters();
 }
 
 function main() {

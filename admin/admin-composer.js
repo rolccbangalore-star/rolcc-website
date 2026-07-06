@@ -403,6 +403,43 @@
     root.dataset.adminMediaFilter = filter;
   }
 
+  function isMediaListView(root) {
+    root = root || getComposerRoot();
+    return root && root.dataset.adminMediaViewMode === "list";
+  }
+
+  function setMediaViewMode(root, mode) {
+    if (!root) return;
+    root.dataset.adminMediaViewMode = mode === "list" ? "list" : "grid";
+  }
+
+  function hideDecapMediaNotFound(root) {
+    if (!isMediaRoute()) return;
+    root.querySelectorAll("h1, h2, p, span").forEach(function (el) {
+      if (el.closest(".admin-media-workspace")) return;
+      if (el.children.length > 0) return;
+      if (normalize(el.textContent) !== "not found") return;
+
+      var hide = el;
+      while (
+        hide.parentElement &&
+        hide.parentElement.tagName !== "MAIN" &&
+        hide.parentElement !== root &&
+        hide.parentElement.children.length === 1
+      ) {
+        hide = hide.parentElement;
+      }
+      if (
+        hide &&
+        !hide.classList.contains("admin-media-workspace") &&
+        hide.tagName !== "MAIN" &&
+        !hide.closest(".admin-media-workspace")
+      ) {
+        hide.classList.add("admin-decap-media-hidden");
+      }
+    });
+  }
+
   function copyText(value) {
     if (!value) return Promise.resolve();
     if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -1315,6 +1352,8 @@
     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>';
   var GRID_VIEW_ICON =
     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>';
+  var UPLOAD_ICON =
+    '<svg class="admin-media-upload-btn__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m17 8-5-5-5 5"/><path d="M12 3v12"/></svg>';
 
   function markViewButton(btn, type) {
     btn.classList.add("admin-view-btn", type === "list" ? "admin-view-btn--list" : "admin-view-btn--grid");
@@ -2402,6 +2441,30 @@
     return items;
   }
 
+  function buildMediaUsageHtml(item) {
+    if (!item.usedOn || !item.usedOn.length) return "";
+    return (
+      '<span class="admin-media-usage-tags">' +
+      item.usedOn
+        .map(function (label) {
+          return '<span class="admin-media-usage-tag">' + escapeHtml(label) + "</span>";
+        })
+        .join("") +
+      "</span>"
+    );
+  }
+
+  function bindMediaItemClick(el, item) {
+    el.addEventListener("click", function () {
+      copyText(item.path).then(function () {
+        el.classList.add(el.classList.contains("admin-media-list-row") ? "admin-media-list-row--copied" : "admin-media-card--copied");
+        window.setTimeout(function () {
+          el.classList.remove("admin-media-list-row--copied", "admin-media-card--copied");
+        }, 1200);
+      });
+    });
+  }
+
   function buildMediaCard(item) {
     var card = document.createElement("button");
     card.type = "button";
@@ -2424,16 +2487,40 @@
       '<span class="admin-media-card__path">' +
       escapeHtml(item.path) +
       "</span>" +
+      buildMediaUsageHtml(item) +
       "</span>";
-    card.addEventListener("click", function () {
-      copyText(item.path).then(function () {
-        card.classList.add("admin-media-card--copied");
-        window.setTimeout(function () {
-          card.classList.remove("admin-media-card--copied");
-        }, 1200);
-      });
-    });
+    bindMediaItemClick(card, item);
     return card;
+  }
+
+  function buildMediaListRow(item) {
+    var row = document.createElement("button");
+    row.type = "button";
+    row.className = "admin-media-list-row";
+    row.dataset.path = item.path;
+    var badge = item.source === "articles" ? "Article" : "Site";
+    row.innerHTML =
+      '<span class="admin-media-list-row__thumb">' +
+      '<img src="' +
+      escapeHtml(item.path) +
+      '" alt="" loading="lazy" decoding="async" />' +
+      "</span>" +
+      '<span class="admin-media-list-row__main">' +
+      '<span class="admin-media-list-row__top">' +
+      '<span class="admin-media-card__badge">' +
+      escapeHtml(badge) +
+      "</span>" +
+      '<span class="admin-media-list-row__name">' +
+      escapeHtml(item.name) +
+      "</span>" +
+      "</span>" +
+      '<span class="admin-media-list-row__path">' +
+      escapeHtml(item.path) +
+      "</span>" +
+      buildMediaUsageHtml(item) +
+      "</span>";
+    bindMediaItemClick(row, item);
+    return row;
   }
 
   function placeMediaWorkspace(main, workspace) {
@@ -2472,10 +2559,17 @@
 
     function run() {
       preserveDecapMediaTab(root);
+      hideDecapMediaNotFound(root);
+
+      if (!root.dataset.adminMediaViewMode) {
+        setMediaViewMode(root, "grid");
+      }
+
       var filter = getMediaFilter(root);
+      var listView = isMediaListView(root);
       var items = mediaManifest || [];
       var filtered = filterMediaItems(items, filter);
-      var signature = filter + "|" + filtered.length + "|" + items.length;
+      var signature = filter + "|" + (listView ? "list" : "grid") + "|" + filtered.length + "|" + items.length;
 
       var workspace = main.querySelector(".admin-media-workspace");
       if (!workspace) {
@@ -2506,6 +2600,40 @@
         var actions = document.createElement("div");
         actions.className = "admin-media-head__actions";
 
+        var viewToggle = document.createElement("div");
+        viewToggle.className = "admin-media-view-toggle admin-view-toggle";
+        viewToggle.setAttribute("role", "group");
+        viewToggle.setAttribute("aria-label", "Media view");
+
+        var listBtn = document.createElement("button");
+        listBtn.type = "button";
+        listBtn.className = "admin-view-btn admin-view-btn--list";
+        listBtn.innerHTML = LIST_VIEW_ICON;
+        listBtn.setAttribute("aria-pressed", listView ? "true" : "false");
+        listBtn.classList.toggle("admin-view-btn--active", listView);
+        setTooltip(listBtn, "List view");
+        listBtn.addEventListener("click", function (event) {
+          event.stopPropagation();
+          setMediaViewMode(root, "list");
+          renderMediaWorkspace(root);
+        });
+
+        var gridBtn = document.createElement("button");
+        gridBtn.type = "button";
+        gridBtn.className = "admin-view-btn admin-view-btn--grid";
+        gridBtn.innerHTML = GRID_VIEW_ICON;
+        gridBtn.setAttribute("aria-pressed", listView ? "false" : "true");
+        gridBtn.classList.toggle("admin-view-btn--active", !listView);
+        setTooltip(gridBtn, "Grid view");
+        gridBtn.addEventListener("click", function (event) {
+          event.stopPropagation();
+          setMediaViewMode(root, "grid");
+          renderMediaWorkspace(root);
+        });
+
+        viewToggle.appendChild(listBtn);
+        viewToggle.appendChild(gridBtn);
+
         var filters = document.createElement("div");
         filters.className = "admin-media-filters";
         [
@@ -2530,13 +2658,14 @@
         var uploadBtn = document.createElement("button");
         uploadBtn.type = "button";
         uploadBtn.className = "btn-primary admin-media-upload-btn";
-        uploadBtn.textContent = "Upload image";
+        uploadBtn.innerHTML = UPLOAD_ICON + "Upload image";
         uploadBtn.addEventListener("click", function (event) {
           event.stopPropagation();
           root.dataset.adminMediaUploadOpen = "true";
           renderMediaWorkspace(root);
         });
 
+        actions.appendChild(viewToggle);
         actions.appendChild(filters);
         actions.appendChild(uploadBtn);
         head.appendChild(titleWrap);
@@ -2553,6 +2682,13 @@
             "<p><strong>No images in this view.</strong></p>" +
             '<p class="admin-media-empty__hint">Try another filter, or upload a new image for your articles.</p>';
           workspace.appendChild(empty);
+        } else if (listView) {
+          var list = document.createElement("div");
+          list.className = "admin-media-list";
+          filtered.forEach(function (item) {
+            list.appendChild(buildMediaListRow(item));
+          });
+          workspace.appendChild(list);
         } else {
           var grid = document.createElement("div");
           grid.className = "admin-media-grid";
@@ -2565,10 +2701,21 @@
         workspace.querySelectorAll(".admin-media-filter").forEach(function (btn) {
           btn.classList.toggle("admin-media-filter--active", btn.dataset.filter === filter);
         });
+        var listBtnSync = workspace.querySelector(".admin-view-btn--list");
+        var gridBtnSync = workspace.querySelector(".admin-view-btn--grid");
+        if (listBtnSync) {
+          listBtnSync.classList.toggle("admin-view-btn--active", listView);
+          listBtnSync.setAttribute("aria-pressed", listView ? "true" : "false");
+        }
+        if (gridBtnSync) {
+          gridBtnSync.classList.toggle("admin-view-btn--active", !listView);
+          gridBtnSync.setAttribute("aria-pressed", listView ? "false" : "true");
+        }
         mountMediaUploadPanel(root, workspace);
       }
 
       placeMediaWorkspace(main, workspace);
+      hideDecapMediaNotFound(root);
     }
 
     loadMediaManifest().then(run);

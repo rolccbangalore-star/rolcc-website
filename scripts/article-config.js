@@ -400,6 +400,20 @@ function articleHeroTags(article) {
   return [];
 }
 
+function renderArticleStatsBar(article) {
+  return `<p class="article-header__stats">
+    <span class="article-header__stat">${escapeHtml(article.dateFormatted)}</span>
+    <span class="article-header__stat-sep" aria-hidden="true">·</span>
+    <span class="article-header__stat">${article.readTime} min read</span>
+  </p>`;
+}
+
+function renderArticleEyebrow(article) {
+  const label = escapeHtml(article.typeLabel || "");
+  const series = article.sermonSeries ? ` · ${escapeHtml(article.sermonSeries)}` : "";
+  return `<p class="article-eyebrow">${label}${series}</p>`;
+}
+
 function renderArticleMetaBar(article) {
   const tags = articleHeroTags(article);
   const tagHtml = tags.length
@@ -414,10 +428,6 @@ function renderArticleMetaBar(article) {
   return `<div class="article-meta">
     <div class="article-meta__tags">${tagHtml}</div>
     ${author}
-    <div class="article-meta__details">
-      <span class="article-meta__item">${escapeHtml(article.dateFormatted)}</span>
-      <span class="article-meta__item">${article.readTime} min read</span>
-    </div>
     ${scripture}
   </div>`;
 }
@@ -433,19 +443,14 @@ function renderArticleHeroHeader(article) {
   const scripture = article.scripture
     ? `<p class="article-meta__scripture">${escapeHtml(article.scripture)}</p>`
     : "";
-  const series = article.sermonSeries
-    ? `<p class="article-meta__series">${escapeHtml(article.sermonSeries)}</p>`
+  const tagsBlock = tagHtml
+    ? `<div class="article-meta article-meta--tags"><div class="article-meta__tags">${tagHtml}</div></div>`
     : "";
   return `<div class="article-hero">
-    <div class="article-meta article-meta--tags"><div class="article-meta__tags">${tagHtml}</div></div>
+    ${tagsBlock}
     <img class="article-hero__image w-full rounded-2xl border border-slate-200" src="${escapeHtml(article.thumbnail)}" alt="" width="960" height="540" loading="lazy" />
     <div class="article-meta article-meta--byline">
       ${author}
-      <div class="article-meta__details">
-        <span class="article-meta__item">${escapeHtml(article.dateFormatted)}</span>
-        <span class="article-meta__item">${article.readTime} min read</span>
-      </div>
-      ${series}
       ${scripture}
     </div>
   </div>`;
@@ -523,6 +528,8 @@ module.exports = {
   primaryArticleTag,
   collectBlockText,
   renderBlocks,
+  renderArticleStatsBar,
+  renderArticleEyebrow,
   renderArticleMetaBar,
   renderArticleHeroHeader,
   renderSummaryBox,

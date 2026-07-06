@@ -269,6 +269,13 @@ function pageIdFromLabel(label) {
     .replace(/^-|-$/g, "");
 }
 
+function isWebsitePageLabel(label) {
+  if (!isBrowsablePageLabel(label)) return false;
+  if (label.indexOf("Article:") === 0) return false;
+  if (label.indexOf("/") !== -1 || /\.json$/i.test(label)) return false;
+  return true;
+}
+
 function buildPagesList(manifest) {
   var pageKeys = new Set();
   var usedIds = new Set(["all", "unassigned"]);
@@ -282,7 +289,7 @@ function buildPagesList(manifest) {
 
   manifest.forEach(function (entry) {
     (entry.usedOn || []).forEach(function (label) {
-      if (!isBrowsablePageLabel(label)) return;
+      if (!isWebsitePageLabel(label)) return;
       var key = label.toLowerCase();
       if (pageKeys.has(key)) return;
       pageKeys.add(key);

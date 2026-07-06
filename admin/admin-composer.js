@@ -212,6 +212,16 @@
     root.dataset.adminMediaPage = pageId || "all";
   }
 
+  function getMediaSourceFilter(root) {
+    root = root || getComposerRoot();
+    return (root && root.dataset.adminMediaSource) || "all";
+  }
+
+  function setMediaSourceFilter(root, sourceId) {
+    if (!root) return;
+    root.dataset.adminMediaSource = sourceId || "all";
+  }
+
   function isMediaListView(root) {
     root = root || getComposerRoot();
     return root && root.dataset.adminMediaViewMode === "list";
@@ -482,7 +492,14 @@
     loadMediaPages().then(function (pages) {
       pagesNav.dataset.bound = "true";
       pagesNav.textContent = "";
-      pages.forEach(function (page) {
+      pages
+        .filter(function (page) {
+          if (page.id === "all" || page.id === "unassigned") return true;
+          if (page.label && page.label.indexOf("Article:") === 0) return false;
+          if (page.label && (page.label.indexOf("/") !== -1 || /\.json$/i.test(page.label))) return false;
+          return true;
+        })
+        .forEach(function (page) {
         var btn = document.createElement("button");
         btn.type = "button";
         btn.className = "admin-sidebar-link admin-sidebar-link--page";
@@ -2280,6 +2297,50 @@
     });
   }
 
+  function filterMediaBySource(items, sourceId) {
+    if (!sourceId || sourceId === "all") return items;
+    if (sourceId === "articles") {
+      return items.filter(function (item) {
+        return item.source === "articles";
+      });
+    }
+    if (sourceId === "website") {
+      return items.filter(function (item) {
+        return item.source === "site";
+      });
+    }
+    return items;
+  }
+
+  function mountMediaSourceFilters(root, container, sourceId) {
+    var filters = document.createElement("div");
+    filters.className = "admin-media-filters";
+    filters.setAttribute("role", "group");
+    filters.setAttribute("aria-label", "Filter by image type");
+
+    [
+      { id: "all", label: "All" },
+      { id: "articles", label: "Articles" },
+      { id: "website", label: "Website" },
+    ].forEach(function (option) {
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "admin-media-filter";
+      btn.dataset.mediaSource = option.id;
+      btn.textContent = option.label;
+      btn.classList.toggle("admin-media-filter--active", sourceId === option.id);
+      btn.setAttribute("aria-pressed", sourceId === option.id ? "true" : "false");
+      btn.addEventListener("click", function (event) {
+        event.stopPropagation();
+        setMediaSourceFilter(root, option.id);
+        renderMediaWorkspace(root);
+      });
+      filters.appendChild(btn);
+    });
+
+    container.appendChild(filters);
+  }
+
   function formatMediaDimensions(item) {
     if (item.width && item.height) return item.width + " × " + item.height;
     return "—";
@@ -2558,13 +2619,16 @@
       }
 
       var pageId = getMediaPageFilter(root);
+      var sourceId = getMediaSourceFilter(root);
       var listView = isMediaListView(root);
       var manifestReady = Array.isArray(mediaManifest);
       var items = manifestReady ? mediaManifest : [];
       var pages = mediaPages || [];
-      var filtered = filterMediaItems(items, pageId, pages);
+      var filtered = filterMediaBySource(filterMediaItems(items, pageId, pages), sourceId);
       var signature =
         pageId +
+        "|" +
+        sourceId +
         "|" +
         (listView ? "list" : "grid") +
         "|" +
@@ -2599,6 +2663,8 @@
         var actions = document.createElement("div");
         actions.className = "admin-media-head__actions";
 
+        mountMediaSourceFilters(root, actions, sourceId);
+
         var viewToggle = document.createElement("div");
         viewToggle.className = "admin-media-view-toggle admin-view-toggle";
         viewToggle.setAttribute("role", "group");
@@ -2607,7 +2673,7 @@
         var listBtn = document.createElement("button");
         listBtn.type = "button";
         listBtn.className = "admin-view-btn admin-view-btn--list";
-        listBtn.innerHTML = LIST_VIEW_ICON;
+        listBtn.innerHTML = LIST_VIEW_ICON + '<span class="admin-media-view-label">List</span>';
         listBtn.setAttribute("aria-pressed", listView ? "true" : "false");
         listBtn.classList.toggle("admin-view-btn--active", listView);
         setTooltip(listBtn, "List view");
@@ -2620,7 +2686,7 @@
         var gridBtn = document.createElement("button");
         gridBtn.type = "button";
         gridBtn.className = "admin-view-btn admin-view-btn--grid";
-        gridBtn.innerHTML = GRID_VIEW_ICON;
+        gridBtn.innerHTML = GRID_VIEW_ICON + '<span class="admin-media-view-label">Grid</span>';
         gridBtn.setAttribute("aria-pressed", listView ? "false" : "true");
         gridBtn.classList.toggle("admin-view-btn--active", !listView);
         setTooltip(gridBtn, "Grid view");
@@ -2665,7 +2731,7 @@
           empty.className = "admin-media-empty";
           empty.innerHTML =
             "<p><strong>No images in this view.</strong></p>" +
-            '<p class="admin-media-empty__hint">Try another page in the sidebar, or upload a new image for your articles.</p>';
+            '<p class="admin-media-empty__hint">Try another filter or page in the sidebar, or upload a new image for your articles.</p>';
           workspace.appendChild(empty);
         } else if (listView) {
           var list = document.createElement("div");

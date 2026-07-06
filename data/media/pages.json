@@ -12,38 +12,6 @@
     "label": "About Us"
   },
   {
-    "id": "article-finding-rest-when-work-never-stops",
-    "label": "Article: Finding Rest When Work Never Stops"
-  },
-  {
-    "id": "article-god-is-still-with-you-in-grief",
-    "label": "Article: God Is Still With You In Grief"
-  },
-  {
-    "id": "article-how-to-stop-stressing-and-trust-god",
-    "label": "Article: How To Stop Stressing And Trust God"
-  },
-  {
-    "id": "article-how-to-stop-stressing-and-trust-god-with-your-problems",
-    "label": "Article: How to Stop Stressing and Trust God with Your Problems"
-  },
-  {
-    "id": "article-psalm-23-the-lord-is-my-shepherd-2",
-    "label": "Article: Psalm 23 — The Lord Is My Shepherd"
-  },
-  {
-    "id": "article-psalm-23-the-lord-is-my-shepherd",
-    "label": "Article: Psalm 23 The Lord Is My Shepherd"
-  },
-  {
-    "id": "article-romans-8-life-in-the-spirit",
-    "label": "Article: Romans 8 Life In The Spirit"
-  },
-  {
-    "id": "article-romans-8-1-11-life-in-the-spirit",
-    "label": "Article: Romans 8:1-11 — Life in the Spirit"
-  },
-  {
     "id": "articles",
     "label": "Articles"
   },
@@ -58,10 +26,6 @@
   {
     "id": "counselling",
     "label": "Counselling"
-  },
-  {
-    "id": "data-articles-composer-cards-json",
-    "label": "data/articles/composer-cards.json"
   },
   {
     "id": "events",

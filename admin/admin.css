@@ -653,6 +653,7 @@ body {
 .admin-media-pane .admin-media-workspace {
   width: 100%;
   box-sizing: border-box;
+  padding-top: 1.25rem;
 }
 
 .admin-media-pane .admin-media-header {
@@ -757,14 +758,49 @@ body {
 }
 
 .admin-media-pane .admin-media-view-toggle .admin-view-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  min-width: 2.25rem;
+  height: 2.25rem;
+  padding: 0 0.65rem;
   border: none;
   border-right: 1px solid var(--rolcc-slate-300);
   border-radius: 0;
   background: transparent;
+  font-family: var(--rolcc-font);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--rolcc-slate-700);
+  cursor: pointer;
+  transition: color 0.15s ease, background 0.15s ease;
 }
 
 .admin-media-pane .admin-media-view-toggle .admin-view-btn:last-child {
   border-right: none;
+}
+
+.admin-media-pane .admin-media-view-toggle .admin-view-btn svg {
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+}
+
+.admin-media-pane .admin-media-view-toggle .admin-view-btn:hover {
+  color: var(--rolcc-slate-900);
+  background: var(--rolcc-slate-50);
+}
+
+.admin-media-pane .admin-media-view-toggle .admin-view-btn[aria-pressed="true"],
+.admin-media-pane .admin-media-view-toggle .admin-view-btn.admin-view-btn--active {
+  color: var(--rolcc-accent);
+  background: rgba(99, 91, 255, 0.12);
+  font-weight: 600;
+}
+
+.admin-media-pane .admin-media-view-label {
+  line-height: 1;
 }
 
 .admin-media-pane .admin-media-usage-tags {

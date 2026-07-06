@@ -388,9 +388,9 @@ function readFooterTemplate() {
           <div>
             <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-400">Resources</p>
             <ul class="mt-4 space-y-2 text-sm">
-              <li><a href="/articles" class="hover:text-white">Articles &amp; Studies</a></li>
-              <li><a href="/faq" class="hover:text-white">FAQs</a></li>
-              <li><a href="/contact" class="hover:text-white">Contact</a></li>
+              <li><a href="/faq" class="hover:text-white">FAQ</a></li>
+              <li><a href="/articles" class="hover:text-white">Articles</a></li>
+              <li><a href="/#latest-sermon" class="hover:text-white">Latest Sermon</a></li>
             </ul>
           </div>
           <div>
@@ -837,10 +837,12 @@ function getFaqTotalPages() {
   }
 }
 
-const FOOTER_FAQ_COLUMN = `              <div>
-                <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-400">Help &amp; FAQs</p>
+const FOOTER_RESOURCES_COLUMN = `              <div>
+                <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-400">Resources</p>
                 <ul class="mt-4 space-y-2.5 text-sm text-slate-300">
-                  <li><a href="/faq" class="footer-link hover:text-white">Browse all FAQs</a></li>
+                  <li><a href="/faq" class="footer-link hover:text-white">FAQ</a></li>
+                  <li><a href="/articles" class="footer-link hover:text-white">Articles</a></li>
+                  <li><a href="/#latest-sermon" class="footer-link hover:text-white">Latest Sermon</a></li>
                 </ul>
               </div>`;
 
@@ -895,25 +897,33 @@ function syncSiteNav() {
       changed = true;
     }
 
-    if (!html.includes("Browse all FAQs")) {
+    if (!html.includes('href="/#latest-sermon" class="footer-link')) {
       const emptyFooterDiv =
         /\n(\s*)<div><\/div>\n(\s*<\/div>\n\s*<\/div>\n\s*<\/div>\n\s*<div class="mt-auto border-t)/;
       if (emptyFooterDiv.test(html)) {
-        html = html.replace(emptyFooterDiv, `\n$1${FOOTER_FAQ_COLUMN.trim()}\n$2`);
+        html = html.replace(emptyFooterDiv, `\n$1${FOOTER_RESOURCES_COLUMN.trim()}\n$2`);
         changed = true;
       }
     }
 
-    if (!html.includes('href="/articles" class="footer-link')) {
-      const footerArticlesPattern =
-        /(<li><a href="\/about" class="footer-link hover:text-white">About Us<\/a><\/li>\s*)(<li><a href="\/contact" class="footer-link hover:text-white">Contact<\/a><\/li>)/;
-      if (footerArticlesPattern.test(html)) {
-        html = html.replace(
-          footerArticlesPattern,
-          '$1<li><a href="/articles" class="footer-link hover:text-white">Articles</a></li>\n                $2'
-        );
-        changed = true;
-      }
+    if (html.includes('Help &amp; FAQs')) {
+      html = html.replace(
+        /<div>\s*<p class="text-\[11px\][^"]*">Help &amp; FAQs<\/p>\s*<ul class="mt-4 space-y-2\.5 text-sm text-slate-300">\s*<li><a href="\/faq" class="footer-link hover:text-white">Browse all FAQs<\/a><\/li>\s*<\/ul>\s*<\/div>/g,
+        FOOTER_RESOURCES_COLUMN.trim()
+      );
+      changed = true;
+    }
+
+    const footerArticlesNavPattern =
+      /(<li><a href="\/about" class="footer-link hover:text-white">About Us<\/a><\/li>\s*)<li><a href="\/articles" class="footer-link hover:text-white">Articles<\/a><\/li>\s*(<li><a href="\/contact" class="footer-link hover:text-white">Contact<\/a><\/li>)/;
+    if (footerArticlesNavPattern.test(html)) {
+      html = html.replace(footerArticlesNavPattern, "$1$2");
+      changed = true;
+    }
+
+    if (html.replace(/footer-link hover:text-white">Main<\/a>/g, 'footer-link hover:text-white">Home</a>') !== html) {
+      html = html.replace(/footer-link hover:text-white">Main<\/a>/g, 'footer-link hover:text-white">Home</a>');
+      changed = true;
     }
 
     if (changed) fs.writeFileSync(filePath, html, "utf8");

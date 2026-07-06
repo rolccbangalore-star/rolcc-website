@@ -19,16 +19,24 @@
   const page = payload.page || 1;
   let filter = "all";
 
+  function articleTags(article) {
+    if (Array.isArray(article.tags) && article.tags.length) return article.tags;
+    return article.category ? [article.category] : [];
+  }
+
   function cardHtml(article) {
     const href = `/articles/${article.type}/${article.slug}`;
     const thumb = article.thumbnail || "/images/og-image.jpg";
     const desc = article.summary || article.description || "";
+    const tagPills = articleTags(article)
+      .map((tag) => `<span class="article-tag article-tag--sm article-tag--muted">${tag}</span>`)
+      .join("");
     return `<a href="${href}" class="articles-card" data-article-type="${article.type}" data-article-category="${article.category || ""}">
       <img class="articles-card__media" src="${thumb}" alt="" loading="lazy" width="640" height="360" />
       <div class="articles-card__body">
         <div class="articles-card__tags">
           <span class="article-tag article-tag--sm">${article.typeLabel || article.type}</span>
-          <span class="article-tag article-tag--sm article-tag--muted">${article.category || ""}</span>
+          ${tagPills}
         </div>
         <h2 class="articles-card__title">${article.title}</h2>
         <p class="articles-card__desc">${desc}</p>
@@ -40,7 +48,7 @@
   function matchesFilter(article) {
     if (filter === "all") return true;
     if (filter === "everyday-faith" || filter === "back-to-bible") return article.type === filter;
-    return (article.category || "").toLowerCase() === filter.toLowerCase();
+    return articleTags(article).some((tag) => tag.toLowerCase() === filter.toLowerCase());
   }
 
   function renderFiltered() {

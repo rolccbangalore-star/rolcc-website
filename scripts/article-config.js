@@ -2,7 +2,7 @@
 
 const ARTICLES_PER_PAGE = 12;
 const LATEST_COUNT = 6;
-const FEATURED_MAX = 3;
+const FEATURED_MAX = 1;
 const RELATED_COUNT = 3;
 const WORDS_PER_MINUTE = 200;
 const SITE_ORIGIN = "https://www.rolcc.in";
@@ -190,6 +190,28 @@ function normalizeStringList(items) {
     .filter(Boolean);
 }
 
+function normalizeArticleTags(article) {
+  const tags = (article?.tags || [])
+    .map((item) => (typeof item === "string" ? item : item?.tag || ""))
+    .map((tag) => String(tag).trim())
+    .filter(Boolean);
+  if (tags.length) return tags;
+  if (article?.category) return [String(article.category).trim()].filter(Boolean);
+  return [];
+}
+
+function renderArticleTagsHtml(article, options) {
+  const opts = options || {};
+  const tags = normalizeArticleTags(article);
+  if (!tags.length) return "";
+  return tags
+    .map((tag, index) => {
+      const muted = opts.mutedAll || index > 0;
+      return `<span class="article-tag article-tag--sm${muted ? " article-tag--muted" : ""}">${escapeHtml(tag)}</span>`;
+    })
+    .join("");
+}
+
 function blockType(block) {
   if (!block?.type) return "";
   if (block.type === "list") return "bulletList";
@@ -329,8 +351,12 @@ function renderBlocks(blocks) {
 }
 
 function renderArticleMetaBar(article) {
+  const tags = normalizeArticleTags(article);
+  const tagHtml = tags.length
+    ? tags.map((tag) => `<span class="article-tag">${escapeHtml(tag)}</span>`).join("")
+    : `<span class="article-tag">${escapeHtml(article.category || "General")}</span>`;
   return `<div class="article-meta">
-    <span class="article-tag">${escapeHtml(article.category)}</span>
+    ${tagHtml}
     <span class="article-meta__item">${escapeHtml(article.author)}</span>
     <span class="article-meta__item">${escapeHtml(article.dateFormatted)}</span>
     <span class="article-meta__item">${article.readTime} min read</span>
@@ -401,6 +427,8 @@ module.exports = {
   markdownToHtml,
   normalizeBlock,
   normalizeStringList,
+  normalizeArticleTags,
+  renderArticleTagsHtml,
   collectBlockText,
   renderBlocks,
   renderArticleMetaBar,

@@ -10,7 +10,7 @@ const COLLECTIONS = [
   { id: "bible-study", folder: "back-to-bible" },
 ];
 
-const CARD_FIELDS = ["title", "author", "category", "date", "modified", "thumbnail", "publish"];
+const CARD_FIELDS = ["title", "author", "category", "tags", "date", "modified", "thumbnail", "publish", "featured"];
 
 function toDateOnly(value) {
   if (!value) return "";
@@ -32,6 +32,13 @@ function cardPreviewFromArticle(data, filePath) {
     preview.author = data.passage ? "ROLCC Fellowship Team" : "ROLCC Pastoral Team";
   }
   if (!preview.category) preview.category = data.passage ? "Bible Study" : "General";
+  if (Array.isArray(data.tags) && data.tags.length) {
+    preview.tags = data.tags
+      .map((item) => (typeof item === "string" ? item : item?.tag || ""))
+      .map((tag) => String(tag).trim())
+      .filter(Boolean);
+    if (!preview.category && preview.tags[0]) preview.category = preview.tags[0];
+  }
   return preview;
 }
 

@@ -246,14 +246,57 @@
     return value;
   }
 
-  function populateTagSelect(select, tags, selected) {
+  function normalizeTagsList(raw, fallbackCategory) {
+    var tags = [];
+    if (Array.isArray(raw)) {
+      raw.forEach(function (item) {
+        if (typeof item === "string" && item.trim()) tags.push(item.trim());
+        else if (item && item.tag && String(item.tag).trim()) tags.push(String(item.tag).trim());
+      });
+    }
+    if (!tags.length && fallbackCategory) tags.push(String(fallbackCategory).trim());
+    var seen = Object.create(null);
+    return tags.filter(function (tag) {
+      if (!tag || seen[tag]) return false;
+      seen[tag] = true;
+      return true;
+    });
+  }
+
+  function readCurrentTags() {
+    var data = readDraftData();
+    return normalizeTagsList(data.tags, data.category);
+  }
+
+  function applyTags(tags) {
+    var clean = normalizeTagsList(tags);
+    var store = getStore();
+    if (!store || !window.AdminImport) return;
+    if (window.AdminImport.tagsToStoreValue) {
+      changeField("tags", window.AdminImport.tagsToStoreValue(clean));
+    } else {
+      changeField(
+        "tags",
+        clean.map(function (tag) {
+          return { tag: tag };
+        })
+      );
+    }
+    changeField("category", clean[0] || "");
+    clean.forEach(function (tag) {
+      rememberTag(tag);
+    });
+  }
+
+  function populateTagAddSelect(select, tags, selectedTags) {
     while (select.firstChild) select.removeChild(select.firstChild);
     var placeholder = document.createElement("option");
     placeholder.value = "";
-    placeholder.textContent = "Choose a tag…";
+    placeholder.textContent = selectedTags.length ? "Add another tag…" : "Choose a tag…";
     select.appendChild(placeholder);
 
     tags.forEach(function (name) {
+      if (selectedTags.indexOf(name) !== -1) return;
       var opt = document.createElement("option");
       opt.value = name;
       opt.textContent = name;
@@ -264,88 +307,112 @@
     createOpt.value = CREATE_TAG_VALUE;
     createOpt.textContent = "Create new tag…";
     select.appendChild(createOpt);
+    select.value = "";
+  }
 
-    if (selected && tags.indexOf(selected) !== -1) {
-      select.value = selected;
-    } else if (selected) {
-      var custom = document.createElement("option");
-      custom.value = selected;
-      custom.textContent = selected;
-      select.insertBefore(custom, createOpt);
-      select.value = selected;
-    } else {
-      select.value = "";
-    }
+  function renderTagChips(container, tags, onRemove) {
+    container.textContent = "";
+    tags.forEach(function (tag) {
+      var chip = document.createElement("span");
+      chip.className = "admin-tag-chip";
+      chip.innerHTML =
+        '<span class="admin-tag-chip__label">' +
+        tag.replace(/&/g, "&amp;").replace(/</g, "&lt;") +
+        '</span><button type="button" class="admin-tag-chip__remove" aria-label="Remove ' +
+        tag.replace(/"/g, "&quot;") +
+        '">×</button>';
+      chip.querySelector(".admin-tag-chip__remove").addEventListener("click", function () {
+        onRemove(tag);
+      });
+      container.appendChild(chip);
+    });
   }
 
   function wireTagField(root) {
-    var wrap = findFieldWrap(root, "tag");
+    var wrap = findFieldWrap(root, "tags") || findFieldWrap(root, "tag");
     if (!wrap) return;
+    wrap.classList.add("admin-field--tags-wired");
+
     if (wrap.dataset.adminTagWired === "true") {
-      var existingSelect = wrap.querySelector("#admin-editor-tag-select");
-      if (existingSelect) {
-        var current = readDraftData().category || "";
-        if (current && existingSelect.value !== current) {
-          loadTags().then(function (tags) {
-            populateTagSelect(existingSelect, tags, current);
-          });
-        }
+      var chipsHost = wrap.querySelector("#admin-editor-tag-chips");
+      if (chipsHost) {
+        var current = readCurrentTags();
+        renderTagChips(chipsHost, current, function (removed) {
+          applyTags(current.filter(function (tag) {
+            return tag !== removed;
+          }));
+          wireTagField(root);
+        });
       }
       return;
     }
 
     hideDecapControl(wrap);
+    wrap.querySelectorAll('[class*="ListControl"], [class*="NestedObjectControl"]').forEach(function (el) {
+      if (!el.closest(".admin-editor-custom")) {
+        el.classList.add("admin-editor-native-hidden");
+      }
+    });
 
     var custom = wrap.querySelector(".admin-editor-custom--tag");
     if (!custom) {
       custom = document.createElement("div");
       custom.className = "admin-editor-custom admin-editor-custom--tag";
       custom.innerHTML =
-        '<select class="admin-editor-select" id="admin-editor-tag-select" aria-label="Article tag"></select>' +
-        '<p class="admin-editor-field-hint">Choose an existing tag or create a new one for future articles.</p>';
+        '<div class="admin-tags-input" id="admin-editor-tags-input">' +
+        '<div class="admin-tags-input__chips" id="admin-editor-tag-chips" aria-live="polite"></div>' +
+        '<select class="admin-editor-select admin-tags-input__add" id="admin-editor-tag-add" aria-label="Add article tag"></select>' +
+        "</div>" +
+        '<p class="admin-editor-field-hint">Add at least 2 tags. Pick from the list or create a new one — new tags are saved for future articles.</p>';
       wrap.appendChild(custom);
     }
 
-    var select = custom.querySelector("#admin-editor-tag-select");
-    if (!select || select.dataset.bound === "true") {
-      if (select) wrap.dataset.adminTagWired = "true";
+    var chipsHost = custom.querySelector("#admin-editor-tag-chips");
+    var addSelect = custom.querySelector("#admin-editor-tag-add");
+    if (!chipsHost || !addSelect || addSelect.dataset.bound === "true") {
+      if (addSelect) wrap.dataset.adminTagWired = "true";
       return;
     }
-    select.dataset.bound = "true";
+    addSelect.dataset.bound = "true";
 
-    function applyTag(value) {
-      if (!value) return;
-      rememberTag(value);
-      changeField("category", value);
-    }
-
-    function refreshTags(selected) {
+    function refreshTagsUi() {
+      var selected = readCurrentTags();
+      renderTagChips(chipsHost, selected, function (removed) {
+        applyTags(
+          selected.filter(function (tag) {
+            return tag !== removed;
+          })
+        );
+        refreshTagsUi();
+      });
       loadTags().then(function (tags) {
-        populateTagSelect(select, tags, selected || readDraftData().category || "");
+        populateTagAddSelect(addSelect, tags, selected);
       });
     }
 
-    select.addEventListener("change", function () {
-      var value = select.value;
+    addSelect.addEventListener("change", function () {
+      var value = addSelect.value;
+      if (!value) return;
+      var selected = readCurrentTags();
       if (value === CREATE_TAG_VALUE) {
         var created = promptForTagName();
+        addSelect.value = "";
         if (!created) {
-          refreshTags(readDraftData().category || "");
+          refreshTagsUi();
           return;
         }
         rememberTag(created);
-        applyTag(created);
-        refreshTags(created);
+        if (selected.indexOf(created) === -1) selected.push(created);
+        applyTags(selected);
+        refreshTagsUi();
         return;
       }
-      if (!value) {
-        changeField("category", "");
-        return;
-      }
-      applyTag(value);
+      if (selected.indexOf(value) === -1) selected.push(value);
+      applyTags(selected);
+      refreshTagsUi();
     });
 
-    refreshTags(readDraftData().category || "");
+    refreshTagsUi();
     wrap.dataset.adminTagWired = "true";
   }
 
@@ -486,6 +553,169 @@
     return btoa(unescape(encodeURIComponent(text)));
   }
 
+  function decodeGithubContent(encoded) {
+    return decodeURIComponent(escape(atob(String(encoded || "").replace(/\n/g, ""))));
+  }
+
+  function getCollectionFolders() {
+    return {
+      articles: "everyday-faith",
+      "bible-study": "back-to-bible",
+    };
+  }
+
+  function findCurrentFeaturedArticle(excludeCollection, excludeSlug) {
+    var store = getStore();
+    if (!store) return null;
+    var state = store.getState();
+    if (!state || !state.entries || !state.entries.get) return null;
+    var folders = getCollectionFolders();
+    var found = null;
+    Object.keys(folders).forEach(function (collection) {
+      var entries = state.entries.get(collection);
+      if (!entries || !entries.forEach) return;
+      entries.forEach(function (entry, slug) {
+        if (collection === excludeCollection && slug === excludeSlug) return;
+        var data = entry.get ? entry.get("data") : entry.data;
+        if (!data) return;
+        var featured = data.get ? data.get("featured") : data.featured;
+        var publish = data.get ? data.get("publish") : data.publish;
+        var title = data.get ? data.get("title") : data.title;
+        if (featured === true && publish !== false) {
+          found = {
+            title: title || slug,
+            slug: slug,
+            collection: collection,
+            folder: folders[collection],
+          };
+        }
+      });
+    });
+    return found;
+  }
+
+  function updateArticleFeaturedOnGithub(token, folder, slug, featured) {
+    var path = "data/articles/" + folder + "/" + slug + ".json";
+    var readUrl =
+      "https://api.github.com/repos/" + GITHUB_REPO + "/contents/" + encodeURIComponent(path) + "?ref=" + GITHUB_BRANCH;
+    return fetch(readUrl, {
+      headers: {
+        Authorization: "Bearer " + token,
+        Accept: "application/vnd.github+json",
+      },
+    })
+      .then(function (res) {
+        if (!res.ok) return null;
+        return res.json();
+      })
+      .then(function (file) {
+        if (!file || !file.content) return false;
+        var data = JSON.parse(decodeGithubContent(file.content));
+        if (data.featured === featured) return true;
+        data.featured = featured;
+        var body = JSON.stringify(data, null, 2) + "\n";
+        return fetch("https://api.github.com/repos/" + GITHUB_REPO + "/contents/" + encodeURIComponent(path), {
+          method: "PUT",
+          headers: {
+            Authorization: "Bearer " + token,
+            Accept: "application/vnd.github+json",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            message: featured ? 'Feature article "' + slug + '"' : 'Unfeature article "' + slug + '"',
+            content: encodeGithubContent(body),
+            branch: GITHUB_BRANCH,
+            sha: file.sha,
+          }),
+        }).then(function (res) {
+          return res.ok;
+        });
+      });
+  }
+
+  function ensureSingleFeaturedArticle() {
+    var meta =
+      window.AdminImport && window.AdminImport.getDraftMeta ? window.AdminImport.getDraftMeta() : { collection: "", slug: "" };
+    var data = readDraftData();
+    if (data.featured !== true) return Promise.resolve(true);
+
+    var cms = window.CMS;
+    var backend = cms && typeof cms.getBackend === "function" ? cms.getBackend() : null;
+    if (!backend || typeof backend.getToken !== "function") return Promise.resolve(false);
+
+    return backend.getToken().then(function (token) {
+      if (!token) return false;
+      var folders = getCollectionFolders();
+      var store = getStore();
+      if (!store) return false;
+      var state = store.getState();
+      var jobs = [];
+      Object.keys(folders).forEach(function (collection) {
+        var entries = state.entries && state.entries.get(collection);
+        if (!entries || !entries.forEach) return;
+        entries.forEach(function (entry, slug) {
+          if (collection === meta.collection && slug === meta.slug) return;
+          var entryData = entry.get ? entry.get("data") : entry.data;
+          if (!entryData) return;
+          var featured = entryData.get ? entryData.get("featured") : entryData.featured;
+          var publish = entryData.get ? entryData.get("publish") : entryData.publish;
+          if (featured === true && publish !== false) {
+            jobs.push(updateArticleFeaturedOnGithub(token, folders[collection], slug, false));
+          }
+        });
+      });
+      if (!jobs.length) return true;
+      return Promise.all(jobs).then(function (results) {
+        return results.every(Boolean);
+      });
+    });
+  }
+
+  function wireFeaturedField(root) {
+    var wrap = findFieldWrap(root, "featured article") || findFieldWrap(root, "featured");
+    if (!wrap) return;
+
+    function getFeaturedCheckbox() {
+      return wrap.querySelector('input[type="checkbox"]');
+    }
+
+    if (wrap.dataset.adminFeaturedWired !== "true") {
+      wrap.dataset.adminFeaturedWired = "true";
+      var checkbox = getFeaturedCheckbox();
+      if (checkbox) {
+        checkbox.addEventListener("change", function () {
+          if (!checkbox.checked) return;
+          var meta =
+            window.AdminImport && window.AdminImport.getDraftMeta
+              ? window.AdminImport.getDraftMeta()
+              : { collection: "", slug: "" };
+          var current = findCurrentFeaturedArticle(meta.collection, meta.slug);
+          if (!current) return;
+          var ok = window.confirm(
+            '"' +
+              current.title +
+              '" is currently the featured article on the listing page.\n\nMaking this article featured will replace it. Continue?'
+          );
+          if (!ok) checkbox.checked = false;
+        });
+      }
+    }
+  }
+
+  function wireHidePublishedField(root) {
+    var wrap = findFieldWrap(root, "published");
+    if (!wrap) return;
+    wrap.classList.add("admin-editor-field--hidden");
+    hideDecapControl(wrap);
+  }
+
+  function wireHideCategoryField(root) {
+    var wrap = findFieldWrap(root, "primary tag") || findFieldWrap(root, "category");
+    if (!wrap) return;
+    wrap.classList.add("admin-editor-field--hidden");
+    hideDecapControl(wrap);
+  }
+
   function tagExistsOnGithub(token, slug) {
     var path = "data/tags/" + slug + ".json";
     var url =
@@ -556,6 +786,9 @@
     wireTagField(root);
     wireAuthorField(root);
     wireQuizToggle(root);
+    wireFeaturedField(root);
+    wireHidePublishedField(root);
+    wireHideCategoryField(root);
   }
 
   var mountRetryTimer = null;
@@ -569,7 +802,7 @@
       attempts += 1;
       var liveRoot = getRoot();
       mountEditorFields(liveRoot);
-      var tagReady = !!liveRoot.querySelector("#admin-editor-tag-select");
+      var tagReady = !!liveRoot.querySelector("#admin-editor-tags-input");
       var authorReady = !!liveRoot.querySelector("#admin-editor-author-prefix");
       if ((!tagReady || !authorReady) && attempts < 24) {
         mountRetryTimer = window.setTimeout(retry, 250);
@@ -582,6 +815,7 @@
     mount: scheduleFieldMounts,
     ensureTagPersisted: ensureTagPersisted,
     ensurePendingTagsPersisted: ensurePendingTagsPersisted,
+    ensureSingleFeaturedArticle: ensureSingleFeaturedArticle,
     rememberTag: rememberTag,
     loadTags: loadTags,
     resetCaches: function () {

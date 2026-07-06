@@ -267,10 +267,23 @@
   }
 
   function renderArticleMetaBar(article) {
+    var tags = [];
+    if (article.tags && article.tags.length) {
+      tags = article.tags;
+    } else if (article.category) {
+      tags = [article.category];
+    }
+    var tagHtml = tags.length
+      ? tags
+          .map(function (tag) {
+            return '<span class="article-tag">' + escapeHtml(tag) + "</span>";
+          })
+          .join("")
+      : '<span class="article-tag">' + escapeHtml(article.category || "General") + "</span>";
     return (
-      '<div class="article-meta"><span class="article-tag">' +
-      escapeHtml(article.category || "General") +
-      '</span><span class="article-meta__item">' +
+      '<div class="article-meta">' +
+      tagHtml +
+      '<span class="article-meta__item">' +
       escapeHtml(article.author || "") +
       '</span><span class="article-meta__item">' +
       escapeHtml(article.dateFormatted || "") +

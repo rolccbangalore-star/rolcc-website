@@ -152,19 +152,25 @@ collections:
       - { label: Summary, name: summary, widget: text, required: false, hint: "Shown at the top of the article." }
       - { label: Search preview, name: description, widget: text, required: false, hint: "For Google and social links (1–2 sentences)." }
       - { label: Author, name: author, widget: string, default: "ROLCC Pastoral Team", hint: "Use the title prefix and name fields in the editor." }
-      - label: Tag
-        name: category
-        widget: relation
+      - label: Tags
+        name: tags
+        widget: list
         required: false
-        collection: article-tags
-        search_fields: [name]
-        value_field: name
-        display_fields: [name]
-        hint: "Choose an existing tag or use Create new tag — it will appear for future articles."
+        field: { label: Tag, name: tag, widget: string }
+        hint: "Add at least 2 tags using the picker below."
+      - { label: Primary tag, name: category, widget: string, required: false, hint: "Auto-set from your first tag." }
       - { label: Date, name: date, widget: datetime, date_format: YYYY-MM-DD, time_format: false, required: false }
-      - { label: Hero image, name: thumbnail, widget: image, default: "/images/og-image.jpg" }
-      - { label: Featured, name: featured, widget: boolean, default: false }
-      - { label: Published, name: publish, widget: boolean, default: false }
+      - label: Hero image
+        name: thumbnail
+        widget: image
+        default: "/images/og-image.jpg"
+        hint: "Recommended 1600×900 px (16:9), under 400 KB, JPG or WebP. Used on listing cards, article hero, and social previews — crops cleanly on mobile, tablet, and desktop."
+      - label: Featured article
+        name: featured
+        widget: boolean
+        default: false
+        hint: "Only one article can be featured on the listing page at a time."
+      - { label: Published, name: publish, widget: boolean, default: false, hint: "Use the Publish button in the top bar. This toggle is hidden in the editor." }
       - { label: Main Scripture, name: scripture, widget: string, required: false, hint: "e.g. Matthew 11:28-30" }
       - { label: Sermon series, name: sermonSeries, widget: string, required: false }
 
@@ -216,15 +222,22 @@ collections:
       - { label: Description, name: description, widget: text }
       - { label: Passage, name: passage, widget: string }
       - { label: Author, name: author, widget: string, default: "ROLCC Fellowship Team", hint: "Use the title prefix and name fields in the editor." }
-      - label: Tag
-        name: category
-        widget: relation
-        collection: article-tags
-        search_fields: [name]
-        value_field: name
-        display_fields: [name]
-        hint: "Choose an existing tag or use Create new tag — it will appear for future articles."
+      - label: Tags
+        name: tags
+        widget: list
+        required: false
+        field: { label: Tag, name: tag, widget: string }
+        hint: "Add at least 2 tags using the picker below."
+      - { label: Primary tag, name: category, widget: string, required: false, hint: "Auto-set from your first tag." }
       - { label: Date, name: date, widget: datetime, date_format: YYYY-MM-DD, time_format: false }
-      - { label: Thumbnail, name: thumbnail, widget: image, default: "/images/og-image.jpg" }
-      - { label: Featured, name: featured, widget: boolean, default: false }
-      - { label: Published, name: publish, widget: boolean, default: true }
+      - label: Hero image
+        name: thumbnail
+        widget: image
+        default: "/images/og-image.jpg"
+        hint: "Recommended 1600×900 px (16:9), under 400 KB, JPG or WebP. Used on listing cards, article hero, and social previews — crops cleanly on mobile, tablet, and desktop."
+      - label: Featured article
+        name: featured
+        widget: boolean
+        default: false
+        hint: "Only one article can be featured on the listing page at a time."
+      - { label: Published, name: publish, widget: boolean, default: true, hint: "Use the Publish button in the top bar. This toggle is hidden in the editor." }

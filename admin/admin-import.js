@@ -2,8 +2,11 @@
   var parseApi = typeof ArticleImportParse !== "undefined" ? ArticleImportParse : null;
 
   var LABEL_ALIASES = {
-    tag: ["tag"],
+    tag: ["tag", "tags"],
+    tags: ["tags", "tag"],
     author: ["author"],
+    featured: ["featured", "featured article"],
+    published: ["published"],
     scripture: ["scripture", "main scripture"],
     "correct option index": ["correct option index", "correct option index (0-based)"],
     "include quiz": ["include quiz", "include quiz?"],
@@ -833,6 +836,11 @@
     if (!data.date) changeDraftFieldValue(store, "date", today);
     if (!data.thumbnail) changeDraftFieldValue(store, "thumbnail", "/images/og-image.jpg");
     changeDraftFieldValue(store, "publish", options.publish === true);
+    var tags = normalizeDraftTags(data);
+    if (tags.length) {
+      changeDraftFieldValue(store, "tags", tagsToStoreValue(tags));
+      changeDraftFieldValue(store, "category", tags[0]);
+    }
 
     return true;
   }
@@ -840,11 +848,39 @@
   var PUBLISH_FIELD_LABELS = {
     title: ["title"],
     date: ["date"],
-    category: ["tag"],
+    tags: ["tags", "tag"],
     summary: ["summary"],
     description: ["search preview"],
     blocks: ["article content"],
   };
+
+  function normalizeDraftTags(data) {
+    data = data || {};
+    var tags = [];
+    if (Array.isArray(data.tags)) {
+      data.tags.forEach(function (item) {
+        if (typeof item === "string" && item.trim()) tags.push(item.trim());
+        else if (item && item.tag && String(item.tag).trim()) tags.push(String(item.tag).trim());
+      });
+    }
+    if (!tags.length && data.category) tags.push(String(data.category).trim());
+    var seen = Object.create(null);
+    return tags.filter(function (tag) {
+      if (!tag || seen[tag]) return false;
+      seen[tag] = true;
+      return true;
+    });
+  }
+
+  function tagsToStoreValue(tags) {
+    var list = (tags || []).map(function (tag) {
+      return { tag: tag };
+    });
+    if (window.Immutable && typeof window.Immutable.fromJS === "function") {
+      return window.Immutable.fromJS(list);
+    }
+    return list;
+  }
 
   function validatePublishRequirements() {
     var data = readDraftData();
@@ -854,7 +890,8 @@
 
     if (!title) missing.push({ key: "title", label: "Title" });
     if (!data.date) missing.push({ key: "date", label: "Date" });
-    if (!data.category) missing.push({ key: "category", label: "Tag" });
+    var tags = normalizeDraftTags(data);
+    if (tags.length < 2) missing.push({ key: "tags", label: "Tags (at least 2)" });
     if (!data.summary || !String(data.summary).trim()) missing.push({ key: "summary", label: "Summary" });
     if (!data.description || !String(data.description).trim()) {
       missing.push({ key: "description", label: "Search preview" });
@@ -1240,12 +1277,20 @@
     var data = readDraftData();
     var tagWork = Promise.resolve();
     if (window.AdminEditorFields) {
-      if (data.category) {
-        tagWork = window.AdminEditorFields.ensureTagPersisted(data.category);
-      }
+      var tags = normalizeDraftTags(data);
+      tags.forEach(function (tagName) {
+        tagWork = tagWork.then(function () {
+          return window.AdminEditorFields.ensureTagPersisted(tagName);
+        });
+      });
       tagWork = tagWork.then(function () {
         return window.AdminEditorFields.ensurePendingTagsPersisted();
       });
+      if (data.featured === true && mode === "publish") {
+        tagWork = tagWork.then(function () {
+          return window.AdminEditorFields.ensureSingleFeaturedArticle();
+        });
+      }
     }
 
     return tagWork.then(function () {
@@ -1630,5 +1675,7 @@
     clickDecapSaveButton: clickDecapSaveButton,
     findFieldByLabel: findFieldByLabel,
     getEditorScopes: getEditorScopes,
+    normalizeDraftTags: normalizeDraftTags,
+    tagsToStoreValue: tagsToStoreValue,
   };
 })();

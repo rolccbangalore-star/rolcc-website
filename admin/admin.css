@@ -2787,6 +2787,92 @@ body.admin-delete-confirm-open {
   line-height: 1.45;
 }
 
+.admin-editor-field--hidden {
+  display: none !important;
+}
+
+.admin-field--tags-wired [class*="ListControl"],
+.admin-field--tags-wired [class*="NestedObjectControl"],
+.admin-field--tags-wired [class*="ControlContainer"] {
+  display: none !important;
+}
+
+.admin-tags-input {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.55rem 0.75rem;
+  border: 1px solid var(--rolcc-slate-200);
+  border-radius: 9999px;
+  background: var(--rolcc-primary);
+}
+
+.admin-tags-input__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  min-height: 1.25rem;
+}
+
+.admin-tags-input__chips:empty {
+  display: none;
+}
+
+.admin-tag-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  max-width: 100%;
+  padding: 0.2rem 0.45rem 0.2rem 0.6rem;
+  border-radius: 9999px;
+  background: var(--rolcc-slate-100);
+  color: var(--rolcc-slate-800);
+  font-size: 0.8125rem;
+  line-height: 1.3;
+}
+
+.admin-tag-chip__label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-tag-chip__remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.15rem;
+  height: 1.15rem;
+  padding: 0;
+  border: 0;
+  border-radius: 9999px;
+  background: transparent;
+  color: var(--rolcc-slate-500);
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.admin-tag-chip__remove:hover,
+.admin-tag-chip__remove:focus-visible {
+  background: rgba(15, 23, 42, 0.08);
+  color: var(--rolcc-slate-800);
+}
+
+.admin-tags-input__add {
+  border: 0;
+  padding-left: 0;
+  padding-right: 0;
+  box-shadow: none;
+  background: transparent;
+}
+
+.admin-tags-input__add:focus {
+  box-shadow: none;
+  border-color: transparent;
+}
+
 #nc-root .admin-field--quiz-collapsed {
   display: none !important;
 }

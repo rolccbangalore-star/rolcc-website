@@ -18,6 +18,8 @@ const {
   collectBlockText,
   renderBlocks,
   renderArticleMetaBar,
+  renderArticleTagsHtml,
+  normalizeArticleTags,
   renderSummaryBox,
   renderKeyTakeaways,
   selectRelatedArticles,
@@ -62,7 +64,8 @@ function loadEverydayFaith() {
         description: data.description || "",
         summary: data.summary || data.description || "",
         author: data.author || "ROLCC Pastoral Team",
-        category: data.category || "General",
+        tags: normalizeArticleTags(data),
+        category: normalizeArticleTags(data)[0] || data.category || "General",
         date: data.date || TODAY,
         dateFormatted: formatDate(data.date || TODAY),
         thumbnail: data.thumbnail || DEFAULT_THUMBNAIL,
@@ -140,7 +143,8 @@ function loadBackToBible() {
         title: data.title || slug,
         description: data.description || "",
         author: data.author || "ROLCC",
-        category: data.category || "Bible Study",
+        tags: normalizeArticleTags(data),
+        category: normalizeArticleTags(data)[0] || data.category || "Bible Study",
         date: data.date || TODAY,
         dateFormatted: formatDate(data.date || TODAY),
         thumbnail: data.thumbnail || DEFAULT_THUMBNAIL,
@@ -301,7 +305,7 @@ function renderArticleCard(article) {
     <div class="articles-card__body">
       <div class="articles-card__tags">
         <span class="article-tag article-tag--sm">${escapeHtml(article.typeLabel)}</span>
-        <span class="article-tag article-tag--sm article-tag--muted">${escapeHtml(article.category)}</span>
+        ${renderArticleTagsHtml(article, { mutedAll: true })}
       </div>
       <h2 class="articles-card__title">${escapeHtml(article.title)}</h2>
       <p class="articles-card__desc">${escapeHtml(article.summary || article.description)}</p>
@@ -757,7 +761,13 @@ function syncSiteNav() {
 
 function main() {
   const articles = loadArticles();
-  const categories = [...new Set(articles.map((a) => a.category).filter(Boolean))].sort();
+  const categories = [
+    ...new Set(
+      articles
+        .flatMap((a) => (a.tags && a.tags.length ? a.tags : [a.category]))
+        .filter(Boolean)
+    ),
+  ].sort();
   const totalPages = Math.max(1, Math.ceil(articles.length / ARTICLES_PER_PAGE));
 
   fs.mkdirSync(OUT_EF, { recursive: true });

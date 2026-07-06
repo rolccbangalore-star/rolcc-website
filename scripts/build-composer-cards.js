@@ -7,15 +7,23 @@ const OUT_FILE = path.join(ARTICLES_DIR, "composer-cards.json");
 
 const COLLECTIONS = ["everyday-faith", "back-to-bible"];
 
-const CARD_FIELDS = ["title", "author", "category", "date", "thumbnail", "publish"];
+const CARD_FIELDS = ["title", "author", "category", "date", "modified", "thumbnail", "publish"];
 
-function cardPreviewFromArticle(data) {
+function toDateOnly(value) {
+  if (!value) return "";
+  return new Date(value).toISOString().split("T")[0];
+}
+
+function cardPreviewFromArticle(data, filePath) {
   const preview = {};
   CARD_FIELDS.forEach((field) => {
     if (data[field] !== undefined && data[field] !== null && data[field] !== "") {
       preview[field] = data[field];
     }
   });
+  if (filePath) {
+    preview.modified = toDateOnly(fs.statSync(filePath).mtime);
+  }
   if (preview.publish === undefined) preview.publish = true;
   if (!preview.author) {
     preview.author = data.passage ? "ROLCC Fellowship Team" : "ROLCC Pastoral Team";
@@ -36,9 +44,10 @@ function buildManifest() {
     fs.readdirSync(dir).forEach((fileName) => {
       if (!fileName.endsWith(".json") || fileName === "composer-cards.json") return;
       const slug = fileName.replace(/\.json$/, "");
-      const raw = fs.readFileSync(path.join(dir, fileName), "utf8");
+      const filePath = path.join(dir, fileName);
+      const raw = fs.readFileSync(filePath, "utf8");
       try {
-        manifest[collection][slug] = cardPreviewFromArticle(JSON.parse(raw));
+        manifest[collection][slug] = cardPreviewFromArticle(JSON.parse(raw), filePath);
       } catch (err) {
         console.warn("Skipping invalid article JSON:", path.join(collection, fileName), err.message);
       }

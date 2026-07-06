@@ -63,10 +63,24 @@
 
   function formatDate(iso) {
     if (!iso) return "";
-    var parts = iso.split("-");
-    if (parts.length !== 3) return iso;
+    var value = String(iso);
+    if (value.indexOf("T") !== -1) value = value.split("T")[0];
+    var parts = value.split("-");
+    if (parts.length !== 3) return value;
     var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     return months[parseInt(parts[1], 10) - 1] + " " + parseInt(parts[2], 10) + ", " + parts[0];
+  }
+
+  function parseModifiedHeader(header) {
+    if (!header) return "";
+    var parsed = new Date(header);
+    if (isNaN(parsed.getTime())) return "";
+    return parsed.toISOString().split("T")[0];
+  }
+
+  function getDisplayDate(data) {
+    if (!data || data.publish === false) return "";
+    return formatDate(data.modified || data.date);
   }
 
   function escapeHtml(value) {
@@ -640,7 +654,11 @@
     entryCache[key] = fetch("/data/articles/" + encodeURIComponent(collection) + "/" + encodeURIComponent(slug) + ".json")
       .then(function (res) {
         if (!res.ok) throw new Error("missing");
-        return res.json();
+        var modified = parseModifiedHeader(res.headers.get("Last-Modified"));
+        return res.json().then(function (data) {
+          if (modified) data.modified = modified;
+          return data;
+        });
       })
       .catch(function () {
         return null;
@@ -662,7 +680,7 @@
     if (data.publish === false) {
       return escapeHtml(author) + ' · <span class="admin-card-meta__draft">Draft</span>';
     }
-    var date = formatDate(data.date);
+    var date = getDisplayDate(data);
     return escapeHtml(author) + (date ? " · " + escapeHtml(date) : "");
   }
 
@@ -749,7 +767,7 @@
       escapeHtml(data.author || "ROLCC") +
       "</span>" +
       '<span class="admin-list-row__cell admin-list-row__date">' +
-      escapeHtml(formatDate(data.date) || "—") +
+      escapeHtml(getDisplayDate(data) || "—") +
       "</span>" +
       '<span class="admin-list-row__cell admin-list-row__status' +
       (isDraft ? " admin-list-row__status--draft" : "") +

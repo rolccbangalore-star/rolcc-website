@@ -6,7 +6,8 @@
       "category": "Work & Calling",
       "date": "2026-06-15",
       "thumbnail": "/images/og-image.jpg",
-      "publish": true
+      "publish": true,
+      "modified": "2026-07-05"
     },
     "god-is-still-with-you-in-grief": {
       "title": "God is still with you in grief",
@@ -14,7 +15,8 @@
       "category": "Faith & Peace",
       "date": "2026-07-03",
       "thumbnail": "/images/og-image.jpg",
-      "publish": true
+      "publish": true,
+      "modified": "2026-07-06"
     },
     "how-to-stop-stressing-and-trust-god": {
       "title": "How to Stop Stressing and Trust God with Your Problems",
@@ -22,14 +24,16 @@
       "category": "Faith & Peace",
       "date": "2026-06-25",
       "thumbnail": "/images/og-image.jpg",
-      "publish": true
+      "publish": true,
+      "modified": "2026-07-05"
     },
     "praying-when-you-dont-have-words": {
       "title": "Praying when you don't have words",
       "author": "ROLCC Pastoral Team",
       "category": "Prayer",
       "date": "2026-07-01",
-      "publish": false
+      "publish": false,
+      "modified": "2026-07-06"
     }
   },
   "back-to-bible": {
@@ -38,7 +42,8 @@
       "author": "ROLCC Fellowship Team",
       "category": "Bible Study",
       "date": "2026-07-02",
-      "publish": false
+      "publish": false,
+      "modified": "2026-07-06"
     },
     "psalm-23-the-lord-is-my-shepherd": {
       "title": "Psalm 23 — The Lord Is My Shepherd",
@@ -46,7 +51,8 @@
       "category": "Bible Study",
       "date": "2026-06-10",
       "thumbnail": "/images/og-image.jpg",
-      "publish": true
+      "publish": true,
+      "modified": "2026-07-05"
     },
     "romans-8-life-in-the-spirit": {
       "title": "Romans 8:1-11 — Life in the Spirit",
@@ -54,7 +60,8 @@
       "category": "Bible Study",
       "date": "2026-06-20",
       "thumbnail": "/images/og-image.jpg",
-      "publish": true
+      "publish": true,
+      "modified": "2026-07-05"
     }
   }
 }

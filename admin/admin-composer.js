@@ -68,7 +68,7 @@
     var parts = value.split("-");
     if (parts.length !== 3) return value;
     var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-    return months[parseInt(parts[1], 10) - 1] + " " + parseInt(parts[2], 10) + ", " + parts[0];
+    return parseInt(parts[2], 10) + " " + months[parseInt(parts[1], 10) - 1] + " " + parts[0];
   }
 
   function parseModifiedHeader(header) {
@@ -493,6 +493,7 @@
     }
 
     applyCollectionTitle(main, getActiveCollection());
+    ensureComposerToolbar(topBlock, root);
 
     if (!headerWrap) {
       headerWrap = document.createElement("div");
@@ -924,13 +925,144 @@
     return hay.indexOf(query) !== -1;
   }
 
-  function sortManifestSlugs(entries, slugs) {
+  var SORT_OPTIONS = [
+    { key: "modified", label: "Updated On" },
+    { key: "title", label: "Title" },
+    { key: "date", label: "Date" },
+    { key: "author", label: "Author" },
+  ];
+
+  function getSortField(root) {
+    return root.dataset.adminSortField || "modified";
+  }
+
+  function sortManifestSlugs(entries, slugs, sortField) {
+    var field = sortField || "modified";
     return slugs.slice().sort(function (a, b) {
-      var da = entries[a].modified || entries[a].date || "";
-      var db = entries[b].modified || entries[b].date || "";
-      if (da !== db) return db.localeCompare(da);
-      return (entries[a].title || "").localeCompare(entries[b].title || "");
+      var ea = entries[a];
+      var eb = entries[b];
+      var va;
+      var vb;
+      if (field === "title") {
+        va = normalize(ea.title);
+        vb = normalize(eb.title);
+        return va.localeCompare(vb);
+      }
+      if (field === "author") {
+        va = normalize(ea.author);
+        vb = normalize(eb.author);
+        return va.localeCompare(vb);
+      }
+      if (field === "date") {
+        va = ea.date || "";
+        vb = eb.date || "";
+        return vb.localeCompare(va);
+      }
+      va = ea.modified || ea.date || "";
+      vb = eb.modified || eb.date || "";
+      if (va !== vb) return vb.localeCompare(va);
+      return normalize(ea.title).localeCompare(normalize(eb.title));
     });
+  }
+
+  function refreshCollectionCards(root) {
+    var container = root.querySelector(".admin-custom-entries");
+    if (container) delete container.dataset.adminSignature;
+    renderCustomCollectionCards(root);
+  }
+
+  function bindComposerViewButtons(root, toolbar) {
+    toolbar.querySelectorAll(".admin-view-btn").forEach(function (btn) {
+      if (btn.dataset.composerViewBound === "true") return;
+      btn.dataset.composerViewBound = "true";
+      btn.addEventListener("click", function () {
+        var listMode = btn.classList.contains("admin-view-btn--list");
+        setViewMode(root, listMode ? "list" : "grid");
+        toolbar.querySelectorAll(".admin-view-btn").forEach(function (peer) {
+          var isList = peer.classList.contains("admin-view-btn--list");
+          peer.classList.toggle("admin-view-btn--active", listMode ? isList : !isList);
+        });
+        refreshCollectionCards(root);
+      });
+    });
+  }
+
+  function ensureComposerToolbar(topBlock, root) {
+    if (!topBlock) return null;
+
+    var toolbar = topBlock.querySelector(".admin-composer-toolbar");
+    if (!toolbar) {
+      toolbar = document.createElement("div");
+      toolbar.className = "admin-collection-toolbar admin-composer-toolbar";
+
+      var sortWrap = document.createElement("div");
+      sortWrap.className = "admin-sort-wrap admin-sort-wrap--composer";
+
+      var sortLabel = document.createElement("span");
+      sortLabel.className = "admin-sort-label";
+      sortLabel.textContent = "Sort by";
+      sortWrap.appendChild(sortLabel);
+
+      var select = document.createElement("select");
+      select.className = "admin-sort-select admin-sort-select--composer";
+      select.setAttribute("aria-label", "Sort articles");
+      SORT_OPTIONS.forEach(function (opt) {
+        var option = document.createElement("option");
+        option.value = opt.key;
+        option.textContent = opt.label;
+        select.appendChild(option);
+      });
+      select.value = getSortField(root);
+      select.addEventListener("change", function () {
+        root.dataset.adminSortField = select.value;
+        refreshCollectionCards(root);
+      });
+      sortWrap.appendChild(select);
+
+      var chevron = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+      chevron.setAttribute("class", "admin-sort-chevron");
+      chevron.setAttribute("viewBox", "0 0 24 24");
+      chevron.setAttribute("fill", "none");
+      chevron.setAttribute("stroke", "currentColor");
+      chevron.setAttribute("stroke-width", "1.75");
+      chevron.setAttribute("aria-hidden", "true");
+      var path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      path.setAttribute("d", "m6 9 6 6 6-6");
+      chevron.appendChild(path);
+      sortWrap.appendChild(chevron);
+
+      var viewToggle = document.createElement("div");
+      viewToggle.className = "admin-view-toggle";
+
+      var listBtn = document.createElement("button");
+      listBtn.type = "button";
+      listBtn.className = "admin-view-btn admin-view-btn--list";
+      listBtn.setAttribute("aria-label", "List view");
+      listBtn.innerHTML = LIST_VIEW_ICON;
+
+      var gridBtn = document.createElement("button");
+      gridBtn.type = "button";
+      gridBtn.className = "admin-view-btn admin-view-btn--grid";
+      gridBtn.setAttribute("aria-label", "Grid view");
+      gridBtn.innerHTML = GRID_VIEW_ICON;
+
+      viewToggle.appendChild(listBtn);
+      viewToggle.appendChild(gridBtn);
+
+      toolbar.appendChild(sortWrap);
+      toolbar.appendChild(viewToggle);
+      topBlock.appendChild(toolbar);
+    }
+
+    var sortSelect = toolbar.querySelector(".admin-sort-select--composer");
+    if (sortSelect) sortSelect.value = getSortField(root);
+
+    var listMode = isListView(root);
+    toolbar.querySelector(".admin-view-btn--list").classList.toggle("admin-view-btn--active", listMode);
+    toolbar.querySelector(".admin-view-btn--grid").classList.toggle("admin-view-btn--active", !listMode);
+
+    bindComposerViewButtons(root, toolbar);
+    return toolbar;
   }
 
   function ensureToolbarInHeader(main) {
@@ -1038,8 +1170,9 @@
       if (!entries) return;
 
       var query = getSearchQuery();
-      var slugs = sortManifestSlugs(entries, Object.keys(entries));
-      var signature = collection + "|" + (listView ? "list" : "grid") + "|" + query + "|" + slugs.join(",");
+      var sortField = getSortField(root);
+      var slugs = sortManifestSlugs(entries, Object.keys(entries), sortField);
+      var signature = collection + "|" + (listView ? "list" : "grid") + "|" + sortField + "|" + query + "|" + slugs.join(",");
 
       var container = main.querySelector(".admin-custom-entries");
       if (!container) {
@@ -1097,7 +1230,8 @@
 
       container.hidden = false;
       hideDecapEntryLists(main);
-      ensureToolbarInHeader(main);
+      var head = main.querySelector(".admin-collection-head");
+      if (head) ensureComposerToolbar(head, root);
       bindViewModeButtons(root);
     }
 

@@ -571,8 +571,8 @@ body {
 
 /* ——— Collection header (Google Drive-style toolbar row) ——— */
 #nc-root .admin-collection-header {
-  padding: 2rem 0 0;
-  margin-top: 0.75rem;
+  padding: 3rem 0 0;
+  margin-top: 1.75rem;
   max-width: none;
   width: 100%;
   box-sizing: border-box;
@@ -670,7 +670,7 @@ body {
   pointer-events: none;
 }
 
-#nc-root .admin-sort-select {
+#nc-root .admin-sort-select:not(.admin-sort-select--composer) {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -687,6 +687,37 @@ body {
   cursor: pointer;
   appearance: none;
   opacity: 0;
+}
+#nc-root .admin-sort-select--composer {
+  position: static;
+  width: auto;
+  height: auto;
+  margin: 0;
+  padding: 0 0.15rem;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  font-family: var(--rolcc-font);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--rolcc-slate-800);
+  cursor: pointer;
+  appearance: auto;
+  opacity: 1;
+}
+
+#nc-root .admin-sort-wrap--composer {
+  cursor: default;
+}
+
+#nc-root .admin-composer-toolbar {
+  display: inline-flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  flex-direction: row-reverse;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
 }
 
 #nc-root .admin-sort-wrap:hover {

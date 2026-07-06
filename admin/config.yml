@@ -21,6 +21,17 @@ editor:
   preview: false
 
 collections:
+  - name: article-tags
+    label: Tags
+    folder: data/tags
+    create: true
+    slug: "{{slug}}"
+    extension: json
+    format: json
+    summary: "{{name}}"
+    fields:
+      - { label: Tag name, name: name, widget: string, hint: "Use Title Case, e.g. Faith & Peace" }
+
   - name: everyday-faith
     label: Sermon Summary
     folder: data/articles/everyday-faith
@@ -34,10 +45,14 @@ collections:
       - { label: Summary, name: summary, widget: text, hint: "Shown at the top of the article." }
       - { label: Search preview, name: description, widget: text, hint: "For Google and social links (1–2 sentences)." }
       - { label: Author, name: author, widget: string, default: "ROLCC Pastoral Team" }
-      - label: Category
+      - label: Tag
         name: category
-        widget: select
-        options: ["Faith & Peace", "Work & Calling", "Relationships", "Prayer", "Family", "General"]
+        widget: relation
+        collection: article-tags
+        search_fields: [name]
+        value_field: name
+        display_fields: [name]
+        hint: "Choose an existing tag or create a new one — it will appear for future articles."
       - { label: Date, name: date, widget: datetime, date_format: YYYY-MM-DD, time_format: false }
       - { label: Hero image, name: thumbnail, widget: image, default: "/images/og-image.jpg" }
       - { label: Featured, name: featured, widget: boolean, default: false }
@@ -146,7 +161,15 @@ collections:
       - { label: Description, name: description, widget: text }
       - { label: Passage, name: passage, widget: string }
       - { label: Author, name: author, widget: string, default: "ROLCC Fellowship Team" }
-      - { label: Category, name: category, widget: string, default: "Bible Study" }
+      - label: Tag
+        name: category
+        widget: relation
+        collection: article-tags
+        search_fields: [name]
+        value_field: name
+        display_fields: [name]
+        default: "Bible Study"
+        hint: "Choose an existing tag or create a new one — it will appear for future articles."
       - { label: Date, name: date, widget: datetime, date_format: YYYY-MM-DD, time_format: false }
       - { label: Thumbnail, name: thumbnail, widget: image, default: "/images/og-image.jpg" }
       - { label: Featured, name: featured, widget: boolean, default: false }

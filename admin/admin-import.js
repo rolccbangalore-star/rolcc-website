@@ -2,6 +2,8 @@
   var parseApi = typeof ArticleImportParse !== "undefined" ? ArticleImportParse : null;
 
   var LABEL_ALIASES = {
+    tag: ["tag"],
+    author: ["author"],
     scripture: ["scripture", "main scripture"],
     "correct option index": ["correct option index", "correct option index (0-based)"],
     "include quiz": ["include quiz", "include quiz?"],
@@ -1626,5 +1628,7 @@
     clearFieldHighlights: clearFieldHighlights,
     highlightPublishFields: highlightPublishFields,
     clickDecapSaveButton: clickDecapSaveButton,
+    findFieldByLabel: findFieldByLabel,
+    getEditorScopes: getEditorScopes,
   };
 })();

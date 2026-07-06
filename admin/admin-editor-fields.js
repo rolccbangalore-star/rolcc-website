@@ -55,35 +55,33 @@
       .replace(/^-+|-+$/g, "");
   }
 
-  function getFieldWrap(labelEl) {
-    if (!labelEl) return null;
-    return (
-      labelEl.closest('[class*="EditorControl"]') ||
-      labelEl.closest('[class*="ListControl"]') ||
-      labelEl.closest("fieldset") ||
-      labelEl.closest("div")
-    );
+  function labelMatches(labelNorm, target) {
+    if (!labelNorm || !target) return false;
+    if (labelNorm === target) return true;
+    if (labelNorm.indexOf(target) === 0) {
+      var next = labelNorm.charAt(target.length);
+      return !next || next === " " || next === "?";
+    }
+    return false;
   }
 
   function findFieldWrap(root, labelText) {
     if (!root) return null;
+    if (window.AdminImport && window.AdminImport.findFieldByLabel) {
+      return window.AdminImport.findFieldByLabel(root, labelText);
+    }
     var target = normalizeLabel(labelText);
-    var aliases = {
-      tag: ["tag"],
-      author: ["author"],
-      "include quiz": ["include quiz", "include quiz?"],
-      quiz: ["quiz"],
-    };
-    var targets = aliases[target] || [target];
-    var main = root.querySelector("main");
-    if (!main) return null;
-
-    var labels = main.querySelectorAll("label, legend, [class*='FieldLabel']");
-    for (var i = 0; i < labels.length; i++) {
-      var labelNorm = normalizeLabel(labels[i].textContent);
-      for (var j = 0; j < targets.length; j++) {
-        if (labelNorm !== targets[j] && labelNorm.indexOf(targets[j]) !== 0) continue;
-        var wrap = getFieldWrap(labels[i]);
+    var scopes = [root.querySelector("main"), root.querySelector("form"), root].filter(Boolean);
+    for (var s = 0; s < scopes.length; s++) {
+      var labels = scopes[s].querySelectorAll("label, legend, [class*='FieldLabel']");
+      for (var i = 0; i < labels.length; i++) {
+        var labelNorm = normalizeLabel(labels[i].textContent);
+        if (!labelMatches(labelNorm, target)) continue;
+        var wrap =
+          labels[i].closest('[class*="EditorControl"]') ||
+          labels[i].closest('[class*="ListControl"]') ||
+          labels[i].closest("fieldset") ||
+          labels[i].closest("div");
         if (wrap) return wrap;
       }
     }
@@ -92,7 +90,7 @@
 
   function hideDecapControl(wrap) {
     if (!wrap) return;
-    wrap.querySelectorAll('[class*="ControlContainer"], [class*="RelationControl"], input, select, textarea').forEach(function (el) {
+    wrap.querySelectorAll('[class*="ControlContainer"], [class*="RelationControl"], [class*="Widget"]').forEach(function (el) {
       if (el.closest(".admin-editor-custom")) return;
       el.classList.add("admin-editor-native-hidden");
       el.setAttribute("tabindex", "-1");
@@ -296,7 +294,6 @@
       return;
     }
 
-    var decapHost = wrap.querySelector('[class*="ControlContainer"], [class*="Widget"], [class*="Relation"]') || wrap;
     hideDecapControl(wrap);
 
     var custom = wrap.querySelector(".admin-editor-custom--tag");
@@ -306,12 +303,12 @@
       custom.innerHTML =
         '<select class="admin-editor-select" id="admin-editor-tag-select" aria-label="Article tag"></select>' +
         '<p class="admin-editor-field-hint">Choose an existing tag or create a new one for future articles.</p>';
-      decapHost.appendChild(custom);
+      wrap.appendChild(custom);
     }
 
     var select = custom.querySelector("#admin-editor-tag-select");
     if (!select || select.dataset.bound === "true") {
-      wrap.dataset.adminTagWired = "true";
+      if (select) wrap.dataset.adminTagWired = "true";
       return;
     }
     select.dataset.bound = "true";
@@ -368,7 +365,6 @@
       return;
     }
 
-    var decapHost = wrap.querySelector('[class*="ControlContainer"], [class*="Widget"]') || wrap;
     hideDecapControl(wrap);
 
     var custom = wrap.querySelector(".admin-editor-custom--author");
@@ -382,14 +378,14 @@
         "</div>" +
         '<datalist id="admin-editor-author-list"></datalist>' +
         '<p class="admin-editor-field-hint">Pick a title prefix and name. Previously used authors appear as suggestions.</p>';
-      decapHost.appendChild(custom);
+      wrap.appendChild(custom);
     }
 
     var prefixSelect = custom.querySelector("#admin-editor-author-prefix");
     var nameInput = custom.querySelector("#admin-editor-author-name");
     var datalist = custom.querySelector("#admin-editor-author-list");
     if (!prefixSelect || !nameInput || prefixSelect.dataset.bound === "true") {
-      wrap.dataset.adminAuthorWired = "true";
+      if (prefixSelect) wrap.dataset.adminAuthorWired = "true";
       return;
     }
     prefixSelect.dataset.bound = "true";
@@ -562,8 +558,28 @@
     wireQuizToggle(root);
   }
 
+  var mountRetryTimer = null;
+  function scheduleFieldMounts(root) {
+    if (!root || !isEditorRoute()) return;
+    mountEditorFields(root);
+    if (mountRetryTimer) window.clearTimeout(mountRetryTimer);
+    var attempts = 0;
+    function retry() {
+      if (!isEditorRoute()) return;
+      attempts += 1;
+      var liveRoot = getRoot();
+      mountEditorFields(liveRoot);
+      var tagReady = !!liveRoot.querySelector("#admin-editor-tag-select");
+      var authorReady = !!liveRoot.querySelector("#admin-editor-author-prefix");
+      if ((!tagReady || !authorReady) && attempts < 24) {
+        mountRetryTimer = window.setTimeout(retry, 250);
+      }
+    }
+    mountRetryTimer = window.setTimeout(retry, 250);
+  }
+
   window.AdminEditorFields = {
-    mount: mountEditorFields,
+    mount: scheduleFieldMounts,
     ensureTagPersisted: ensureTagPersisted,
     ensurePendingTagsPersisted: ensurePendingTagsPersisted,
     rememberTag: rememberTag,

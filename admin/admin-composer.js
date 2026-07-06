@@ -18,12 +18,30 @@
   var mediaManifest = null;
   var mediaManifestPromise = null;
   var enhanceTimer = null;
+  var enhanceCount = 0;
   var editorState = {
     syncingTitle: false,
     dirty: false,
     snapshot: "",
     formBound: false,
   };
+
+  // #region agent log
+  function debugLog(hypothesisId, location, message, data) {
+    fetch("http://127.0.0.1:7663/ingest/a8dab655-487d-4443-a923-c6ebc86b6891", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "e5fa7f" },
+      body: JSON.stringify({
+        sessionId: "e5fa7f",
+        hypothesisId: hypothesisId,
+        location: location,
+        message: message,
+        data: data || {},
+        timestamp: Date.now(),
+      }),
+    }).catch(function () {});
+  }
+  // #endregion
 
   function $(id) {
     return document.getElementById(id);
@@ -527,6 +545,14 @@
   function scheduleEnhance(root, fn) {
     if (enhanceTimer) window.clearTimeout(enhanceTimer);
     enhanceTimer = window.setTimeout(function () {
+      enhanceCount += 1;
+      // #region agent log
+      debugLog("H1", "scheduleEnhance", "enhance scheduled", {
+        enhanceCount: enhanceCount,
+        hash: getHash(),
+        isMediaRoute: isMediaRoute(),
+      });
+      // #endregion
       fn(root);
     }, 16);
   }
@@ -1188,6 +1214,16 @@
       resetEditorSplitShell(root);
     }
     if (isCollectionRoute()) root.classList.add("admin-view--collection");
+    // #region agent log
+    if (isMediaRoute()) {
+      debugLog("H3", "updateViewClass", "media view classes applied", {
+        hash: getHash(),
+        rootClasses: root.className,
+        bodyClasses: body.className,
+        isLoginView: isLoginView(root),
+      });
+    }
+    // #endregion
   }
 
   var CREATE_ICON =
@@ -2732,6 +2768,13 @@
 
   function removeMediaWorkspace(root) {
     if (!root) return;
+    // #region agent log
+    debugLog("H1", "removeMediaWorkspace", "removing media workspace", {
+      hash: getHash(),
+      isMediaRoute: isMediaRoute(),
+      stack: new Error().stack ? new Error().stack.split("\n").slice(1, 4).join(" | ") : "",
+    });
+    // #endregion
     closeMediaUploadPanel(root);
     delete root.dataset.adminMediaUploadOpen;
     var workspace = root.querySelector(".admin-media-workspace");
@@ -2741,6 +2784,12 @@
   }
 
   function renderMediaWorkspace(root) {
+    // #region agent log
+    debugLog("H1", "renderMediaWorkspace:entry", "render called", {
+      hash: getHash(),
+      isMediaRoute: isMediaRoute(),
+    });
+    // #endregion
     if (!isMediaRoute()) {
       removeMediaWorkspace(root);
       return;
@@ -2928,6 +2977,24 @@
 
       placeMediaWorkspace(main, workspace);
       hideDecapMediaNotFound(root);
+      // #region agent log
+      var wsStyle = workspace && window.getComputedStyle ? window.getComputedStyle(workspace) : null;
+      debugLog("H2", "renderMediaWorkspace:run:end", "after placeMediaWorkspace", {
+        hash: getHash(),
+        mainConnected: !!(main && main.isConnected),
+        workspaceConnected: !!(workspace && workspace.isConnected),
+        workspaceInMain: !!(workspace && main && main.contains(workspace)),
+        workspaceHidden: workspace ? workspace.hidden : null,
+        workspaceDisplay: wsStyle ? wsStyle.display : null,
+        workspaceChildCount: workspace ? workspace.childElementCount : 0,
+        ncRootChildCount: root ? root.childElementCount : 0,
+        mainCount: root ? root.querySelectorAll("main").length : 0,
+        hasMediaClass: root.classList.contains("admin-view--media"),
+        signature: workspace ? workspace.dataset.adminSignature : null,
+        manifestReady: Array.isArray(mediaManifest),
+        manifestCount: Array.isArray(mediaManifest) ? mediaManifest.length : 0,
+      });
+      // #endregion
     }
 
     run();

@@ -777,6 +777,132 @@
     });
   }
 
+  function ensureDeleteConfirmModal() {
+    var modal = $("admin-delete-confirm-modal");
+    if (modal) return modal;
+
+    modal = document.createElement("div");
+    modal.id = "admin-delete-confirm-modal";
+    modal.className = "admin-delete-confirm-modal";
+    modal.hidden = true;
+    modal.innerHTML =
+      '<div class="admin-delete-confirm-modal__backdrop" data-delete-close></div>' +
+      '<div class="admin-delete-confirm-modal__panel" role="alertdialog" aria-modal="true" aria-labelledby="admin-delete-confirm-title">' +
+      '<h2 id="admin-delete-confirm-title" class="admin-delete-confirm-modal__title"></h2>' +
+      '<p class="admin-delete-confirm-modal__message" id="admin-delete-confirm-message"></p>' +
+      '<div class="admin-delete-confirm-modal__actions">' +
+      '<button type="button" class="btn-outline" data-delete-close>Cancel</button>' +
+      '<button type="button" class="btn-primary admin-delete-confirm-modal__confirm" id="admin-delete-confirm-btn">Delete</button>' +
+      "</div></div>";
+    document.body.appendChild(modal);
+
+    modal.querySelectorAll("[data-delete-close]").forEach(function (el) {
+      el.addEventListener("click", closeDeleteConfirmModal);
+    });
+
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape" && modal && !modal.hidden) {
+        closeDeleteConfirmModal();
+      }
+    });
+
+    return modal;
+  }
+
+  function closeDeleteConfirmModal() {
+    var modal = $("admin-delete-confirm-modal");
+    if (!modal) return;
+    modal.hidden = true;
+    document.body.classList.remove("admin-delete-confirm-open");
+    var trigger = modal._deleteTrigger;
+    if (trigger && trigger.focus) trigger.focus();
+    modal._deleteTrigger = null;
+  }
+
+  function openDeleteConfirmModal(options) {
+    var modal = ensureDeleteConfirmModal();
+    modal.querySelector("#admin-delete-confirm-title").textContent = options.title || "Delete article?";
+    modal.querySelector("#admin-delete-confirm-message").textContent =
+      options.message || "This cannot be undone.";
+    var confirmBtn = modal.querySelector("#admin-delete-confirm-btn");
+    confirmBtn.textContent = options.confirmLabel || "Delete";
+    confirmBtn.onclick = options.onConfirm;
+    modal._deleteTrigger = options.trigger || null;
+    modal.hidden = false;
+    document.body.classList.add("admin-delete-confirm-open");
+    confirmBtn.focus();
+  }
+
+  function syncDeleteButtonLabel() {
+    var btn = $("admin-delete-btn");
+    if (!btn) return;
+    var isNew =
+      window.AdminImport && window.AdminImport.isNewEntryRoute
+        ? window.AdminImport.isNewEntryRoute()
+        : /\/new$/.test(getHash());
+    if (!isNew && window.AdminImport && window.AdminImport.getDraftMeta) {
+      var meta = window.AdminImport.getDraftMeta();
+      if (meta && meta.newRecord) isNew = true;
+    }
+    btn.textContent = isNew ? "Discard" : "Delete";
+    btn.setAttribute("aria-label", isNew ? "Discard unsaved article" : "Delete article");
+  }
+
+  function deleteArticle(root) {
+    if (!isEditorRoute()) return;
+    if (!window.AdminImport || !window.AdminImport.deleteArticleEntry) {
+      setEditorStatus("Editor not ready — refresh and try again.", true);
+      return;
+    }
+
+    var isNew =
+      window.AdminImport.isNewEntryRoute && window.AdminImport.isNewEntryRoute();
+    if (!isNew && window.AdminImport.getDraftMeta) {
+      var meta = window.AdminImport.getDraftMeta();
+      if (meta && meta.newRecord) isNew = true;
+    }
+
+    var titleInput = $("admin-editor-title-input");
+    var title = titleInput && titleInput.value ? titleInput.value.trim() : "this article";
+    var trigger = $("admin-delete-btn");
+
+    openDeleteConfirmModal({
+      trigger: trigger,
+      title: isNew ? "Discard this draft?" : "Delete this article?",
+      message: isNew
+        ? "Unsaved changes will be lost. You can start a new article anytime."
+        : '“' +
+          title +
+          '” will be removed from the website. This deletes the article file from the repository and cannot be undone.',
+      confirmLabel: isNew ? "Discard" : "Delete",
+      onConfirm: function () {
+        closeDeleteConfirmModal();
+        setEditorStatus(isNew ? "Discarding…" : "Deleting…");
+        window.AdminImport.deleteArticleEntry()
+          .then(function () {
+            editorState.dirty = false;
+            setEditorStatus(isNew ? "Draft discarded" : "Article deleted");
+            window.setTimeout(function () {
+              setEditorStatus("");
+            }, 2500);
+          })
+          .catch(function (err) {
+            var msg = (err && err.message) || String(err || "Delete failed");
+            setEditorStatus(msg, true);
+          });
+      },
+    });
+  }
+
+  function bindDeleteButton(root) {
+    var btn = $("admin-delete-btn");
+    if (!btn || btn.dataset.bound === "true") return;
+    btn.dataset.bound = "true";
+    btn.addEventListener("click", function () {
+      deleteArticle(root);
+    });
+  }
+
   function runPersistAction(root, options) {
     options = options || {};
     if (!window.AdminImport || !window.AdminImport.saveEntry) {
@@ -883,6 +1009,7 @@
     var importBtn = $("admin-import-btn");
     var previewBtn = $("admin-preview-btn");
     var saveDraftBtn = $("admin-save-draft-btn");
+    var deleteBtn = $("admin-delete-btn");
     var publishBtn = $("admin-publish-btn");
     var publishSlot = $("admin-publish-slot");
     var websiteLink = document.querySelector(".admin-website-link");
@@ -893,6 +1020,10 @@
     if (importBtn) importBtn.hidden = !onEditor;
     if (previewBtn) previewBtn.hidden = !onEditor;
     if (saveDraftBtn) saveDraftBtn.hidden = !onEditor;
+    if (deleteBtn) {
+      deleteBtn.hidden = !onEditor;
+      syncDeleteButtonLabel();
+    }
     if (publishBtn) publishBtn.hidden = !onEditor;
 
     if (publishSlot) {
@@ -953,6 +1084,7 @@
 
     syncTitleFromDecap(root);
     bindSaveDraftButton(root);
+    bindDeleteButton(root);
     bindPublishButton(root);
     relocatePublishButton(root);
     mountEditorDirtyWatcher(root);
@@ -992,27 +1124,55 @@
     mountEditorSubheader(root);
   }
 
+  function logoutComposer() {
+    try {
+      if (window.CMS && window.CMS.authStore && typeof window.CMS.authStore.logout === "function") {
+        window.CMS.authStore.logout();
+      }
+    } catch (err) {
+      /* ignore */
+    }
+    try {
+      Object.keys(localStorage).forEach(function (key) {
+        if (/github|netlify|decap|nc-|backstage/i.test(key)) {
+          localStorage.removeItem(key);
+        }
+      });
+    } catch (err2) {
+      /* ignore */
+    }
+    location.hash = "";
+    location.reload();
+  }
+
   function mountProfileButton(root) {
     var profileSlot = $("admin-profile-slot");
     if (!profileSlot) return;
 
-    var profile =
-      root.querySelector("header .admin-user-menu") ||
-      root.querySelector("header button[aria-haspopup='true']") ||
-      root.querySelector("header button");
+    root.querySelectorAll("header button[aria-haspopup='true'], header .admin-user-menu").forEach(function (el) {
+      el.classList.add("admin-editor-controls-hidden");
+    });
 
-    if (profile && profile.parentElement !== profileSlot) {
-      profile.classList.add("admin-user-menu");
-      profileSlot.appendChild(profile);
+    var btn = $("admin-logout-btn");
+    if (!btn) {
+      btn = document.createElement("button");
+      btn.type = "button";
+      btn.id = "admin-logout-btn";
+      btn.className = "admin-logout-btn";
+      btn.setAttribute("aria-label", "Log out");
+      btn.innerHTML = LOGOUT_ICON;
+      profileSlot.appendChild(btn);
+    } else if (btn.parentElement !== profileSlot) {
+      profileSlot.appendChild(btn);
     }
 
-    var btn = profileSlot.querySelector("button");
-    if (!btn) return;
-
-    btn.classList.add("admin-logout-btn");
-    if (btn.dataset.adminLogoutStyled !== "true") {
-      btn.dataset.adminLogoutStyled = "true";
-      btn.innerHTML = LOGOUT_ICON;
+    if (btn.dataset.bound !== "true") {
+      btn.dataset.bound = "true";
+      btn.addEventListener("click", function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        logoutComposer();
+      });
     }
     setTooltip(btn, "Log out");
   }

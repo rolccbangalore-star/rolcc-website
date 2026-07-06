@@ -291,7 +291,8 @@ body {
 
 .admin-user-menu button,
 .admin-profile-slot > button,
-.admin-profile-slot > div > button {
+.admin-profile-slot > div > button,
+.admin-logout-btn {
   display: inline-flex !important;
   align-items: center;
   justify-content: center;
@@ -310,7 +311,8 @@ body {
 
 .admin-user-menu button:hover,
 .admin-profile-slot > button:hover,
-.admin-profile-slot > div > button:hover {
+.admin-profile-slot > div > button:hover,
+.admin-logout-btn:hover {
   border-color: var(--rolcc-slate-300) !important;
   box-shadow: var(--rolcc-shadow-sm);
   background: var(--rolcc-primary) !important;
@@ -2420,6 +2422,7 @@ body.admin-composer-dropdown-open #nc-root .admin-custom-grid {
 body.admin-page--authed:not(.admin-page--editor) .admin-import-btn,
 body.admin-page--authed:not(.admin-page--editor) .admin-preview-btn,
 body.admin-page--authed:not(.admin-page--editor) .admin-save-draft-btn,
+body.admin-page--authed:not(.admin-page--editor) .admin-delete-btn,
 body.admin-page--authed:not(.admin-page--editor) .admin-publish-btn,
 body.admin-page--authed:not(.admin-page--editor) .admin-publish-slot {
   display: none !important;
@@ -2493,6 +2496,7 @@ body.admin-page--authed:not(.admin-page--editor) .admin-publish-slot {
 }
 
 .admin-save-draft-btn,
+.admin-delete-btn,
 .admin-publish-btn {
   min-height: 2.5rem;
   padding: 0.625rem 1.25rem;
@@ -2517,6 +2521,83 @@ body.admin-page--authed:not(.admin-page--editor) .admin-publish-slot {
   min-height: 2.5rem;
   padding: 0.625rem 1rem;
   font-size: 0.8125rem;
+}
+
+.admin-delete-btn {
+  color: #b91c1c;
+  border-color: #fecaca;
+}
+
+.admin-delete-btn:hover,
+.admin-delete-btn:focus-visible {
+  color: #991b1b;
+  border-color: #f87171;
+  background: #fef2f2;
+}
+
+.admin-delete-confirm-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 10002;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.admin-delete-confirm-modal[hidden] {
+  display: none !important;
+}
+
+.admin-delete-confirm-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+}
+
+.admin-delete-confirm-modal__panel {
+  position: relative;
+  width: min(100%, 28rem);
+  padding: 1.5rem;
+  border-radius: 1rem;
+  background: #fff;
+  box-shadow: 0 24px 48px rgba(15, 23, 42, 0.18);
+}
+
+.admin-delete-confirm-modal__title {
+  margin: 0 0 0.5rem;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.admin-delete-confirm-modal__message {
+  margin: 0 0 1.25rem;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: #475569;
+}
+
+.admin-delete-confirm-modal__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+.admin-delete-confirm-modal__confirm {
+  color: #fff;
+  background: #dc2626;
+  border-color: #dc2626;
+}
+
+.admin-delete-confirm-modal__confirm:hover,
+.admin-delete-confirm-modal__confirm:focus-visible {
+  background: #b91c1c;
+  border-color: #b91c1c;
+}
+
+body.admin-delete-confirm-open {
+  overflow: hidden;
 }
 
 .admin-publish-slot {

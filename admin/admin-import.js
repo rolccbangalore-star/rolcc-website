@@ -925,11 +925,28 @@
   }
 
   function findEditorPersistApi(rootEl) {
+    return findEditorActionApi(rootEl);
+  }
+
+  function findEditorActionApi(rootEl) {
     if (!rootEl) return null;
     var fiberKey = Object.keys(rootEl).find(function (k) {
       return k.indexOf("__reactFiber$") === 0 || k.indexOf("__reactContainer$") === 0;
     });
     if (!fiberKey) return null;
+
+    var api = {};
+    var actionNames = [
+      "persistEntry",
+      "handlePersistEntry",
+      "deleteEntry",
+      "handleDeleteEntry",
+      "handleDeletePublishedEntry",
+      "deletePublishedEntry",
+      "onDelete",
+      "discardDraft",
+      "handleDiscardDraft",
+    ];
 
     var seen = new Set();
     var queue = [rootEl[fiberKey]];
@@ -939,18 +956,140 @@
       seen.add(node);
       var props = node.memoizedProps || node.pendingProps;
       if (props) {
-        if (typeof props.persistEntry === "function") {
-          return { persistEntry: props.persistEntry, collection: props.collection };
-        }
-        if (typeof props.handlePersistEntry === "function") {
-          return { handlePersistEntry: props.handlePersistEntry, collection: props.collection };
+        actionNames.forEach(function (name) {
+          if (typeof props[name] === "function" && !api[name]) {
+            api[name] = props[name];
+          }
+        });
+        if (props.collection && !api.collection) {
+          api.collection = props.collection;
         }
       }
       if (node.child) queue.push(node.child);
       if (node.sibling) queue.push(node.sibling);
       if (node.return) queue.push(node.return);
     }
-    return null;
+
+    var hasAction = actionNames.some(function (name) {
+      return typeof api[name] === "function";
+    });
+    return hasAction ? api : null;
+  }
+
+  function isNewEntryRoute() {
+    return /\/new(?:\?|$)/.test(location.hash || "");
+  }
+
+  function getDraftMeta() {
+    var store = getCmsStore();
+    if (!store) return null;
+    var state = store.getState();
+    if (!state || !state.entryDraft) return null;
+    var draft = state.entryDraft;
+    var slug = draft.get ? draft.get("slug") : draft.slug;
+    var newRecord = draft.get ? draft.get("newRecord") : draft.newRecord;
+    return {
+      slug: slug,
+      newRecord: Boolean(newRecord) || isNewEntryRoute(),
+      collection: getCollectionFromStore(store),
+      collectionName: getCollection(),
+    };
+  }
+
+  function navigateToCollection(collectionName) {
+    var name = collectionName || getCollection();
+    location.hash = "#/collections/" + name;
+  }
+
+  function discardDraftEntry() {
+    var store = getCmsStore();
+    var root = $("nc-root");
+    var api = root ? findEditorActionApi(root) : null;
+
+    if (api && typeof api.discardDraft === "function") {
+      api.discardDraft();
+    } else if (api && typeof api.handleDiscardDraft === "function") {
+      api.handleDiscardDraft();
+    } else if (store) {
+      store.dispatch({ type: "DRAFT_DISCARD" });
+    }
+
+    navigateToCollection();
+    return Promise.resolve();
+  }
+
+  function clickDecapDeleteButton(root) {
+    if (!root) return false;
+    var candidates = root.querySelectorAll("button, a[class*='Button'], a.btn");
+    for (var i = 0; i < candidates.length; i++) {
+      var btn = candidates[i];
+      var text = (btn.textContent || "").replace(/\s+/g, " ").trim().toLowerCase();
+      if (text === "delete" || text === "delete entry" || text.indexOf("delete published") === 0) {
+        btn.click();
+        return true;
+      }
+    }
+    return false;
+  }
+
+  function deleteExistingEntry(root, meta) {
+    var api = findEditorActionApi(root);
+    if (!api) {
+      if (clickDecapDeleteButton(root)) return Promise.resolve();
+      return Promise.reject(new Error("Could not connect to the editor delete action"));
+    }
+
+    if (typeof api.handleDeleteEntry === "function") {
+      return Promise.resolve(api.handleDeleteEntry());
+    }
+    if (typeof api.handleDeletePublishedEntry === "function") {
+      return Promise.resolve(api.handleDeletePublishedEntry());
+    }
+    if (typeof api.deletePublishedEntry === "function" && meta.collection && meta.slug) {
+      return Promise.resolve(api.deletePublishedEntry(meta.collection, meta.slug));
+    }
+    if (typeof api.deleteEntry === "function") {
+      if (meta.collection && meta.slug) {
+        return Promise.resolve(api.deleteEntry(meta.collection, meta.slug));
+      }
+      if (meta.collection) {
+        return Promise.resolve(api.deleteEntry(meta.collection));
+      }
+      return Promise.resolve(api.deleteEntry());
+    }
+    if (typeof api.onDelete === "function") {
+      return Promise.resolve(api.onDelete());
+    }
+    if (clickDecapDeleteButton(root)) return Promise.resolve();
+    return Promise.reject(new Error("Could not connect to the editor delete action"));
+  }
+
+  function deleteArticleEntry() {
+    var root = $("nc-root");
+    if (!root) {
+      return Promise.reject(new Error("Editor not ready"));
+    }
+
+    var meta = getDraftMeta();
+    if (!meta) {
+      return Promise.reject(new Error("No article open"));
+    }
+
+    if (meta.newRecord) {
+      return discardDraftEntry();
+    }
+
+    return deleteExistingEntry(root, meta).then(function () {
+      window.setTimeout(function () {
+        if (isEditorRoute()) {
+          navigateToCollection(meta.collectionName);
+        }
+      }, 400);
+    });
+  }
+
+  function isEditorRoute() {
+    return /\/entries\/|\/new$/.test(location.hash || "");
   }
 
   function persistEntryDraft(attempt) {
@@ -1364,8 +1503,13 @@
     runAutoImport: runAutoImport,
     looksLikeImport: looksLikeImport,
     getCmsStore: getCmsStore,
+    getDraftEntryJs: getDraftEntryJs,
+    readDraftData: readDraftData,
     prepareDraftForSave: prepareDraftForSave,
     saveEntry: saveEntry,
+    deleteArticleEntry: deleteArticleEntry,
+    getDraftMeta: getDraftMeta,
+    isNewEntryRoute: isNewEntryRoute,
     validatePublishRequirements: validatePublishRequirements,
     clearFieldHighlights: clearFieldHighlights,
     highlightPublishFields: highlightPublishFields,

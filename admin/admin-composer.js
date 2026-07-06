@@ -751,7 +751,7 @@
     return null;
   }
 
-  function setSaveDraftStatus(message, isError) {
+  function setEditorStatus(message, isError) {
     var status = $("admin-editor-status");
     if (!status) return;
     status.textContent = message || "";
@@ -768,53 +768,91 @@
     });
   }
 
-  function saveDraftProgress(root) {
-    if (!isEditorRoute()) return;
+  function bindPublishButton(root) {
+    var btn = $("admin-publish-btn");
+    if (!btn || btn.dataset.bound === "true") return;
+    btn.dataset.bound = "true";
+    btn.addEventListener("click", function () {
+      publishArticle(root);
+    });
+  }
 
-    syncTitleFromHeader(root);
-
-    var headerInput = $("admin-editor-title-input");
-    var title = headerInput ? headerInput.value.trim() : "";
-    if (!title) {
-      setSaveDraftStatus("Add a title before saving.", true);
-      if (headerInput) headerInput.focus();
+  function runPersistAction(root, options) {
+    options = options || {};
+    if (!window.AdminImport || !window.AdminImport.saveEntry) {
+      setEditorStatus("Editor not ready — refresh and try again.", true);
       return;
     }
 
-    setSaveDraftStatus("Saving…");
-
-    if (window.AdminImport && window.AdminImport.prepareDraftForSave) {
-      if (!window.AdminImport.prepareDraftForSave()) {
-        setSaveDraftStatus("Add a title before saving.", true);
-        return;
-      }
-    }
+    syncTitleFromHeader(root);
+    setEditorStatus(options.workingMessage || "Saving…");
 
     window.setTimeout(function () {
-      var clicked =
-        (window.AdminImport && window.AdminImport.clickDecapSaveButton && window.AdminImport.clickDecapSaveButton(root)) ||
-        (function () {
-          var decapBtn = findDecapPublishButton(root);
-          if (decapBtn) {
-            decapBtn.click();
-            return true;
+      window.AdminImport.saveEntry({ mode: options.mode || "draft" })
+        .then(function () {
+          editorState.dirty = false;
+          if (window.AdminImport.clearFieldHighlights) {
+            window.AdminImport.clearFieldHighlights(root);
           }
-          return false;
-        })();
-
-      if (clicked) {
-        editorState.dirty = false;
-        window.setTimeout(function () {
-          setSaveDraftStatus("Draft saved");
+          setEditorStatus(options.successMessage || "Saved");
           window.setTimeout(function () {
-            setSaveDraftStatus("");
+            setEditorStatus("");
           }, 3000);
-        }, 1200);
-        return;
-      }
-
-      setSaveDraftStatus("Could not save — refresh and try again.", true);
+        })
+        .catch(function (err) {
+          var msg = (err && err.message) || String(err || "Save failed");
+          if (/missing required/i.test(msg)) {
+            setEditorStatus("Complete highlighted fields to publish.", true);
+          } else {
+            setEditorStatus(msg, true);
+          }
+        });
     }, 120);
+  }
+
+  function saveDraftProgress(root) {
+    if (!isEditorRoute()) return;
+    runPersistAction(root, {
+      mode: "draft",
+      workingMessage: "Saving draft…",
+      successMessage: "Draft saved",
+    });
+  }
+
+  function publishArticle(root) {
+    if (!isEditorRoute()) return;
+    if (!window.AdminImport) return;
+
+    syncTitleFromHeader(root);
+
+    if (window.AdminImport.clearFieldHighlights) {
+      window.AdminImport.clearFieldHighlights(root);
+    }
+
+    var missing = window.AdminImport.validatePublishRequirements
+      ? window.AdminImport.validatePublishRequirements()
+      : [];
+    if (missing.length) {
+      var first = window.AdminImport.highlightPublishFields
+        ? window.AdminImport.highlightPublishFields(root, missing)
+        : null;
+      var names = missing
+        .map(function (item) {
+          return item.label;
+        })
+        .join(", ");
+      setEditorStatus("To publish, complete: " + names + ".", true);
+      if (first && first.scrollIntoView) {
+        first.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+      return;
+    }
+
+    runPersistAction(root, {
+      mode: "publish",
+      workingMessage: "Publishing…",
+      successMessage: "Published",
+    });
   }
 
   function relocatePublishButton(root) {
@@ -863,7 +901,9 @@
     if (websiteLink) websiteLink.hidden = onEditor;
 
     var saveDraftBtn = $("admin-save-draft-btn");
+    var publishBtn = $("admin-publish-btn");
     if (saveDraftBtn) saveDraftBtn.hidden = !onEditor;
+    if (publishBtn) publishBtn.hidden = !onEditor;
 
     if (onEditor) {
       var backBtn = $("admin-editor-back");
@@ -894,6 +934,7 @@
 
     syncTitleFromDecap(root);
     bindSaveDraftButton(root);
+    bindPublishButton(root);
     relocatePublishButton(root);
     mountEditorDirtyWatcher(root);
     hideDecapEditorChrome(root);

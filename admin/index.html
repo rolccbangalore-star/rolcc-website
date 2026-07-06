@@ -15,7 +15,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="/css/articles.css" />
-    <link rel="stylesheet" href="/admin/admin.css?v=20260707editor4" />
+    <link rel="stylesheet" href="/admin/admin.css?v=20260707editor5" />
   </head>
   <body class="admin-page">
     <header id="admin-topbar" class="admin-shell-topbar" hidden>
@@ -87,8 +87,9 @@
           ><svg class="admin-website-link__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>Website</a
         >
         <button type="button" class="btn-outline admin-import-btn" id="admin-import-btn" hidden>Import</button>
-        <button type="button" class="btn-primary admin-save-draft-btn" id="admin-save-draft-btn" hidden>Save draft</button>
-        <div id="admin-publish-slot" class="admin-publish-slot" hidden></div>
+        <button type="button" class="btn-outline admin-save-draft-btn" id="admin-save-draft-btn" hidden>Save draft</button>
+        <button type="button" class="btn-primary admin-publish-btn" id="admin-publish-btn" hidden>Publish</button>
+        <div id="admin-publish-slot" class="admin-publish-slot" hidden aria-hidden="true"></div>
         <div id="admin-profile-slot" class="admin-profile-slot"></div>
       </div>
     </header>
@@ -146,8 +147,8 @@
     <script src="https://unpkg.com/decap-cms@3.3.0/dist/decap-cms.js"></script>
     <script src="https://unpkg.com/immutable@4.3.6/dist/immutable.min.js"></script>
     <script src="/scripts/article-import-parse.js?v=20260707store5"></script>
-    <script src="/admin/admin-composer.js?v=20260707editor4"></script>
-    <script src="/admin/admin-import.js?v=20260707store6"></script>
+    <script src="/admin/admin-composer.js?v=20260707editor5"></script>
+    <script src="/admin/admin-import.js?v=20260707store7"></script>
     <script>
       (function () {
         var errorBox = document.getElementById("cms-error");

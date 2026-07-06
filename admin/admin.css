@@ -2484,12 +2484,25 @@ body.admin-composer-dropdown-open #nc-root .admin-custom-grid {
   color: #b91c1c;
 }
 
-.admin-save-draft-btn {
+.admin-save-draft-btn,
+.admin-publish-btn {
   min-height: 2.5rem;
   padding: 0.625rem 1.25rem;
   font-size: 0.875rem;
   font-weight: 600;
   white-space: nowrap;
+}
+
+.admin-editor-title-block.admin-field--missing .admin-editor-title-input {
+  border-color: #dc2626;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15);
+}
+
+#nc-root .admin-field--missing {
+  border-radius: 0.75rem;
+  outline: 2px solid #dc2626;
+  outline-offset: 4px;
+  background: rgba(254, 242, 242, 0.65);
 }
 
 .admin-import-btn {

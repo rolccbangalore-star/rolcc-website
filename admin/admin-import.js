@@ -804,7 +804,8 @@
     return slug + ".json";
   }
 
-  function prepareDraftForSave() {
+  function prepareDraftForSave(options) {
+    options = options || {};
     var store = getCmsStore();
     if (!store) return false;
 
@@ -813,22 +814,191 @@
     var headerTitle = headerInput ? headerInput.value.trim() : "";
     var today = new Date().toISOString().slice(0, 10);
 
-    if (headerTitle && headerTitle !== data.title) {
+    if (headerTitle) {
       changeDraftFieldValue(store, "title", headerTitle);
       data.title = headerTitle;
     }
 
     if (!data.title || !String(data.title).trim()) {
-      return false;
+      if (options.allowIncomplete) {
+        changeDraftFieldValue(store, "title", "Untitled draft");
+        data.title = "Untitled draft";
+      } else {
+        return false;
+      }
     }
 
     if (!data.date) changeDraftFieldValue(store, "date", today);
     if (!data.category) changeDraftFieldValue(store, "category", "General");
     if (!data.thumbnail) changeDraftFieldValue(store, "thumbnail", "/images/og-image.jpg");
-    if (data.publish !== false) changeDraftFieldValue(store, "publish", false);
+    changeDraftFieldValue(store, "publish", options.publish === true);
 
-    changeDraftFieldValue(store, "title", data.title || headerTitle);
     return true;
+  }
+
+  var PUBLISH_FIELD_LABELS = {
+    title: ["title"],
+    date: ["date"],
+    category: ["tag"],
+    summary: ["summary"],
+    description: ["search preview"],
+    blocks: ["article content"],
+  };
+
+  function validatePublishRequirements() {
+    var data = readDraftData();
+    var headerInput = $("admin-editor-title-input");
+    var title = (headerInput && headerInput.value.trim()) || (data.title && String(data.title).trim()) || "";
+    var missing = [];
+
+    if (!title) missing.push({ key: "title", label: "Title" });
+    if (!data.date) missing.push({ key: "date", label: "Date" });
+    if (!data.category) missing.push({ key: "category", label: "Tag" });
+    if (!data.summary || !String(data.summary).trim()) missing.push({ key: "summary", label: "Summary" });
+    if (!data.description || !String(data.description).trim()) {
+      missing.push({ key: "description", label: "Search preview" });
+    }
+    if (!data.blocks || !data.blocks.length) missing.push({ key: "blocks", label: "Article content" });
+
+    return missing;
+  }
+
+  function findFieldContainer(labelEl) {
+    var node = labelEl;
+    for (var i = 0; i < 10 && node; i++) {
+      if (
+        node.classList &&
+        (Array.prototype.some.call(node.classList, function (c) {
+          return /Control|Widget|FieldPane|field/i.test(c);
+        }) ||
+          node.tagName === "SECTION")
+      ) {
+        return node;
+      }
+      node = node.parentElement;
+    }
+    return labelEl.parentElement || labelEl;
+  }
+
+  function clearFieldHighlights(root) {
+    if (!root) return;
+    root.querySelectorAll(".admin-field--missing").forEach(function (el) {
+      el.classList.remove("admin-field--missing");
+    });
+    var titleBlock = $("admin-editor-title-block");
+    if (titleBlock) titleBlock.classList.remove("admin-field--missing");
+  }
+
+  function highlightPublishFields(root, missing) {
+    clearFieldHighlights(root);
+    if (!root || !missing || !missing.length) return null;
+
+    var firstEl = null;
+    missing.forEach(function (item) {
+      if (item.key === "title") {
+        var titleBlock = $("admin-editor-title-block");
+        if (titleBlock) {
+          titleBlock.classList.add("admin-field--missing");
+          if (!firstEl) firstEl = titleBlock;
+        }
+        return;
+      }
+
+      var labels = PUBLISH_FIELD_LABELS[item.key] || [String(item.label || "").toLowerCase()];
+      var nodes = root.querySelectorAll("main label, main h2, main legend, main p");
+      for (var i = 0; i < nodes.length; i++) {
+        var text = (nodes[i].textContent || "").replace(/\s+/g, " ").trim().toLowerCase();
+        var matched = labels.some(function (label) {
+          return text === label || text.indexOf(label) === 0;
+        });
+        if (!matched) continue;
+        var container = findFieldContainer(nodes[i]);
+        if (container) {
+          container.classList.add("admin-field--missing");
+          if (!firstEl) firstEl = container;
+        }
+        break;
+      }
+    });
+
+    return firstEl;
+  }
+
+  function findEditorPersistApi(rootEl) {
+    if (!rootEl) return null;
+    var fiberKey = Object.keys(rootEl).find(function (k) {
+      return k.indexOf("__reactFiber$") === 0 || k.indexOf("__reactContainer$") === 0;
+    });
+    if (!fiberKey) return null;
+
+    var seen = new Set();
+    var queue = [rootEl[fiberKey]];
+    while (queue.length) {
+      var node = queue.shift();
+      if (!node || seen.has(node)) continue;
+      seen.add(node);
+      var props = node.memoizedProps || node.pendingProps;
+      if (props) {
+        if (typeof props.persistEntry === "function") {
+          return { persistEntry: props.persistEntry, collection: props.collection };
+        }
+        if (typeof props.handlePersistEntry === "function") {
+          return { handlePersistEntry: props.handlePersistEntry, collection: props.collection };
+        }
+      }
+      if (node.child) queue.push(node.child);
+      if (node.sibling) queue.push(node.sibling);
+      if (node.return) queue.push(node.return);
+    }
+    return null;
+  }
+
+  function persistEntryDraft(attempt) {
+    attempt = attempt || 0;
+    var store = getCmsStore();
+    var root = $("nc-root");
+    if (!store || !root) {
+      return Promise.reject(new Error("Editor not ready"));
+    }
+
+    var api = findEditorPersistApi(root);
+    if (!api) {
+      if (attempt < 10) {
+        return new Promise(function (resolve, reject) {
+          window.setTimeout(function () {
+            persistEntryDraft(attempt + 1).then(resolve).catch(reject);
+          }, 200);
+        });
+      }
+      return Promise.reject(new Error("Could not connect to the editor save action"));
+    }
+
+    if (api.handlePersistEntry) {
+      return Promise.resolve(api.handlePersistEntry({}));
+    }
+
+    var collection = api.collection;
+    if (!collection) {
+      var state = store.getState();
+      if (state.collections && state.collections.get) {
+        collection = state.collections.get(getCollection());
+      }
+    }
+    if (!collection) {
+      return Promise.reject(new Error("Collection not found"));
+    }
+
+    return Promise.resolve(api.persistEntry(collection));
+  }
+
+  function saveEntry(options) {
+    options = options || {};
+    var mode = options.mode || "draft";
+    prepareDraftForSave({
+      publish: mode === "publish",
+      allowIncomplete: mode === "draft",
+    });
+    return persistEntryDraft(0);
   }
 
   function clickDecapSaveButton(root) {
@@ -1195,6 +1365,10 @@
     looksLikeImport: looksLikeImport,
     getCmsStore: getCmsStore,
     prepareDraftForSave: prepareDraftForSave,
+    saveEntry: saveEntry,
+    validatePublishRequirements: validatePublishRequirements,
+    clearFieldHighlights: clearFieldHighlights,
+    highlightPublishFields: highlightPublishFields,
     clickDecapSaveButton: clickDecapSaveButton,
   };
 })();

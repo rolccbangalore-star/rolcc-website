@@ -497,7 +497,7 @@ function articleSchema(article, canonical) {
 
 function renderQuizSection(article) {
   if (!article.includeQuiz || !article.quiz?.length) return "";
-  return `<section class="article-section" aria-label="Study quiz">
+  return `<section class="article-section" id="article-quiz" aria-label="Study quiz">
       <h2 class="text-lg font-semibold text-slate-900">Quick quiz</h2>
       <p class="mt-2 text-sm text-slate-600">Test your understanding. Answers stay on this device only.</p>
       <div class="article-quiz mt-4" data-article-quiz>

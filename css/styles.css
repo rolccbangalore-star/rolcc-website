@@ -1961,12 +1961,13 @@ body {
   min-height: 100vh;
   pointer-events: auto;
 }
-/* When scrolled to bottom: raise footer above main so nav links are clickable */
+/* When footer is reachable: raise it above main so nav links are clickable */
 body.footer-in-view .footer-reveal {
   z-index: 20 !important;
 }
 
-body.footer-in-view main {
+/* Only disable main clicks on fixed-footer reveal pages (main sits on top of the footer) */
+body.footer-in-view.has-fixed-footer main {
   pointer-events: none;
 }
 

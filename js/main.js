@@ -226,17 +226,54 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // Footer: fixed at bottom; Serve section unveils it on scroll (footer-reveal in BG, Serve scrolls up to reveal)
-  // When user scrolls to bottom, raise footer z-index so nav links are clickable (main otherwise covers footer).
-  (function footerInView() {
+  // Footer: fixed reveal pages keep the footer behind scrolling main (z-0 vs main z-10).
+  // Enable footer links as soon as the unveil spacer enters view — not only at document bottom.
+  (function footerClickability() {
     var footerSection = document.getElementById("footer-section");
     if (!footerSection) return;
 
-    var threshold = 80;
+    var footerIsFixed = window.getComputedStyle(footerSection).position === "fixed";
+    if (footerIsFixed) {
+      document.body.classList.add("has-fixed-footer");
+    }
+
+    function setFooterInView(active) {
+      document.body.classList.toggle("footer-in-view", active);
+    }
+
+    var spacer = document.querySelector(".serve-unveil-spacer");
+
+    if (spacer && footerIsFixed && "IntersectionObserver" in window) {
+      var spacerObserver = new IntersectionObserver(
+        function (entries) {
+          setFooterInView(entries.some(function (entry) {
+            return entry.isIntersecting;
+          }));
+        },
+        { threshold: 0, rootMargin: "0px 0px 25% 0px" }
+      );
+      spacerObserver.observe(spacer);
+      return;
+    }
+
+    if ("IntersectionObserver" in window) {
+      var footerObserver = new IntersectionObserver(
+        function (entries) {
+          setFooterInView(entries.some(function (entry) {
+            return entry.isIntersecting;
+          }));
+        },
+        { threshold: 0.05, rootMargin: "0px 0px -8% 0px" }
+      );
+      footerObserver.observe(footerSection);
+      return;
+    }
+
+    var threshold = 120;
     function update() {
-      var nearBottom =
-        window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - threshold;
-      document.body.classList.toggle("footer-in-view", nearBottom);
+      setFooterInView(
+        window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - threshold
+      );
     }
     window.addEventListener("scroll", update, { passive: true });
     window.addEventListener("resize", update);

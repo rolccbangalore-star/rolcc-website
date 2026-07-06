@@ -19,6 +19,14 @@
   }
   if (!questions.length) return;
 
+  const quizSection =
+    document.getElementById("article-quiz") ||
+    root.closest('section[aria-label="Study quiz"]') ||
+    root;
+  if (quizSection && !quizSection.id) quizSection.id = "article-quiz";
+
+  initQuizFab(quizSection);
+
   let index = 0;
   let score = 0;
   let answered = false;
@@ -251,3 +259,46 @@
 
   renderQuestion();
 })();
+
+function initQuizFab(quizSection) {
+  if (!quizSection || document.querySelector("[data-quiz-fab]")) return;
+
+  const fab = document.createElement("a");
+  fab.href = "#article-quiz";
+  fab.className = "article-quiz-fab";
+  fab.setAttribute("data-quiz-fab", "");
+  fab.setAttribute("aria-label", "Jump to Quick Quiz");
+
+  fab.innerHTML =
+    '<span class="article-quiz-fab__ring" aria-hidden="true"></span>' +
+    '<svg class="article-quiz-fab__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+    '<path d="M9 11h6"/><path d="M9 15h6"/><path d="M9 7h6"/>' +
+    '<path d="M6 3h8l4 4v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/>' +
+    "</svg>" +
+    '<span class="article-quiz-fab__label">Quick Quiz</span>';
+
+  fab.addEventListener("click", function (e) {
+    e.preventDefault();
+    const target = document.getElementById("article-quiz") || quizSection;
+    if (!target) return;
+    target.scrollIntoView({ behavior: "smooth", block: "start" });
+    target.classList.add("article-quiz-section--highlight");
+    window.setTimeout(function () {
+      target.classList.remove("article-quiz-section--highlight");
+    }, 1400);
+  });
+
+  document.body.appendChild(fab);
+
+  if ("IntersectionObserver" in window) {
+    const observer = new IntersectionObserver(
+      function (entries) {
+        entries.forEach(function (entry) {
+          fab.classList.toggle("is-hidden", entry.isIntersecting);
+        });
+      },
+      { root: null, rootMargin: "0px 0px -12% 0px", threshold: 0.12 }
+    );
+    observer.observe(quizSection);
+  }
+}

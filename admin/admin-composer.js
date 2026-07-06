@@ -71,12 +71,58 @@
     return normalize(label ? label.textContent : "");
   }
 
+  var META_LABELS = [
+    "title",
+    "summary",
+    "search preview",
+    "description",
+    "author",
+    "tag",
+    "date",
+    "hero image",
+    "thumbnail",
+    "featured",
+    "published",
+    "scripture",
+    "sermon series",
+    "passage",
+  ];
+
+  function isMetaField(label) {
+    var normalized = normalize(label).replace(/\?$/, "").replace(/\s*\(optional\)$/, "").trim();
+    return META_LABELS.some(function (name) {
+      return normalized === name || normalized.indexOf(name) === 0;
+    });
+  }
+
   function isContentField(label) {
-    var normalized = normalize(label).replace(/\?$/, "");
+    if (isMetaField(label)) return false;
+    var normalized = normalize(label).replace(/\?$/, "").replace(/\s*\(optional\)$/, "").trim();
     return CONTENT_LABELS.some(function (name) {
       var field = name.replace(/\?$/, "");
       return normalized === field || normalized.indexOf(field) === 0;
     });
+  }
+
+  function findRootForLabel(label, form) {
+    var el = label.parentElement;
+    while (el && el !== form) {
+      var parent = el.parentElement;
+      if (!parent || parent === form) return el;
+      var labeledSiblings = 0;
+      for (var i = 0; i < parent.children.length; i++) {
+        var child = parent.children[i];
+        if (child.classList.contains("admin-editor-columns")) continue;
+        if (child.querySelector("label")) labeledSiblings++;
+      }
+      if (labeledSiblings >= 2) return el;
+      el = parent;
+    }
+    return label.parentElement;
+  }
+
+  function isKnownTopLevelField(labelText) {
+    return isContentField(labelText) || isMetaField(labelText);
   }
 
   function findEditorFieldControls(root) {
@@ -86,25 +132,58 @@
     var form = main.querySelector("form");
     if (!form) return [];
 
-    var mount = form.querySelector(":scope > div") || form;
-    var columns = mount.querySelector(".admin-editor-columns");
-
+    var columns = form.querySelector(".admin-editor-columns");
     if (columns) {
-      var placed = [];
-      columns.querySelectorAll(".admin-editor-col__fields > div").forEach(function (node) {
-        if (node.querySelector("label")) placed.push(node);
-      });
-      return placed;
+      return Array.prototype.slice
+        .call(form.querySelectorAll(".admin-editor-col__fields > div"))
+        .filter(function (node) {
+          return node.querySelector("label");
+        });
     }
 
-    var controls = [];
-    for (var i = 0; i < mount.children.length; i++) {
-      var node = mount.children[i];
-      if (node.classList.contains("admin-editor-columns")) continue;
-      if (!node.querySelector("label")) continue;
-      controls.push(node);
+    var roots = [];
+    var claimed = new Set();
+    var labels = form.querySelectorAll("label");
+
+    for (var i = 0; i < labels.length; i++) {
+      var label = labels[i];
+      if (label.closest(".admin-editor-columns")) continue;
+
+      var labelText = normalize(label.textContent).replace(/\?$/, "").replace(/\s*\(optional\)$/, "").trim();
+      if (!isKnownTopLevelField(labelText)) continue;
+
+      var rootEl = findRootForLabel(label, form);
+      if (!rootEl || claimed.has(rootEl)) continue;
+
+      claimed.add(rootEl);
+      roots.push(rootEl);
     }
-    return controls;
+
+    return roots;
+  }
+
+  function findEditorFieldMount(form, controls) {
+    if (!form || !controls.length) return form;
+
+    var counts = new Map();
+    controls.forEach(function (control) {
+      var node = control.parentElement;
+      while (node && node !== form) {
+        counts.set(node, (counts.get(node) || 0) + 1);
+        node = node.parentElement;
+      }
+    });
+
+    var best = form;
+    var bestScore = 0;
+    counts.forEach(function (score, node) {
+      if (score > bestScore && score >= controls.length - 1) {
+        bestScore = score;
+        best = node;
+      }
+    });
+
+    return best;
   }
 
   function tagEditorLayout(root) {
@@ -116,11 +195,12 @@
     var form = main.querySelector("form");
     if (!form) return;
 
-    var mount = form.querySelector(":scope > div") || form;
     var controls = findEditorFieldControls(root);
     if (!controls.length) return;
 
-    var columns = mount.querySelector(".admin-editor-columns");
+    var mount = findEditorFieldMount(form, controls);
+    var columns = form.querySelector(".admin-editor-columns");
+
     if (!columns) {
       columns = document.createElement("div");
       columns.className = "admin-editor-columns";
@@ -149,7 +229,7 @@
       } else {
         control.classList.add("admin-field--meta");
         control.classList.remove("admin-field--content");
-        if (labelText === "title") {
+        if (normalize(labelText) === "title") {
           control.classList.add("admin-field--title-synced");
           var decapTitle = control.querySelector('input[type="text"], textarea');
           if (decapTitle && decapTitle.dataset.titleSyncBound !== "true") {
@@ -164,6 +244,7 @@
     });
 
     mount.classList.add("admin-editor-mount");
+    form.classList.add("admin-editor-form");
     mount.dataset.adminLayout = "done";
     columns.dataset.adminLayout = "done";
     syncTitleFromDecap(root);
@@ -191,6 +272,9 @@
 
     root.querySelectorAll(".admin-field--meta, .admin-field--content").forEach(function (el) {
       el.classList.remove("admin-field--meta", "admin-field--content", "admin-field--title-synced");
+    });
+    root.querySelectorAll("form.admin-editor-form").forEach(function (form) {
+      form.classList.remove("admin-editor-form");
     });
   }
 
@@ -2424,6 +2508,14 @@
     enhanceMediaView(root);
     mountEditorSubheader(root);
     tagEditorLayout(root);
+    if (isEditorRoute() && !root.querySelector(".admin-editor-columns")) {
+      window.setTimeout(function () {
+        tagEditorLayout(root);
+      }, 150);
+      window.setTimeout(function () {
+        tagEditorLayout(root);
+      }, 500);
+    }
   }
 
   function watch() {

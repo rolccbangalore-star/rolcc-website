@@ -26,22 +26,34 @@
   };
 
   var dock = getOrCreateActionDock();
+  var wrap = document.createElement("div");
+  wrap.className = "article-clap-wrap";
+
+  var hintEl = document.createElement("span");
+  hintEl.className = "article-clap__hint";
+  hintEl.setAttribute("data-clap-hint", "");
+  hintEl.textContent = "Give Kudos";
+
   var widget = document.createElement("button");
   widget.type = "button";
   widget.className = "article-clap";
   widget.setAttribute("data-article-clap", "");
   widget.setAttribute("data-slug", slug);
   widget.setAttribute("aria-pressed", "false");
-  widget.setAttribute("aria-label", "Appreciate this article");
+  widget.setAttribute("aria-label", "Give kudos to this article");
   widget.innerHTML =
+    '<span class="article-clap__ring" aria-hidden="true"></span>' +
     '<span class="article-clap__icon" aria-hidden="true">' +
     '<canvas class="article-clap__lottie" data-clap-lottie width="128" height="128"></canvas>' +
     "</span>" +
-    '<span class="article-clap__count" data-clap-count>0</span>';
+    '<span class="article-clap__total"><span data-clap-count>0</span> Kudos</span>';
 
-  dock.appendChild(widget);
+  wrap.appendChild(hintEl);
+  wrap.appendChild(widget);
+  dock.appendChild(wrap);
 
   var btn = widget;
+  var iconEl = widget.querySelector(".article-clap__icon");
   var lottieCanvas = widget.querySelector("[data-clap-lottie]");
   var countEl = widget.querySelector("[data-clap-count]");
   var MAX_USER_CLAPS = 50;
@@ -68,13 +80,27 @@
 
   function updateUI() {
     if (countEl) countEl.textContent = formatCount(totalCount);
+    if (hintEl) {
+      if (userClaps > 0) {
+        hintEl.textContent = "You gave " + userClaps + "x";
+        hintEl.classList.add("is-personal");
+      } else {
+        hintEl.textContent = "Give Kudos";
+        hintEl.classList.remove("is-personal");
+      }
+    }
     widget.classList.toggle("is-active", userClaps > 0);
     btn.disabled = userClaps >= MAX_USER_CLAPS;
     btn.setAttribute("aria-pressed", userClaps > 0 ? "true" : "false");
     if (userClaps >= MAX_USER_CLAPS) {
-      btn.setAttribute("aria-label", "Maximum appreciations reached");
+      btn.setAttribute("aria-label", "Maximum kudos reached. You gave " + userClaps + "x.");
+    } else if (userClaps > 0) {
+      btn.setAttribute(
+        "aria-label",
+        totalCount + " kudos total. You gave " + userClaps + "x. Tap or press and hold for more."
+      );
     } else {
-      btn.setAttribute("aria-label", "Appreciate this article. Tap or press and hold for more.");
+      btn.setAttribute("aria-label", formatCount(totalCount) + " kudos. Give kudos. Tap or press and hold for more.");
     }
   }
 
@@ -107,17 +133,19 @@
 
   function playClapAnimation() {
     if (reducedMotion) {
-      btn.classList.remove("is-pulse");
-      void btn.offsetWidth;
-      btn.classList.add("is-pulse");
+      if (!iconEl) return;
+      iconEl.classList.remove("is-pulse");
+      void iconEl.offsetWidth;
+      iconEl.classList.add("is-pulse");
       return;
     }
 
     ensureDotLottie().then(function (player) {
       if (!player) {
-        btn.classList.remove("is-pulse");
-        void btn.offsetWidth;
-        btn.classList.add("is-pulse");
+        if (!iconEl) return;
+        iconEl.classList.remove("is-pulse");
+        void iconEl.offsetWidth;
+        iconEl.classList.add("is-pulse");
         return;
       }
       if (typeof player.stop === "function") player.stop();

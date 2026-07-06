@@ -800,7 +800,7 @@
   bottom: max(1.25rem, env(safe-area-inset-bottom, 0px));
   z-index: 50;
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: center;
   gap: 0.55rem;
   transform: translateX(-50%);
@@ -813,45 +813,83 @@
   pointer-events: auto;
 }
 
+.article-clap-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.article-clap__hint {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: rgba(15, 23, 42, 0.55);
+  white-space: nowrap;
+  line-height: 1;
+  pointer-events: none;
+}
+
+.article-clap__hint.is-personal {
+  color: rgba(15, 23, 42, 0.72);
+}
+
 .article-clap {
+  position: relative;
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
-  padding: 0.35rem 0.9rem 0.35rem 0.35rem;
+  gap: 0.5rem;
+  padding: 0.72rem 1.05rem;
   border-radius: 9999px;
   border: 1px solid #e2e8f0;
   background: #fff;
   cursor: pointer;
   overflow: visible;
+  flex-shrink: 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  font-family: inherit;
   box-shadow:
     0 4px 14px rgba(15, 23, 42, 0.12),
     0 2px 6px rgba(15, 23, 42, 0.06);
   transition:
     border-color 0.2s ease,
     box-shadow 0.2s ease,
-    transform 0.15s ease;
+    transform 0.2s ease;
+  animation: article-quiz-fab-bounce 2.6s ease-in-out infinite;
+  isolation: isolate;
 }
 
-.article-clap:hover:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow:
-    0 6px 18px rgba(15, 23, 42, 0.14),
-    0 2px 6px rgba(15, 23, 42, 0.08);
+.article-clap__ring {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border: 2px solid rgba(234, 88, 12, 0.35);
+  animation: article-quiz-fab-ring 2.6s ease-out infinite;
+  pointer-events: none;
+}
+
+.article-clap:hover:not(:disabled),
+.article-clap:focus-visible {
+  transform: translateY(-2px);
+  animation-play-state: paused;
+}
+
+.article-clap:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
 }
 
 .article-clap.is-active {
   border-color: #fdba74;
-  box-shadow:
-    0 4px 14px rgba(234, 88, 12, 0.18),
-    0 2px 6px rgba(15, 23, 42, 0.06);
 }
 
 .article-clap__icon {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 3.25rem;
-  height: 3.25rem;
+  width: 1.125rem;
+  height: 1.125rem;
   border-radius: 9999px;
   background: #0f172a;
   flex-shrink: 0;
@@ -861,10 +899,13 @@
 
 .article-clap__lottie {
   display: block;
-  width: 4.5rem;
-  height: 4.5rem;
+  width: 2.75rem;
+  height: 2.75rem;
   pointer-events: none;
-  position: relative;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
   z-index: 1;
 }
 
@@ -873,37 +914,18 @@
   cursor: default;
 }
 
-.article-clap.is-pulse {
+.article-clap__icon.is-pulse {
   animation: article-clap-pulse 0.35s ease;
 }
 
-.article-clap__meta {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.1rem;
-  padding-right: 0.1rem;
-  line-height: 1.15;
-}
-
 .article-clap__total {
-  font-size: 0.9375rem;
-  font-weight: 700;
+  font-size: 0.875rem;
+  font-weight: 600;
   color: #0f172a;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
-}
-
-.article-clap__hint {
-  font-size: 0.6875rem;
-  font-weight: 600;
-  color: #64748b;
-  white-space: nowrap;
-}
-
-.article-clap__hint.is-personal {
-  color: #ea580c;
+  line-height: 1;
 }
 
 @keyframes article-clap-pulse {
@@ -915,12 +937,6 @@
   }
   100% {
     transform: scale(1);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .article-clap.is-pulse {
-    animation: none;
   }
 }
 
@@ -1229,6 +1245,15 @@
     order: -1;
     font-size: 0.8125rem;
   }
+
+  .article-clap {
+    padding: 0.72rem 1rem;
+    font-size: 0.8125rem;
+  }
+
+  .article-clap__total {
+    font-size: 0.8125rem;
+  }
 }
 
 @media (min-width: 640px) {
@@ -1236,11 +1261,23 @@
     padding: 0.8rem 1.2rem;
     font-size: 0.9375rem;
   }
+
+  .article-clap {
+    padding: 0.8rem 1.2rem;
+    font-size: 0.9375rem;
+  }
+
+  .article-clap__total {
+    font-size: 0.9375rem;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .article-quiz-fab,
   .article-quiz-fab__ring,
+  .article-clap,
+  .article-clap__ring,
+  .article-clap__icon.is-pulse,
   .article-quiz-section--highlight .article-quiz {
     animation: none;
   }

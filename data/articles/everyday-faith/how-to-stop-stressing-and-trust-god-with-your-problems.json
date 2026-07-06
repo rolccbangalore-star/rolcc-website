@@ -1,0 +1,237 @@
+{
+  "sermonSeries": "Everyday Faith",
+  "blocks": [
+    {
+      "type": "quote",
+      "text": "Do not be afraid or dismayed because of this great multitude, for the battle is not yours, but God's.",
+      "attribution": "2 Chronicles 20:15"
+    },
+    {
+      "type": "paragraph",
+      "text": "When difficulties arise, we often try to solve everything ourselves. We carry the emotional weight of every outcome, yet once the problem is over, we are tempted to take the credit instead of acknowledging God's faithfulness."
+    },
+    {
+      "type": "heading",
+      "level": "2",
+      "text": "The Battle Belongs to God"
+    },
+    {
+      "type": "paragraph",
+      "text": "Throughout Scripture, God repeatedly demonstrates that victory comes from Him. At Jericho, He brought down the walls without conventional warfare, reminding His people that His power—not human ability—secures the victory."
+    },
+    {
+      "type": "heading",
+      "level": "2",
+      "text": "Gideon's Lesson in Trust"
+    },
+    {
+      "type": "paragraph",
+      "text": "God reduced Gideon's army from thousands to just 300 men so Israel would know that success came from Him alone. By removing every reason for human pride, God taught His people to depend completely on Him."
+    },
+    {
+      "type": "scriptureCallout",
+      "reference": "2 Chronicles 20:15",
+      "text": "The battle is not yours, but God's."
+    },
+    {
+      "type": "heading",
+      "level": "2",
+      "text": "Practical Ways to Trust God"
+    },
+    {
+      "type": "bulletList",
+      "items": [
+        {
+          "item": "Write down your fears and prayers before the situation changes to remember God's faithfulness later."
+        },
+        {
+          "item": "Spend time in God's Word and learn to recognize His voice above every other influence."
+        },
+        {
+          "item": "Keep a testimony journal of God's answers to prayer and provision."
+        },
+        {
+          "item": "Do your part faithfully while leaving the outcome in God's hands."
+        }
+      ]
+    },
+    {
+      "type": "faq",
+      "items": [
+        {
+          "question": "If the battle belongs to God, why do I still face difficulties?",
+          "answer": "God never promised a life without challenges. He promises to be with us and use every battle to strengthen our faith."
+        },
+        {
+          "question": "Is it wrong to feel afraid?",
+          "answer": "Fear is a normal human emotion. The goal is not to let fear control our decisions but to trust God despite it."
+        },
+        {
+          "question": "What does trusting God look like in daily life?",
+          "answer": "Trusting God means faithfully doing what you can while surrendering the final outcome to Him."
+        }
+      ]
+    },
+    {
+      "type": "cta",
+      "label": "Connect with a Cell Group",
+      "url": "/contact",
+      "text": "Grow in faith alongside others as you learn to trust God through every season.",
+      "style": "primary"
+    }
+  ],
+  "summary": "Life's challenges often tempt us to carry every burden on our own. This message reminds us that God calls us to trust Him in every battle, exchanging anxiety for faith as we rely on His strength instead of our own.",
+  "author": "Pr. Benson K Sunny",
+  "thumbnail": "https://upload.wikimedia.org/wikipedia/commons/0/0e/Book_of_Judges_Chapter_6-3_%28Bible_Illustrations_by_Sweet_Media%29.jpg",
+  "featured": false,
+  "date": "2026-07-06",
+  "publish": true,
+  "quiz": [
+    {
+      "question": "According to 2 Chronicles 20:15, who does the battle belong to?",
+      "options": [
+        {
+          "option": "God"
+        },
+        {
+          "option": "The strongest army"
+        },
+        {
+          "option": "The king"
+        },
+        {
+          "option": "The bravest soldier"
+        },
+        {
+          "option": "God"
+        },
+        {
+          "option": "The strongest army"
+        },
+        {
+          "option": "The king"
+        },
+        {
+          "option": "The bravest soldier"
+        }
+      ],
+      "correctIndex": 0,
+      "explanation": "The verse declares that the battle belongs to God."
+    },
+    {
+      "question": "Why did God reduce Gideon's army?",
+      "options": [
+        {
+          "option": "To prevent Israel from taking the credit"
+        },
+        {
+          "option": "Because supplies were limited"
+        },
+        {
+          "option": "To make the journey easier"
+        },
+        {
+          "option": "To avoid conflict"
+        },
+        {
+          "option": "To prevent Israel from taking the credit"
+        },
+        {
+          "option": "Because supplies were limited"
+        },
+        {
+          "option": "To make the journey easier"
+        },
+        {
+          "option": "To avoid conflict"
+        }
+      ],
+      "correctIndex": 0,
+      "explanation": "God wanted Israel to recognize that victory came from Him, not their own strength."
+    },
+    {
+      "question": "What practical habit helps believers remember God's faithfulness?",
+      "options": [
+        {
+          "option": "Keeping a testimony journal"
+        },
+        {
+          "option": "Ignoring past struggles"
+        },
+        {
+          "option": "Avoiding challenges"
+        },
+        {
+          "option": "Waiting for perfect circumstances"
+        },
+        {
+          "option": "Keeping a testimony journal"
+        },
+        {
+          "option": "Ignoring past struggles"
+        },
+        {
+          "option": "Avoiding challenges"
+        },
+        {
+          "option": "Waiting for perfect circumstances"
+        }
+      ],
+      "correctIndex": 0,
+      "explanation": "Recording God's answers to prayer builds faith for future challenges."
+    },
+    {
+      "question": "What does trusting God mean according to the sermon?",
+      "options": [
+        {
+          "option": "Doing your part while leaving the outcome to God"
+        },
+        {
+          "option": "Doing nothing and waiting"
+        },
+        {
+          "option": "Avoiding difficult decisions"
+        },
+        {
+          "option": "Relying only on your own plans"
+        },
+        {
+          "option": "Doing your part while leaving the outcome to God"
+        },
+        {
+          "option": "Doing nothing and waiting"
+        },
+        {
+          "option": "Avoiding difficult decisions"
+        },
+        {
+          "option": "Relying only on your own plans"
+        }
+      ],
+      "correctIndex": 0,
+      "explanation": "Biblical trust combines faithful action with complete dependence on God."
+    }
+  ],
+  "title": "How to Stop Stressing and Trust God with Your Problems",
+  "description": "Learn how trusting God instead of relying on yourself brings peace, courage, and confidence through every challenge. Discover biblical lessons from Gideon and 2 Chronicles 20:15.",
+  "scripture": "2 Chronicles 20:15",
+  "includeQuiz": true,
+  "category": "Faith & Peace",
+  "keyTakeaways": [
+    {
+      "item": "The battle ultimately belongs to God."
+    },
+    {
+      "item": "Self-reliance creates unnecessary anxiety and pride."
+    },
+    {
+      "item": "God often removes our confidence in human strength so we learn to trust Him."
+    },
+    {
+      "item": "Remembering God's past faithfulness strengthens future faith."
+    },
+    {
+      "item": "Faith means obeying God while leaving the results in His hands."
+    }
+  ]
+}

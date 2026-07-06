@@ -1,14 +1,49 @@
 (function () {
-  var widget = document.querySelector("[data-article-clap]");
-  if (!widget) return;
+  var slugScript = document.getElementById("article-clap-slug");
+  if (!slugScript) return;
 
-  var slug = widget.getAttribute("data-slug");
-  var btn = widget.querySelector("[data-clap-button]");
+  var slug = "";
+  try {
+    slug = JSON.parse(slugScript.textContent || "");
+  } catch (e) {
+    return;
+  }
+  if (!slug) return;
+
+  function getOrCreateActionDock() {
+    var dock = document.getElementById("article-action-dock");
+    if (!dock) {
+      dock = document.createElement("div");
+      dock.id = "article-action-dock";
+      dock.className = "article-action-dock";
+      document.body.appendChild(dock);
+    }
+    return dock;
+  }
+
+  window.ArticleClap = {
+    getActionDock: getOrCreateActionDock,
+  };
+
+  var dock = getOrCreateActionDock();
+  var widget = document.createElement("button");
+  widget.type = "button";
+  widget.className = "article-clap";
+  widget.setAttribute("data-article-clap", "");
+  widget.setAttribute("data-slug", slug);
+  widget.setAttribute("aria-pressed", "false");
+  widget.setAttribute("aria-label", "Appreciate this article");
+  widget.innerHTML =
+    '<span class="article-clap__icon" aria-hidden="true">' +
+    '<canvas class="article-clap__lottie" data-clap-lottie width="128" height="128"></canvas>' +
+    "</span>" +
+    '<span class="article-clap__count" data-clap-count>0</span>';
+
+  dock.appendChild(widget);
+
+  var btn = widget;
   var lottieCanvas = widget.querySelector("[data-clap-lottie]");
-  if (!btn || !slug) return;
-
   var countEl = widget.querySelector("[data-clap-count]");
-  var userEl = widget.querySelector("[data-clap-user]");
   var MAX_USER_CLAPS = 50;
   var storageKey = "rolcc-clap:" + slug;
   var userClaps = parseInt(localStorage.getItem(storageKey) || "0", 10) || 0;
@@ -20,7 +55,7 @@
   var reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var dotLottiePlayer = null;
   var dotLottieReady = null;
-  var LOTTIE_SRC = "/assets/clap.lottie";
+  var LOTTIE_SRC = "/assets/confetti.lottie";
   var holdStarted = false;
   var pointerActive = false;
 
@@ -33,23 +68,13 @@
 
   function updateUI() {
     if (countEl) countEl.textContent = formatCount(totalCount);
-    if (userEl) {
-      if (userClaps > 0) {
-        userEl.hidden = false;
-        userEl.textContent =
-          userClaps === 1 ? "You appreciated this once" : "You appreciated this " + userClaps + " times";
-      } else {
-        userEl.hidden = true;
-        userEl.textContent = "";
-      }
-    }
     widget.classList.toggle("is-active", userClaps > 0);
     btn.disabled = userClaps >= MAX_USER_CLAPS;
     btn.setAttribute("aria-pressed", userClaps > 0 ? "true" : "false");
     if (userClaps >= MAX_USER_CLAPS) {
       btn.setAttribute("aria-label", "Maximum appreciations reached");
     } else {
-      btn.setAttribute("aria-label", "Appreciate this article. Click or press and hold for more.");
+      btn.setAttribute("aria-label", "Appreciate this article. Tap or press and hold for more.");
     }
   }
 

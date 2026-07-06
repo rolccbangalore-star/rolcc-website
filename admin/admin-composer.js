@@ -172,8 +172,10 @@
   }
 
   function closeAllDropdowns() {
-    document.querySelectorAll(".admin-dropdown.is-open").forEach(function (el) {
+    document.querySelectorAll(".admin-dropdown.is-open, .admin-composer-menu.is-open").forEach(function (el) {
       el.classList.remove("is-open");
+      var trigger = el.querySelector(".admin-composer-menu__trigger");
+      if (trigger) trigger.setAttribute("aria-expanded", "false");
     });
   }
 
@@ -924,14 +926,200 @@
   }
 
   var SORT_OPTIONS = [
-    { key: "modified", label: "Updated On" },
-    { key: "title", label: "Title" },
-    { key: "date", label: "Date" },
-    { key: "author", label: "Author" },
+    { key: "modified", label: "Updated On", icon: "clock" },
+    { key: "title", label: "Title", icon: "title" },
+    { key: "date", label: "Date", icon: "calendar" },
+    { key: "author", label: "Author", icon: "user" },
   ];
+
+  var MENU_ICONS = {
+    clock:
+      '<svg class="admin-menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+    title:
+      '<svg class="admin-menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M4 6h16M4 12h10M4 18h6"/></svg>',
+    calendar:
+      '<svg class="admin-menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 11h18"/></svg>',
+    user:
+      '<svg class="admin-menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><circle cx="12" cy="8" r="3"/><path d="M5 20a7 7 0 0 1 14 0"/></svg>',
+    draft:
+      '<svg class="admin-menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>',
+    all:
+      '<svg class="admin-menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>',
+    filter:
+      '<svg class="admin-menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M4 5h16l-6 7v6l-4 2v-8Z"/></svg>',
+    sort:
+      '<svg class="admin-menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="m8 9 4-4 4 4"/><path d="m8 15 4 4 4-4"/></svg>',
+    chevron:
+      '<svg class="admin-menu-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>',
+  };
+
+  function menuIcon(name) {
+    return MENU_ICONS[name] || MENU_ICONS.all;
+  }
 
   function getSortField(root) {
     return root.dataset.adminSortField || "modified";
+  }
+
+  function getFilterKey(root) {
+    return root.dataset.adminFilterKey || "all";
+  }
+
+  function getFilterOptions(collection) {
+    var options = [
+      { key: "all", label: "All articles", icon: "all" },
+      { key: "draft", label: "Draft", icon: "draft" },
+    ];
+    var entries = cardManifest && cardManifest[collection];
+    if (!entries) return options;
+
+    var authors = {};
+    Object.keys(entries).forEach(function (slug) {
+      var author = entries[slug].author || "ROLCC";
+      authors[author] = true;
+    });
+
+    Object.keys(authors)
+      .sort()
+      .forEach(function (name) {
+        options.push({ key: "author:" + name, label: name, icon: "user", group: "author" });
+      });
+
+    return options;
+  }
+
+  function findMenuOption(options, key) {
+    for (var i = 0; i < options.length; i++) {
+      if (options[i].key === key) return options[i];
+    }
+    return null;
+  }
+
+  function matchesFilter(data, filterKey) {
+    if (!filterKey || filterKey === "all") return true;
+    if (filterKey === "draft") return data.publish === false;
+    if (filterKey.indexOf("author:") === 0) {
+      return (data.author || "ROLCC") === filterKey.slice(7);
+    }
+    return true;
+  }
+
+  function createComposerMenu(root, config) {
+    var wrap = document.createElement("div");
+    wrap.className = "admin-composer-menu admin-dropdown " + (config.wrapClass || "");
+
+    var trigger = document.createElement("button");
+    trigger.type = "button";
+    trigger.className = "admin-composer-menu__trigger";
+    trigger.setAttribute("aria-haspopup", "listbox");
+    trigger.setAttribute("aria-expanded", "false");
+
+    var triggerIcon = document.createElement("span");
+    triggerIcon.className = "admin-composer-menu__trigger-icon";
+    triggerIcon.innerHTML = menuIcon(config.triggerIcon);
+
+    var triggerText = document.createElement("span");
+    triggerText.className = "admin-composer-menu__trigger-text";
+
+    if (config.prefixLabel) {
+      var prefix = document.createElement("span");
+      prefix.className = "admin-composer-menu__prefix";
+      prefix.textContent = config.prefixLabel;
+      triggerText.appendChild(prefix);
+    }
+
+    var valueEl = document.createElement("span");
+    valueEl.className = "admin-composer-menu__value";
+    triggerText.appendChild(valueEl);
+
+    var chevron = document.createElement("span");
+    chevron.className = "admin-composer-menu__chevron";
+    chevron.innerHTML = MENU_ICONS.chevron;
+
+    trigger.appendChild(triggerIcon);
+    trigger.appendChild(triggerText);
+    trigger.appendChild(chevron);
+
+    var menu = document.createElement("div");
+    menu.className = "admin-composer-menu__menu";
+    menu.setAttribute("role", "listbox");
+
+    wrap.appendChild(trigger);
+    wrap.appendChild(menu);
+
+    function updateTrigger() {
+      var options = config.getOptions();
+      var current = config.getValue(root);
+      var match = findMenuOption(options, current);
+      valueEl.textContent = match ? match.label : config.fallbackLabel || "";
+    }
+
+    function renderOptions() {
+      menu.textContent = "";
+      var options = config.getOptions();
+      var current = config.getValue(root);
+      var lastGroup = "";
+
+      options.forEach(function (opt) {
+        if (opt.group && opt.group !== lastGroup) {
+          var heading = document.createElement("p");
+          heading.className = "admin-composer-menu__heading";
+          heading.textContent = opt.group === "author" ? "Author" : opt.group;
+          menu.appendChild(heading);
+          lastGroup = opt.group;
+        }
+
+        var btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "admin-composer-menu__option";
+        btn.setAttribute("role", "option");
+        btn.dataset.value = opt.key;
+        if (opt.key === current) {
+          btn.classList.add("admin-composer-menu__option--active");
+          btn.setAttribute("aria-selected", "true");
+        }
+        btn.innerHTML =
+          '<span class="admin-composer-menu__option-icon">' +
+          menuIcon(opt.icon) +
+          '</span><span class="admin-composer-menu__option-label">' +
+          escapeHtml(opt.label) +
+          "</span>";
+
+        btn.addEventListener("click", function (event) {
+          event.stopPropagation();
+          config.setValue(root, opt.key);
+          updateTrigger();
+          wrap.classList.remove("is-open");
+          trigger.setAttribute("aria-expanded", "false");
+          config.onChange();
+        });
+        menu.appendChild(btn);
+      });
+    }
+
+    trigger.addEventListener("click", function (event) {
+      event.stopPropagation();
+      var open = wrap.classList.contains("is-open");
+      closeAllDropdowns();
+      if (!open) {
+        renderOptions();
+        updateTrigger();
+        wrap.classList.add("is-open");
+        trigger.setAttribute("aria-expanded", "true");
+      }
+    });
+
+    menu.addEventListener("click", function (event) {
+      event.stopPropagation();
+    });
+
+    wrap.renderMenu = function () {
+      renderOptions();
+      updateTrigger();
+    };
+
+    updateTrigger();
+    return wrap;
   }
 
   function sortManifestSlugs(entries, slugs, sortField) {
@@ -988,60 +1176,12 @@
   function ensureComposerToolbar(topBlock, root) {
     if (!topBlock) return null;
 
+    var collection = getActiveCollection();
     var toolbar = topBlock.querySelector(".admin-composer-toolbar");
+
     if (!toolbar) {
       toolbar = document.createElement("div");
       toolbar.className = "admin-collection-toolbar admin-composer-toolbar";
-
-      var sortWrap = document.createElement("div");
-      sortWrap.className = "admin-sort-wrap admin-sort-wrap--composer";
-
-      var sortLabel = document.createElement("span");
-      sortLabel.className = "admin-sort-label";
-      sortLabel.textContent = "Sort by";
-      sortWrap.appendChild(sortLabel);
-
-      var valueEl = document.createElement("span");
-      valueEl.className = "admin-sort-value";
-      sortWrap.appendChild(valueEl);
-
-      var select = document.createElement("select");
-      select.className = "admin-sort-select admin-sort-select--composer";
-      select.setAttribute("aria-label", "Sort articles");
-      SORT_OPTIONS.forEach(function (opt) {
-        var option = document.createElement("option");
-        option.value = opt.key;
-        option.textContent = opt.label;
-        select.appendChild(option);
-      });
-      select.value = getSortField(root);
-
-      function updateSortValue() {
-        var current = SORT_OPTIONS.find(function (opt) {
-          return opt.key === select.value;
-        });
-        valueEl.textContent = current ? current.label : "";
-      }
-
-      select.addEventListener("change", function () {
-        root.dataset.adminSortField = select.value;
-        updateSortValue();
-        refreshCollectionCards(root);
-      });
-      updateSortValue();
-      sortWrap.appendChild(select);
-
-      var chevron = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-      chevron.setAttribute("class", "admin-sort-chevron");
-      chevron.setAttribute("viewBox", "0 0 24 24");
-      chevron.setAttribute("fill", "none");
-      chevron.setAttribute("stroke", "currentColor");
-      chevron.setAttribute("stroke-width", "1.75");
-      chevron.setAttribute("aria-hidden", "true");
-      var path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-      path.setAttribute("d", "m6 9 6 6 6-6");
-      chevron.appendChild(path);
-      sortWrap.appendChild(chevron);
 
       var viewToggle = document.createElement("div");
       viewToggle.className = "admin-view-toggle";
@@ -1061,22 +1201,51 @@
       viewToggle.appendChild(listBtn);
       viewToggle.appendChild(gridBtn);
 
-      toolbar.appendChild(sortWrap);
+      var sortMenu = createComposerMenu(root, {
+        wrapClass: "admin-composer-menu--sort",
+        triggerIcon: "sort",
+        prefixLabel: "Sort by",
+        fallbackLabel: "Updated On",
+        getOptions: function () {
+          return SORT_OPTIONS;
+        },
+        getValue: getSortField,
+        setValue: function (r, key) {
+          r.dataset.adminSortField = key;
+        },
+        onChange: function () {
+          refreshCollectionCards(root);
+        },
+      });
+
+      var filterMenu = createComposerMenu(root, {
+        wrapClass: "admin-composer-menu--filter",
+        triggerIcon: "filter",
+        prefixLabel: "Filter",
+        fallbackLabel: "All articles",
+        getOptions: function () {
+          return getFilterOptions(collection);
+        },
+        getValue: getFilterKey,
+        setValue: function (r, key) {
+          r.dataset.adminFilterKey = key;
+        },
+        onChange: function () {
+          refreshCollectionCards(root);
+        },
+      });
+
+      toolbar.appendChild(filterMenu);
+      toolbar.appendChild(sortMenu);
       toolbar.appendChild(viewToggle);
       topBlock.appendChild(toolbar);
     }
 
-    var sortSelect = toolbar.querySelector(".admin-sort-select--composer");
-    if (sortSelect) {
-      sortSelect.value = getSortField(root);
-      var valueEl = toolbar.querySelector(".admin-sort-value");
-      if (valueEl) {
-        var current = SORT_OPTIONS.find(function (opt) {
-          return opt.key === sortSelect.value;
-        });
-        valueEl.textContent = current ? current.label : "";
-      }
-    }
+    var sortMenuEl = toolbar.querySelector(".admin-composer-menu--sort");
+    if (sortMenuEl && sortMenuEl.renderMenu) sortMenuEl.renderMenu();
+
+    var filterMenuEl = toolbar.querySelector(".admin-composer-menu--filter");
+    if (filterMenuEl && filterMenuEl.renderMenu) filterMenuEl.renderMenu();
 
     var listMode = isListView(root);
     toolbar.querySelector(".admin-view-btn--list").classList.toggle("admin-view-btn--active", listMode);
@@ -1191,7 +1360,9 @@
       var query = getSearchQuery();
       var sortField = getSortField(root);
       var slugs = sortManifestSlugs(entries, Object.keys(entries), sortField);
-      var signature = collection + "|" + (listView ? "list" : "grid") + "|" + sortField + "|" + query + "|" + slugs.join(",");
+      var filterKey = getFilterKey(root);
+      var signature =
+        collection + "|" + (listView ? "list" : "grid") + "|" + sortField + "|" + filterKey + "|" + query + "|" + slugs.join(",");
 
       var container = main.querySelector(".admin-custom-entries");
       if (!container) {
@@ -1217,9 +1388,10 @@
 
           var list = document.createElement("ul");
           list.className = "admin-custom-list";
-          slugs.forEach(function (slug) {
-            var data = entries[slug];
-            if (!matchesSearch(data, collection, query)) return;
+        slugs.forEach(function (slug) {
+          var data = entries[slug];
+          if (!matchesSearch(data, collection, query)) return;
+          if (!matchesFilter(data, getFilterKey(root))) return;
             var li = document.createElement("li");
             li.className = "admin-list-item admin-grid-card";
             var link = document.createElement("a");
@@ -1232,9 +1404,10 @@
         } else {
           var grid = document.createElement("ul");
           grid.className = "admin-custom-grid";
-          slugs.forEach(function (slug) {
-            var data = entries[slug];
-            if (!matchesSearch(data, collection, query)) return;
+        slugs.forEach(function (slug) {
+          var data = entries[slug];
+          if (!matchesSearch(data, collection, query)) return;
+          if (!matchesFilter(data, getFilterKey(root))) return;
             var li = document.createElement("li");
             li.className = "admin-grid-card";
             var link = document.createElement("a");
@@ -1303,6 +1476,7 @@
 
   function resetCollectionLayout(root) {
     delete root.dataset.adminViewMode;
+    delete root.dataset.adminFilterKey;
     var container = root.querySelector(".admin-custom-entries");
     if (container) delete container.dataset.adminSignature;
     entryCache = Object.create(null);

@@ -529,7 +529,9 @@ function buildHubPage(articles, faqs) {
     .map((article) => renderArticleCard(article, hubCardOptions(article, featuredSlug, latestSlug)));
 
   const bodyMain = `
-      <section class="articles-hero relative overflow-hidden">
+      <div class="articles-hub-page">
+      <section class="articles-hero contact-hero contact-hero--bg-image relative overflow-hidden">
+        <div class="contact-hero__curve" aria-hidden="true"></div>
         <div class="relative z-10 mx-auto max-w-6xl px-4 pt-6 pb-8 sm:px-6 sm:pt-24 sm:pb-10 md:pt-28 md:pb-12 lg:px-8 lg:pt-32 lg:pb-14">
           <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-accent">Articles &amp; Studies</p>
           <h1 class="mt-3 text-balance text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl md:text-4xl">Faith for everyday life and deeper Bible study</h1>
@@ -563,6 +565,7 @@ function buildHubPage(articles, faqs) {
 
       ${renderHubCtaBanner()}
       ${renderHubFaqSection(faqs)}
+      </div>
       <div class="serve-unveil-spacer min-h-screen" aria-hidden="true"></div>`;
 
   const listPayload = articles.map((a) => ({

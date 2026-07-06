@@ -946,6 +946,11 @@ body {
   font-size: 0.875rem;
 }
 
+#nc-root .admin-media-empty--loading {
+  border-style: solid;
+  background: var(--rolcc-primary);
+}
+
 #nc-root .admin-media-upload-panel {
   margin-bottom: 1.25rem;
   padding: 1rem;
@@ -2351,7 +2356,7 @@ body.admin-page--editor-split #nc-root [class*="ControlPane"],
 body.admin-page--editor-split #nc-root [class*="EditorControl"],
 body.admin-page--editor-split #nc-root [class*="WidgetObject"],
 body.admin-page--editor-split #nc-root .admin-editor-decap-hidden,
-body.admin-page--editor-split #nc-root main > :not(.admin-editor-subheader) {
+body.admin-page--editor-split #nc-root main > :not(.admin-editor-subheader):not(.admin-media-workspace) {
   display: none !important;
   visibility: hidden !important;
   pointer-events: none !important;

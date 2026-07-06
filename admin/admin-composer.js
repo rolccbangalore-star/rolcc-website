@@ -667,9 +667,9 @@
     switcher.querySelector('[data-view="media"]').onclick = function () {
       closeAllDropdowns();
       if (label) label.textContent = "Media";
+      if (location.hash !== "#/media") location.hash = "#/media";
       tabs = getHeaderTabs(root);
       if (tabs.media) tabs.media.click();
-      else location.hash = "#/media";
       scheduleEnhance(root, enhance);
     };
   }
@@ -1164,6 +1164,7 @@
     if (isMediaRoute()) {
       root.classList.add("admin-view--media");
       body.classList.add("admin-page--media");
+      resetEditorSplitShell(root);
     }
     if (isCollectionRoute()) root.classList.add("admin-view--collection");
   }
@@ -2712,11 +2713,10 @@
     if (!root) return;
     closeMediaUploadPanel(root);
     delete root.dataset.adminMediaUploadOpen;
-    var main = root.querySelector("main");
-    if (!main) return;
-    var workspace = main.querySelector(".admin-media-workspace");
+    var workspace = root.querySelector(".admin-media-workspace");
     if (workspace) workspace.remove();
-    showDecapEntryLists(main);
+    var main = root.querySelector("main");
+    if (main) showDecapEntryLists(main);
   }
 
   function renderMediaWorkspace(root) {
@@ -2725,10 +2725,10 @@
       return;
     }
 
-    var main = ensureMainWorkspace(root);
-    if (!main) return;
-
     function run() {
+      var main = ensureMainWorkspace(root);
+      if (!main) return;
+
       preserveDecapMediaTab(root);
       hideDecapMediaNotFound(root);
 
@@ -2738,11 +2738,24 @@
 
       var filter = getMediaFilter(root);
       var listView = isMediaListView(root);
-      var items = mediaManifest || [];
+      var manifestReady = Array.isArray(mediaManifest);
+      var items = manifestReady ? mediaManifest : [];
       var filtered = filterMediaItems(items, filter);
-      var signature = filter + "|" + (listView ? "list" : "grid") + "|" + filtered.length + "|" + items.length;
+      var signature =
+        filter +
+        "|" +
+        (listView ? "list" : "grid") +
+        "|" +
+        (manifestReady ? filtered.length + "|" + items.length : "loading");
 
-      var workspace = main.querySelector(".admin-media-workspace");
+      var workspace = root.querySelector(".admin-media-workspace");
+      if (workspace && (!workspace.parentElement || !main.contains(workspace))) {
+        workspace.remove();
+        workspace = null;
+      }
+      if (!workspace) {
+        workspace = main.querySelector(".admin-media-workspace");
+      }
       if (!workspace) {
         workspace = document.createElement("div");
         workspace.className = "admin-media-workspace";
@@ -2846,7 +2859,14 @@
 
         mountMediaUploadPanel(root, workspace);
 
-        if (!filtered.length) {
+        if (!manifestReady) {
+          var loading = document.createElement("div");
+          loading.className = "admin-media-empty admin-media-empty--loading";
+          loading.innerHTML =
+            "<p><strong>Loading image library…</strong></p>" +
+            '<p class="admin-media-empty__hint">Fetching images from the site manifest.</p>';
+          workspace.appendChild(loading);
+        } else if (!filtered.length) {
           var empty = document.createElement("div");
           empty.className = "admin-media-empty";
           empty.innerHTML =
@@ -2889,8 +2909,8 @@
       hideDecapMediaNotFound(root);
     }
 
+    run();
     loadMediaManifest().then(run);
-    if (mediaManifest) run();
   }
 
   function enhanceMediaView(root) {

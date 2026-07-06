@@ -1,0 +1,251 @@
+{
+  "sermonSeries": "Everyday Faith",
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "We all have moments where we step into a new season with massive, fancy expectations. When you graduate college, you might think there are hundreds of companies waiting to fight over your services. When you start a new business, you might immediately calculate a first-year turnover of one crore. When you get engaged, you dream up a picture-perfect, fairy-tale marriage where you live like royalty. But then, ground reality hits."
+    },
+    {
+      "type": "heading",
+      "level": "2",
+      "text": "The Shock of Ground Reality"
+    },
+    {
+      "type": "paragraph",
+      "text": "Suddenly, you struggle to pass basic interview rounds, your business can barely cover its own rent, and the daily, messy work of sharing a life begins. When reality fails to match our fantasy, we get deeply frustrated or want to quit. This initial season of trouble isn't a sign of failure; it is a necessary training process that forces us out of our wrong assumptions and provides real wisdom, skills, and experience."
+    },
+    {
+      "type": "heading",
+      "level": "2",
+      "text": "Shifting From Religious Performance to True Light"
+    },
+    {
+      "type": "paragraph",
+      "text": "In the first century, when Jesus entered the world, everything was in a dark state. The governance was corrupt, society was highly discriminatory, and the religious leaders (the Pharisees) were completely misinterpreting the scriptures to protect their own wealth and power. Education and basic respect were privileges reserved only for the elite, while the religious system taught common people that God was a personal asset of the rich."
+    },
+    {
+      "type": "paragraph",
+      "text": "Then Jesus entered the scene and flipped the script. He went up on a mountain and preached a message rooted in the true heart of God. Jesus didn't just lecture; He practically demonstrated what light looked like by sitting down to eat with social outcasts and sinners. Through His actions, Jesus proved a powerful truth: Light is love, not hatred. Light is inclusion, not discrimination."
+    },
+    {
+      "type": "quote",
+      "text": "Then Jesus spoke to them again saying, 'I am the light of the world. He who follows me shall not walk in darkness but have the light of life.'",
+      "attribution": "John 8:12"
+    },
+    {
+      "type": "scriptureCallout",
+      "reference": "John 8:12",
+      "text": "Then spake Jesus again unto them, saying, I am the light of the world: he that followeth me shall not walk in darkness, but shall have the light of life."
+    },
+    {
+      "type": "heading",
+      "level": "2",
+      "text": "Overcoming Modern Self-Centeredness"
+    },
+    {
+      "type": "paragraph",
+      "text": "Stepping into God's light means allowing Him to correct your angles, shift your perspective, and expose the areas where you are being foolish or self-centered. In modern culture, we love to use trendy terms to excuse our bad habits. We often claim, 'I'm just a deep introvert,' to justify why we don't smile at the person next to us, refuse to say hello, or ignore the needs of our community."
+    },
+    {
+      "type": "paragraph",
+      "text": "While personality types are real, the Bible warns that being entirely self-centered and closed off from caring for others is a sin, not a trait to be proud of. God has not created you as an isolated creature; you are designed to be social and to love your neighbor. We must stop normalizing self-absorption as an identity and allow Christ's love to reshape how we engage with the people around us."
+    },
+    {
+      "type": "heading",
+      "level": "3",
+      "text": "Action Steps for Your Week"
+    },
+    {
+      "type": "bulletList",
+      "items": [
+        {
+          "item": "Face the Ground Reality: If your business, career, or relationship is messy right now, do not quit; stay there and let God build your wisdom through the struggle."
+        },
+        {
+          "item": "Smile at Your Neighbor: Break the habit of self-centered isolation and actively acknowledge the people sitting right next to you."
+        },
+        {
+          "item": "Read the Word to Check the World: Use God’s Word as your ultimate parameter and scale to judge if the information you consume daily is right or wrong."
+        },
+        {
+          "item": "Intercede for Your Nation: Don't panic about future economic or social shifts; anchor your happiness in God and lift your community up in prayer."
+        }
+      ]
+    },
+    {
+      "type": "faq",
+      "items": [
+        {
+          "question": "Why does the beginning of a new venture (like a business or marriage) always feel so frustrating?",
+          "answer": "Because we usually enter them with unrealistic, fancy expectations. The initial season of trouble isn't a sign of failure; it's a necessary training process that strips away your wrong assumptions and gives you real wisdom, skills, and experience."
+        },
+        {
+          "question": "What is the true definition of 'Light' in a Christian context?",
+          "answer": "True light is the unconditional love and wisdom of Jesus. It is an active posture of caring for others, tearing down social barriers, and aligning your daily choices with the heart of God rather than human traditions."
+        },
+        {
+          "question": "Is it really a sin to be anti-social or self-absorbed?",
+          "answer": "The Bible explicitly calls us to love our neighbors as ourselves. When we become entirely self-centered—refusing to look at, speak to, or care for those around us—we are actively walking in darkness and operating against how God designed human beings to function."
+        }
+      ]
+    },
+    {
+      "type": "cta",
+      "label": "Find a Fellowship Meeting",
+      "url": "/contact",
+      "text": "Ready to step out of isolation and experience authentic Christian community? Connect with a local group near you today.",
+      "style": "primary"
+    }
+  ],
+  "summary": "Stepping into a new career, marriage, or venture with massive, fancy expectations often leaves us facing a frustrating ground reality. Discover how letting Jesus' true light cut through our wrong assumptions brings real wisdom, shifting us from self-centered isolation to authentic perspective.",
+  "author": "Rev. Benson K Sunny",
+  "thumbnail": "https://live.staticflickr.com/4042/4305366199_24617050de_b.jpg",
+  "featured": true,
+  "date": "2026-07-06",
+  "publish": false,
+  "quiz": [
+    {
+      "question": "What does Jesus state will happen to those who actively follow Him according to John 8:12?",
+      "options": [
+        {
+          "option": "They will automatically become superior to their neighbors."
+        },
+        {
+          "option": "They will never face any worldly trials or hard realities."
+        },
+        {
+          "option": "They shall not walk in darkness but have the light of life."
+        },
+        {
+          "option": "They will immediately receive massive material wealth."
+        },
+        {
+          "option": "They will automatically become superior to their neighbors."
+        },
+        {
+          "option": "They will never face any worldly trials or hard realities."
+        },
+        {
+          "option": "They shall not walk in darkness but have the light of life."
+        },
+        {
+          "option": "They will immediately receive massive material wealth."
+        }
+      ],
+      "correctIndex": 2,
+      "explanation": "John 8:12 explicitly reads: 'He who follows me shall not walk in darkness but have the light of life.'"
+    },
+    {
+      "question": "What dark social condition was prevalent during Jesus' first-century ministry?",
+      "options": [
+        {
+          "option": "Severe discrimination where scripture was twisted to favor the rich and privileged."
+        },
+        {
+          "option": "A global economic collapse that stopped all local business trades."
+        },
+        {
+          "option": "A complete lack of basic literacy across the entire continent."
+        },
+        {
+          "option": "The complete absence of philosophical schools and systemic learning."
+        },
+        {
+          "option": "Severe discrimination where scripture was twisted to favor the rich and privileged."
+        },
+        {
+          "option": "A global economic collapse that stopped all local business trades."
+        },
+        {
+          "option": "A complete lack of basic literacy across the entire continent."
+        },
+        {
+          "option": "The complete absence of philosophical schools and systemic learning."
+        }
+      ],
+      "correctIndex": 0,
+      "explanation": "The text points out that the Pharisees and scribes misinterpreted the Word of God to secure prestige, while creating massive discrimination against common people and women."
+    },
+    {
+      "question": "How does the sermon define the true meaning of spiritual 'Light'?",
+      "options": [
+        {
+          "option": "Achieving academic awards and outperforming your peers."
+        },
+        {
+          "option": "Love, inclusion, and active care for others according to God's heart."
+        },
+        {
+          "option": "A motivational speech designed to make you laugh and smile."
+        },
+        {
+          "option": "A mystical gimmick experienced only when you close your eyes."
+        },
+        {
+          "option": "Achieving academic awards and outperforming your peers."
+        },
+        {
+          "option": "Love, inclusion, and active care for others according to God's heart."
+        },
+        {
+          "option": "A motivational speech designed to make you laugh and smile."
+        },
+        {
+          "option": "A mystical gimmick experienced only when you close your eyes."
+        }
+      ],
+      "correctIndex": 1,
+      "explanation": "The sermon emphasizes that true light is love and care, explicitly demonstrated when Jesus sat with sinners and outcasts to show them God's heart."
+    },
+    {
+      "question": "What warning does the speaker give regarding using the label 'introvert' to excuse self-absorption?",
+      "options": [
+        {
+          "option": "It is a highly respected spiritual gift in the New Testament."
+        },
+        {
+          "option": "It automatically exempts an individual from attending cell group meetings."
+        },
+        {
+          "option": "It is a fully medical condition that cannot be changed by faith."
+        },
+        {
+          "option": "It is a modern excuse that can normalize a sinful, self-centered lifestyle."
+        },
+        {
+          "option": "It is a highly respected spiritual gift in the New Testament."
+        },
+        {
+          "option": "It automatically exempts an individual from attending cell group meetings."
+        },
+        {
+          "option": "It is a fully medical condition that cannot be changed by faith."
+        },
+        {
+          "option": "It is a modern excuse that can normalize a sinful, self-centered lifestyle."
+        }
+      ],
+      "correctIndex": 3,
+      "explanation": "The speaker directly challenges the audience, stating that using modern buzzwords to normalize ignoring or refusing to smile at others is a sin of self-centeredness."
+    }
+  ],
+  "title": "Why Real Life Doesn't Match Our Expectations: Finding Direction in the Ground Reality",
+  "tags": [],
+  "description": "Tired of the frustration that comes from unrealistic life expectations? Discover how letting Jesus' true light expose your blind spots can bring genuine perspective and peace.",
+  "scripture": "John 8:12",
+  "includeQuiz": true,
+  "keyTakeaways": [
+    {
+      "item": "Unrealistic fantasies about career, marriage, and business will always cause frustration until we allow ground reality to teach us true wisdom."
+    },
+    {
+      "item": "True spiritual light is defined by active love, humility, and tearing down social barriers, completely contradicting religious pride and discrimination."
+    },
+    {
+      "item": "Embracing the identity of an isolated, self-centered individual is a spiritual trap that directly opposes God's command to love and care for others."
+    },
+    {
+      "item": "Relying on God's Word as our ultimate standard allows us to correctly evaluate the information and cultural trends we consume daily."
+    }
+  ]
+}

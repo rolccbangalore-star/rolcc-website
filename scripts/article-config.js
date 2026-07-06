@@ -414,21 +414,27 @@ function renderArticleEyebrow(article) {
   return `<p class="article-eyebrow">${label}${series}</p>`;
 }
 
+function renderArticleByline(article) {
+  const parts = [];
+  if (article.author) {
+    parts.push(`<span class="article-meta__author">${escapeHtml(article.author)}</span>`);
+  }
+  if (article.scripture) {
+    parts.push(`<span class="article-meta__scripture">${escapeHtml(article.scripture)}</span>`);
+  }
+  if (!parts.length) return "";
+  return `<p class="article-meta__byline">${parts.join('<span class="article-meta__byline-sep" aria-hidden="true">·</span>')}</p>`;
+}
+
 function renderArticleMetaBar(article) {
   const tags = articleHeroTags(article);
   const tagHtml = tags.length
     ? tags.map((tag) => `<span class="article-tag">${escapeHtml(tag)}</span>`).join("")
     : `<span class="article-tag">${escapeHtml(article.category || "General")}</span>`;
-  const author = article.author
-    ? `<p class="article-meta__author">${escapeHtml(article.author)}</p>`
-    : "";
-  const scripture = article.scripture
-    ? `<p class="article-meta__scripture">${escapeHtml(article.scripture)}</p>`
-    : "";
+  const byline = renderArticleByline(article);
   return `<div class="article-meta">
     <div class="article-meta__tags">${tagHtml}</div>
-    ${author}
-    ${scripture}
+    ${byline}
   </div>`;
 }
 
@@ -437,22 +443,14 @@ function renderArticleHeroHeader(article) {
   const tagHtml = tags.length
     ? tags.map((tag) => `<span class="article-tag">${escapeHtml(tag)}</span>`).join("")
     : `<span class="article-tag">${escapeHtml(article.category || "General")}</span>`;
-  const author = article.author
-    ? `<p class="article-meta__author">${escapeHtml(article.author)}</p>`
-    : "";
-  const scripture = article.scripture
-    ? `<p class="article-meta__scripture">${escapeHtml(article.scripture)}</p>`
-    : "";
-  const tagsBlock = tagHtml
-    ? `<div class="article-meta article-meta--tags"><div class="article-meta__tags">${tagHtml}</div></div>`
-    : "";
+  const byline = renderArticleByline(article);
+  const metaBlock = `<div class="article-hero__meta">
+    <div class="article-meta__tags">${tagHtml}</div>
+    ${byline}
+  </div>`;
   return `<div class="article-hero">
-    ${tagsBlock}
+    ${metaBlock}
     <img class="article-hero__image w-full rounded-2xl border border-slate-200" src="${escapeHtml(article.thumbnail)}" alt="" width="960" height="540" loading="lazy" />
-    <div class="article-meta article-meta--byline">
-      ${author}
-      ${scripture}
-    </div>
   </div>`;
 }
 

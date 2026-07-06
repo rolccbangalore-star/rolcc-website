@@ -137,6 +137,10 @@
   display: none;
 }
 
+.articles-chips--toolbar {
+  margin-top: 0;
+}
+
 .articles-card {
   display: flex;
   flex-direction: column;
@@ -187,6 +191,7 @@
   box-shadow: 0 2px 8px rgba(15, 23, 42, 0.12);
 }
 
+.articles-card__badge--featured,
 .articles-card__badge--latest {
   background: #fff;
   color: #1d4ed8;

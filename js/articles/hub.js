@@ -68,9 +68,11 @@
   function cardHtml(article, options) {
     const href = `/articles/${article.type}/${article.slug}`;
     const thumb = article.thumbnail || "/images/og-image.jpg";
-    const badgeHtml = options.latest
-      ? '<span class="articles-card__badge articles-card__badge--latest">Latest</span>'
-      : "";
+    const badgeHtml = options.featured
+      ? '<span class="articles-card__badge articles-card__badge--featured">Featured</span>'
+      : options.latest
+        ? '<span class="articles-card__badge articles-card__badge--latest">Latest</span>'
+        : "";
 
     return `<a href="${href}" class="articles-card articles-card--tall" data-article-type="${escapeHtml(article.type)}" data-article-category="${escapeHtml(article.category || "")}">
       <div class="articles-card__media-wrap">
@@ -91,10 +93,7 @@
   }
 
   function getPool() {
-    return payload.articles.filter(function (article) {
-      if (featuredSlug && articleKey(article) === featuredSlug) return false;
-      return matchesFilter(article);
-    });
+    return payload.articles.filter(matchesFilter);
   }
 
   function sortArticles(list) {
@@ -111,6 +110,14 @@
       sorted.sort(function (a, b) {
         return String(b.date || "").localeCompare(String(a.date || ""));
       });
+    }
+    if (!featuredSlug) return sorted;
+    const featuredIndex = sorted.findIndex(function (article) {
+      return articleKey(article) === featuredSlug;
+    });
+    if (featuredIndex > 0) {
+      const featured = sorted.splice(featuredIndex, 1)[0];
+      sorted.unshift(featured);
     }
     return sorted;
   }
@@ -149,14 +156,25 @@
     if (page > totalPages) page = totalPages;
     const start = (page - 1) * perPage;
     const pageItems = pool.slice(start, start + perPage);
-    const newestInPool = pool[0] ? articleKey(pool[0]) : "";
+    let latestInPool = "";
+    if (sort === "newest") {
+      let newest = null;
+      pool.forEach(function (article) {
+        if (featuredSlug && articleKey(article) === featuredSlug) return;
+        if (!newest || String(article.date || "") > String(newest.date || "")) {
+          newest = article;
+        }
+      });
+      latestInPool = newest ? articleKey(newest) : "";
+    }
 
     grid.innerHTML = pageItems.length
       ? `<div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">${pageItems
           .map(function (article) {
             const key = articleKey(article);
             return cardHtml(article, {
-              latest: sort === "newest" && key === newestInPool && key !== featuredSlug,
+              featured: key === featuredSlug,
+              latest: sort === "newest" && key === latestInPool,
             });
           })
           .join("")}</div>`
@@ -202,7 +220,7 @@
       if (!nextPage || nextPage < 1) return;
       page = nextPage;
       render();
-      const section = document.querySelector('[aria-label="All articles"]');
+      const section = document.querySelector('[aria-label="Articles"]');
       if (section) section.scrollIntoView({ behavior: "smooth", block: "start" });
     });
   }

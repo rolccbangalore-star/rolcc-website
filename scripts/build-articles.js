@@ -413,9 +413,11 @@ function renderArticleCardMeta(article) {
 
 function renderArticleCard(article, options = {}) {
   const href = articleUrl(article);
-  const badgeHtml = options.latest
-    ? '<span class="articles-card__badge articles-card__badge--latest">Latest</span>'
-    : "";
+  const badgeHtml = options.featured
+    ? '<span class="articles-card__badge articles-card__badge--featured">Featured</span>'
+    : options.latest
+      ? '<span class="articles-card__badge articles-card__badge--latest">Latest</span>'
+      : "";
 
   return `<a href="${href}" class="articles-card articles-card--tall" data-article-type="${escapeHtml(article.type)}" data-article-category="${escapeHtml(article.category || "")}">
     <div class="articles-card__media-wrap">
@@ -452,12 +454,44 @@ function renderPagination(pageNum, totalPages) {
   return `<nav class="articles-pagination" aria-label="Articles pages">${prev}<div class="flex flex-wrap gap-1">${pages}</div>${next}</nav>`;
 }
 
-function renderFilterChips() {
-  return `<div class="articles-chips mt-6" role="toolbar" aria-label="Filter articles" data-articles-chips>
+function renderFilterChips(options = {}) {
+  const chipsClass = options.toolbar ? "articles-chips articles-chips--toolbar" : "articles-chips mt-6";
+  return `<div class="${chipsClass}" role="toolbar" aria-label="Filter articles" data-articles-chips>
     <button type="button" class="articles-chip is-active" data-articles-filter="all">All</button>
     <button type="button" class="articles-chip" data-articles-filter="everyday-faith">Sermon</button>
     <button type="button" class="articles-chip" data-articles-filter="back-to-bible">Bible Study</button>
   </div>`;
+}
+
+function hubLatestSlug(articles, featuredSlug) {
+  const candidate = articles.find((a) => `${a.type}/${a.slug}` !== featuredSlug);
+  return candidate ? `${candidate.type}/${candidate.slug}` : "";
+}
+
+function hubCardOptions(article, featuredSlug, latestSlug) {
+  const key = `${article.type}/${article.slug}`;
+  return {
+    featured: Boolean(featuredSlug && key === featuredSlug),
+    latest: Boolean(latestSlug && key === latestSlug && key !== featuredSlug),
+  };
+}
+
+function sortHubArticles(articles, sort, featuredSlug) {
+  const sorted = articles.slice();
+  if (sort === "oldest") {
+    sorted.sort((a, b) => String(a.date || "").localeCompare(String(b.date || "")));
+  } else if (sort === "title") {
+    sorted.sort((a, b) => String(a.title || "").localeCompare(String(b.title || "")));
+  } else {
+    sorted.sort((a, b) => String(b.date || "").localeCompare(String(a.date || "")));
+  }
+  if (!featuredSlug) return sorted;
+  const featuredIndex = sorted.findIndex((a) => `${a.type}/${a.slug}` === featuredSlug);
+  if (featuredIndex > 0) {
+    const [featured] = sorted.splice(featuredIndex, 1);
+    sorted.unshift(featured);
+  }
+  return sorted;
 }
 
 function buildPageShell({ title, description, canonical, ogType, ogImage, headExtra, bodyMain, assetRoot, scripts, hubPage, siteFooter }) {
@@ -480,10 +514,7 @@ ${footer}
 function buildHubPage(articles, faqs) {
   const featuredArticle = pickFeaturedArticle(articles);
   const featuredSlug = featuredArticle ? `${featuredArticle.type}/${featuredArticle.slug}` : "";
-  const listArticles = featuredArticle
-    ? articles.filter((a) => `${a.type}/${a.slug}` !== featuredSlug)
-    : articles;
-  const latestSlug = articles[0] ? `${articles[0].type}/${articles[0].slug}` : "";
+  const latestSlug = hubLatestSlug(articles, featuredSlug);
   const canonical = `${SITE_ORIGIN}/articles`;
   const title = "Articles & Bible Studies | River of Life Christian Church, Bangalore";
   const description =
@@ -493,38 +524,23 @@ function buildHubPage(articles, faqs) {
     <link rel="stylesheet" href="/css/faq.css" />
     <link rel="canonical" href="${canonical}" />`;
 
-  const initialCards = listArticles.slice(0, ARTICLES_PER_PAGE).map((article, index) => {
-    const isLatest = `${article.type}/${article.slug}` === latestSlug && latestSlug !== featuredSlug;
-    return renderArticleCard(article, { latest: isLatest });
-  });
+  const initialCards = sortHubArticles(articles, "newest", featuredSlug)
+    .slice(0, ARTICLES_PER_PAGE)
+    .map((article) => renderArticleCard(article, hubCardOptions(article, featuredSlug, latestSlug)));
 
   const bodyMain = `
-      <div class="articles-hub-top">
       <section class="articles-hero relative overflow-hidden">
         <div class="relative z-10 mx-auto max-w-6xl px-4 pt-6 pb-8 sm:px-6 sm:pt-24 sm:pb-10 md:pt-28 md:pb-12 lg:px-8 lg:pt-32 lg:pb-14">
           <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-accent">Articles &amp; Studies</p>
           <h1 class="mt-3 text-balance text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl md:text-4xl">Faith for everyday life and deeper Bible study</h1>
           <p class="mt-5 max-w-2xl text-sm text-slate-600 sm:text-base leading-relaxed">Read sermon reflections and Bible study guides written for everyday life and cell fellowship.</p>
-          ${renderFilterChips()}
         </div>
       </section>
 
-      ${
-        featuredArticle
-          ? `<section class="articles-featured-wrap" aria-label="Featured article">
-        <div class="relative z-10 mx-auto max-w-6xl px-4 pb-10 sm:px-6 sm:pb-12 lg:px-8">
-          <h2 class="text-lg font-semibold text-slate-900">Featured</h2>
-          <div class="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">${renderArticleCard(featuredArticle)}</div>
-        </div>
-      </section>`
-          : ""
-      }
-      </div>
-
-      <section class="articles-list-section border-b border-slate-200 bg-slate-50" aria-label="All articles">
+      <section class="articles-list-section border-b border-slate-200 bg-slate-50" aria-label="Articles">
         <div class="mx-auto max-w-6xl px-4 py-10 sm:px-6 md:py-14 lg:px-8">
           <div class="articles-toolbar">
-            <h2 class="text-lg font-semibold text-slate-900">All articles</h2>
+            ${renderFilterChips({ toolbar: true })}
             <div class="articles-toolbar__controls">
               <label class="articles-sort">
                 <span class="articles-sort__label">Sort by</span>

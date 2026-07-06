@@ -156,17 +156,18 @@
         decapInput.value = searchInput.value;
         decapInput.dispatchEvent(new Event("input", { bubbles: true }));
         decapInput.dispatchEvent(new Event("change", { bubbles: true }));
+        var container = root.querySelector(".admin-custom-entries");
+        if (container) delete container.dataset.adminSignature;
+        scheduleEnhance(root, enhance);
       });
       return;
     }
 
     searchInput.addEventListener("input", function () {
-      var q = normalize(searchInput.value);
-      var main = root.querySelector("main");
-      if (!main) return;
-      main.querySelectorAll("ul li").forEach(function (card) {
-        card.hidden = !!(q && normalize(card.textContent).indexOf(q) === -1);
-      });
+      var root = $("nc-root");
+      var container = root && root.querySelector(".admin-custom-entries");
+      if (container) delete container.dataset.adminSignature;
+      if (root) scheduleEnhance(root, enhance);
     });
   }
 
@@ -588,11 +589,9 @@
             markViewButton(pair.grid, "grid");
           }
           syncCollectionViewMode(root);
-          root.querySelectorAll("[data-admin-card]").forEach(function (el) {
-            delete el.dataset.adminCard;
-            delete el.dataset.adminCardView;
-          });
-          enhanceGridCards(root);
+          var container = root.querySelector(".admin-custom-entries");
+          if (container) delete container.dataset.adminSignature;
+          renderCustomCollectionCards(root);
         }, 80);
       });
     });
@@ -879,69 +878,136 @@
     link.appendChild(body);
   }
 
-  function paintCard(link, card, data, collection, listView, imageEl) {
-    if (listView) {
-      renderListRow(link, data, collection);
-    } else {
-      renderGridCard(link, data, collection, imageEl);
-    }
-    link.dataset.adminCard = "done";
-    link.dataset.adminCardView = listView ? "list" : "grid";
-    card.classList.add("admin-grid-card");
-    card.classList.toggle("admin-list-item", listView);
+  function getSearchQuery() {
+    var input = $("admin-search-input");
+    return input ? normalize(input.value) : "";
   }
 
-  function enhanceGridCards(root) {
-    if (!isCollectionRoute()) return;
+  function matchesSearch(data, collection, query) {
+    if (!query) return true;
+    var hay = normalize(
+      [data.title, data.author, data.category, COLLECTION_LABELS[collection], data.publish === false ? "draft" : "published"].join(" ")
+    );
+    return hay.indexOf(query) !== -1;
+  }
+
+  function sortManifestSlugs(entries, slugs) {
+    return slugs.slice().sort(function (a, b) {
+      var da = entries[a].modified || entries[a].date || "";
+      var db = entries[b].modified || entries[b].date || "";
+      if (da !== db) return db.localeCompare(da);
+      return (entries[a].title || "").localeCompare(entries[b].title || "");
+    });
+  }
+
+  function hideDecapEntryLists(main) {
+    main.querySelectorAll("ul").forEach(function (ul) {
+      if (ul.classList.contains("admin-custom-grid") || ul.classList.contains("admin-custom-list")) return;
+      ul.classList.add("admin-decap-entries");
+      ul.hidden = true;
+    });
+  }
+
+  function showDecapEntryLists(main) {
+    main.querySelectorAll(".admin-decap-entries").forEach(function (ul) {
+      ul.hidden = false;
+      ul.classList.remove("admin-decap-entries");
+    });
+  }
+
+  function removeCustomEntries(root) {
+    var main = root && root.querySelector("main");
+    if (!main) return;
+    var container = main.querySelector(".admin-custom-entries");
+    if (container) container.remove();
+    showDecapEntryLists(main);
+    var header = main.querySelector(".admin-list-header");
+    if (header) header.remove();
+  }
+
+  function renderCustomCollectionCards(root) {
+    if (!isCollectionRoute()) {
+      removeCustomEntries(root);
+      return;
+    }
 
     var main = root.querySelector("main");
     if (!main) return;
 
+    var collection = getActiveCollection();
+    if (!collection) return;
+
     function run() {
       var listView = isListView(root);
       syncCollectionViewMode(root);
-      ensureListHeader(main, listView);
       bindViewModeButtons(root);
+      hideDecapEntryLists(main);
 
-      main.querySelectorAll("ul li").forEach(function (card) {
-        var link = card.querySelector("a");
-        if (!link) return;
+      var entries = cardManifest && cardManifest[collection];
+      if (!entries) return;
 
-        var parsed = parseEntryFromLink(link);
-        if (!parsed) return;
+      var query = getSearchQuery();
+      var slugs = sortManifestSlugs(entries, Object.keys(entries));
+      var signature = collection + "|" + (listView ? "list" : "grid") + "|" + query + "|" + slugs.join(",");
 
-        if (!cardNeedsPaint(link, listView)) return;
-
-        var imageEl = link.querySelector(".admin-card-image") || link.querySelector(":scope > div");
-        if (imageEl) imageEl.classList.add("admin-card-image");
-
-        var cacheKey = parsed.collection + "/" + parsed.slug;
-        var manifestData = getManifestEntry(parsed.collection, parsed.slug);
-
-        function paint(data) {
-          if (!data) return;
-          paintCard(link, card, data, parsed.collection, isListView(root), imageEl);
+      var container = main.querySelector(".admin-custom-entries");
+      if (!container) {
+        container = document.createElement("div");
+        container.className = "admin-custom-entries";
+        var anchor = main.querySelector(".admin-collection-header");
+        if (anchor && anchor.nextSibling) {
+          main.insertBefore(container, anchor.nextSibling);
+        } else {
+          main.appendChild(container);
         }
+      }
 
-        if (manifestData) {
-          paint(manifestData);
-          return;
-        }
+      if (container.dataset.adminSignature === signature) return;
+      container.dataset.adminSignature = signature;
+      container.textContent = "";
 
-        paint(buildFallbackCardData(link, parsed.collection, parsed.slug));
+      if (listView) {
+        var listHeader = document.createElement("div");
+        listHeader.className = "admin-list-header";
+        listHeader.innerHTML =
+          '<span class="admin-list-header__cell admin-list-header__name">Title</span>' +
+          '<span class="admin-list-header__cell admin-list-header__collection">Collection</span>' +
+          '<span class="admin-list-header__cell admin-list-header__author">Author</span>' +
+          '<span class="admin-list-header__cell admin-list-header__date">Date</span>' +
+          '<span class="admin-list-header__cell admin-list-header__status">Status</span>';
+        container.appendChild(listHeader);
 
-        var cached = entryCache[cacheKey];
-        if (cached && typeof cached.then === "function") {
-          cached.then(paint);
-          return;
-        }
-        if (cached && typeof cached === "object") {
-          paint(cached);
-          return;
-        }
+        var list = document.createElement("ul");
+        list.className = "admin-custom-list";
+        slugs.forEach(function (slug) {
+          var data = entries[slug];
+          if (!matchesSearch(data, collection, query)) return;
+          var li = document.createElement("li");
+          li.className = "admin-list-item admin-grid-card";
+          var link = document.createElement("a");
+          link.href = "#/collections/" + collection + "/entries/" + encodeURIComponent(slug);
+          renderListRow(link, data, collection);
+          li.appendChild(link);
+          list.appendChild(li);
+        });
+        container.appendChild(list);
+        return;
+      }
 
-        fetchEntry(parsed.collection, parsed.slug).then(paint);
+      var grid = document.createElement("ul");
+      grid.className = "admin-custom-grid";
+      slugs.forEach(function (slug) {
+        var data = entries[slug];
+        if (!matchesSearch(data, collection, query)) return;
+        var li = document.createElement("li");
+        li.className = "admin-grid-card";
+        var link = document.createElement("a");
+        link.href = "#/collections/" + collection + "/entries/" + encodeURIComponent(slug);
+        renderGridCard(link, data, collection, null);
+        li.appendChild(link);
+        grid.appendChild(li);
       });
+      container.appendChild(grid);
     }
 
     loadCardManifest().then(run);
@@ -992,10 +1058,8 @@
   }
 
   function resetCollectionLayout(root) {
-    root.querySelectorAll("[data-admin-card]").forEach(function (el) {
-      delete el.dataset.adminCard;
-      delete el.dataset.adminCardView;
-    });
+    var container = root.querySelector(".admin-custom-entries");
+    if (container) delete container.dataset.adminSignature;
     entryCache = Object.create(null);
   }
 
@@ -1006,7 +1070,7 @@
     restructureCollectionHeader(root);
     syncCollectionViewMode(root);
     mountCreateButton(root);
-    enhanceGridCards(root);
+    renderCustomCollectionCards(root);
     tagEditorLayout(root);
   }
 

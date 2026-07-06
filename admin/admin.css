@@ -776,35 +776,36 @@ body {
   min-height: 2.25rem;
 }
 
-/* ——— Article cards ——— */
-#nc-root.admin-view--grid main ul,
-#nc-root.admin-view--grid .admin-main ul {
+/* ——— Article cards (custom manifest grid — Decap list hidden) ——— */
+#nc-root .admin-custom-entries {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+#nc-root main .admin-decap-entries {
+  display: none !important;
+}
+
+#nc-root.admin-view--grid .admin-custom-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
   gap: 1.25rem;
-  width: 100% !important;
-  max-width: none !important;
-  padding: 0 !important;
-  margin: 0 !important;
+  width: 100%;
+  padding: 0;
+  margin: 0;
   list-style: none;
   box-sizing: border-box;
 }
 
-#nc-root.admin-view--grid main ul > li,
-#nc-root.admin-view--grid .admin-main ul > li {
-  margin-left: 0 !important;
-  flex: initial !important;
-  width: auto !important;
-  height: auto !important;
-}
-
-#nc-root.admin-view--grid .admin-grid-card > a:not(:has(.admin-card-body)) > * {
-  display: none !important;
-}
-
-#nc-root.admin-view--grid .admin-grid-card > a:not(:has(.admin-card-body)) {
-  display: block;
-  min-height: 18rem;
+#nc-root.admin-view--list .admin-custom-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  box-sizing: border-box;
 }
 
 #nc-root .admin-grid-card {

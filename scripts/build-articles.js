@@ -679,6 +679,7 @@ function buildEverydayFaithPage(article, allArticles) {
     <script type="application/ld+json">${articleSchema(article, canonical)}</script>`;
 
   const bodyMain = `
+      <div class="article-detail-page">
       <article class="mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
         <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-accent">${escapeHtml(article.typeLabel)}${article.sermonSeries ? ` · ${escapeHtml(article.sermonSeries)}` : ""}</p>
         <h1 class="mt-3 text-balance text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">${escapeHtml(article.title)}</h1>
@@ -697,6 +698,7 @@ function buildEverydayFaithPage(article, allArticles) {
         ${renderRelated(allArticles, article)}
         <p class="mt-10"><a href="/articles" class="text-sm font-medium text-accent hover:underline">← Back to all articles</a></p>
       </article>
+      </div>
       <div class="serve-unveil-spacer min-h-screen" aria-hidden="true"></div>`;
 
   const scripts = `<script src="/js/articles/clap.js"></script>${renderQuizScripts(article)}`;
@@ -743,6 +745,7 @@ function buildBackToBiblePage(article, allArticles) {
   const quizHtml = renderQuizSection(article);
 
   const bodyMain = `
+      <div class="article-detail-page">
       <article class="mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
         <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-accent">${escapeHtml(article.typeLabel)}</p>
         <h1 class="mt-3 text-balance text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">${escapeHtml(article.title)}</h1>
@@ -762,6 +765,7 @@ function buildBackToBiblePage(article, allArticles) {
         ${renderRelated(allArticles, article)}
         <p class="mt-10"><a href="/articles" class="text-sm font-medium text-accent hover:underline">← Back to all articles</a></p>
       </article>
+      </div>
       <div class="serve-unveil-spacer min-h-screen" aria-hidden="true"></div>`;
 
   const scripts = `<script src="/js/articles/clap.js"></script>${renderQuizScripts(article)}`;

@@ -524,6 +524,27 @@
     });
   }
 
+  function hideDecapMediaObstructions(root) {
+    if (!isMediaRoute() || isLoginView(root)) return;
+    var hidden = 0;
+    root.querySelectorAll('[class*="AuthenticationPage"], [class*="StyledAuthenticationPage"]').forEach(function (el) {
+      if (el.closest(".admin-media-workspace")) return;
+      el.classList.add("admin-decap-media-hidden");
+      el.setAttribute("aria-hidden", "true");
+      el.hidden = true;
+      hidden += 1;
+    });
+    // #region agent log
+    var main = root.querySelector("main");
+    debugLog("H2", "hideDecapMediaObstructions", "hid auth obstructions", {
+      runId: "post-fix",
+      hiddenCount: hidden,
+      mainTop: main ? main.getBoundingClientRect().top : null,
+      isLoginView: isLoginView(root),
+    });
+    // #endregion
+  }
+
   function copyText(value) {
     if (!value) return Promise.resolve();
     if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -1611,6 +1632,10 @@
   }
 
   function syncCollectionViewMode(root) {
+    if (isMediaRoute()) {
+      root.classList.remove("admin-view--list", "admin-view--grid");
+      return;
+    }
     var list = isListView(root);
     root.classList.toggle("admin-view--list", list);
     root.classList.toggle("admin-view--grid", !list);
@@ -2652,6 +2677,7 @@
       if (!main) return;
 
       preserveDecapMediaTab(root);
+      hideDecapMediaObstructions(root);
       hideDecapMediaNotFound(root);
 
       if (!root.dataset.adminMediaViewMode) {
@@ -2832,7 +2858,9 @@
       // #region agent log
       var wsStyle = workspace && window.getComputedStyle ? window.getComputedStyle(workspace) : null;
       debugLog("H2", "renderMediaWorkspace:run:end", "after placeMediaWorkspace", {
+        runId: "post-fix",
         hash: getHash(),
+        mainTop: main ? main.getBoundingClientRect().top : null,
         mainConnected: !!(main && main.isConnected),
         workspaceConnected: !!(workspace && workspace.isConnected),
         workspaceInMain: !!(workspace && main && main.contains(workspace)),

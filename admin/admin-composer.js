@@ -72,8 +72,125 @@
   }
 
   function isContentField(label) {
+    var normalized = normalize(label).replace(/\?$/, "");
     return CONTENT_LABELS.some(function (name) {
-      return label === name || label.indexOf(name) === 0;
+      var field = name.replace(/\?$/, "");
+      return normalized === field || normalized.indexOf(field) === 0;
+    });
+  }
+
+  function findEditorFieldControls(root) {
+    var main = root.querySelector("main");
+    if (!main) return [];
+
+    var form = main.querySelector("form");
+    if (!form) return [];
+
+    var mount = form.querySelector(":scope > div") || form;
+    var columns = mount.querySelector(".admin-editor-columns");
+
+    if (columns) {
+      var placed = [];
+      columns.querySelectorAll(".admin-editor-col__fields > div").forEach(function (node) {
+        if (node.querySelector("label")) placed.push(node);
+      });
+      return placed;
+    }
+
+    var controls = [];
+    for (var i = 0; i < mount.children.length; i++) {
+      var node = mount.children[i];
+      if (node.classList.contains("admin-editor-columns")) continue;
+      if (!node.querySelector("label")) continue;
+      controls.push(node);
+    }
+    return controls;
+  }
+
+  function tagEditorLayout(root) {
+    if (!isEditorRoute()) return;
+
+    var main = root.querySelector("main");
+    if (!main) return;
+
+    var form = main.querySelector("form");
+    if (!form) return;
+
+    var mount = form.querySelector(":scope > div") || form;
+    var controls = findEditorFieldControls(root);
+    if (!controls.length) return;
+
+    var columns = mount.querySelector(".admin-editor-columns");
+    if (!columns) {
+      columns = document.createElement("div");
+      columns.className = "admin-editor-columns";
+      columns.innerHTML =
+        '<div class="admin-editor-col admin-editor-col--content">' +
+        '<p class="admin-editor-column-label">Blog Content</p>' +
+        '<div class="admin-editor-col__fields admin-editor-col__fields--content"></div>' +
+        "</div>" +
+        '<div class="admin-editor-col admin-editor-col--meta">' +
+        '<p class="admin-editor-column-label">Blog Info</p>' +
+        '<div class="admin-editor-col__fields admin-editor-col__fields--meta"></div>' +
+        "</div>";
+      mount.insertBefore(columns, mount.firstChild);
+    }
+
+    var contentFields = columns.querySelector(".admin-editor-col__fields--content");
+    var metaFields = columns.querySelector(".admin-editor-col__fields--meta");
+    if (!contentFields || !metaFields) return;
+
+    controls.forEach(function (control) {
+      var labelText = getControlLabel(control);
+      if (isContentField(labelText)) {
+        control.classList.add("admin-field--content");
+        control.classList.remove("admin-field--meta");
+        contentFields.appendChild(control);
+      } else {
+        control.classList.add("admin-field--meta");
+        control.classList.remove("admin-field--content");
+        if (labelText === "title") {
+          control.classList.add("admin-field--title-synced");
+          var decapTitle = control.querySelector('input[type="text"], textarea');
+          if (decapTitle && decapTitle.dataset.titleSyncBound !== "true") {
+            decapTitle.dataset.titleSyncBound = "true";
+            decapTitle.addEventListener("input", function () {
+              syncTitleFromDecap(root);
+            });
+          }
+        }
+        metaFields.appendChild(control);
+      }
+    });
+
+    mount.classList.add("admin-editor-mount");
+    mount.dataset.adminLayout = "done";
+    columns.dataset.adminLayout = "done";
+    syncTitleFromDecap(root);
+  }
+
+  function resetEditorLayout(root) {
+    root.querySelectorAll(".admin-editor-columns").forEach(function (columns) {
+      var mount = columns.parentElement;
+      var contentFields = columns.querySelector(".admin-editor-col__fields--content");
+      var metaFields = columns.querySelector(".admin-editor-col__fields--meta");
+
+      [contentFields, metaFields].forEach(function (bucket) {
+        if (!bucket) return;
+        while (bucket.firstChild) {
+          if (mount) mount.insertBefore(bucket.firstChild, columns);
+        }
+      });
+
+      columns.remove();
+      if (mount) {
+        delete mount.dataset.adminLayout;
+        mount.classList.remove("admin-editor-mount");
+      }
+    });
+
+    root.querySelectorAll(".admin-field--meta, .admin-field--content").forEach(function (el) {
+      el.classList.remove("admin-field--meta", "admin-field--content", "admin-field--title-synced");
     });
   }
 
@@ -1989,75 +2106,6 @@
     if (cardManifest) run();
   }
 
-  function tagEditorLayout(root) {
-    if (!isEditorRoute()) return;
-
-    var main = root.querySelector("main");
-    if (!main) return;
-
-    var pane =
-      (main.querySelector("form") && main.querySelector("form").parentElement) ||
-      main.querySelector(":scope > div > div") ||
-      main.querySelector(":scope > div");
-    if (!pane) return;
-
-    var scroll = pane.querySelector(":scope > div") || pane;
-    var controls = scroll.querySelectorAll(":scope > div");
-    if (!controls.length) controls = pane.children;
-
-    var tagged = false;
-    var contentLabeled = false;
-    var metaLabeled = false;
-
-    Array.prototype.forEach.call(controls, function (control) {
-      if (!control.querySelector("label")) return;
-      var labelText = getControlLabel(control);
-      if (isContentField(labelText)) {
-        control.classList.add("admin-field--content");
-        control.classList.remove("admin-field--meta");
-        if (!contentLabeled) {
-          contentLabeled = true;
-          if (!control.querySelector(".admin-editor-column-label")) {
-            var contentLabel = document.createElement("p");
-            contentLabel.className = "admin-editor-column-label";
-            contentLabel.textContent = "Blog Content";
-            control.insertBefore(contentLabel, control.firstChild);
-          }
-        }
-        tagged = true;
-      } else {
-        control.classList.add("admin-field--meta");
-        control.classList.remove("admin-field--content");
-        if (labelText === "title") {
-          control.classList.add("admin-field--title-synced");
-          var decapTitle = control.querySelector('input[type="text"], textarea');
-          if (decapTitle && decapTitle.dataset.titleSyncBound !== "true") {
-            decapTitle.dataset.titleSyncBound = "true";
-            decapTitle.addEventListener("input", function () {
-              syncTitleFromDecap(root);
-            });
-          }
-        }
-        if (!metaLabeled) {
-          metaLabeled = true;
-          if (!control.querySelector(".admin-editor-column-label")) {
-            var metaLabel = document.createElement("p");
-            metaLabel.className = "admin-editor-column-label";
-            metaLabel.textContent = "Blog Info";
-            control.insertBefore(metaLabel, control.firstChild);
-          }
-        }
-      }
-    });
-
-    if (tagged) {
-      pane.classList.add("admin-editor-split");
-      pane.dataset.adminLayout = "done";
-    }
-
-    syncTitleFromDecap(root);
-  }
-
   function resetEditorState() {
     editorState.dirty = false;
     editorState.snapshot = "";
@@ -2068,16 +2116,6 @@
     var headerInput = $("admin-editor-title-input");
     if (headerInput) headerInput.value = "";
     updateEditorStatusLabel();
-  }
-
-  function resetEditorLayout(root) {
-    root.querySelectorAll("[data-admin-layout]").forEach(function (el) {
-      delete el.dataset.adminLayout;
-      el.classList.remove("admin-editor-split");
-    });
-    root.querySelectorAll(".admin-field--meta, .admin-field--content").forEach(function (el) {
-      el.classList.remove("admin-field--meta", "admin-field--content");
-    });
   }
 
   function resetCollectionLayout(root) {

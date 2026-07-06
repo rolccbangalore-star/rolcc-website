@@ -907,7 +907,7 @@
       var labels = PUBLISH_FIELD_LABELS[item.key] || [String(item.label || "").toLowerCase()];
       var nodes = root.querySelectorAll("main label, main h2, main legend, main p");
       for (var i = 0; i < nodes.length; i++) {
-        var text = (nodes[i].textContent || "").replace(/\s+/g, " ").trim().toLowerCase();
+        var text = normalizeLabel(nodes[i].textContent || "");
         var matched = labels.some(function (label) {
           return text === label || text.indexOf(label) === 0;
         });
@@ -1173,9 +1173,15 @@
       return discardDraftEntry();
     }
 
+    var slug = meta.slug || getEntrySlugFromHash();
+    var collectionName = meta.collectionName || getCollection();
+
     return deleteExistingEntry(root, meta).then(function () {
+      if (window.AdminComposer && window.AdminComposer.removeArticleFromListing && slug) {
+        window.AdminComposer.removeArticleFromListing(collectionName, slug);
+      }
       if (isEditorRoute()) {
-        navigateToCollection(meta.collectionName);
+        navigateToCollection(collectionName);
       }
     });
   }

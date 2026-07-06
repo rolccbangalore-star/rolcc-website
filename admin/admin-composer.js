@@ -622,6 +622,10 @@
     applyDecapLayoutFixes(root);
   }
 
+  function normalizeFieldLabel(text) {
+    return normalize(text).replace(/\s*\(optional\)$/i, "").trim();
+  }
+
   function findDecapTitleInput(root) {
     if (!root) return null;
     var main = root.querySelector("main");
@@ -629,7 +633,7 @@
     var controls = main.querySelectorAll("label");
     for (var i = 0; i < controls.length; i++) {
       var label = controls[i];
-      if (normalize(label.textContent) !== "title") continue;
+      if (normalizeFieldLabel(label.textContent) !== "title") continue;
       var wrap = label.closest("div");
       if (!wrap) continue;
       var input = wrap.querySelector('input[type="text"], textarea');
@@ -661,11 +665,75 @@
 
   function syncTitleFromDecap(root) {
     var headerInput = $("admin-editor-title-input");
+    if (!headerInput || editorState.syncingTitle) return;
+
+    var title = "";
     var decapTitle = findDecapTitleInput(root);
-    if (!headerInput || !decapTitle || editorState.syncingTitle) return;
+    if (decapTitle) title = decapTitle.value.trim();
+    if (!title && window.AdminImport && window.AdminImport.readDraftData) {
+      var data = window.AdminImport.readDraftData();
+      if (data && data.title) title = String(data.title).trim();
+    }
+    if (!title) return;
+
     editorState.syncingTitle = true;
-    headerInput.value = decapTitle.value;
+    headerInput.value = title;
     editorState.syncingTitle = false;
+  }
+
+  var OPTIONAL_EDITOR_FIELDS = [
+    "main scripture",
+    "sermon series",
+    "key takeaways",
+    "include quiz",
+    "quiz",
+    "hero image",
+    "featured",
+    "published",
+    "author",
+    "attribution",
+    "caption",
+    "supporting text",
+    "title (accessibility)",
+  ];
+
+  function normalizeEditorFieldLabels(root) {
+    if (!root) return;
+    root.querySelectorAll("main label, main h2, main legend, main p").forEach(function (el) {
+      var text = el.textContent || "";
+      if (!/\(optional\)/i.test(text)) return;
+      var base = normalizeFieldLabel(text);
+      var keepOptional = OPTIONAL_EDITOR_FIELDS.some(function (field) {
+        return base === field || base.indexOf(field + " ") === 0;
+      });
+      if (!keepOptional) {
+        el.textContent = text.replace(/\s*\(optional\)/gi, "");
+      }
+    });
+  }
+
+  function bindTitleFieldSync(root) {
+    var decapTitle = findDecapTitleInput(root);
+    if (!decapTitle || decapTitle.dataset.adminTitleBound === "true") return;
+    decapTitle.dataset.adminTitleBound = "true";
+    decapTitle.addEventListener("input", function () {
+      syncTitleFromDecap(root);
+    });
+    decapTitle.addEventListener("change", function () {
+      syncTitleFromDecap(root);
+    });
+  }
+
+  function scheduleTitleSync(root) {
+    syncTitleFromDecap(root);
+    window.setTimeout(function () {
+      syncTitleFromDecap(root);
+    }, 250);
+    window.setTimeout(function () {
+      syncTitleFromDecap(root);
+      bindTitleFieldSync(root);
+      normalizeEditorFieldLabels(root);
+    }, 900);
   }
 
   function updateEditorStatusLabel() {
@@ -1084,6 +1152,7 @@
     }
 
     syncTitleFromDecap(root);
+    scheduleTitleSync(root);
     bindSaveDraftButton(root);
     bindDeleteButton(root);
     bindPublishButton(root);
@@ -2550,6 +2619,23 @@
     updateEditorStatusLabel();
   }
 
+  function removeArticleFromListing(collection, slug) {
+    collection = normalizeCollectionId(collection);
+    slug = decodeURIComponent(String(slug || "").trim());
+    if (!collection || !slug) return;
+
+    if (cardManifest && cardManifest[collection]) {
+      delete cardManifest[collection][slug];
+    }
+    delete entryCache[collection + "/" + slug];
+
+    var root = getComposerRoot();
+    if (!root) return;
+    var container = root.querySelector(".admin-custom-entries");
+    if (container) delete container.dataset.adminSignature;
+    scheduleEnhance(root, enhance);
+  }
+
   function resetCollectionLayout(root) {
     root = root || getComposerRoot();
     if (!root) return;
@@ -3249,6 +3335,7 @@
     findDecapTitleInput: findDecapTitleInput,
     setInputValue: setInputValue,
     syncTitleFromDecap: syncTitleFromDecap,
+    removeArticleFromListing: removeArticleFromListing,
     resetEditorSnapshot: function (root) {
       root = root || getComposerRoot();
       editorState.snapshot = captureEditorSnapshot(root);

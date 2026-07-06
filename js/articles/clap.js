@@ -26,10 +26,31 @@
   var dockHideObserved = typeof WeakSet !== "undefined" ? new WeakSet() : null;
   var dockHideObservedFallback = [];
 
+  function isInFooterRevealZone() {
+    var viewHeight = window.innerHeight || document.documentElement.clientHeight;
+
+    if (document.body.classList.contains("footer-in-view")) return true;
+
+    var spacers = document.querySelectorAll(".serve-unveil-spacer");
+    var spacer = spacers.length ? spacers[spacers.length - 1] : null;
+    if (spacer) {
+      var rect = spacer.getBoundingClientRect();
+      var unveilTop = viewHeight * 0.62;
+      if (rect.top < unveilTop && rect.bottom > 0) return true;
+      if (rect.bottom <= 0) return true;
+    }
+
+    var doc = document.documentElement;
+    var scrollBottom = window.scrollY + viewHeight;
+    if (scrollBottom >= doc.scrollHeight - 96) return true;
+
+    return false;
+  }
+
   function updateDockVisibility() {
     var dock = document.getElementById("article-action-dock");
     if (!dock) return;
-    dock.classList.toggle("is-hidden", dockHideVisible.size > 0);
+    dock.classList.toggle("is-hidden", dockHideVisible.size > 0 || isInFooterRevealZone());
   }
 
   function ensureDockHideObserver() {
@@ -89,6 +110,14 @@
 
   function initDockAutoHide() {
     collectDockHideTargets().forEach(observeDockHideTarget);
+
+    function syncFooterDock() {
+      updateDockVisibility();
+    }
+
+    window.addEventListener("scroll", syncFooterDock, { passive: true });
+    window.addEventListener("resize", syncFooterDock);
+    syncFooterDock();
   }
 
   window.ArticleClap = {

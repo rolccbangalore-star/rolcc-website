@@ -149,7 +149,7 @@ function readHubFooterTemplate() {
 
 const ROOT = path.join(__dirname, "..");
 const TODAY = new Date().toISOString().slice(0, 10);
-const ASSET_CACHE_VERSION = "a58da82";
+const ASSET_CACHE_VERSION = "dock-footer-fix";
 const DATA_DIR = path.join(ROOT, "data");
 const EF_DIR = path.join(DATA_DIR, "articles", "everyday-faith");
 const BTB_DIR = path.join(DATA_DIR, "articles", "back-to-bible");

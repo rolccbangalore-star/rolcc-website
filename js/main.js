@@ -226,8 +226,8 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // Footer: fixed reveal pages keep the footer behind scrolling main (z-0 vs main z-10).
-  // Enable footer links as soon as the unveil spacer enters view — not only at document bottom.
+  // Footer: fixed reveal pages stack main above the footer. Only the links band becomes
+  // clickable once the unveil spacer reaches the lower viewport — FAQ/content stays usable.
   (function footerClickability() {
     var footerSection = document.getElementById("footer-section");
     if (!footerSection) return;
@@ -235,24 +235,30 @@ document.addEventListener("DOMContentLoaded", function () {
     var footerIsFixed = window.getComputedStyle(footerSection).position === "fixed";
     if (footerIsFixed) {
       document.body.classList.add("has-fixed-footer");
+      var linksPanel = footerSection.querySelector(".flex.min-h-screen.flex-col > .border-t");
+      if (linksPanel) {
+        linksPanel.classList.add("footer-links-panel");
+      }
     }
 
     function setFooterInView(active) {
       document.body.classList.toggle("footer-in-view", active);
     }
 
-    var spacer = document.querySelector(".serve-unveil-spacer");
+    var spacers = document.querySelectorAll(".serve-unveil-spacer");
+    var spacer = spacers.length ? spacers[spacers.length - 1] : null;
 
-    if (spacer && footerIsFixed && "IntersectionObserver" in window) {
-      var spacerObserver = new IntersectionObserver(
-        function (entries) {
-          setFooterInView(entries.some(function (entry) {
-            return entry.isIntersecting;
-          }));
-        },
-        { threshold: 0, rootMargin: "0px 0px 25% 0px" }
-      );
-      spacerObserver.observe(spacer);
+    if (spacer && footerIsFixed) {
+      function updateFooterLinks() {
+        var rect = spacer.getBoundingClientRect();
+        var viewHeight = window.innerHeight;
+        var bottomBandTop = viewHeight * 0.62;
+        var inUnveilZone = rect.top < bottomBandTop && rect.bottom > 0;
+        setFooterInView(inUnveilZone);
+      }
+      window.addEventListener("scroll", updateFooterLinks, { passive: true });
+      window.addEventListener("resize", updateFooterLinks);
+      updateFooterLinks();
       return;
     }
 

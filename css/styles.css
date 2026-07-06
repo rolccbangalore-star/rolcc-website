@@ -1961,19 +1961,27 @@ body {
   min-height: 100vh;
   pointer-events: auto;
 }
-/* When footer is reachable: raise it above main so nav links are clickable */
-body.footer-in-view .footer-reveal {
-  z-index: 20 !important;
-}
 
-/* Only disable main clicks on fixed-footer reveal pages (main sits on top of the footer) */
-body.footer-in-view.has-fixed-footer main {
+/* Fixed-footer pages: lift shell above main but pass clicks through except the links band */
+body.footer-in-view.has-fixed-footer .footer-reveal {
+  z-index: 20 !important;
   pointer-events: none;
 }
 
-body.footer-in-view .footer-reveal,
-body.footer-in-view .footer-reveal a,
-body.footer-in-view .footer-reveal button {
+body.footer-in-view.has-fixed-footer .footer-reveal .footer-links-panel,
+body.footer-in-view.has-fixed-footer .footer-reveal .footer-links-panel a,
+body.footer-in-view.has-fixed-footer .footer-reveal .footer-links-panel button {
+  pointer-events: auto;
+}
+
+/* Standard (non-fixed) footers: ensure links sit above overlapping main when visible */
+body.footer-in-view:not(.has-fixed-footer) .footer-reveal {
+  z-index: 20 !important;
+}
+
+body.footer-in-view:not(.has-fixed-footer) .footer-reveal,
+body.footer-in-view:not(.has-fixed-footer) .footer-reveal a,
+body.footer-in-view:not(.has-fixed-footer) .footer-reveal button {
   pointer-events: auto;
 }
 .footer-reveal .footer-bg {

@@ -504,10 +504,11 @@ function renderQuizSection(article) {
         <p class="text-xs text-slate-500" data-quiz-progress></p>
         <p class="article-quiz__question mt-2" data-quiz-question></p>
         <div class="article-quiz__options" data-quiz-options></div>
+        <div class="article-quiz__results" data-quiz-results hidden></div>
         <p class="article-quiz__feedback" data-quiz-feedback></p>
         <div class="article-quiz__actions">
           <button type="button" class="article-quiz__btn" data-quiz-next hidden>Next question</button>
-          <button type="button" class="article-quiz__btn article-quiz__btn--ghost" data-quiz-reset>Reset quiz</button>
+          <button type="button" class="article-quiz__btn article-quiz__btn--ghost" data-quiz-reset hidden>Retake quiz</button>
         </div>
       </div>
     </section>`;

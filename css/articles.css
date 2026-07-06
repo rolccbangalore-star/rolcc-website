@@ -869,6 +869,22 @@
   animation: none;
 }
 
+body.footer-in-view .article-action-dock {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+body.footer-in-view .article-action-dock > * {
+  pointer-events: none;
+  animation: none;
+}
+
+body.footer-in-view .article-action-dock .article-clap__ring,
+body.footer-in-view .article-action-dock .article-quiz-fab__ring {
+  animation: none;
+}
+
 .article-clap-wrap {
   display: flex;
   flex-direction: column;

@@ -66,6 +66,9 @@
     var related = document.querySelector('[aria-labelledby="related-articles-heading"]');
     if (related) targets.push(related);
 
+    var spacers = document.querySelectorAll(".serve-unveil-spacer");
+    if (spacers.length) targets.push(spacers[spacers.length - 1]);
+
     return targets;
   }
 

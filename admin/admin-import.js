@@ -804,6 +804,54 @@
     return slug + ".json";
   }
 
+  function prepareDraftForSave() {
+    var store = getCmsStore();
+    if (!store) return false;
+
+    var data = readDraftData();
+    var headerInput = $("admin-editor-title-input");
+    var headerTitle = headerInput ? headerInput.value.trim() : "";
+    var today = new Date().toISOString().slice(0, 10);
+
+    if (headerTitle && headerTitle !== data.title) {
+      changeDraftFieldValue(store, "title", headerTitle);
+      data.title = headerTitle;
+    }
+
+    if (!data.title || !String(data.title).trim()) {
+      return false;
+    }
+
+    if (!data.date) changeDraftFieldValue(store, "date", today);
+    if (!data.category) changeDraftFieldValue(store, "category", "General");
+    if (!data.thumbnail) changeDraftFieldValue(store, "thumbnail", "/images/og-image.jpg");
+    if (data.publish !== false) changeDraftFieldValue(store, "publish", false);
+
+    changeDraftFieldValue(store, "title", data.title || headerTitle);
+    return true;
+  }
+
+  function clickDecapSaveButton(root) {
+    if (!root) return false;
+    var candidates = root.querySelectorAll("button, a[class*='Button'], a.btn");
+    for (var i = 0; i < candidates.length; i++) {
+      var btn = candidates[i];
+      if (btn.id === "admin-save-draft-btn" || btn.closest("#admin-save-draft-btn")) continue;
+      var text = (btn.textContent || "").replace(/\s+/g, " ").trim().toLowerCase();
+      if (
+        text === "publish" ||
+        text === "publish now" ||
+        text === "save" ||
+        text === "save and publish" ||
+        text.indexOf("publish") === 0
+      ) {
+        btn.click();
+        return true;
+      }
+    }
+    return false;
+  }
+
   function getRepoImportFolder(collection) {
     return isBibleStudyCollection(collection) ? "data/articles/back-to-bible" : "data/articles/everyday-faith";
   }
@@ -1145,5 +1193,8 @@
     openImportModal: openImportModal,
     runAutoImport: runAutoImport,
     looksLikeImport: looksLikeImport,
+    getCmsStore: getCmsStore,
+    prepareDraftForSave: prepareDraftForSave,
+    clickDecapSaveButton: clickDecapSaveButton,
   };
 })();

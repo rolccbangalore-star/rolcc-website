@@ -732,15 +732,89 @@
 
   function findDecapPublishButton(root) {
     if (!root) return null;
-    var candidates = root.querySelectorAll("main button, main a.btn, main a[class*='Button']");
+    var candidates = root.querySelectorAll("button, a[class*='Button'], a.btn");
     for (var i = 0; i < candidates.length; i++) {
       var btn = candidates[i];
+      if (btn.id === "admin-save-draft-btn") continue;
+      if (btn.closest && btn.closest("#admin-topbar")) continue;
       var text = normalize(btn.textContent);
-      if (text === "publish" || text === "publish now" || text === "save" || text.indexOf("publish") === 0) {
+      if (
+        text === "publish" ||
+        text === "publish now" ||
+        text === "save" ||
+        text === "save and publish" ||
+        text.indexOf("publish") === 0
+      ) {
         return btn;
       }
     }
     return null;
+  }
+
+  function setSaveDraftStatus(message, isError) {
+    var status = $("admin-editor-status");
+    if (!status) return;
+    status.textContent = message || "";
+    status.classList.toggle("admin-editor-status--dirty", Boolean(message && !isError));
+    status.classList.toggle("admin-editor-status--error", Boolean(isError));
+  }
+
+  function bindSaveDraftButton(root) {
+    var btn = $("admin-save-draft-btn");
+    if (!btn || btn.dataset.bound === "true") return;
+    btn.dataset.bound = "true";
+    btn.addEventListener("click", function () {
+      saveDraftProgress(root);
+    });
+  }
+
+  function saveDraftProgress(root) {
+    if (!isEditorRoute()) return;
+
+    syncTitleFromHeader(root);
+
+    var headerInput = $("admin-editor-title-input");
+    var title = headerInput ? headerInput.value.trim() : "";
+    if (!title) {
+      setSaveDraftStatus("Add a title before saving.", true);
+      if (headerInput) headerInput.focus();
+      return;
+    }
+
+    setSaveDraftStatus("Saving…");
+
+    if (window.AdminImport && window.AdminImport.prepareDraftForSave) {
+      if (!window.AdminImport.prepareDraftForSave()) {
+        setSaveDraftStatus("Add a title before saving.", true);
+        return;
+      }
+    }
+
+    window.setTimeout(function () {
+      var clicked =
+        (window.AdminImport && window.AdminImport.clickDecapSaveButton && window.AdminImport.clickDecapSaveButton(root)) ||
+        (function () {
+          var decapBtn = findDecapPublishButton(root);
+          if (decapBtn) {
+            decapBtn.click();
+            return true;
+          }
+          return false;
+        })();
+
+      if (clicked) {
+        editorState.dirty = false;
+        window.setTimeout(function () {
+          setSaveDraftStatus("Draft saved");
+          window.setTimeout(function () {
+            setSaveDraftStatus("");
+          }, 3000);
+        }, 1200);
+        return;
+      }
+
+      setSaveDraftStatus("Could not save — refresh and try again.", true);
+    }, 120);
   }
 
   function relocatePublishButton(root) {
@@ -751,8 +825,8 @@
       slot.hidden = true;
       return;
     }
-    btn.classList.add("btn-primary");
-    btn.classList.remove("btn-outline");
+    btn.classList.add("btn-outline");
+    btn.classList.remove("btn-primary");
     if (btn.parentElement !== slot) slot.appendChild(btn);
     slot.hidden = false;
   }
@@ -788,6 +862,9 @@
     if (importBtn) importBtn.hidden = !onEditor;
     if (websiteLink) websiteLink.hidden = onEditor;
 
+    var saveDraftBtn = $("admin-save-draft-btn");
+    if (saveDraftBtn) saveDraftBtn.hidden = !onEditor;
+
     if (onEditor) {
       var backBtn = $("admin-editor-back");
       if (backBtn) {
@@ -816,6 +893,7 @@
     }
 
     syncTitleFromDecap(root);
+    bindSaveDraftButton(root);
     relocatePublishButton(root);
     mountEditorDirtyWatcher(root);
     hideDecapEditorChrome(root);

@@ -2480,6 +2480,18 @@ body.admin-composer-dropdown-open #nc-root .admin-custom-grid {
   color: #92400e;
 }
 
+.admin-editor-status--error {
+  color: #b91c1c;
+}
+
+.admin-save-draft-btn {
+  min-height: 2.5rem;
+  padding: 0.625rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
 .admin-import-btn {
   min-height: 2.5rem;
   padding: 0.625rem 1rem;
@@ -2491,7 +2503,7 @@ body.admin-composer-dropdown-open #nc-root .admin-custom-grid {
   align-items: center;
 }
 
-.admin-publish-slot .btn-primary,
+.admin-publish-slot .btn-outline,
 .admin-publish-slot button {
   min-height: 2.5rem !important;
   padding: 0.625rem 1.25rem !important;

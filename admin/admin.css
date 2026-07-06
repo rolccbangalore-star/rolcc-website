@@ -623,8 +623,8 @@ body {
   display: none !important;
 }
 
-#nc-root.admin-view--media:not(.admin-view--login) [class*="StyledAuthenticationPage"],
-#nc-root.admin-view--media:not(.admin-view--login) [class*="AuthenticationPage"] {
+#nc-root.admin-view--media [class*="StyledAuthenticationPage"],
+#nc-root.admin-view--media [class*="AuthenticationPage"] {
   display: none !important;
   height: 0 !important;
   min-height: 0 !important;
@@ -632,6 +632,14 @@ body {
   margin: 0 !important;
   padding: 0 !important;
   visibility: hidden !important;
+}
+
+#nc-root.admin-view--login [class*="StyledAuthenticationPage"],
+#nc-root.admin-view--login [class*="AuthenticationPage"] {
+  display: flex !important;
+  height: auto !important;
+  min-height: 100vh !important;
+  visibility: visible !important;
 }
 
 #nc-root.admin-view--media .admin-content-wrap > *:not(main),

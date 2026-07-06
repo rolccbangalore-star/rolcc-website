@@ -78,10 +78,20 @@
 
   function isLoginView(root) {
     if (!root) return true;
-    if (root.querySelector('[class*="AuthenticationPage"], [class*="StyledAuthenticationPage"]')) return true;
     var loginBtn = root.querySelector('button[class*="LoginButton"]');
-    if (loginBtn && normalize(loginBtn.textContent).indexOf("github") !== -1) return true;
-    return false;
+    if (!loginBtn || normalize(loginBtn.textContent).indexOf("github") === -1) return false;
+    if (loginBtn.hidden) return false;
+    var btnStyle = window.getComputedStyle(loginBtn);
+    return btnStyle.display !== "none" && btnStyle.visibility !== "hidden";
+  }
+
+  function mediaRouteNeedsLogin(root) {
+    if (!root) return true;
+    var loginBtn = root.querySelector('button[class*="LoginButton"]');
+    if (!loginBtn || normalize(loginBtn.textContent).indexOf("github") === -1) return false;
+    if (loginBtn.hidden) return false;
+    var btnStyle = window.getComputedStyle(loginBtn);
+    return btnStyle.display !== "none" && btnStyle.visibility !== "hidden";
   }
 
   function getFieldLabelElements(scope) {
@@ -525,7 +535,7 @@
   }
 
   function hideDecapMediaObstructions(root) {
-    if (!isMediaRoute() || isLoginView(root)) return;
+    if (!isMediaRoute() || mediaRouteNeedsLogin(root)) return;
     var hidden = 0;
     root.querySelectorAll('[class*="AuthenticationPage"], [class*="StyledAuthenticationPage"]').forEach(function (el) {
       if (el.closest(".admin-media-workspace")) return;
@@ -540,6 +550,7 @@
       runId: "post-fix",
       hiddenCount: hidden,
       mainTop: main ? main.getBoundingClientRect().top : null,
+      needsLogin: mediaRouteNeedsLogin(root),
       isLoginView: isLoginView(root),
     });
     // #endregion

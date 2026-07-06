@@ -149,6 +149,7 @@ function readHubFooterTemplate() {
 
 const ROOT = path.join(__dirname, "..");
 const TODAY = new Date().toISOString().slice(0, 10);
+const ASSET_CACHE_VERSION = "a58da82";
 const DATA_DIR = path.join(ROOT, "data");
 const EF_DIR = path.join(DATA_DIR, "articles", "everyday-faith");
 const BTB_DIR = path.join(DATA_DIR, "articles", "back-to-bible");
@@ -553,7 +554,7 @@ function buildHubPage(articles, faqs) {
   const description =
     "Everyday Faith sermon summaries and Back to the Bible cell fellowship studies from River of Life Christian Church in Bangalore.";
 
-  const headExtra = `<link rel="stylesheet" href="/css/articles.css" />
+  const headExtra = `<link rel="stylesheet" href="/css/articles.css?v=${ASSET_CACHE_VERSION}" />
     <link rel="stylesheet" href="/css/faq.css" />
     <link rel="canonical" href="${canonical}" />`;
 
@@ -660,7 +661,7 @@ function articleSchema(article, canonical) {
 }
 
 function renderClapScripts(article) {
-  return `\n    <script id="article-clap-slug" type="application/json">${JSON.stringify(article.slug)}</script>\n    <script src="/js/articles/clap.js"></script>`;
+  return `\n    <script id="article-clap-slug" type="application/json">${JSON.stringify(article.slug)}</script>\n    <script src="/js/articles/clap.js?v=${ASSET_CACHE_VERSION}"></script>`;
 }
 
 function renderQuizSection(article) {
@@ -691,7 +692,7 @@ function buildEverydayFaithPage(article, allArticles) {
   const canonical = articleCanonical(article);
   const assetRoot = "/";
   const title = `${article.title} | Everyday Faith | River of Life Christian Church`;
-  const headExtra = `<link rel="stylesheet" href="/css/articles.css" />
+  const headExtra = `<link rel="stylesheet" href="/css/articles.css?v=${ASSET_CACHE_VERSION}" />
     <link rel="canonical" href="${canonical}" />
     <script type="application/ld+json">${articleSchema(article, canonical)}</script>`;
 
@@ -721,7 +722,7 @@ function buildEverydayFaithPage(article, allArticles) {
 function buildBackToBiblePage(article, allArticles) {
   const canonical = articleCanonical(article);
   const title = `${article.title} | Back to the Bible | River of Life Christian Church`;
-  const headExtra = `<link rel="stylesheet" href="/css/articles.css" />
+  const headExtra = `<link rel="stylesheet" href="/css/articles.css?v=${ASSET_CACHE_VERSION}" />
     <link rel="canonical" href="${canonical}" />
     <script type="application/ld+json">${articleSchema(article, canonical)}</script>`;
 

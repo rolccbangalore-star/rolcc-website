@@ -10,6 +10,27 @@
   }
   if (!slug) return;
 
+  var CLAP_BUILD = "a58da82";
+
+  // #region agent log
+  function dbgLog(location, message, data, hypothesisId) {
+    fetch("http://127.0.0.1:7663/ingest/a8dab655-487d-4443-a923-c6ebc86b6891", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "e5fa7f" },
+      body: JSON.stringify({
+        sessionId: "e5fa7f",
+        location: location,
+        message: message,
+        data: data || {},
+        timestamp: Date.now(),
+        hypothesisId: hypothesisId,
+        runId: "pre-fix",
+      }),
+    }).catch(function () {});
+  }
+  dbgLog("clap.js:init", "clap module loaded", { build: CLAP_BUILD, slug: slug }, "H2");
+  // #endregion
+
   function getOrCreateActionDock() {
     var dock = document.getElementById("article-action-dock");
     if (!dock) {

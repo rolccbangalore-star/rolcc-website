@@ -224,6 +224,8 @@
     });
     document.querySelectorAll(".admin-dropdown.is-open").forEach(function (el) {
       el.classList.remove("is-open");
+      var createTrigger = el.querySelector(".admin-create-dropdown__trigger");
+      if (createTrigger) createTrigger.setAttribute("aria-expanded", "false");
     });
     syncComposerDropdownBodyClass();
   }
@@ -384,55 +386,85 @@
   var PLACEHOLDER_THUMB =
     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10.5" r="1.5"/><path d="m21 17-5.5-5.5a1.5 1.5 0 0 0-2.12 0L8 17"/></svg>';
 
-  function styleCreateButton(createBtn) {
-    if (!createBtn) return;
-    createBtn.classList.add("admin-create-article", "btn-primary");
-    if (createBtn.dataset.adminCreateStyled !== "true") {
-      createBtn.dataset.adminCreateStyled = "true";
-      createBtn.innerHTML = CREATE_ICON + "Create Article";
+  function navigateToNewArticle(collection) {
+    var target = "#/collections/" + collection + "/new";
+    var ncRoot = getComposerRoot();
+    var decapNew =
+      ncRoot && ncRoot.querySelector('a[href*="/collections/' + collection + '/new"]');
+    if (decapNew) {
+      decapNew.click();
+      return;
     }
+    if (location.hash !== target) location.hash = target;
   }
 
   function mountCreateButton(root) {
     var createSlot = $("admin-create-slot");
     if (!createSlot) return;
 
-    if (!isCollectionRoute()) {
+    if (isLoginView(root)) {
       createSlot.hidden = true;
       return;
     }
 
-    var collection = getActiveCollection() || "everyday-faith";
-    var href = "#/collections/" + collection + "/new";
-    var createBtn = createSlot.querySelector("a.admin-create-article");
-
-    if (!createBtn) {
-      createBtn = document.createElement("a");
-      createBtn.className = "admin-create-article btn-primary";
+    var wrap = createSlot.querySelector(".admin-create-dropdown");
+    if (!wrap) {
       createSlot.textContent = "";
-      createSlot.appendChild(createBtn);
+      wrap = document.createElement("div");
+      wrap.className = "admin-create-dropdown admin-dropdown";
+
+      var trigger = document.createElement("button");
+      trigger.type = "button";
+      trigger.className = "admin-create-article btn-primary admin-create-dropdown__trigger";
+      trigger.setAttribute("aria-haspopup", "true");
+      trigger.setAttribute("aria-expanded", "false");
+      trigger.innerHTML = CREATE_ICON + "Create Article";
+      setTooltip(trigger, "Create Article");
+
+      var menu = document.createElement("div");
+      menu.className = "admin-create-dropdown__menu admin-dropdown__menu";
+      menu.setAttribute("role", "menu");
+
+      [
+        { id: "everyday-faith", label: "Sermon Summary" },
+        { id: "back-to-bible", label: "Back to the Bible" },
+      ].forEach(function (opt) {
+        var btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "admin-create-dropdown__option";
+        btn.dataset.collection = opt.id;
+        btn.textContent = opt.label;
+        btn.setAttribute("role", "menuitem");
+        btn.addEventListener("click", function (event) {
+          event.preventDefault();
+          event.stopPropagation();
+          wrap.classList.remove("is-open");
+          trigger.setAttribute("aria-expanded", "false");
+          closeAllDropdowns();
+          navigateToNewArticle(opt.id);
+        });
+        menu.appendChild(btn);
+      });
+
+      trigger.addEventListener("click", function (event) {
+        event.stopPropagation();
+        var open = wrap.classList.contains("is-open");
+        closeAllDropdowns();
+        if (!open) {
+          wrap.classList.add("is-open");
+          trigger.setAttribute("aria-expanded", "true");
+        }
+      });
+
+      menu.addEventListener("click", function (event) {
+        event.stopPropagation();
+      });
+
+      wrap.appendChild(trigger);
+      wrap.appendChild(menu);
+      createSlot.appendChild(wrap);
     }
 
-    createBtn.href = href;
-    styleCreateButton(createBtn);
-    setTooltip(createBtn, "Create Article");
-    if (createBtn.dataset.createBound !== "true") {
-      createBtn.dataset.createBound = "true";
-      createBtn.addEventListener("click", function (event) {
-        event.preventDefault();
-        var collection = getActiveCollection() || "everyday-faith";
-        var target = "#/collections/" + collection + "/new";
-        var ncRoot = getComposerRoot();
-        var decapNew =
-          ncRoot &&
-          (ncRoot.querySelector('main a[href*="/new"]') || ncRoot.querySelector('a[href*="/collections/' + collection + '/new"]'));
-        if (decapNew) {
-          decapNew.click();
-          return;
-        }
-        if (location.hash !== target) location.hash = target;
-      });
-    }
     createSlot.hidden = false;
   }
 
@@ -566,6 +598,10 @@
 
     applyCollectionTitle(main, getActiveCollection());
     ensureComposerToolbar(topBlock, root);
+
+    topBlock.querySelectorAll('a[href*="/new"]').forEach(function (link) {
+      link.remove();
+    });
 
     if (!headerWrap) {
       headerWrap = document.createElement("div");
@@ -1814,7 +1850,7 @@
     document.addEventListener("click", function (event) {
       if (
         event.target.closest(
-          ".admin-composer-menu__menu, .admin-composer-menu__trigger, .admin-composer-menu__option, #admin-view-switcher"
+          ".admin-composer-menu__menu, .admin-composer-menu__trigger, .admin-composer-menu__option, #admin-view-switcher, .admin-create-dropdown"
         )
       ) {
         return;

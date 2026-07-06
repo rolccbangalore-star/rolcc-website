@@ -394,22 +394,47 @@
     });
   }
 
-  function findTagMountPoint(root) {
+  var LAST_META_FIELD_LABELS = [
+    "sermon series",
+    "passage",
+    "main scripture",
+    "scripture",
+    "featured article",
+    "featured",
+    "hero image",
+    "date",
+    "author",
+  ];
+
+  function findTagInsertPoint(root) {
     if (!isEditorRoute()) return null;
+
+    for (var i = 0; i < LAST_META_FIELD_LABELS.length; i++) {
+      var fieldWrap = findFieldWrap(root, LAST_META_FIELD_LABELS[i]);
+      if (fieldWrap && fieldWrap.parentElement) {
+        return { parent: fieldWrap.parentElement, after: fieldWrap };
+      }
+    }
+
     var pane = root.querySelector('[class*="EditorControlPane"]');
-    if (!pane) return null;
-    var anchor =
-      findFieldWrap(root, "author") ||
-      findFieldWrap(root, "date") ||
-      findFieldWrap(root, "featured article") ||
-      findFieldWrap(root, "featured");
-    if (!anchor || !pane.contains(anchor)) return null;
-    return pane;
+    if (pane) return { parent: pane, after: null };
+
+    var form = root.querySelector("main form") || root.querySelector("main");
+    if (form) return { parent: form, after: null };
+
+    return null;
   }
 
-  function positionTagField(wrap, mount) {
-    if (!wrap || !mount) return;
-    mount.appendChild(wrap);
+  function positionTagField(wrap, insertPoint) {
+    if (!wrap || !insertPoint || !insertPoint.parent) return;
+    if (insertPoint.after) {
+      if (wrap.parentElement === insertPoint.parent && wrap.previousElementSibling === insertPoint.after) {
+        return;
+      }
+      insertPoint.parent.insertBefore(wrap, insertPoint.after.nextSibling);
+      return;
+    }
+    insertPoint.parent.appendChild(wrap);
   }
 
   function unmountEditorFields(root) {
@@ -458,10 +483,12 @@
 
   function wireTagField(root) {
     if (!isEditorRoute()) return;
-    var mount = findTagMountPoint(root);
-    if (!mount) return;
+    var insertPoint = findTagInsertPoint(root);
+    if (!insertPoint) return;
 
-    var wrap = mount.querySelector(".admin-field--tags-wired");
+    var wrap =
+      insertPoint.parent.querySelector(".admin-field--tags-wired") ||
+      root.querySelector(".admin-field--tags-wired");
     if (!wrap) {
       wrap = document.createElement("div");
       wrap.className = "admin-field--tags-wired admin-editor-custom admin-editor-custom--tag";
@@ -476,12 +503,13 @@
         "</div>" +
         '<p class="admin-editor-field-hint admin-tags-field__hint" id="admin-editor-tag-hint">Type to find tags. Add at least 2 before publishing.</p>';
 
-      positionTagField(wrap, mount);
+      positionTagField(wrap, insertPoint);
     } else {
-      positionTagField(wrap, mount);
+      positionTagField(wrap, insertPoint);
     }
 
     if (wrap.dataset.adminTagWired === "true") {
+      positionTagField(wrap, findTagInsertPoint(root));
       var chipsHostLive = wrap.querySelector("#admin-editor-tag-chips");
       var hintLive = wrap.querySelector("#admin-editor-tag-hint");
       if (chipsHostLive) {
@@ -665,6 +693,7 @@
 
     refreshTagsUi();
     wrap.dataset.adminTagWired = "true";
+    positionTagField(wrap, findTagInsertPoint(root));
   }
 
   function wireAuthorField(root) {

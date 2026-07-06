@@ -2335,28 +2335,38 @@ body.admin-page--editor-split .admin-editor-split__right > .admin-editor-column-
 
 /* Show Decap fields moved into the split shell */
 body.admin-page--editor-split #admin-editor-split-shell [class*="EditorControl"],
+body.admin-page--editor-split #admin-editor-split-shell [class*="Widget"],
+body.admin-page--editor-split #admin-editor-split-shell [class*="ObjectControl"],
 body.admin-page--editor-split #admin-editor-split-shell .admin-field--meta,
-body.admin-page--editor-split #admin-editor-split-shell .admin-field--content {
-  display: block !important;
+body.admin-page--editor-split #admin-editor-split-shell .admin-field--content,
+body.admin-page--editor-split #admin-editor-split-shell .admin-editor-split__fields input,
+body.admin-page--editor-split #admin-editor-split-shell .admin-editor-split__fields textarea,
+body.admin-page--editor-split #admin-editor-split-shell .admin-editor-split__fields select,
+body.admin-page--editor-split #admin-editor-split-shell .admin-editor-split__fields button {
+  display: revert !important;
   visibility: visible !important;
   pointer-events: auto !important;
   position: relative !important;
-  width: 100% !important;
-  max-width: none !important;
+  width: auto !important;
+  max-width: 100% !important;
   clip: auto !important;
   overflow: visible !important;
   height: auto !important;
   opacity: 1 !important;
 }
 
-/* Hide all Decap editor UI while split shell is active */
-body.admin-page--editor-split #nc-root form,
-body.admin-page--editor-split #nc-root [class*="EditorControlPane"],
-body.admin-page--editor-split #nc-root [class*="ControlPane"],
-body.admin-page--editor-split #nc-root [class*="EditorControl"],
-body.admin-page--editor-split #nc-root [class*="WidgetObject"],
-body.admin-page--editor-split #nc-root .admin-editor-decap-hidden,
-body.admin-page--editor-split #nc-root main > :not(.admin-editor-subheader):not(.admin-media-workspace) {
+body.admin-page--editor-split #admin-editor-split-shell .admin-field--meta,
+body.admin-page--editor-split #admin-editor-split-shell .admin-field--content {
+  display: block !important;
+  width: 100% !important;
+}
+
+/* Hide Decap editor UI only after fields are mounted in the split */
+body.admin-page--editor-split-ready #nc-root form,
+body.admin-page--editor-split-ready #nc-root [class*="EditorControlPane"],
+body.admin-page--editor-split-ready #nc-root [class*="ControlPane"],
+body.admin-page--editor-split-ready #nc-root .admin-editor-decap-hidden,
+body.admin-page--editor-split-ready #nc-root main > :not(.admin-editor-subheader):not(.admin-media-workspace) {
   display: none !important;
   visibility: hidden !important;
   pointer-events: none !important;

@@ -194,14 +194,27 @@
         });
     }
 
-    var roots = [];
+    var controls = [];
     var claimed = [];
+
+    form.querySelectorAll('[class*="EditorControl"]').forEach(function (control) {
+      if (control.closest("#admin-editor-split-shell")) return;
+      var labelText = getControlLabel(control);
+      if (!isKnownTopLevelField(labelText)) return;
+      if (claimed.indexOf(control) !== -1) return;
+      claimed.push(control);
+      controls.push(control);
+    });
+
+    if (controls.length) return controls;
+
     var labels = getFieldLabelElements(form);
 
     for (var i = 0; i < labels.length; i++) {
       var label = labels[i];
       if (label.closest(".admin-editor-columns")) continue;
       if (label.closest(".admin-editor-col__fields")) continue;
+      if (label.closest("#admin-editor-split-shell")) continue;
 
       var labelText = normalizeFieldLabel(label.textContent);
       if (!isKnownTopLevelField(labelText)) continue;
@@ -210,10 +223,10 @@
       if (!rootEl || claimed.indexOf(rootEl) !== -1) continue;
 
       claimed.push(rootEl);
-      roots.push(rootEl);
+      controls.push(rootEl);
     }
 
-    return roots;
+    return controls;
   }
 
   function findEditorFieldMount(form, controls) {
@@ -926,7 +939,7 @@
   function resetEditorSplitShell(root) {
     var shell = document.getElementById("admin-editor-split-shell");
     if (shell) shell.remove();
-    document.body.classList.remove("admin-page--editor-split");
+    document.body.classList.remove("admin-page--editor-split", "admin-page--editor-split-ready");
     root.querySelectorAll(".admin-editor-split").forEach(function (el) {
       if (el.id !== "admin-editor-split-shell" && !el.closest("#admin-editor-split-shell")) el.remove();
     });
@@ -941,11 +954,15 @@
 
   function hideDecapEditorUI(root) {
     if (!isEditorRoute()) return;
+    var shell = document.getElementById("admin-editor-split-shell");
+    if (!shell || shell.dataset.adminFieldsMounted !== "true") return;
+
+    document.body.classList.add("admin-page--editor-split-ready");
+
     var selectors = [
       "form",
       '[class*="EditorControlPane"]',
       '[class*="ControlPane"]',
-      '[class*="EditorControl"]',
       '[class*="WidgetObject"]',
       '[class*="ObjectWidget"]',
     ];
@@ -1054,8 +1071,12 @@
       buckets.metaFields.appendChild(entry.control);
     });
 
+    if (!metaEntries.length && !contentControls.length) return;
+
     shell.dataset.adminFieldsMounted = "true";
+    document.body.classList.add("admin-page--editor-split-ready");
     syncTitleFromDecap(root);
+    hideDecapEditorUI(root);
   }
 
   function mountEditorSplitShell(root) {
@@ -1100,8 +1121,8 @@
     }
 
     document.body.classList.add("admin-page--editor-split");
-    hideDecapEditorUI(root);
     mountEditorFieldsInSplit(root);
+    hideDecapEditorUI(root);
   }
 
   function mountProfileButton(root) {
@@ -2929,10 +2950,10 @@
     mountEditorSubheader(root);
     mountEditorSplitShell(root);
     if (isEditorRoute()) {
-      [100, 300, 800, 1500, 2500].forEach(function (delay) {
+      [100, 300, 600, 1000, 1500, 2500, 4000].forEach(function (delay) {
         window.setTimeout(function () {
-          mountEditorSplitShell(root);
           mountEditorFieldsInSplit(root);
+          mountEditorSplitShell(root);
         }, delay);
       });
     }

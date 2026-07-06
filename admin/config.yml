@@ -41,31 +41,6 @@ collections:
     format: json
     summary: "{{title}}"
     fields:
-      - { label: Title, name: title, widget: string }
-      - { label: Summary, name: summary, widget: text, hint: "Shown at the top of the article." }
-      - { label: Search preview, name: description, widget: text, hint: "For Google and social links (1–2 sentences)." }
-      - { label: Author, name: author, widget: string, default: "ROLCC Pastoral Team" }
-      - label: Tag
-        name: category
-        widget: relation
-        collection: article-tags
-        search_fields: [name]
-        value_field: name
-        display_fields: [name]
-        hint: "Choose an existing tag or create a new one — it will appear for future articles."
-      - { label: Date, name: date, widget: datetime, date_format: YYYY-MM-DD, time_format: false }
-      - { label: Hero image, name: thumbnail, widget: image, default: "/images/og-image.jpg" }
-      - { label: Featured, name: featured, widget: boolean, default: false }
-      - { label: Published, name: publish, widget: boolean, default: true }
-      - { label: Scripture, name: scripture, widget: string, required: false, hint: "e.g. Matthew 11:28-30" }
-      - { label: Sermon series, name: sermonSeries, widget: string, required: false }
-      - label: Key takeaways
-        name: keyTakeaways
-        widget: list
-        required: false
-        hint: "Optional bullets after the article."
-        field: { label: Takeaway, name: item, widget: string }
-
       - label: Article content
         name: blocks
         widget: list
@@ -148,6 +123,49 @@ collections:
               - { label: Title (accessibility), name: title, widget: string, required: false }
               - { label: Caption, name: caption, widget: string, required: false }
 
+      - label: Key takeaways
+        name: keyTakeaways
+        widget: list
+        required: false
+        hint: "Optional bullets after the article."
+        field: { label: Takeaway, name: item, widget: string }
+
+      - { label: Include quiz?, name: includeQuiz, widget: boolean, default: false }
+      - label: Quiz
+        name: quiz
+        widget: list
+        required: false
+        condition:
+          field: includeQuiz
+          value: true
+        fields:
+          - { label: Question, name: question, widget: string }
+          - label: Options
+            name: options
+            widget: list
+            field: { label: Option, name: option, widget: string }
+          - { label: Correct option index (0-based), name: correctIndex, widget: number, value_type: int, min: 0 }
+          - { label: Explanation, name: explanation, widget: text, required: false }
+
+      - { label: Title, name: title, widget: string }
+      - { label: Summary, name: summary, widget: text, hint: "Shown at the top of the article." }
+      - { label: Search preview, name: description, widget: text, hint: "For Google and social links (1–2 sentences)." }
+      - { label: Author, name: author, widget: string, default: "ROLCC Pastoral Team" }
+      - label: Tag
+        name: category
+        widget: relation
+        collection: article-tags
+        search_fields: [name]
+        value_field: name
+        display_fields: [name]
+        hint: "Choose an existing tag or create a new one — it will appear for future articles."
+      - { label: Date, name: date, widget: datetime, date_format: YYYY-MM-DD, time_format: false }
+      - { label: Hero image, name: thumbnail, widget: image, default: "/images/og-image.jpg" }
+      - { label: Featured, name: featured, widget: boolean, default: false }
+      - { label: Published, name: publish, widget: boolean, default: true }
+      - { label: Scripture, name: scripture, widget: string, required: false, hint: "e.g. Matthew 11:28-30" }
+      - { label: Sermon series, name: sermonSeries, widget: string, required: false }
+
   - name: back-to-bible
     label: Back to the Bible
     folder: data/articles/back-to-bible
@@ -157,23 +175,6 @@ collections:
     format: json
     summary: "{{title}}"
     fields:
-      - { label: Title, name: title, widget: string }
-      - { label: Description, name: description, widget: text }
-      - { label: Passage, name: passage, widget: string }
-      - { label: Author, name: author, widget: string, default: "ROLCC Fellowship Team" }
-      - label: Tag
-        name: category
-        widget: relation
-        collection: article-tags
-        search_fields: [name]
-        value_field: name
-        display_fields: [name]
-        default: "Bible Study"
-        hint: "Choose an existing tag or create a new one — it will appear for future articles."
-      - { label: Date, name: date, widget: datetime, date_format: YYYY-MM-DD, time_format: false }
-      - { label: Thumbnail, name: thumbnail, widget: image, default: "/images/og-image.jpg" }
-      - { label: Featured, name: featured, widget: boolean, default: false }
-      - { label: Published, name: publish, widget: boolean, default: true }
       - label: Sections
         name: sections
         widget: list
@@ -208,3 +209,21 @@ collections:
             field: { label: Option, name: option, widget: string }
           - { label: Correct option index (0-based), name: correctIndex, widget: number, value_type: int, min: 0 }
           - { label: Explanation, name: explanation, widget: text, required: false }
+
+      - { label: Title, name: title, widget: string }
+      - { label: Description, name: description, widget: text }
+      - { label: Passage, name: passage, widget: string }
+      - { label: Author, name: author, widget: string, default: "ROLCC Fellowship Team" }
+      - label: Tag
+        name: category
+        widget: relation
+        collection: article-tags
+        search_fields: [name]
+        value_field: name
+        display_fields: [name]
+        default: "Bible Study"
+        hint: "Choose an existing tag or create a new one — it will appear for future articles."
+      - { label: Date, name: date, widget: datetime, date_format: YYYY-MM-DD, time_format: false }
+      - { label: Thumbnail, name: thumbnail, widget: image, default: "/images/og-image.jpg" }
+      - { label: Featured, name: featured, widget: boolean, default: false }
+      - { label: Published, name: publish, widget: boolean, default: true }

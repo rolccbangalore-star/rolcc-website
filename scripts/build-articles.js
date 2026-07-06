@@ -71,6 +71,16 @@ function loadEverydayFaith() {
         sermonSeries: data.sermonSeries || "",
         keyTakeaways,
         blocks,
+        includeQuiz: data.includeQuiz === true,
+        quiz:
+          data.includeQuiz === true
+            ? (data.quiz || []).map((item) => ({
+                question: item.question,
+                options: (item.options || []).map((o) => (typeof o === "string" ? o : o.option || "")),
+                correctIndex: item.correctIndex,
+                explanation: item.explanation || "",
+              }))
+            : [],
         readTime: computeReadTime(textForReadTime),
         bodyHtml: renderBlocks(blocks),
       });
@@ -485,6 +495,29 @@ function articleSchema(article, canonical) {
   return JSON.stringify(base, null, 2);
 }
 
+function renderQuizSection(article) {
+  if (!article.includeQuiz || !article.quiz?.length) return "";
+  return `<section class="article-section" aria-label="Study quiz">
+      <h2 class="text-lg font-semibold text-slate-900">Quick quiz</h2>
+      <p class="mt-2 text-sm text-slate-600">Test your understanding. Answers stay on this device only.</p>
+      <div class="article-quiz mt-4" data-article-quiz>
+        <p class="text-xs text-slate-500" data-quiz-progress></p>
+        <p class="article-quiz__question mt-2" data-quiz-question></p>
+        <div class="article-quiz__options" data-quiz-options></div>
+        <p class="article-quiz__feedback" data-quiz-feedback></p>
+        <div class="article-quiz__actions">
+          <button type="button" class="article-quiz__btn" data-quiz-next hidden>Next question</button>
+          <button type="button" class="article-quiz__btn article-quiz__btn--ghost" data-quiz-reset>Reset quiz</button>
+        </div>
+      </div>
+    </section>`;
+}
+
+function renderQuizScripts(article) {
+  if (!article.includeQuiz || !article.quiz?.length) return "";
+  return `\n    <script id="article-quiz-data" type="application/json">${JSON.stringify(article.quiz)}</script>\n    <script src="/js/articles/quiz.js"></script>`;
+}
+
 function buildEverydayFaithPage(article, allArticles) {
   const canonical = articleCanonical(article);
   const assetRoot = "/";
@@ -502,6 +535,7 @@ function buildEverydayFaithPage(article, allArticles) {
         ${renderSummaryBox(article.summary)}
         <div class="article-prose mt-8">${article.bodyHtml}</div>
         ${renderKeyTakeaways(article.keyTakeaways)}
+        ${renderQuizSection(article)}
         <div class="mt-10">
           <button type="button" class="article-clap" data-article-clap data-slug="${escapeHtml(article.slug)}" aria-label="Appreciate this article">
             <span aria-hidden="true">👏</span> Appreciate · <span data-clap-count>0</span>
@@ -512,7 +546,7 @@ function buildEverydayFaithPage(article, allArticles) {
         <p class="mt-10"><a href="/articles" class="text-sm font-medium text-accent hover:underline">← Back to all articles</a></p>
       </article>`;
 
-  const scripts = `<script src="/js/articles/clap.js"></script>`;
+  const scripts = `<script src="/js/articles/clap.js"></script>${renderQuizScripts(article)}`;
   return buildPageShell({ title, description: article.description, canonical, ogType: "article", ogImage: article.thumbnail.startsWith("http") ? article.thumbnail : `${SITE_ORIGIN}${article.thumbnail}`, headExtra, bodyMain, assetRoot, scripts });
 }
 
@@ -553,23 +587,7 @@ function buildBackToBiblePage(article, allArticles) {
     </section>`
     : "";
 
-  const quizHtml =
-    article.includeQuiz && article.quiz?.length
-      ? `<section class="article-section" aria-label="Study quiz">
-      <h2 class="text-lg font-semibold text-slate-900">Quick quiz</h2>
-      <p class="mt-2 text-sm text-slate-600">Test your understanding. Answers stay on this device only.</p>
-      <div class="article-quiz mt-4" data-article-quiz>
-        <p class="text-xs text-slate-500" data-quiz-progress></p>
-        <p class="article-quiz__question mt-2" data-quiz-question></p>
-        <div class="article-quiz__options" data-quiz-options></div>
-        <p class="article-quiz__feedback" data-quiz-feedback></p>
-        <div class="article-quiz__actions">
-          <button type="button" class="article-quiz__btn" data-quiz-next hidden>Next question</button>
-          <button type="button" class="article-quiz__btn article-quiz__btn--ghost" data-quiz-reset>Reset quiz</button>
-        </div>
-      </div>
-    </section>`
-      : "";
+  const quizHtml = renderQuizSection(article);
 
   const bodyMain = `
       <article class="mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
@@ -592,11 +610,7 @@ function buildBackToBiblePage(article, allArticles) {
         <p class="mt-10"><a href="/articles" class="text-sm font-medium text-accent hover:underline">← Back to all articles</a></p>
       </article>`;
 
-  const scripts = `<script src="/js/articles/clap.js"></script>${
-    article.includeQuiz && article.quiz?.length
-      ? `\n    <script id="article-quiz-data" type="application/json">${JSON.stringify(article.quiz)}</script>\n    <script src="/js/articles/quiz.js"></script>`
-      : ""
-  }`;
+  const scripts = `<script src="/js/articles/clap.js"></script>${renderQuizScripts(article)}`;
   return buildPageShell({ title, description: article.description, canonical, ogType: "article", ogImage: article.thumbnail.startsWith("http") ? article.thumbnail : `${SITE_ORIGIN}${article.thumbnail}`, headExtra, bodyMain, assetRoot: "/", scripts });
 }
 

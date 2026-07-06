@@ -881,8 +881,7 @@ body {
 }
 
 .admin-media-pane .admin-media-list-row--copied {
-  border-color: var(--rolcc-accent);
-  box-shadow: 0 0 0 1px rgba(99, 91, 255, 0.25);
+  background: rgba(99, 91, 255, 0.08);
 }
 
 .admin-media-pane .admin-media-list-row__thumb {

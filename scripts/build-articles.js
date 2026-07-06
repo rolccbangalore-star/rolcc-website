@@ -531,16 +531,15 @@ function buildHubPage(articles, faqs) {
   const bodyMain = `
       <div class="articles-hub-page">
       <section class="articles-hero contact-hero contact-hero--bg-image relative overflow-hidden">
-        <div class="contact-hero__curve" aria-hidden="true"></div>
-        <div class="relative z-10 mx-auto max-w-6xl px-4 pt-6 pb-8 sm:px-6 sm:pt-24 sm:pb-10 md:pt-28 md:pb-12 lg:px-8 lg:pt-32 lg:pb-14">
+        <div class="relative z-10 mx-auto max-w-6xl px-4 pt-6 pb-12 sm:px-6 sm:pt-24 sm:pb-16 md:pt-28 md:pb-20 lg:px-8 lg:pt-32 lg:pb-24">
           <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-accent">Articles &amp; Studies</p>
           <h1 class="mt-3 text-balance text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl md:text-4xl">Faith for everyday life and deeper Bible study</h1>
           <p class="mt-5 max-w-2xl text-sm text-slate-600 sm:text-base leading-relaxed">Read sermon reflections and Bible study guides written for everyday life and cell fellowship.</p>
         </div>
       </section>
 
-      <section class="articles-list-section border-b border-slate-200 bg-slate-50" aria-label="Articles">
-        <div class="mx-auto max-w-6xl px-4 py-10 sm:px-6 md:py-14 lg:px-8">
+      <section class="articles-list-section border-b border-slate-200" aria-label="Articles">
+        <div class="mx-auto max-w-6xl px-4 pb-10 sm:px-6 md:pb-14 lg:px-8">
           <div class="articles-toolbar">
             ${renderFilterChips({ toolbar: true })}
             <div class="articles-toolbar__controls">

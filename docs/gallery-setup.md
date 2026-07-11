@@ -45,14 +45,16 @@ Edit `data/gallery-config.json`:
     "enabled": true,
     "mode": "playlist",
     "playlistId": "PLxxxxxxxxxxxxxxxx",
-    "limit": 12,
+    "limit": 0,
+    "perPage": 12,
     "videos": []
   }
 }
 ```
 
 - **`mode: "playlist"`** — sync from your curated playlist (recommended)
-- **`limit`** — max videos to show (newest first)
+- **`limit`** — max videos to fetch from YouTube (`0` = entire playlist, up to 200)
+- **`perPage`** — sermons shown per page on `/sermons` (FAQ-style pagination)
 - **`videos`** — leave empty for auto-sync; if you add manual entries here, they override the playlist fetch
 
 ### Step 4 — Add API key locally

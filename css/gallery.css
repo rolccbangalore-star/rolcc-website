@@ -128,6 +128,23 @@
   width: 100% !important;
 }
 
+.gallery-empty--cta {
+  margin-top: 0.75rem;
+  border-style: solid;
+  background: #fff;
+}
+
+.gallery-empty--cta a {
+  color: #635bff;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.gallery-empty--cta a:hover,
+.gallery-empty--cta a:focus-visible {
+  text-decoration: underline;
+}
+
 .gallery-youtube-grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr);

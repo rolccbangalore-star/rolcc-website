@@ -67,6 +67,10 @@
       "destination": "/sermons.html"
     },
     {
+      "source": "/gallery",
+      "destination": "/gallery.html"
+    },
+    {
       "source": "/sermons/2",
       "destination": "/sermons-2.html"
     },
@@ -236,6 +240,11 @@
       "permanent": true
     },
     {
+      "source": "/gallery.html",
+      "destination": "/gallery",
+      "permanent": true
+    },
+    {
       "source": "/sermons-2.html",
       "destination": "/sermons/2",
       "permanent": true
@@ -278,16 +287,6 @@
     {
       "source": "/sermons-10.html",
       "destination": "/sermons/10",
-      "permanent": true
-    },
-    {
-      "source": "/gallery.html",
-      "destination": "/sermons",
-      "permanent": true
-    },
-    {
-      "source": "/gallery",
-      "destination": "/sermons",
       "permanent": true
     },
     {

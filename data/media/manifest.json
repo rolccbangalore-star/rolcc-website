@@ -18,7 +18,7 @@
     "folder": "images",
     "width": 180,
     "height": 180,
-    "usageCount": 144,
+    "usageCount": 156,
     "usedOn": [
       "About Us",
       "Article: Finding Anchor In The Tsunami Practical Wisdom And Spiritual Accountability In Times Of Crisis",
@@ -46,6 +46,9 @@
       "PMD",
       "River Kids",
       "ROLF",
+      "Sermons",
+      "Sermons 2",
+      "Sermons 3",
       "Services"
     ]
   },
@@ -68,10 +71,7 @@
     "folder": "assets",
     "width": 2400,
     "height": 1600,
-    "usageCount": 3,
-    "usedOn": [
-      "Home"
-    ]
+    "usageCount": 0
   },
   {
     "path": "/assets/carousel- banner-2.webp",
@@ -80,10 +80,7 @@
     "folder": "assets",
     "width": 1920,
     "height": 1080,
-    "usageCount": 1,
-    "usedOn": [
-      "Home"
-    ]
+    "usageCount": 0
   },
   {
     "path": "/assets/carousel- banner-3.webp",
@@ -92,10 +89,7 @@
     "folder": "assets",
     "width": 1920,
     "height": 1080,
-    "usageCount": 1,
-    "usedOn": [
-      "Home"
-    ]
+    "usageCount": 0
   },
   {
     "path": "/assets/carousel- banner-4.webp",
@@ -104,10 +98,7 @@
     "folder": "assets",
     "width": 2400,
     "height": 1600,
-    "usageCount": 1,
-    "usedOn": [
-      "Home"
-    ]
+    "usageCount": 0
   },
   {
     "path": "/assets/cf/Cell_fellowship (1).png",
@@ -272,11 +263,10 @@
     "folder": "assets",
     "width": 2184,
     "height": 698,
-    "usageCount": 6,
+    "usageCount": 4,
     "usedOn": [
       "Articles",
-      "Faq",
-      "Gallery"
+      "Faq"
     ]
   },
   {
@@ -376,7 +366,7 @@
     "folder": "images",
     "width": 48,
     "height": 48,
-    "usageCount": 144,
+    "usageCount": 156,
     "usedOn": [
       "About Us",
       "Article: Finding Anchor In The Tsunami Practical Wisdom And Spiritual Accountability In Times Of Crisis",
@@ -404,6 +394,9 @@
       "PMD",
       "River Kids",
       "ROLF",
+      "Sermons",
+      "Sermons 2",
+      "Sermons 3",
       "Services"
     ]
   },
@@ -414,7 +407,7 @@
     "folder": "images",
     "width": 96,
     "height": 96,
-    "usageCount": 144,
+    "usageCount": 156,
     "usedOn": [
       "About Us",
       "Article: Finding Anchor In The Tsunami Practical Wisdom And Spiritual Accountability In Times Of Crisis",
@@ -442,6 +435,9 @@
       "PMD",
       "River Kids",
       "ROLF",
+      "Sermons",
+      "Sermons 2",
+      "Sermons 3",
       "Services"
     ]
   },
@@ -731,7 +727,7 @@
     "folder": "assets",
     "width": 373,
     "height": 457,
-    "usageCount": 100,
+    "usageCount": 116,
     "usedOn": [
       "About Us",
       "Article: Finding Anchor In The Tsunami Practical Wisdom And Spiritual Accountability In Times Of Crisis",
@@ -759,6 +755,9 @@
       "PMD",
       "River Kids",
       "ROLF",
+      "Sermons",
+      "Sermons 2",
+      "Sermons 3",
       "Services"
     ]
   },
@@ -781,7 +780,7 @@
     "folder": "images",
     "width": 176,
     "height": 769,
-    "usageCount": 344,
+    "usageCount": 372,
     "usedOn": [
       "About Us",
       "Article Import Parse",
@@ -816,6 +815,9 @@
       "PMD",
       "River Kids",
       "ROLF",
+      "Sermons",
+      "Sermons 2",
+      "Sermons 3",
       "Services"
     ]
   },

@@ -11,6 +11,7 @@ loadProjectEnv(ROOT);
 const SITE_ORIGIN = "https://www.rolcc.in";
 const GALLERY_ASSET_VERSION = "sermons-spacing-v1";
 const SERMONS_PATH = "/sermons";
+const GALLERY_PATH = "/gallery";
 const DEFAULT_SERMONS_PER_PAGE = 12;
 const MAX_PLAYLIST_FETCH = 200;
 const CONFIG_PATH = path.join(ROOT, "data", "gallery-config.json");
@@ -490,6 +491,13 @@ async function buildGalleryData(config, cached) {
   };
 }
 
+function truncateCaption(value, maxLength) {
+  const text = String(value || "").trim();
+  if (!text) return "";
+  if (text.length <= maxLength) return text;
+  return text.slice(0, maxLength).trim() + "…";
+}
+
 function renderInstagramItem(item) {
   const permalink = escapeHtml(item.permalink);
   return `<div class="gallery-instagram-item">
@@ -499,21 +507,15 @@ function renderInstagramItem(item) {
     </div>`;
 }
 
-function renderInstagramSection(items) {
+function renderInstagramGalleryContent(items) {
   if (!items.length) {
-    return `<section class="gallery-section" data-gallery-instagram aria-label="Instagram highlights">
-        <div class="gallery-section__head">
-          <div>
-            <h2 class="gallery-section__title">Instagram</h2>
-            <p class="gallery-section__intro">Reels and posts from @rolccindia.</p>
-          </div>
-          <a href="https://www.instagram.com/rolccindia" class="gallery-section__link" target="_blank" rel="noopener noreferrer">Follow on Instagram</a>
-        </div>
-        <p class="gallery-empty">Instagram highlights will appear here after API credentials are configured for the build. See <code>docs/gallery-setup.md</code>.</p>
+    return `<section class="gallery-section" data-gallery-instagram aria-label="Instagram gallery">
+        <p class="gallery-empty">Instagram posts will appear here once Meta API credentials are configured. Follow the setup guide in <code>docs/gallery-setup.md</code>, then run <code>npm run test:instagram</code> and <code>npm run build:gallery</code>.</p>
+        <p class="gallery-empty gallery-empty--cta"><a href="https://www.instagram.com/rolccindia" target="_blank" rel="noopener noreferrer">Follow @rolccindia on Instagram</a> in the meantime.</p>
       </section>`;
   }
 
-  return `<section class="gallery-section" data-gallery-instagram aria-label="Instagram highlights">
+  return `<section class="gallery-section" data-gallery-instagram aria-label="Instagram gallery">
       <div class="gallery-section__head">
         <div>
           <h2 class="gallery-section__title">Instagram</h2>
@@ -767,7 +769,6 @@ function buildGalleryHtml(config, data, pageOptions = {}) {
   const heading = escapeHtml(page.title || "Messages from River of Life");
   const intro = escapeHtml(page.description || description);
   const youtubeEnabled = config.youtube && config.youtube.enabled !== false;
-  const instagramEnabled = config.instagram && config.instagram.enabled !== false;
   const pageMeta = {
     pageNum,
     totalPages,
@@ -776,8 +777,6 @@ function buildGalleryHtml(config, data, pageOptions = {}) {
     end,
   };
   const youtubeSection = youtubeEnabled ? renderYoutubeSection(pageVideos, pageMeta) : "";
-  const instagramSection =
-    pageNum === 1 && instagramEnabled ? renderInstagramSection(data.instagram || []) : "";
   const pageSections = pageNum === 1 ? renderSermonsPageSections() : "";
 
   const headExtra = `<link rel="stylesheet" href="/css/articles.css?v=${GALLERY_ASSET_VERSION}" />
@@ -807,7 +806,6 @@ function buildGalleryHtml(config, data, pageOptions = {}) {
       <section class="articles-list-section border-b border-slate-200" aria-label="Sermons content">
         <div class="mx-auto max-w-6xl px-4 pb-10 sm:px-6 md:pb-14 lg:px-8">
           ${youtubeSection}
-          ${instagramSection}
         </div>
       </section>
       </div>
@@ -829,6 +827,97 @@ ${readFooterTemplate()}
     <script src="/js/gallery.js?v=${GALLERY_ASSET_VERSION}"></script>${pageNum === 1 ? `
     <script src="/js/faq/core.js"></script>
     <script src="/js/faq/accordion.js"></script>` : ""}
+  </body>
+</html>`;
+}
+
+function renderGalleryPageSchema(items, canonical) {
+  const listItems = (items || []).map((item, index) => ({
+    "@type": "ListItem",
+    position: index + 1,
+    item: {
+      "@type": "ImageObject",
+      name: truncateCaption(item.caption, 80) || "River of Life Christian Church on Instagram",
+      url: item.permalink,
+      contentUrl: item.thumbnail,
+    },
+  }));
+
+  if (!listItems.length) return "";
+
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: "Gallery | River of Life Christian Church",
+    url: canonical,
+    mainEntity: {
+      "@type": "ItemList",
+      itemListElement: listItems,
+    },
+  };
+
+  return `<script type="application/ld+json">${JSON.stringify(schema)}</script>`;
+}
+
+function buildGalleryPageHtml(config, data) {
+  const galleryPage = config.galleryPage || {};
+  const title = "Gallery | River of Life Christian Church, Bangalore";
+  const description =
+    galleryPage.description ||
+    "Photos, reels, and highlights from River of Life Christian Church on Instagram.";
+  const canonical = `${SITE_ORIGIN}${GALLERY_PATH}`;
+  const eyebrow = escapeHtml(galleryPage.eyebrow || "Gallery");
+  const heading = escapeHtml(galleryPage.title || "Life at River of Life");
+  const intro = escapeHtml(description);
+  const instagramItems =
+    config.instagram && config.instagram.enabled !== false ? data.instagram || [] : [];
+  const instagramSection = renderInstagramGalleryContent(instagramItems);
+
+  const headExtra = `<link rel="stylesheet" href="/css/articles.css?v=${GALLERY_ASSET_VERSION}" />
+    <link rel="stylesheet" href="/css/gallery.css?v=${GALLERY_ASSET_VERSION}" />
+    <link rel="canonical" href="${canonical}" />
+    ${renderGalleryPageSchema(instagramItems, canonical)}`;
+
+  const header = readHeaderNavTemplate()
+    .replaceAll("{{TITLE}}", title)
+    .replaceAll("{{DESCRIPTION}}", description)
+    .replace("{{CANONICAL}}", canonical)
+    .replace("{{HEAD_EXTRA}}", headExtra);
+
+  return `${header}
+    <main class="main-no-top-gap relative z-10">
+      <div class="articles-hub-page">
+      <div class="articles-hub-top">
+      <section class="articles-hero contact-hero relative">
+        <div class="relative z-10 mx-auto max-w-6xl px-4 pt-6 pb-12 sm:px-6 sm:pt-24 sm:pb-16 md:pt-28 md:pb-20 lg:px-8 lg:pt-32 lg:pb-24">
+          <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-accent">${eyebrow}</p>
+          <h1 class="mt-3 text-balance text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl md:text-4xl">${heading}</h1>
+          <p class="mt-5 max-w-2xl text-sm text-slate-600 sm:text-base leading-relaxed">${intro}</p>
+          <p class="mt-6">
+            <a href="https://www.instagram.com/rolccindia" class="gallery-section__link" target="_blank" rel="noopener noreferrer">Follow @rolccindia on Instagram</a>
+          </p>
+        </div>
+      </section>
+
+      <section class="articles-list-section border-b border-slate-200" aria-label="Gallery content">
+        <div class="mx-auto max-w-6xl px-4 pb-10 sm:px-6 md:pb-14 lg:px-8">
+          ${instagramSection}
+        </div>
+      </section>
+      </div>
+      </div>
+
+      <div class="serve-unveil-spacer min-h-screen" aria-hidden="true"></div>
+    </main>
+${readFooterTemplate()}
+    <button
+      id="scroll-top-btn"
+      class="scroll-to-top hidden fixed bottom-5 right-4 z-40 rounded-full bg-slate-900/90 p-2 text-xs text-slate-100 shadow-lg ring-1 ring-slate-600 hover:bg-slate-800 sm:bottom-6 sm:right-6"
+      aria-label="Scroll to top"
+      type="button"
+    >↑</button>
+    <script src="/js/main.js"></script>
+    <script src="/js/gallery-instagram.js?v=${GALLERY_ASSET_VERSION}"></script>
   </body>
 </html>`;
 }
@@ -928,7 +1017,9 @@ async function main() {
     });
 
   const legacyGalleryPath = path.join(ROOT, "gallery.html");
-  if (fs.existsSync(legacyGalleryPath)) fs.unlinkSync(legacyGalleryPath);
+  const galleryHtml = buildGalleryPageHtml(config, data);
+  fs.writeFileSync(legacyGalleryPath, galleryHtml, "utf8");
+  console.log(`Wrote gallery.html (${data.instagram.length} Instagram item(s))`);
 
   syncGalleryFooterLink();
 
@@ -938,6 +1029,7 @@ async function main() {
       articles: articlesIndex.articles || [],
       faqTotalPages: 10,
       sermonsTotalPages: totalPages,
+      includeGallery: true,
       today: new Date().toISOString().slice(0, 10),
     });
   } catch (error) {

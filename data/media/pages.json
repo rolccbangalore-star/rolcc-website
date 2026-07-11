@@ -88,6 +88,18 @@
     "label": "ROLF"
   },
   {
+    "id": "sermons",
+    "label": "Sermons"
+  },
+  {
+    "id": "sermons-2",
+    "label": "Sermons 2"
+  },
+  {
+    "id": "sermons-3",
+    "label": "Sermons 3"
+  },
+  {
     "id": "services",
     "label": "Services"
   }

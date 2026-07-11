@@ -4,7 +4,7 @@ const { SITE_ORIGIN, articleCanonical } = require("./article-config");
 
 const ROOT = path.join(__dirname, "..");
 
-function writeSitemap({ articles = [], faqTotalPages = 1, sermonsTotalPages = 1, today } = {}) {
+function writeSitemap({ articles = [], faqTotalPages = 1, sermonsTotalPages = 1, includeGallery = false, today } = {}) {
   const TODAY = today || new Date().toISOString().slice(0, 10);
   const staticPages = [
     ["/", "weekly", "1.0"],
@@ -21,6 +21,10 @@ function writeSitemap({ articles = [], faqTotalPages = 1, sermonsTotalPages = 1,
     ["/rolf", "monthly", "0.7"],
     ["/articles", "weekly", "0.85"],
   ];
+
+  if (includeGallery) {
+    staticPages.push(["/gallery", "weekly", "0.75"]);
+  }
 
   const urls = staticPages.map(
     ([loc, changefreq, priority]) =>

@@ -196,17 +196,15 @@
     </header>
 
     <main class="main-no-top-gap relative z-10">
-      <!-- Hero Carousel: banner image spans full width below header & announcement -->
-      <section class="hero-carousel hero-carousel--with-bg hero-theme-dark" id="hero-banner" data-bg-image="assets/carousel- banner-1.webp">
+      <!-- Hero Carousel: full-width video banners below header & announcement -->
+      <section class="hero-carousel hero-carousel--with-bg hero-theme-dark" id="hero-banner">
         <div class="carousel-track">
-          <!-- Slide 1: Join Us This Sunday (ministry highlight video) -->
-          <div class="carousel-slide carousel-slide--video active flex flex-col justify-center items-center text-center" data-bg-image="assets/carousel- banner-1.webp">
+          <!-- Slide 1: Worship Service -->
+          <div class="carousel-slide carousel-slide--video active flex flex-col justify-center items-center text-center">
             <div class="hero-carousel__video-wrap">
-              <video class="hero-carousel__video" muted loop playsinline preload="metadata" poster="assets/carousel- banner-1.webp" aria-hidden="true">
-                <source src="assets/Website Hero.webm" type="video/webm" />
-                <source src="assets/Website Hero.mp4" type="video/mp4" />
+              <video class="hero-carousel__video" muted loop playsinline preload="metadata" aria-hidden="true">
+                <source src="assets/Banner/website-worship-service.mp4" type="video/mp4" />
               </video>
-              
             </div>
             <div class="carousel-slide-inner mx-auto w-full max-w-6xl flex flex-col justify-center items-center px-4 py-12 sm:px-6 md:py-16 lg:px-8 text-center">
               <p class="text-xs font-semibold uppercase tracking-[0.18em] text-accent">Join Us Live</p>
@@ -219,19 +217,29 @@
               </div>
             </div>
           </div>
-          <!-- Slide 2: 2026 Theme -->
-          <div class="carousel-slide carousel-slide-bg-2 flex flex-col justify-center items-center text-center" data-bg-image="assets/carousel- banner-2.webp">
+          <!-- Slide 2: Cell Fellowship -->
+          <div class="carousel-slide carousel-slide--video flex flex-col justify-center items-center text-center">
+            <div class="hero-carousel__video-wrap">
+              <video class="hero-carousel__video" muted loop playsinline preload="none" aria-hidden="true">
+                <source src="assets/Banner/website-fellowship.mp4" type="video/mp4" />
+              </video>
+            </div>
             <div class="carousel-slide-inner mx-auto w-full max-w-6xl flex flex-col justify-center items-center px-4 py-12 sm:px-6 md:py-16 lg:px-8 text-center">
-              <p class="text-xs font-semibold uppercase tracking-[0.18em] text-accent">2026</p>
-              <h2 class="mt-2 text-balance text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl md:text-5xl">Year of Transformation</h2>
-              <p class="mt-4 max-w-xl text-sm leading-relaxed text-slate-600 sm:text-base">A year of renewal, restored families, deeper faith, and visible spiritual growth through the power of the Holy Spirit.</p>
+              <p class="text-xs font-semibold uppercase tracking-[0.18em] text-accent">Midweek Community</p>
+              <h2 class="mt-2 text-balance text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl md:text-5xl">Cell Fellowship</h2>
+              <p class="mt-4 max-w-xl text-sm leading-relaxed text-slate-600 sm:text-base">Every Wednesday, 8:00 PM — Bible study, prayer, and doing life together in cell groups.</p>
               <div class="mt-6">
-                <a href="/about" class="btn-primary inline-flex items-center rounded-full bg-accent px-5 py-2.5 text-sm font-semibold text-white shadow-sm ring-1 ring-accent/70 hover:bg-accentSoft">Discover the Vision</a>
+                <a href="/fellowship" class="btn-primary inline-flex items-center rounded-full bg-accent px-5 py-2.5 text-sm font-semibold text-white shadow-sm ring-1 ring-accent/70 hover:bg-accentSoft">Explore Fellowship</a>
               </div>
             </div>
           </div>
-          <!-- Slide 3: Upcoming Event -->
-          <div class="carousel-slide carousel-slide-bg-3 flex flex-col justify-center items-center text-center" data-bg-image="assets/carousel- banner-3.webp">
+          <!-- Slide 3: Worship Evening -->
+          <div class="carousel-slide carousel-slide--video flex flex-col justify-center items-center text-center">
+            <div class="hero-carousel__video-wrap">
+              <video class="hero-carousel__video" muted loop playsinline preload="none" aria-hidden="true">
+                <source src="assets/Banner/website-worship-evening.mp4" type="video/mp4" />
+              </video>
+            </div>
             <div class="carousel-slide-inner mx-auto w-full max-w-6xl flex flex-col justify-center items-center px-4 py-12 sm:px-6 md:py-16 lg:px-8 text-center">
               <p class="text-xs font-semibold uppercase tracking-[0.18em] text-accent">Monthly Gathering</p>
               <h2 class="mt-2 text-balance text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl md:text-5xl">Worship Evening</h2>
@@ -242,14 +250,35 @@
               </div>
             </div>
           </div>
-          <!-- Slide 4: Giving -->
-          <div class="carousel-slide carousel-slide-bg-4 flex flex-col justify-center items-center text-center" data-bg-image="assets/carousel- banner-4.webp">
+          <!-- Slide 4: River Kids -->
+          <div class="carousel-slide carousel-slide--video flex flex-col justify-center items-center text-center">
+            <div class="hero-carousel__video-wrap">
+              <video class="hero-carousel__video" muted loop playsinline preload="none" aria-hidden="true">
+                <source src="assets/Banner/website-river-kids.mp4" type="video/mp4" />
+              </video>
+            </div>
             <div class="carousel-slide-inner mx-auto w-full max-w-6xl flex flex-col justify-center items-center px-4 py-12 sm:px-6 md:py-16 lg:px-8 text-center">
-              <p class="text-xs font-semibold uppercase tracking-[0.18em] text-accent">Giving</p>
+              <p class="text-xs font-semibold uppercase tracking-[0.18em] text-accent">Children&apos;s Ministry</p>
+              <h2 class="mt-2 text-balance text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl md:text-5xl">River Kids</h2>
+              <p class="mt-4 max-w-xl text-sm leading-relaxed text-slate-600 sm:text-base">Raising children in faith through engaging Bible teaching and worship.</p>
+              <div class="mt-6">
+                <a href="/river-kids" class="btn-primary inline-flex items-center rounded-full bg-accent px-5 py-2.5 text-sm font-semibold text-white shadow-sm ring-1 ring-accent/70 hover:bg-accentSoft">Explore River Kids</a>
+              </div>
+            </div>
+          </div>
+          <!-- Slide 5: ROLF -->
+          <div class="carousel-slide carousel-slide--video flex flex-col justify-center items-center text-center">
+            <div class="hero-carousel__video-wrap">
+              <video class="hero-carousel__video" muted loop playsinline preload="none" aria-hidden="true">
+                <source src="assets/Banner/website-rolf.mp4" type="video/mp4" />
+              </video>
+            </div>
+            <div class="carousel-slide-inner mx-auto w-full max-w-6xl flex flex-col justify-center items-center px-4 py-12 sm:px-6 md:py-16 lg:px-8 text-center">
+              <p class="text-xs font-semibold uppercase tracking-[0.18em] text-accent">ROLF</p>
               <h2 class="mt-2 text-balance text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl md:text-5xl">Partner With Us in Kingdom Impact</h2>
               <p class="mt-4 max-w-xl text-sm leading-relaxed text-slate-600 sm:text-base">Your generosity supports ministry, discipleship, outreach, and the next generation.</p>
               <div class="mt-6">
-                <a href="/giving" class="btn-primary inline-flex items-center rounded-full bg-accent px-5 py-2.5 text-sm font-semibold text-white shadow-sm ring-1 ring-accent/70 hover:bg-accentSoft">Give Online</a>
+                <a href="/rolf" class="btn-primary inline-flex items-center rounded-full bg-accent px-5 py-2.5 text-sm font-semibold text-white shadow-sm ring-1 ring-accent/70 hover:bg-accentSoft">Partner With Us</a>
               </div>
             </div>
           </div>
@@ -261,7 +290,7 @@
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
         </button>
         <div class="carousel-dots-wrapper">
-          <button type="button" class="hero-carousel__video-play" aria-label="Play ministry highlight video">
+          <button type="button" class="hero-carousel__video-play" aria-label="Play banner video">
             <span>Play Video</span>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
           </button>
@@ -270,6 +299,7 @@
             <button type="button" aria-label="Slide 2"></button>
             <button type="button" aria-label="Slide 3"></button>
             <button type="button" aria-label="Slide 4"></button>
+            <button type="button" aria-label="Slide 5"></button>
           </div>
         </div>
       </section>
@@ -837,7 +867,7 @@
         </div>
       </section>
 
-                                          <!-- @blog-section:start -->
+                                                            <!-- @blog-section:start -->
       <!-- Blog spotlight (auto-generated) -->
       <section id="articles-spotlight" class="home-blog border-b border-slate-200 bg-white" aria-labelledby="home-blog-heading-index">
         <div class="mx-auto max-w-6xl px-4 py-14 sm:px-6 md:py-16 lg:px-8">

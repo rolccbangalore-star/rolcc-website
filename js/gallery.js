@@ -1,4 +1,32 @@
 (function () {
+  function activateYoutubePlayer(button) {
+    var videoId = button.getAttribute("data-video-id");
+    if (!videoId || button.getAttribute("data-gallery-youtube-active") === "true") return;
+
+    var title = button.getAttribute("aria-label") || "YouTube video";
+    var frame = document.createElement("div");
+    frame.className = "gallery-youtube-card__frame";
+    frame.setAttribute("data-gallery-youtube-active", "true");
+
+    var iframe = document.createElement("iframe");
+    iframe.src = "https://www.youtube-nocookie.com/embed/" + encodeURIComponent(videoId) + "?autoplay=1&rel=0";
+    iframe.title = title.replace(/^Play\s+/, "");
+    iframe.loading = "lazy";
+    iframe.allow =
+      "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+    iframe.allowFullscreen = true;
+    iframe.setAttribute("allowfullscreen", "");
+
+    frame.appendChild(iframe);
+    button.replaceWith(frame);
+  }
+
+  document.querySelectorAll("[data-gallery-youtube-play]").forEach(function (button) {
+    button.addEventListener("click", function () {
+      activateYoutubePlayer(button);
+    });
+  });
+
   var instagramSection = document.querySelector("[data-gallery-instagram]");
   if (!instagramSection) return;
 

@@ -7,6 +7,7 @@ const { loadProjectEnv } = require("./load-env");
 const ROOT = path.join(__dirname, "..");
 loadProjectEnv(ROOT);
 const SITE_ORIGIN = "https://www.rolcc.in";
+const GALLERY_ASSET_VERSION = "gallery-hero-v1";
 const CONFIG_PATH = path.join(ROOT, "data", "gallery-config.json");
 const DATA_PATH = path.join(ROOT, "data", "gallery.json");
 
@@ -89,15 +90,66 @@ function normalizeYoutubeItem(snippet) {
   const resource = snippet && snippet.resourceId;
   const id = resource && resource.videoId;
   if (!id || (resource.kind && resource.kind !== "youtube#video")) return null;
+  const title = String(snippet.title || "").trim();
+  if (/^deleted video$/i.test(title) || /^private video$/i.test(title)) return null;
   const thumbs = snippet.thumbnails || {};
   return {
     id,
-    title: String(snippet.title || "River of Life Christian Church").trim(),
+    title: title || "River of Life Christian Church",
     thumbnail:
       (thumbs.high && thumbs.high.url) ||
       (thumbs.medium && thumbs.medium.url) ||
       `https://i.ytimg.com/vi/${id}/hqdefault.jpg`,
   };
+}
+
+async function validateYoutubeVideos(videos) {
+  const apiKey = process.env.YOUTUBE_API_KEY;
+  if (!apiKey || !videos.length) return videos;
+
+  const ids = videos.map((video) => video.id).join(",");
+  const url =
+    "https://www.googleapis.com/youtube/v3/videos?part=status,snippet&id=" +
+    encodeURIComponent(ids) +
+    "&key=" +
+    encodeURIComponent(apiKey);
+
+  try {
+    const payload = await httpsGetJson(url);
+    const valid = new Map(
+      (payload.items || [])
+        .filter(
+          (item) =>
+            item.status &&
+            item.status.embeddable &&
+            item.status.privacyStatus === "public"
+        )
+        .map((item) => [
+          item.id,
+          {
+            id: item.id,
+            title: (item.snippet && item.snippet.title) || "River of Life Christian Church",
+            thumbnail:
+              (item.snippet &&
+                item.snippet.thumbnails &&
+                item.snippet.thumbnails.high &&
+                item.snippet.thumbnails.high.url) ||
+              `https://i.ytimg.com/vi/${item.id}/hqdefault.jpg`,
+          },
+        ])
+    );
+
+    const filtered = videos.filter((video) => valid.has(video.id)).map((video) => valid.get(video.id) || video);
+    if (filtered.length < videos.length) {
+      console.warn(
+        `Gallery: removed ${videos.length - filtered.length} unavailable or non-embeddable YouTube video(s).`
+      );
+    }
+    return filtered;
+  } catch (error) {
+    console.warn("Gallery: YouTube validation skipped —", error.message);
+    return videos;
+  }
 }
 
 async function fetchYoutubePlaylistItems(playlistId, limit) {
@@ -207,7 +259,7 @@ async function buildYoutubeVideos(config, cached) {
 
   const fetched = await fetchYoutubeFromConfig(config);
   if (fetched !== null && fetched.length) {
-    return fetched;
+    return validateYoutubeVideos(fetched);
   }
 
   if (Array.isArray(cached.youtube) && cached.youtube.length) {
@@ -378,17 +430,30 @@ function renderYoutubeSection(items) {
     .map((video) => {
       const id = escapeHtml(video.id);
       const title = escapeHtml(video.title);
+      const watchUrl = `https://www.youtube.com/watch?v=${id}`;
+      const thumb =
+        escapeHtml(video.thumbnail) || `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
       return `<article class="gallery-youtube-card">
-          <div class="gallery-youtube-card__frame">
-            <iframe
-              src="https://www.youtube-nocookie.com/embed/${id}"
-              title="${title}"
+          <button
+            type="button"
+            class="gallery-youtube-card__frame"
+            data-gallery-youtube-play
+            data-video-id="${id}"
+            aria-label="Play ${title}"
+          >
+            <img
+              class="gallery-youtube-card__thumb"
+              src="${thumb}"
+              alt=""
               loading="lazy"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              allowfullscreen
-            ></iframe>
-          </div>
-          <h3 class="gallery-youtube-card__title">${title}</h3>
+              width="480"
+              height="360"
+            />
+            <span class="gallery-youtube-card__play" aria-hidden="true"></span>
+          </button>
+          <h3 class="gallery-youtube-card__title">
+            <a href="${watchUrl}" target="_blank" rel="noopener noreferrer">${title}</a>
+          </h3>
         </article>`;
     })
     .join("");
@@ -433,7 +498,7 @@ function readHeaderNavTemplate() {
     <script>
       tailwind.config = { theme: { extend: { colors: { primary: "#ffffff", primaryDark: "#f6f9fc", accent: "#635bff", accentSoft: "#818cf8" } } } };
     </script>
-    <link rel="stylesheet" href="css/styles.css" />
+    <link rel="stylesheet" href="/css/styles.css" />
     {{HEAD_EXTRA}}
   </head>
   <body class="bg-slate-50 text-slate-900">
@@ -446,7 +511,7 @@ function readHeaderNavTemplate() {
     <header class="header-top" id="header">
       <nav class="header-top__bar mx-auto max-w-6xl px-4 py-3 sm:px-6 lg:px-8 flex items-center justify-between">
         <a href="/" class="header-top__brand flex items-center gap-3">
-          <img src="assets/logo.svg" alt="River of Life Christian Church" class="header-top__logo-img" width="36" height="44" />
+          <img src="/assets/logo.svg" alt="River of Life Christian Church" class="header-top__logo-img" width="36" height="44" />
           <div class="leading-tight"><p class="text-sm font-semibold tracking-wide">River of Life</p><p class="text-[11px] text-slate-500">Christian Church · Bangalore</p></div>
         </a>
         <div class="hidden lg:flex items-center gap-6 text-sm font-medium">
@@ -561,8 +626,8 @@ function buildGalleryHtml(config, data) {
   const youtubeSection = youtubeEnabled ? renderYoutubeSection(data.youtube || []) : "";
   const instagramSection = instagramEnabled ? renderInstagramSection(data.instagram || []) : "";
 
-  const headExtra = `<link rel="stylesheet" href="css/articles.css" />
-    <link rel="stylesheet" href="css/gallery.css" />
+  const headExtra = `<link rel="stylesheet" href="/css/articles.css?v=${GALLERY_ASSET_VERSION}" />
+    <link rel="stylesheet" href="/css/gallery.css?v=${GALLERY_ASSET_VERSION}" />
     <link rel="canonical" href="${canonical}" />
     ${renderGallerySchema(data, canonical)}`;
 
@@ -602,8 +667,8 @@ ${readFooterTemplate()}
       aria-label="Scroll to top"
       type="button"
     >↑</button>
-    <script src="js/main.js"></script>
-    <script src="js/gallery.js"></script>
+    <script src="/js/main.js"></script>
+    <script src="/js/gallery.js?v=${GALLERY_ASSET_VERSION}"></script>
   </body>
 </html>`;
 }
@@ -646,6 +711,11 @@ function syncGalleryFooterLink() {
 async function main() {
   const config = readJson(CONFIG_PATH, {});
   const cached = readJson(DATA_PATH, { instagram: [], youtube: [] });
+  if (process.env.YOUTUBE_API_KEY) {
+    console.log("Gallery: YouTube API key found.");
+  } else {
+    console.warn("Gallery: YouTube API key missing — using cached/config videos.");
+  }
   const data = await buildGalleryData(config, cached);
   writeJson(DATA_PATH, data);
 

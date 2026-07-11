@@ -1740,7 +1740,7 @@
     );
 
     if (isStudy) {
-      rows.push(importRow("Passage", includedOrMissing(Boolean(s.passage && String(s.passage).trim())));
+      rows.push(importRow("Passage", includedOrMissing(Boolean(s.passage && String(s.passage).trim()))));
       rows.push(
         importRow(
           "Sections",
@@ -1862,7 +1862,7 @@
         input.type = "file";
         input.accept = ".json,.md,.txt,text/plain,application/json";
         input.addEventListener("change", function () {
-          if (input.files && input.files[0]) handleFile(input.files[0], { fillEmptyOnly: true });
+          if (input.files && input.files[0]) handleFile(input.files[0], { useModal: true });
         });
         input.click();
       });
@@ -1895,7 +1895,7 @@
       if (!isEditorRoute()) return;
       var file = event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files[0];
       if (file) {
-        handleFile(file, { fillEmptyOnly: true });
+        handleFile(file, { useModal: true });
         return;
       }
       var text = event.dataTransfer && event.dataTransfer.getData("text/plain");

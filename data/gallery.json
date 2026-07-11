@@ -1,66 +1,90 @@
 {
-  "fetchedAt": "2026-07-11T13:48:23.454Z",
+  "fetchedAt": "2026-07-11T13:55:10.513Z",
   "instagram": [],
   "youtube": [
     {
       "id": "R0FVfqtBfbM",
       "title": "The Battle Belongs to the Lord | 2 Chronicles 20:15 | Pr. Benson K Sunny | 30 09 2025",
-      "thumbnail": "https://i.ytimg.com/vi/R0FVfqtBfbM/hqdefault.jpg"
+      "thumbnail": "https://i.ytimg.com/vi/R0FVfqtBfbM/hqdefault.jpg",
+      "publishedAt": "2025-09-30T02:30:06Z",
+      "viewCount": 37
     },
     {
       "id": "toui81UtxDA",
       "title": "The Light of the World | John 8:12  | Pr. Benson K Sunny | 01/09/25 |",
-      "thumbnail": "https://i.ytimg.com/vi/toui81UtxDA/hqdefault.jpg"
+      "thumbnail": "https://i.ytimg.com/vi/toui81UtxDA/hqdefault.jpg",
+      "publishedAt": "2025-09-23T02:30:06Z",
+      "viewCount": 29
     },
     {
       "id": "qUDkI6xY6xQ",
       "title": "God’s Wisdom Beyond Understanding | Job 42:3 Reflection | Pr. Benson K Sunny | 08/10/25  |",
-      "thumbnail": "https://i.ytimg.com/vi/qUDkI6xY6xQ/hqdefault.jpg"
+      "thumbnail": "https://i.ytimg.com/vi/qUDkI6xY6xQ/hqdefault.jpg",
+      "publishedAt": "2025-09-09T02:30:44Z",
+      "viewCount": 51
     },
     {
       "id": "CNP8BlWVraI",
       "title": "God’s Power Has No Limits | Job 42:2 Explained | Pr. Benson K Sunny | 01/09/25 |",
-      "thumbnail": "https://i.ytimg.com/vi/CNP8BlWVraI/hqdefault.jpg"
+      "thumbnail": "https://i.ytimg.com/vi/CNP8BlWVraI/hqdefault.jpg",
+      "publishedAt": "2025-09-02T02:30:15Z",
+      "viewCount": 81
     },
     {
       "id": "i5sipzjeymQ",
       "title": "The Fourth Man in the Fire | Daniel 3:25 Explained | Pr. Benson K Sunny | 25  08 2025 |",
-      "thumbnail": "https://i.ytimg.com/vi/i5sipzjeymQ/hqdefault.jpg"
+      "thumbnail": "https://i.ytimg.com/vi/i5sipzjeymQ/hqdefault.jpg",
+      "publishedAt": "2025-08-26T02:30:06Z",
+      "viewCount": 49
     },
     {
       "id": "AthbMPQax8g",
       "title": "When Hope Turns to Despair | Jeremiah 8:15 Reflection | Pr. Benson K Sunny | 05 08 2025 |",
-      "thumbnail": "https://i.ytimg.com/vi/AthbMPQax8g/hqdefault.jpg"
+      "thumbnail": "https://i.ytimg.com/vi/AthbMPQax8g/hqdefault.jpg",
+      "publishedAt": "2025-08-05T02:30:06Z",
+      "viewCount": 45
     },
     {
       "id": "yxCtSUH9dKE",
       "title": "Isaiah’s Vision of God’s Glory | Isaiah 6:1–5 Exposition | Special Guest  with Pr. Cheng |",
-      "thumbnail": "https://i.ytimg.com/vi/yxCtSUH9dKE/hqdefault.jpg"
+      "thumbnail": "https://i.ytimg.com/vi/yxCtSUH9dKE/hqdefault.jpg",
+      "publishedAt": "2025-07-29T02:30:06Z",
+      "viewCount": 73
     },
     {
       "id": "IULyeiqndDg",
       "title": "Freedom in Christ | Galatians 5:1 - A Call to Stand Firm |  Pr. Benson K Sunny |",
-      "thumbnail": "https://i.ytimg.com/vi/IULyeiqndDg/hqdefault.jpg"
+      "thumbnail": "https://i.ytimg.com/vi/IULyeiqndDg/hqdefault.jpg",
+      "publishedAt": "2025-07-22T02:30:05Z",
+      "viewCount": 69
     },
     {
       "id": "iuizr3kIqNQ",
       "title": "| Stand Firm in Freedom | Galatians 5:1 Explained | Pr. Benson K Sunny |",
-      "thumbnail": "https://i.ytimg.com/vi/iuizr3kIqNQ/hqdefault.jpg"
+      "thumbnail": "https://i.ytimg.com/vi/iuizr3kIqNQ/hqdefault.jpg",
+      "publishedAt": "2025-07-15T02:30:06Z",
+      "viewCount": 48
     },
     {
       "id": "WZwHlsi8RpM",
       "title": "Fire from Heaven & Glory of the Lord | 2 Chronicles 7:1–3  | Pr. Benson K Sunny",
-      "thumbnail": "https://i.ytimg.com/vi/WZwHlsi8RpM/hqdefault.jpg"
+      "thumbnail": "https://i.ytimg.com/vi/WZwHlsi8RpM/hqdefault.jpg",
+      "publishedAt": "2025-07-08T02:30:06Z",
+      "viewCount": 39
     },
     {
       "id": "UfUJY4ZkHnc",
       "title": "\"The Song of Victory | Exodus 15:1 - Moses’ Praise After the Red Sea\" | Pr. Benson K Sunny",
-      "thumbnail": "https://i.ytimg.com/vi/UfUJY4ZkHnc/hqdefault.jpg"
+      "thumbnail": "https://i.ytimg.com/vi/UfUJY4ZkHnc/hqdefault.jpg",
+      "publishedAt": "2025-07-01T02:30:06Z",
+      "viewCount": 51
     },
     {
       "id": "eDFQoFTxYwk",
       "title": "Guided by God | The Cloud and Fire of Exodus 13:21 | Pr. Benson K Sunny | 24.06.2025",
-      "thumbnail": "https://i.ytimg.com/vi/eDFQoFTxYwk/hqdefault.jpg"
+      "thumbnail": "https://i.ytimg.com/vi/eDFQoFTxYwk/hqdefault.jpg",
+      "publishedAt": "2025-06-24T02:30:06Z",
+      "viewCount": 41
     }
   ]
 }

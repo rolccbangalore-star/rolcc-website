@@ -9,7 +9,8 @@
     frame.setAttribute("data-gallery-youtube-active", "true");
 
     var iframe = document.createElement("iframe");
-    iframe.src = "https://www.youtube-nocookie.com/embed/" + encodeURIComponent(videoId) + "?autoplay=1&rel=0";
+    iframe.src =
+      "https://www.youtube-nocookie.com/embed/" + encodeURIComponent(videoId) + "?autoplay=1&rel=0";
     iframe.title = title.replace(/^Play\s+/, "");
     iframe.loading = "lazy";
     iframe.allow =
@@ -26,6 +27,88 @@
       activateYoutubePlayer(button);
     });
   });
+
+  var grid = document.querySelector("[data-gallery-youtube-grid]");
+  var sortSelect = document.querySelector("[data-gallery-sort]");
+  var sortToggle = document.querySelector("[data-gallery-sort-toggle]");
+  var sortMenu = document.querySelector("[data-gallery-sort-menu]");
+  var sortIcon = document.querySelector(".articles-sort-icon");
+  var currentSort = "newest";
+
+  function getCards() {
+    if (!grid) return [];
+    return Array.from(grid.querySelectorAll(".gallery-youtube-card"));
+  }
+
+  function compareCards(a, b, sort) {
+    if (sort === "popular") {
+      return Number(b.getAttribute("data-sort-views") || 0) - Number(a.getAttribute("data-sort-views") || 0);
+    }
+    if (sort === "alphabet") {
+      return String(a.getAttribute("data-sort-title") || "").localeCompare(
+        String(b.getAttribute("data-sort-title") || "")
+      );
+    }
+    return String(b.getAttribute("data-sort-published") || "").localeCompare(
+      String(a.getAttribute("data-sort-published") || "")
+    );
+  }
+
+  function updateSortUi() {
+    if (sortIcon) {
+      sortIcon.classList.toggle("is-sorted", currentSort !== "newest");
+    }
+    if (sortMenu) {
+      sortMenu.querySelectorAll("[data-gallery-sort-value]").forEach(function (btn) {
+        var active = btn.getAttribute("data-gallery-sort-value") === currentSort;
+        btn.classList.toggle("is-active", active);
+        btn.setAttribute("aria-selected", active ? "true" : "false");
+      });
+    }
+  }
+
+  function applySort(sort) {
+    if (!grid) return;
+    currentSort = sort || "newest";
+    if (sortSelect) sortSelect.value = currentSort;
+    updateSortUi();
+
+    var cards = getCards().sort(function (a, b) {
+      return compareCards(a, b, currentSort);
+    });
+    cards.forEach(function (card) {
+      grid.appendChild(card);
+    });
+  }
+
+  if (sortSelect) {
+    sortSelect.addEventListener("change", function () {
+      applySort(sortSelect.value || "newest");
+    });
+  }
+
+  if (sortToggle && sortMenu) {
+    sortToggle.addEventListener("click", function () {
+      var open = !sortMenu.hidden;
+      sortMenu.hidden = open;
+      sortToggle.setAttribute("aria-expanded", open ? "false" : "true");
+    });
+
+    sortMenu.addEventListener("click", function (e) {
+      var btn = e.target.closest("[data-gallery-sort-value]");
+      if (!btn) return;
+      applySort(btn.getAttribute("data-gallery-sort-value") || "newest");
+      sortMenu.hidden = true;
+      sortToggle.setAttribute("aria-expanded", "false");
+    });
+
+    document.addEventListener("click", function (e) {
+      if (sortMenu.hidden) return;
+      if (e.target.closest("[data-gallery-sort-toggle]") || e.target.closest("[data-gallery-sort-menu]")) return;
+      sortMenu.hidden = true;
+      sortToggle.setAttribute("aria-expanded", "false");
+    });
+  }
 
   var instagramSection = document.querySelector("[data-gallery-instagram]");
   if (!instagramSection) return;

@@ -1,5 +1,22 @@
 /* Gallery page — hero reuses articles-hub-top from articles.css */
 
+.gallery-toolbar {
+  margin-bottom: 1.75rem;
+}
+
+.gallery-toolbar__row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+@media (max-width: 639px) {
+  .gallery-toolbar__row {
+    justify-content: flex-end;
+  }
+}
+
 .gallery-section + .gallery-section {
   margin-top: 3.5rem;
   padding-top: 3.5rem;

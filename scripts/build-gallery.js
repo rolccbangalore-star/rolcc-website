@@ -7,7 +7,7 @@ const { loadProjectEnv } = require("./load-env");
 const ROOT = path.join(__dirname, "..");
 loadProjectEnv(ROOT);
 const SITE_ORIGIN = "https://www.rolcc.in";
-const GALLERY_ASSET_VERSION = "gallery-hero-v1";
+const GALLERY_ASSET_VERSION = "gallery-sort-v1";
 const CONFIG_PATH = path.join(ROOT, "data", "gallery-config.json");
 const DATA_PATH = path.join(ROOT, "data", "gallery.json");
 
@@ -100,6 +100,8 @@ function normalizeYoutubeItem(snippet) {
       (thumbs.high && thumbs.high.url) ||
       (thumbs.medium && thumbs.medium.url) ||
       `https://i.ytimg.com/vi/${id}/hqdefault.jpg`,
+    publishedAt: String(snippet.publishedAt || ""),
+    viewCount: 0,
   };
 }
 
@@ -109,7 +111,7 @@ async function validateYoutubeVideos(videos) {
 
   const ids = videos.map((video) => video.id).join(",");
   const url =
-    "https://www.googleapis.com/youtube/v3/videos?part=status,snippet&id=" +
+    "https://www.googleapis.com/youtube/v3/videos?part=status,snippet,statistics&id=" +
     encodeURIComponent(ids) +
     "&key=" +
     encodeURIComponent(apiKey);
@@ -135,6 +137,8 @@ async function validateYoutubeVideos(videos) {
                 item.snippet.thumbnails.high &&
                 item.snippet.thumbnails.high.url) ||
               `https://i.ytimg.com/vi/${item.id}/hqdefault.jpg`,
+            publishedAt: (item.snippet && item.snippet.publishedAt) || "",
+            viewCount: Number(item.statistics && item.statistics.viewCount) || 0,
           },
         ])
     );
@@ -412,28 +416,45 @@ function renderInstagramSection(items) {
     </section>`;
 }
 
-function renderYoutubeSection(items) {
-  if (!items.length) {
-    return `<section class="gallery-section" aria-label="Selected YouTube videos">
-        <div class="gallery-section__head">
-          <div>
-            <h2 class="gallery-section__title">YouTube</h2>
-            <p class="gallery-section__intro">Selected messages from River of Life Christian Church.</p>
+function renderSermonsToolbar() {
+  return `<div class="gallery-toolbar">
+    <div class="gallery-toolbar__row">
+      <div class="articles-sort-wrap">
+        <label class="articles-sort articles-sort--desktop">
+          <span class="articles-sort__label">Sort by</span>
+          <select class="articles-sort__select" data-gallery-sort aria-label="Sort sermons">
+            <option value="newest" selected>Date Latest to Oldest</option>
+            <option value="popular">Popular</option>
+            <option value="alphabet">Alphabet</option>
+          </select>
+        </label>
+        <div class="articles-sort-mobile">
+          <button type="button" class="articles-sort-icon" data-gallery-sort-toggle aria-label="Sort sermons" aria-haspopup="listbox" aria-expanded="false">
+            <svg class="articles-sort-icon__svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M4 6h10"/><path d="M4 12h7"/><path d="M4 18h4"/><path d="M15 8l3-3 3 3"/><path d="M18 5v14"/><path d="M15 16l3 3 3-3"/>
+            </svg>
+          </button>
+          <div class="articles-sort-menu" data-gallery-sort-menu hidden role="listbox" aria-label="Sort sermons">
+            <button type="button" class="articles-sort-menu__item is-active" data-gallery-sort-value="newest" role="option">Date Latest to Oldest</button>
+            <button type="button" class="articles-sort-menu__item" data-gallery-sort-value="popular" role="option">Popular</button>
+            <button type="button" class="articles-sort-menu__item" data-gallery-sort-value="alphabet" role="option">Alphabet</button>
           </div>
-          <a href="https://www.youtube.com/@rolccindia" class="gallery-section__link" target="_blank" rel="noopener noreferrer">Visit our channel</a>
         </div>
-        <p class="gallery-empty">Set a YouTube playlist in <code>data/gallery-config.json</code> and add <code>YOUTUBE_API_KEY</code> to your build env. See <code>docs/gallery-setup.md</code>.</p>
-      </section>`;
-  }
+      </div>
+    </div>
+  </div>`;
+}
 
-  const cards = items
-    .map((video) => {
-      const id = escapeHtml(video.id);
-      const title = escapeHtml(video.title);
-      const watchUrl = `https://www.youtube.com/watch?v=${id}`;
-      const thumb =
-        escapeHtml(video.thumbnail) || `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
-      return `<article class="gallery-youtube-card">
+function renderYoutubeCard(video) {
+  const id = escapeHtml(video.id);
+  const title = escapeHtml(video.title);
+  const sortTitle = escapeHtml(String(video.title || "").toLowerCase());
+  const watchUrl = `https://www.youtube.com/watch?v=${id}`;
+  const thumb = escapeHtml(video.thumbnail) || `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
+  const publishedAt = escapeHtml(video.publishedAt || "");
+  const viewCount = Number(video.viewCount) || 0;
+
+  return `<article class="gallery-youtube-card" data-sort-published="${publishedAt}" data-sort-views="${viewCount}" data-sort-title="${sortTitle}">
           <button
             type="button"
             class="gallery-youtube-card__frame"
@@ -455,18 +476,27 @@ function renderYoutubeSection(items) {
             <a href="${watchUrl}" target="_blank" rel="noopener noreferrer">${title}</a>
           </h3>
         </article>`;
-    })
-    .join("");
+}
+
+function renderYoutubeSection(items) {
+  if (!items.length) {
+    return `<section class="gallery-section" aria-label="Selected YouTube videos">
+        <div class="gallery-section__head">
+          <div>
+            <h2 class="gallery-section__title">YouTube</h2>
+            <p class="gallery-section__intro">Selected messages from River of Life Christian Church.</p>
+          </div>
+          <a href="https://www.youtube.com/@rolccindia" class="gallery-section__link" target="_blank" rel="noopener noreferrer">Visit our channel</a>
+        </div>
+        <p class="gallery-empty">Set a YouTube playlist in <code>data/gallery-config.json</code> and add <code>YOUTUBE_API_KEY</code> to your build env. See <code>docs/gallery-setup.md</code>.</p>
+      </section>`;
+  }
+
+  const cards = items.map((video) => renderYoutubeCard(video)).join("");
 
   return `<section class="gallery-section" aria-label="Sermons">
-      <div class="gallery-section__head">
-        <div>
-          <h2 class="gallery-section__title">Sunday Sermons</h2>
-            <p class="gallery-section__intro">Messages from our Sunday worship services.</p>
-        </div>
-        <a href="https://www.youtube.com/@rolccindia" class="gallery-section__link" target="_blank" rel="noopener noreferrer">Visit our channel</a>
-      </div>
-      <div class="gallery-youtube-grid">${cards}</div>
+      ${renderSermonsToolbar()}
+      <div class="gallery-youtube-grid" data-gallery-youtube-grid>${cards}</div>
     </section>`;
 }
 

@@ -659,33 +659,6 @@ body {
     rgba(15, 23, 42, 0.55) 100%
   );
 }
-.hero-carousel__video-play {
-  position: relative;
-  z-index: 3;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  margin-bottom: 0.65rem;
-  padding: 0.15rem 0.35rem;
-  border: none;
-  background: transparent;
-  font-size: 0.6875rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.92);
-  cursor: pointer;
-  text-shadow: 0 0 16px rgba(15, 23, 42, 0.9), 0 0 32px rgba(15, 23, 42, 0.75);
-  transition: color 0.2s ease, opacity 0.2s ease;
-}
-.hero-carousel__video-play:hover { color: #fff; }
-.hero-carousel__video-play svg { flex-shrink: 0; }
-.hero-carousel.is-video-slide-active.is-video-paused .hero-carousel__video-play {
-  display: inline-flex;
-}
-.hero-carousel__video-play[hidden] {
-  display: none !important;
-}
 .carousel-slide--video .carousel-slide-inner {
   position: relative;
   z-index: 2;

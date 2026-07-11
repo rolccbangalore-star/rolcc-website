@@ -412,8 +412,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const dots = carousel.querySelectorAll(".carousel-dots button");
     const prevBtn = carousel.querySelector(".hero-carousel__arrow--prev");
     const nextBtn = carousel.querySelector(".hero-carousel__arrow--next");
-    const heroVideoPlayBtn = carousel.querySelector(".hero-carousel__video-play");
-    const HERO_VIDEO_TABLET_MAX = 1023;
     let current = 0;
 
     function isYoutubeLiveSlide(slide) {
@@ -431,44 +429,21 @@ document.addEventListener("DOMContentLoaded", function () {
       return slide.querySelector(".hero-carousel__video");
     }
 
-    function isHeroVideoManualMode() {
-      return window.matchMedia("(max-width: " + HERO_VIDEO_TABLET_MAX + "px)").matches;
-    }
-
     function updateHeroVideoUi() {
       var activeVideoSlide = getActiveVideoSlide();
       var onVideoSlide = !!activeVideoSlide;
-      var paused = activeVideoSlide && activeVideoSlide.classList.contains("is-video-paused");
       var onYoutubeLive = activeVideoSlide && isYoutubeLiveSlide(activeVideoSlide);
       heroBanner.classList.toggle("is-video-slide-active", onVideoSlide);
-      heroBanner.classList.toggle("is-video-paused", !!(onVideoSlide && paused && !onYoutubeLive));
       heroBanner.classList.toggle("is-youtube-live-active", !!onYoutubeLive);
-      if (heroVideoPlayBtn) heroVideoPlayBtn.hidden = !(onVideoSlide && paused && !onYoutubeLive);
     }
 
-    function showHeroVideoPlayButton() {
-      var activeVideoSlide = getActiveVideoSlide();
-      if (!activeVideoSlide) return;
-      activeVideoSlide.classList.add("is-video-paused");
-      updateHeroVideoUi();
-    }
-
-    function hideHeroVideoPlayButton() {
-      var activeVideoSlide = getActiveVideoSlide();
-      if (!activeVideoSlide) return;
-      activeVideoSlide.classList.remove("is-video-paused");
-      updateHeroVideoUi();
-    }
-
-    function tryPlayHeroVideo() {
-      var activeVideoSlide = getActiveVideoSlide();
-      var heroVideo = getActiveVideo();
-      if (!heroVideo || !activeVideoSlide) return;
-      heroVideo.play().then(function () {
-        hideHeroVideoPlayButton();
-      }).catch(function () {
-        showHeroVideoPlayButton();
-      });
+    function playHeroVideo(video) {
+      if (!video) return;
+      if (video.readyState === 0) {
+        video.preload = "auto";
+        video.load();
+      }
+      video.play().catch(function () {});
     }
 
     function initHeroVideo() {
@@ -482,64 +457,10 @@ document.addEventListener("DOMContentLoaded", function () {
       var heroVideo = getActiveVideo();
       if (!heroVideo || !activeVideoSlide) return;
 
-      if (isHeroVideoManualMode()) {
-        heroVideo.preload = "none";
-        showHeroVideoPlayButton();
-        return;
-      }
-
       heroVideo.preload = "auto";
-      tryPlayHeroVideo();
-
-      var loadTimeout = window.setTimeout(function () {
-        if (activeVideoSlide.classList.contains("is-video-paused")) return;
-        if (heroVideo.readyState < 2 || heroVideo.paused) {
-          showHeroVideoPlayButton();
-        }
-      }, 8000);
-
-      heroVideo.addEventListener("canplaythrough", function () {
-        window.clearTimeout(loadTimeout);
-      }, { once: true });
-
-      heroVideo.addEventListener("error", function () {
-        window.clearTimeout(loadTimeout);
-        showHeroVideoPlayButton();
-      });
-
+      playHeroVideo(heroVideo);
       updateHeroVideoUi();
     }
-
-    if (heroVideoPlayBtn) {
-      heroVideoPlayBtn.addEventListener("click", function () {
-        var heroVideo = getActiveVideo();
-        if (!heroVideo) return;
-        heroVideo.preload = "auto";
-        if (heroVideo.readyState === 0) {
-          heroVideo.load();
-        }
-        tryPlayHeroVideo();
-      });
-    }
-
-    window.matchMedia("(max-width: " + HERO_VIDEO_TABLET_MAX + "px)").addEventListener("change", function () {
-      var activeVideoSlide = getActiveVideoSlide();
-      var heroVideo = getActiveVideo();
-      if (!heroVideo || !activeVideoSlide) return;
-      if (isHeroVideoManualMode()) {
-        slides.forEach(function (s) {
-          var video = s.querySelector(".hero-carousel__video");
-          if (video) {
-            video.pause();
-            video.preload = "none";
-          }
-        });
-        showHeroVideoPlayButton();
-      } else if (activeVideoSlide.classList.contains("active")) {
-        heroVideo.preload = "auto";
-        tryPlayHeroVideo();
-      }
-    });
 
     // Adaptive contrast: average image dark → white text; average image light → black text
     function setHeroThemeFromImage(imageUrl) {
@@ -608,12 +529,7 @@ document.addEventListener("DOMContentLoaded", function () {
         var video = s.querySelector(".hero-carousel__video");
         if (!video) return;
         if (s.classList.contains("active")) {
-          if (s.classList.contains("is-video-paused")) return;
-          if (!isHeroVideoManualMode()) {
-            video.play().catch(function () {
-              showHeroVideoPlayButton();
-            });
-          }
+          playHeroVideo(video);
         } else {
           video.pause();
         }
@@ -635,16 +551,10 @@ document.addEventListener("DOMContentLoaded", function () {
       current = (index + slides.length) % slides.length;
       slides.forEach(function (s, i) {
         s.classList.toggle("active", i === current);
-        if (i !== current) s.classList.remove("is-video-paused");
       });
       dots.forEach((d, i) => d.classList.toggle("active", i === current));
       syncHeroVideos();
-      var activeVideo = getActiveVideo();
-      if (slides[current].classList.contains("carousel-slide--video") && activeVideo && activeVideo.paused) {
-        showHeroVideoPlayButton();
-      } else {
-        updateHeroVideoUi();
-      }
+      updateHeroVideoUi();
       applyHeroThemeForSlide(slides[current]);
     }
 

@@ -1,5 +1,9 @@
 /* Gallery page — hero reuses articles-hub-top from articles.css */
 
+.gallery-results-meta {
+  margin: 0 0 1rem;
+}
+
 .gallery-toolbar {
   margin-bottom: 1.75rem;
 }
@@ -7,13 +11,23 @@
 .gallery-toolbar__row {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
   width: 100%;
+}
+
+.gallery-toolbar .articles-sort-wrap {
+  position: relative;
+}
+
+.gallery-toolbar__channel {
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 @media (max-width: 639px) {
   .gallery-toolbar__row {
-    justify-content: flex-end;
+    justify-content: space-between;
   }
 }
 
@@ -129,6 +143,11 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: opacity 0.12s ease;
+}
+
+.gallery-youtube-card__frame.is-previewing .gallery-youtube-card__play {
+  opacity: 0.9;
 }
 
 .gallery-youtube-card__play {

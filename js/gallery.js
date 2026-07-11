@@ -22,7 +22,50 @@
     button.replaceWith(frame);
   }
 
+  function initPreview(button) {
+    var img = button.querySelector(".gallery-youtube-card__thumb");
+    var framesJson = button.getAttribute("data-preview-frames");
+    if (!img || !framesJson) return;
+
+    var frames;
+    try {
+      frames = JSON.parse(framesJson);
+    } catch (error) {
+      return;
+    }
+    if (!Array.isArray(frames) || frames.length < 2) return;
+
+    var originalSrc = img.getAttribute("src") || img.src;
+    var index = 0;
+    var timer = null;
+
+    function start() {
+      if (timer || button.getAttribute("data-gallery-youtube-active") === "true") return;
+      button.classList.add("is-previewing");
+      index = 0;
+      timer = window.setInterval(function () {
+        index = (index + 1) % frames.length;
+        img.src = frames[index];
+      }, 400);
+    }
+
+    function stop() {
+      button.classList.remove("is-previewing");
+      if (timer) {
+        window.clearInterval(timer);
+        timer = null;
+      }
+      img.src = originalSrc;
+    }
+
+    button.addEventListener("mouseenter", start);
+    button.addEventListener("mouseleave", stop);
+    button.addEventListener("focus", start);
+    button.addEventListener("blur", stop);
+  }
+
   document.querySelectorAll("[data-gallery-youtube-play]").forEach(function (button) {
+    initPreview(button);
     button.addEventListener("click", function () {
       activateYoutubePlayer(button);
     });
@@ -32,7 +75,7 @@
   var sortSelect = document.querySelector("[data-gallery-sort]");
   var sortToggle = document.querySelector("[data-gallery-sort-toggle]");
   var sortMenu = document.querySelector("[data-gallery-sort-menu]");
-  var sortIcon = document.querySelector(".articles-sort-icon");
+  var sortIcon = document.querySelector(".gallery-toolbar .articles-sort-icon");
   var currentSort = "newest";
 
   function getCards() {
@@ -88,7 +131,8 @@
   }
 
   if (sortToggle && sortMenu) {
-    sortToggle.addEventListener("click", function () {
+    sortToggle.addEventListener("click", function (event) {
+      event.stopPropagation();
       var open = !sortMenu.hidden;
       sortMenu.hidden = open;
       sortToggle.setAttribute("aria-expanded", open ? "false" : "true");

@@ -63,8 +63,44 @@
       "destination": "/rolf.html"
     },
     {
-      "source": "/gallery",
-      "destination": "/gallery.html"
+      "source": "/sermons",
+      "destination": "/sermons.html"
+    },
+    {
+      "source": "/sermons/2",
+      "destination": "/sermons-2.html"
+    },
+    {
+      "source": "/sermons/3",
+      "destination": "/sermons-3.html"
+    },
+    {
+      "source": "/sermons/4",
+      "destination": "/sermons-4.html"
+    },
+    {
+      "source": "/sermons/5",
+      "destination": "/sermons-5.html"
+    },
+    {
+      "source": "/sermons/6",
+      "destination": "/sermons-6.html"
+    },
+    {
+      "source": "/sermons/7",
+      "destination": "/sermons-7.html"
+    },
+    {
+      "source": "/sermons/8",
+      "destination": "/sermons-8.html"
+    },
+    {
+      "source": "/sermons/9",
+      "destination": "/sermons-9.html"
+    },
+    {
+      "source": "/sermons/10",
+      "destination": "/sermons-10.html"
     },
     {
       "source": "/faq",
@@ -195,8 +231,63 @@
       "permanent": true
     },
     {
+      "source": "/sermons.html",
+      "destination": "/sermons",
+      "permanent": true
+    },
+    {
+      "source": "/sermons-2.html",
+      "destination": "/sermons/2",
+      "permanent": true
+    },
+    {
+      "source": "/sermons-3.html",
+      "destination": "/sermons/3",
+      "permanent": true
+    },
+    {
+      "source": "/sermons-4.html",
+      "destination": "/sermons/4",
+      "permanent": true
+    },
+    {
+      "source": "/sermons-5.html",
+      "destination": "/sermons/5",
+      "permanent": true
+    },
+    {
+      "source": "/sermons-6.html",
+      "destination": "/sermons/6",
+      "permanent": true
+    },
+    {
+      "source": "/sermons-7.html",
+      "destination": "/sermons/7",
+      "permanent": true
+    },
+    {
+      "source": "/sermons-8.html",
+      "destination": "/sermons/8",
+      "permanent": true
+    },
+    {
+      "source": "/sermons-9.html",
+      "destination": "/sermons/9",
+      "permanent": true
+    },
+    {
+      "source": "/sermons-10.html",
+      "destination": "/sermons/10",
+      "permanent": true
+    },
+    {
       "source": "/gallery.html",
-      "destination": "/gallery",
+      "destination": "/sermons",
+      "permanent": true
+    },
+    {
+      "source": "/gallery",
+      "destination": "/sermons",
       "permanent": true
     },
     {

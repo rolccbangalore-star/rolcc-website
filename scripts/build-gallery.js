@@ -7,7 +7,10 @@ const { loadProjectEnv } = require("./load-env");
 const ROOT = path.join(__dirname, "..");
 loadProjectEnv(ROOT);
 const SITE_ORIGIN = "https://www.rolcc.in";
-const GALLERY_ASSET_VERSION = "gallery-sort-v1";
+const GALLERY_ASSET_VERSION = "sermons-pagination-v1";
+const SERMONS_PATH = "/sermons";
+const DEFAULT_SERMONS_PER_PAGE = 12;
+const MAX_PLAYLIST_FETCH = 200;
 const CONFIG_PATH = path.join(ROOT, "data", "gallery-config.json");
 const DATA_PATH = path.join(ROOT, "data", "gallery.json");
 
@@ -105,6 +108,49 @@ function normalizeYoutubeItem(snippet) {
   };
 }
 
+function httpsHeadOk(url) {
+  return new Promise((resolve) => {
+    https
+      .request(url, { method: "HEAD" }, (res) => {
+        resolve(Boolean(res.statusCode && res.statusCode >= 200 && res.statusCode < 400));
+      })
+      .on("error", () => resolve(false))
+      .end();
+  });
+}
+
+async function buildPreviewFrames(videoId, fallbackThumb) {
+  const candidates = [
+    fallbackThumb,
+    `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`,
+    `https://i.ytimg.com/vi/${videoId}/mqdefault.jpg`,
+    `https://i.ytimg.com/vi/${videoId}/sddefault.jpg`,
+    `https://i.ytimg.com/vi/${videoId}/1.jpg`,
+    `https://i.ytimg.com/vi/${videoId}/2.jpg`,
+    `https://i.ytimg.com/vi/${videoId}/3.jpg`,
+  ];
+
+  const frames = [];
+  for (const url of candidates) {
+    if (!url || frames.includes(url)) continue;
+    if (await httpsHeadOk(url)) frames.push(url);
+  }
+
+  return frames.length ? frames : [fallbackThumb || `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`];
+}
+
+async function enrichPreviewFrames(videos) {
+  const enriched = [];
+  for (const video of videos) {
+    const previewFrames = await buildPreviewFrames(
+      video.id,
+      video.thumbnail || `https://i.ytimg.com/vi/${video.id}/hqdefault.jpg`
+    );
+    enriched.push({ ...video, previewFrames });
+  }
+  return enriched;
+}
+
 async function validateYoutubeVideos(videos) {
   const apiKey = process.env.YOUTUBE_API_KEY;
   if (!apiKey || !videos.length) return videos;
@@ -167,12 +213,13 @@ async function fetchYoutubePlaylistItems(playlistId, limit) {
     return null;
   }
 
+  const fetchAll = limit == null || limit <= 0;
   const videos = [];
   let pageToken = "";
 
   try {
-    while (videos.length < limit) {
-      const maxResults = Math.min(50, limit - videos.length);
+    while (fetchAll || videos.length < limit) {
+      const maxResults = fetchAll ? 50 : Math.min(50, limit - videos.length);
       const url =
         "https://www.googleapis.com/youtube/v3/playlistItems?part=snippet" +
         `&playlistId=${encodeURIComponent(playlistId)}` +
@@ -185,11 +232,18 @@ async function fetchYoutubePlaylistItems(playlistId, limit) {
         const video = normalizeYoutubeItem(item.snippet);
         if (!video) continue;
         videos.push(video);
-        if (videos.length >= limit) break;
+        if (!fetchAll && videos.length >= limit) break;
+        if (fetchAll && videos.length >= MAX_PLAYLIST_FETCH) break;
       }
 
       pageToken = payload.nextPageToken || "";
       if (!pageToken) break;
+      if (!fetchAll && videos.length >= limit) break;
+      if (fetchAll && videos.length >= MAX_PLAYLIST_FETCH) break;
+    }
+
+    if (fetchAll) {
+      console.log(`Gallery: fetched ${videos.length} video(s) from playlist.`);
     }
 
     return videos;
@@ -202,7 +256,11 @@ async function fetchYoutubePlaylistItems(playlistId, limit) {
 async function fetchYoutubeFromConfig(config) {
   const youtube = config.youtube || {};
   const mode = String(youtube.mode || "manual").trim().toLowerCase();
-  const limit = Number(youtube.limit) || 12;
+  const rawLimit = youtube.limit;
+  const limit =
+    rawLimit === 0 || rawLimit === null || rawLimit === undefined || rawLimit === ""
+      ? null
+      : Number(rawLimit) || DEFAULT_SERMONS_PER_PAGE;
 
   if (mode === "playlist") {
     const playlistId = parsePlaylistId(youtube.playlistId);
@@ -234,7 +292,8 @@ async function fetchYoutubeFromConfig(config) {
         throw new Error(`Could not find uploads playlist for @${handle}.`);
       }
 
-      console.log(`Gallery: fetching latest ${limit} uploads from @${handle}.`);
+      const fetchLabel = limit ? `latest ${limit}` : "all";
+      console.log(`Gallery: fetching ${fetchLabel} uploads from @${handle}.`);
       return fetchYoutubePlaylistItems(uploadsPlaylistId, limit);
     } catch (error) {
       console.warn("Gallery: YouTube channel fetch failed —", error.message);
@@ -245,6 +304,46 @@ async function fetchYoutubeFromConfig(config) {
   return null;
 }
 
+function getSermonsPerPage(config) {
+  return Math.max(1, Number(config.youtube && config.youtube.perPage) || DEFAULT_SERMONS_PER_PAGE);
+}
+
+function sermonsHref(pageNum) {
+  return pageNum === 1 ? SERMONS_PATH : `${SERMONS_PATH}/${pageNum}`;
+}
+
+function sermonsFileName(pageNum) {
+  return pageNum === 1 ? "sermons.html" : `sermons-${pageNum}.html`;
+}
+
+function renderSermonsPagination(pageNum, totalPages) {
+  if (totalPages <= 1) return "";
+
+  const mkLink = (num, label, current) => {
+    const href = sermonsHref(num);
+    if (num === current) {
+      return `<span class="faq-pagination__page is-current" aria-current="page">${label}</span>`;
+    }
+    return `<a class="faq-pagination__page" href="${href}" data-sermons-page="${num}">${label}</a>`;
+  };
+
+  let pages = "";
+  for (let i = 1; i <= totalPages; i++) {
+    pages += mkLink(i, String(i), pageNum);
+  }
+
+  const prev =
+    pageNum > 1
+      ? `<a class="faq-pagination__nav" href="${sermonsHref(pageNum - 1)}" rel="prev" data-sermons-page="${pageNum - 1}">Previous</a>`
+      : `<span class="faq-pagination__nav is-disabled">Previous</span>`;
+  const next =
+    pageNum < totalPages
+      ? `<a class="faq-pagination__nav" href="${sermonsHref(pageNum + 1)}" rel="next" data-sermons-page="${pageNum + 1}">Next</a>`
+      : `<span class="faq-pagination__nav is-disabled">Next</span>`;
+
+  return `<nav class="faq-pagination" aria-label="Sermon pages" data-sermons-pagination>${prev}<div class="faq-pagination__pages">${pages}</div>${next}</nav>`;
+}
+
 async function buildYoutubeVideos(config, cached) {
   if (config.youtube && config.youtube.enabled === false) return [];
 
@@ -253,25 +352,24 @@ async function buildYoutubeVideos(config, cached) {
     .trim()
     .toLowerCase();
 
+  let videos = [];
+
   if (manualVideos.length) {
-    return enrichYoutubeTitles(manualVideos);
+    videos = await enrichYoutubeTitles(manualVideos);
+  } else if (mode !== "manual") {
+    const fetched = await fetchYoutubeFromConfig(config);
+    if (fetched !== null && fetched.length) {
+      videos = fetched;
+    } else if (Array.isArray(cached.youtube) && cached.youtube.length) {
+      console.warn("Gallery: using cached YouTube videos from data/gallery.json.");
+      videos = cached.youtube;
+    }
   }
 
-  if (mode === "manual") {
-    return [];
-  }
+  if (!videos.length) return [];
 
-  const fetched = await fetchYoutubeFromConfig(config);
-  if (fetched !== null && fetched.length) {
-    return validateYoutubeVideos(fetched);
-  }
-
-  if (Array.isArray(cached.youtube) && cached.youtube.length) {
-    console.warn("Gallery: using cached YouTube videos from data/gallery.json.");
-    return cached.youtube;
-  }
-
-  return [];
+  const validated = await validateYoutubeVideos(videos);
+  return enrichPreviewFrames(validated);
 }
 
 async function enrichYoutubeTitles(videos) {
@@ -441,6 +539,7 @@ function renderSermonsToolbar() {
           </div>
         </div>
       </div>
+      <a href="https://www.youtube.com/@rolccindia" class="gallery-section__link gallery-toolbar__channel" target="_blank" rel="noopener noreferrer">Visit our channel</a>
     </div>
   </div>`;
 }
@@ -454,12 +553,19 @@ function renderYoutubeCard(video) {
   const publishedAt = escapeHtml(video.publishedAt || "");
   const viewCount = Number(video.viewCount) || 0;
 
+  const previewFrames = Array.isArray(video.previewFrames) && video.previewFrames.length
+    ? video.previewFrames
+    : [thumb];
+  const previewAttr = escapeHtml(JSON.stringify(previewFrames));
+
   return `<article class="gallery-youtube-card" data-sort-published="${publishedAt}" data-sort-views="${viewCount}" data-sort-title="${sortTitle}">
           <button
             type="button"
             class="gallery-youtube-card__frame"
             data-gallery-youtube-play
+            data-gallery-youtube-preview
             data-video-id="${id}"
+            data-preview-frames="${previewAttr}"
             aria-label="Play ${title}"
           >
             <img
@@ -478,7 +584,7 @@ function renderYoutubeCard(video) {
         </article>`;
 }
 
-function renderYoutubeSection(items) {
+function renderYoutubeSection(items, pageMeta) {
   if (!items.length) {
     return `<section class="gallery-section" aria-label="Selected YouTube videos">
         <div class="gallery-section__head">
@@ -493,10 +599,20 @@ function renderYoutubeSection(items) {
   }
 
   const cards = items.map((video) => renderYoutubeCard(video)).join("");
+  const resultsMeta =
+    pageMeta && pageMeta.total > 0
+      ? `<p class="gallery-results-meta text-sm text-slate-500" aria-live="polite">Showing ${pageMeta.start}–${pageMeta.end} of ${pageMeta.total} sermons</p>`
+      : "";
+  const paginationHtml =
+    pageMeta && pageMeta.totalPages > 1
+      ? `<div class="mt-10">${renderSermonsPagination(pageMeta.pageNum, pageMeta.totalPages)}</div>`
+      : "";
 
   return `<section class="gallery-section" aria-label="Sermons">
       ${renderSermonsToolbar()}
+      ${resultsMeta}
       <div class="gallery-youtube-grid" data-gallery-youtube-grid>${cards}</div>
+      ${paginationHtml}
     </section>`;
 }
 
@@ -598,9 +714,9 @@ function readFooterTemplate() {
   return `\n    ${footerMatch[0].trim()}\n`;
 }
 
-function renderGallerySchema(data, canonical) {
+function renderGallerySchema(videos, canonical) {
   const items = [];
-  (data.youtube || []).forEach((video, index) => {
+  (videos || []).forEach((video) => {
     items.push({
       "@type": "ListItem",
       position: items.length + 1,
@@ -610,17 +726,6 @@ function renderGallerySchema(data, canonical) {
         url: `https://www.youtube.com/watch?v=${video.id}`,
         thumbnailUrl: video.thumbnail,
         embedUrl: `https://www.youtube.com/embed/${video.id}`,
-      },
-    });
-  });
-  (data.instagram || []).forEach((post) => {
-    items.push({
-      "@type": "ListItem",
-      position: items.length + 1,
-      item: {
-        "@type": "SocialMediaPosting",
-        url: post.permalink,
-        headline: (post.caption || "Instagram post").slice(0, 120),
       },
     });
   });
@@ -641,25 +746,45 @@ function renderGallerySchema(data, canonical) {
   return `<script type="application/ld+json">${JSON.stringify(schema)}</script>`;
 }
 
-function buildGalleryHtml(config, data) {
+function buildGalleryHtml(config, data, pageOptions = {}) {
   const page = config.page || {};
-  const title = "Sermons | River of Life Christian Church, Bangalore";
+  const pageNum = pageOptions.pageNum || 1;
+  const totalPages = pageOptions.totalPages || 1;
+  const pageVideos = pageOptions.pageVideos || data.youtube || [];
+  const totalVideos = pageOptions.totalVideos != null ? pageOptions.totalVideos : pageVideos.length;
+  const perPage = pageOptions.perPage || getSermonsPerPage(config);
+  const start = totalVideos ? (pageNum - 1) * perPage + 1 : 0;
+  const end = Math.min(pageNum * perPage, totalVideos);
+
+  const title =
+    pageNum === 1
+      ? "Sermons | River of Life Christian Church, Bangalore"
+      : `Sermons — Page ${pageNum} | River of Life Christian Church, Bangalore`;
   const description =
     page.description ||
     "Watch Sunday sermons and messages from River of Life Christian Church in Bangalore.";
-  const canonical = `${SITE_ORIGIN}/gallery`;
+  const canonical = `${SITE_ORIGIN}${sermonsHref(pageNum)}`;
   const eyebrow = escapeHtml(page.eyebrow || "Sermons");
   const heading = escapeHtml(page.title || "Messages from River of Life");
   const intro = escapeHtml(page.description || description);
   const youtubeEnabled = config.youtube && config.youtube.enabled !== false;
   const instagramEnabled = config.instagram && config.instagram.enabled !== false;
-  const youtubeSection = youtubeEnabled ? renderYoutubeSection(data.youtube || []) : "";
-  const instagramSection = instagramEnabled ? renderInstagramSection(data.instagram || []) : "";
+  const pageMeta = {
+    pageNum,
+    totalPages,
+    total: totalVideos,
+    start,
+    end,
+  };
+  const youtubeSection = youtubeEnabled ? renderYoutubeSection(pageVideos, pageMeta) : "";
+  const instagramSection =
+    pageNum === 1 && instagramEnabled ? renderInstagramSection(data.instagram || []) : "";
 
   const headExtra = `<link rel="stylesheet" href="/css/articles.css?v=${GALLERY_ASSET_VERSION}" />
     <link rel="stylesheet" href="/css/gallery.css?v=${GALLERY_ASSET_VERSION}" />
+    <link rel="stylesheet" href="/css/faq.css" />
     <link rel="canonical" href="${canonical}" />
-    ${renderGallerySchema(data, canonical)}`;
+    ${renderGallerySchema(pageVideos, canonical)}`;
 
   const header = readHeaderNavTemplate()
     .replaceAll("{{TITLE}}", title)
@@ -679,7 +804,7 @@ function buildGalleryHtml(config, data) {
         </div>
       </section>
 
-      <section class="articles-list-section border-b border-slate-200" aria-label="Gallery content">
+      <section class="articles-list-section border-b border-slate-200" aria-label="Sermons content">
         <div class="mx-auto max-w-6xl px-4 pb-10 sm:px-6 md:pb-14 lg:px-8">
           ${youtubeSection}
           ${instagramSection}
@@ -706,7 +831,8 @@ ${readFooterTemplate()}
 function syncGalleryFooterLink() {
   const galleryMarker = '<a href="/gallery" class="footer-link hover:text-white">Gallery</a>';
   const latestSermonFrom = 'href="/#latest-sermon" class="footer-link hover:text-white">Latest Sermon';
-  const latestSermonTo = 'href="/gallery" class="footer-link hover:text-white">Latest Sermon';
+  const latestSermonTo = 'href="/sermons" class="footer-link hover:text-white">Latest Sermon';
+  const latestSermonGallery = 'href="/gallery" class="footer-link hover:text-white">Latest Sermon';
   const files = [];
 
   function walk(dir) {
@@ -736,7 +862,7 @@ function syncGalleryFooterLink() {
           `<li><a href="/faq" class="footer-link hover:text-white">FAQ</a></li>
                   <li><a href="/articles" class="footer-link hover:text-white">Articles</a></li>
                   <li><a href="/gallery" class="footer-link hover:text-white">Gallery</a></li>
-                  <li><a href="/gallery" class="footer-link hover:text-white">Latest Sermon</a></li>`
+                  <li><a href="/sermons" class="footer-link hover:text-white">Latest Sermon</a></li>`
         );
         changed = true;
       }
@@ -744,6 +870,11 @@ function syncGalleryFooterLink() {
 
     if (html.includes(latestSermonFrom)) {
       html = html.replaceAll(latestSermonFrom, latestSermonTo);
+      changed = true;
+    }
+
+    if (html.includes(latestSermonGallery)) {
+      html = html.replaceAll(latestSermonGallery, latestSermonTo);
       changed = true;
     }
 
@@ -762,8 +893,38 @@ async function main() {
   const data = await buildGalleryData(config, cached);
   writeJson(DATA_PATH, data);
 
-  const html = buildGalleryHtml(config, data);
-  fs.writeFileSync(path.join(ROOT, "gallery.html"), html, "utf8");
+  const perPage = getSermonsPerPage(config);
+  const allVideos = data.youtube || [];
+  const totalPages = Math.max(1, Math.ceil(allVideos.length / perPage));
+
+  for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
+    const start = (pageNum - 1) * perPage;
+    const pageVideos = allVideos.slice(start, start + perPage);
+    const html = buildGalleryHtml(config, data, {
+      pageNum,
+      totalPages,
+      pageVideos,
+      totalVideos: allVideos.length,
+      perPage,
+    });
+    const fileName = sermonsFileName(pageNum);
+    fs.writeFileSync(path.join(ROOT, fileName), html, "utf8");
+    console.log(`Wrote ${fileName} (${pageVideos.length} sermons)`);
+  }
+
+  fs.readdirSync(ROOT)
+    .filter((name) => /^sermons-\d+\.html$/.test(name))
+    .forEach((name) => {
+      const pageNum = Number(name.match(/^sermons-(\d+)\.html$/)[1]);
+      if (pageNum > totalPages) {
+        fs.unlinkSync(path.join(ROOT, name));
+        console.log(`Removed stale ${name}`);
+      }
+    });
+
+  const legacyGalleryPath = path.join(ROOT, "gallery.html");
+  if (fs.existsSync(legacyGalleryPath)) fs.unlinkSync(legacyGalleryPath);
+
   syncGalleryFooterLink();
 
   try {
@@ -771,6 +932,7 @@ async function main() {
     writeSitemap({
       articles: articlesIndex.articles || [],
       faqTotalPages: 10,
+      sermonsTotalPages: totalPages,
       today: new Date().toISOString().slice(0, 10),
     });
   } catch (error) {
@@ -778,7 +940,7 @@ async function main() {
   }
 
   console.log(
-    `Wrote gallery.html (${data.instagram.length} Instagram, ${data.youtube.length} YouTube videos).`
+    `Built sermons across ${totalPages} page(s) (${data.instagram.length} Instagram, ${allVideos.length} YouTube videos).`
   );
 }
 

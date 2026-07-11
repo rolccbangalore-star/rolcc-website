@@ -1256,7 +1256,7 @@ const FOOTER_RESOURCES_COLUMN = `              <div>
                   <li><a href="/faq" class="footer-link hover:text-white">FAQ</a></li>
                   <li><a href="/articles" class="footer-link hover:text-white">Articles</a></li>
                   <li><a href="/gallery" class="footer-link hover:text-white">Gallery</a></li>
-                  <li><a href="/gallery" class="footer-link hover:text-white">Latest Sermon</a></li>
+                  <li><a href="/sermons" class="footer-link hover:text-white">Latest Sermon</a></li>
                 </ul>
               </div>`;
 

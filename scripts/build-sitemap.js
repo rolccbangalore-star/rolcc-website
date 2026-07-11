@@ -4,7 +4,7 @@ const { SITE_ORIGIN, articleCanonical } = require("./article-config");
 
 const ROOT = path.join(__dirname, "..");
 
-function writeSitemap({ articles = [], faqTotalPages = 1, today } = {}) {
+function writeSitemap({ articles = [], faqTotalPages = 1, sermonsTotalPages = 1, today } = {}) {
   const TODAY = today || new Date().toISOString().slice(0, 10);
   const staticPages = [
     ["/", "weekly", "1.0"],
@@ -20,7 +20,6 @@ function writeSitemap({ articles = [], faqTotalPages = 1, today } = {}) {
     ["/counselling", "monthly", "0.7"],
     ["/rolf", "monthly", "0.7"],
     ["/articles", "weekly", "0.85"],
-    ["/gallery", "weekly", "0.7"],
   ];
 
   const urls = staticPages.map(
@@ -30,6 +29,13 @@ function writeSitemap({ articles = [], faqTotalPages = 1, today } = {}) {
 
   for (let i = 1; i <= faqTotalPages; i++) {
     const loc = i === 1 ? "/faq" : `/faq/${i}`;
+    urls.push(
+      `  <url>\n    <loc>${SITE_ORIGIN}${loc}</loc>\n    <lastmod>${TODAY}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>${i === 1 ? "0.8" : "0.6"}</priority>\n  </url>`
+    );
+  }
+
+  for (let i = 1; i <= sermonsTotalPages; i++) {
+    const loc = i === 1 ? "/sermons" : `/sermons/${i}`;
     urls.push(
       `  <url>\n    <loc>${SITE_ORIGIN}${loc}</loc>\n    <lastmod>${TODAY}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>${i === 1 ? "0.8" : "0.6"}</priority>\n  </url>`
     );

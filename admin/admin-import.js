@@ -1,5 +1,7 @@
 (function () {
   var parseApi = typeof ArticleImportParse !== "undefined" ? ArticleImportParse : null;
+  var GITHUB_REPO = "rolccbangalore-star/rolcc-website";
+  var GITHUB_BRANCH = "main";
 
   var LABEL_ALIASES = {
     tag: ["tag", "tags"],
@@ -1165,20 +1167,55 @@
     return /\/new(?:\?|$)/.test(location.hash || "");
   }
 
-  function getDraftMeta() {
-    var store = getCmsStore();
-    if (!store) return null;
-    var state = store.getState();
-    if (!state || !state.entryDraft) return null;
-    var draft = state.entryDraft;
-    var slug = draft.get ? draft.get("slug") : draft.slug;
-    var newRecord = draft.get ? draft.get("newRecord") : draft.newRecord;
-    return {
-      slug: slug,
-      newRecord: Boolean(newRecord) || isNewEntryRoute(),
-      collection: getCollectionFromStore(store),
-      collectionName: getCollection(),
+  function getArticleDataFolder(collectionName) {
+    var folders = {
+      articles: "everyday-faith",
+      "bible-study": "back-to-bible",
     };
+    return folders[normalizeCollectionId(collectionName)] || null;
+  }
+
+  function getDraftMeta() {
+    var collectionName = getCollection();
+    var slugFromHash = getEntrySlugFromHash();
+    var store = getCmsStore();
+
+    if (store) {
+      var state = store.getState();
+      if (state && state.entryDraft) {
+        var draft = state.entryDraft;
+        var slug = draft.get ? draft.get("slug") : draft.slug;
+        var newRecord = draft.get ? draft.get("newRecord") : draft.newRecord;
+        return {
+          slug: slug || slugFromHash,
+          newRecord: Boolean(newRecord) || isNewEntryRoute(),
+          collection: getCollectionFromStore(store),
+          collectionName: collectionName,
+        };
+      }
+    }
+
+    if (!isEditorRoute()) return null;
+
+    if (isNewEntryRoute()) {
+      return {
+        slug: "",
+        newRecord: true,
+        collection: store ? getCollectionFromStore(store) : null,
+        collectionName: collectionName,
+      };
+    }
+
+    if (slugFromHash) {
+      return {
+        slug: slugFromHash,
+        newRecord: false,
+        collection: store ? getCollectionFromStore(store) : null,
+        collectionName: collectionName,
+      };
+    }
+
+    return null;
   }
 
   function navigateToCollection(collectionName) {
@@ -1232,7 +1269,7 @@
       }
 
       var props = node.memoizedProps || node.pendingProps;
-      if (props && props.entryDraft && props.collection && typeof props.deleteEntry === "function") {
+      if (props && props.collection && typeof props.deleteEntry === "function") {
         var slug = props.slug || getEntrySlugFromHash();
         if (props.newEntry) {
           return {
@@ -1311,47 +1348,183 @@
     return false;
   }
 
-  function deleteExistingEntry(root, meta) {
-    var editorApi = findEntryEditorDeleteApi(root);
+  function invokeDeleteEntry(deleteFn, collection, slug) {
+    if (!deleteFn || !collection || !slug) {
+      return Promise.reject(new Error("Delete action not available for this entry"));
+    }
+    var store = getCmsStore();
+    var result = deleteFn(collection, slug);
+    if (typeof result === "function") {
+      if (!store || typeof store.dispatch !== "function") {
+        return Promise.reject(new Error("CMS store not ready — refresh and try again"));
+      }
+      return Promise.resolve(store.dispatch(result));
+    }
+    return Promise.resolve(result);
+  }
 
-    if (editorApi && editorApi.newEntry) {
-      navigateToCollection(editorApi.collectionName || meta.collectionName);
-      return Promise.resolve();
+  function deleteEntryOnGithub(collectionName, slug) {
+    var folder = getArticleDataFolder(collectionName);
+    if (!folder) {
+      return Promise.reject(new Error("Unknown collection — cannot delete file"));
+    }
+    var path = "data/articles/" + folder + "/" + slug + ".json";
+    var cms = window.CMS;
+    var backend = cms && typeof cms.getBackend === "function" ? cms.getBackend() : null;
+    if (!backend || typeof backend.getToken !== "function") {
+      return Promise.reject(new Error("Not signed in — log in to GitHub and try again"));
     }
 
-    if (editorApi && typeof editorApi.handleDeleteEntry === "function") {
-      withConfirmBypass(function () {
-        editorApi.handleDeleteEntry();
-      });
-      return waitForEditorExit();
-    }
-
-    if (editorApi && typeof editorApi.deleteEntry === "function") {
-      return Promise.resolve(editorApi.deleteEntry(editorApi.collection, editorApi.slug)).then(function () {
-        navigateToCollection(editorApi.collectionName || meta.collectionName);
-      });
-    }
-
-    if (
-      withConfirmBypass(function () {
-        return clickDecapDeleteButton(root);
+    return backend.getToken().then(function (token) {
+      if (!token) {
+        return Promise.reject(new Error("Not signed in — log in to GitHub and try again"));
+      }
+      var readUrl =
+        "https://api.github.com/repos/" +
+        GITHUB_REPO +
+        "/contents/" +
+        encodeURIComponent(path) +
+        "?ref=" +
+        GITHUB_BRANCH;
+      return fetch(readUrl, {
+        headers: {
+          Authorization: "Bearer " + token,
+          Accept: "application/vnd.github+json",
+        },
       })
-    ) {
+        .then(function (res) {
+          if (res.status === 404) return { missing: true };
+          if (!res.ok) {
+            return res.json().catch(function () {
+              return {};
+            }).then(function (body) {
+              throw new Error((body && body.message) || "Could not read article file on GitHub");
+            });
+          }
+          return res.json();
+        })
+        .then(function (file) {
+          if (file && file.missing) return true;
+          if (!file || !file.sha) {
+            throw new Error("Article file not found in repository");
+          }
+          return fetch("https://api.github.com/repos/" + GITHUB_REPO + "/contents/" + encodeURIComponent(path), {
+            method: "DELETE",
+            headers: {
+              Authorization: "Bearer " + token,
+              Accept: "application/vnd.github+json",
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              message: 'Delete article "' + slug + '"',
+              sha: file.sha,
+              branch: GITHUB_BRANCH,
+            }),
+          }).then(function (res) {
+            if (!res.ok) {
+              return res.json().catch(function () {
+                return {};
+              }).then(function (body) {
+                throw new Error((body && body.message) || "GitHub rejected the delete request");
+              });
+            }
+            return true;
+          });
+        });
+    });
+  }
+
+  function deleteEntryViaBackend(meta) {
+    var store = getCmsStore();
+    var collectionName = meta.collectionName || getCollection();
+    var slug = meta.slug || getEntrySlugFromHash();
+    if (!slug) {
+      return Promise.reject(new Error("No article open — missing entry slug"));
+    }
+
+    var collection = meta.collection;
+    if (!collection && store) {
+      collection = getCollectionFromStore(store);
+    }
+
+    var cms = window.CMS;
+    var backend = cms && typeof cms.getBackend === "function" ? cms.getBackend() : null;
+    if (backend && typeof backend.deleteEntry === "function" && store && collection) {
+      var state = store.getState();
+      return Promise.resolve(backend.deleteEntry(state, collection, slug));
+    }
+
+    return deleteEntryOnGithub(collectionName, slug);
+  }
+
+  function deleteExistingEntry(root, meta, attempt) {
+    attempt = attempt || 0;
+    var collectionName = meta.collectionName || getCollection();
+    var slug = meta.slug || getEntrySlugFromHash();
+    var editorApi = findEntryEditorDeleteApi(root);
+    var actionApi = findEditorActionApi(root);
+
+    if ((editorApi && editorApi.newEntry) || (isNewEntryRoute() && !slug)) {
+      return discardDraftEntry();
+    }
+
+    var handleDelete =
+      (editorApi && editorApi.handleDeleteEntry) ||
+      (actionApi && actionApi.handleDeleteEntry) ||
+      (actionApi && actionApi.handleDeletePublishedEntry);
+    if (typeof handleDelete === "function") {
+      withConfirmBypass(function () {
+        handleDelete();
+      });
       return waitForEditorExit();
     }
 
-    return Promise.reject(new Error("Could not connect to the editor delete action"));
+    var deleteFn =
+      (editorApi && editorApi.deleteEntry) ||
+      (actionApi && actionApi.deleteEntry) ||
+      (actionApi && actionApi.deletePublishedEntry);
+    var collection =
+      (editorApi && editorApi.collection) ||
+      (actionApi && actionApi.collection) ||
+      meta.collection;
+    if (!collection) {
+      var store = getCmsStore();
+      if (store) collection = getCollectionFromStore(store);
+    }
+    var resolvedSlug = (editorApi && editorApi.slug) || slug;
+
+    if (typeof deleteFn === "function" && collection && resolvedSlug) {
+      return invokeDeleteEntry(deleteFn, collection, resolvedSlug).then(function () {
+        navigateToCollection(collectionName);
+      });
+    }
+
+    if (attempt < 10) {
+      return new Promise(function (resolve, reject) {
+        window.setTimeout(function () {
+          deleteExistingEntry(root, meta, attempt + 1).then(resolve).catch(reject);
+        }, 200);
+      });
+    }
+
+    return deleteEntryViaBackend(meta).then(function () {
+      navigateToCollection(collectionName);
+    });
   }
 
   function deleteArticleEntry() {
     var root = $("nc-root");
     if (!root) {
-      return Promise.reject(new Error("Editor not ready"));
+      return Promise.reject(new Error("CMS shell not loaded — refresh and try again"));
+    }
+
+    if (!isEditorRoute()) {
+      return Promise.reject(new Error("No article open — open an article first"));
     }
 
     var meta = getDraftMeta();
     if (!meta) {
-      return Promise.reject(new Error("No article open"));
+      return Promise.reject(new Error("No article open — could not read the current entry"));
     }
 
     if (meta.newRecord) {
@@ -1359,10 +1532,13 @@
     }
 
     var slug = meta.slug || getEntrySlugFromHash();
+    if (!slug) {
+      return Promise.reject(new Error("No article open — missing entry slug"));
+    }
     var collectionName = meta.collectionName || getCollection();
 
     return deleteExistingEntry(root, meta).then(function () {
-      if (window.AdminComposer && window.AdminComposer.removeArticleFromListing && slug) {
+      if (window.AdminComposer && window.AdminComposer.removeArticleFromListing) {
         window.AdminComposer.removeArticleFromListing(collectionName, slug);
       }
       if (isEditorRoute()) {

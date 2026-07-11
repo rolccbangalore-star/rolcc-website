@@ -79,12 +79,6 @@
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://www.rolcc.in/gallery</loc>
-    <lastmod>2026-07-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.75</priority>
-  </url>
-  <url>
     <loc>https://www.rolcc.in/faq</loc>
     <lastmod>2026-07-11</lastmod>
     <changefreq>weekly</changefreq>
@@ -151,16 +145,16 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.rolcc.in/sermons/2</loc>
-    <lastmod>2026-07-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <loc>https://www.rolcc.in/articles/back-to-bible/2-kings-4-widows-oil</loc>
+    <lastmod>2026-07-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.rolcc.in/sermons/3</loc>
-    <lastmod>2026-07-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <loc>https://www.rolcc.in/articles/back-to-bible/mark-6-five-loaves-two-fish</loc>
+    <lastmod>2026-07-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.rolcc.in/articles/everyday-faith/finding-anchor-in-the-tsunami-practical-wisdom-and-spiritual-accountability-in-times-of-crisis</loc>
@@ -217,8 +211,32 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://www.rolcc.in/articles/back-to-bible/armor-fruit-gifts-spirit</loc>
+    <lastmod>2026-07-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.rolcc.in/articles/back-to-bible/mountains-in-the-bible</loc>
+    <lastmod>2026-07-03</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.rolcc.in/articles/back-to-bible/matthew-25-parable-of-the-talents</loc>
+    <lastmod>2026-07-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://www.rolcc.in/articles/back-to-bible/romans-8-life-in-the-spirit</loc>
     <lastmod>2026-06-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.rolcc.in/articles/back-to-bible/matthew-17-mount-of-transfiguration</loc>
+    <lastmod>2026-06-17</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>

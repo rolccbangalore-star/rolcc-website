@@ -17,11 +17,13 @@
   }
 
   function normalizeCollectionId(id) {
+    if (!id) return "";
+    var key = String(id).replace(/_/g, "-");
     var aliases = {
       "everyday-faith": "articles",
       "back-to-bible": "bible-study",
     };
-    return aliases[id] || id || "";
+    return aliases[key] || aliases[id] || key;
   }
 
   function isArticlesCollection(collection) {
@@ -589,14 +591,28 @@
 
   function summarizeContentEntry(entry, collection) {
     collection = normalizeCollectionId(collection);
+    var tags = [];
+    if (Array.isArray(entry.tags)) {
+      entry.tags.forEach(function (item) {
+        if (typeof item === "string" && item.trim()) tags.push(item.trim());
+        else if (item && item.tag && String(item.tag).trim()) tags.push(String(item.tag).trim());
+      });
+    }
     var summary = {
       title: entry.title || "",
+      description: entry.description || "",
+      summaryText: entry.summary || "",
+      passage: entry.passage || "",
+      author: entry.author || "",
       blockCount: 0,
       sectionCount: 0,
       takeawayCount: 0,
       questionCount: 0,
+      activityCount: (entry.activities || []).length,
       quizCount: (entry.quiz || []).length,
+      tagCount: tags.length,
       hasQuiz: entry.includeQuiz === true && (entry.quiz || []).length > 0,
+      isBibleStudy: !isArticlesCollection(collection),
     };
     if (isArticlesCollection(collection)) {
       summary.blockCount = (entry.blocks || []).length;
@@ -637,7 +653,7 @@
     },
     "bible-study": {
       _tagInstructions:
-        "Read the full study. Pick 1–2 tags from _allowedTags that best match the passage and application. Include Bible Study when appropriate.",
+        "Read the full study. Pick 1–2 tags from _allowedTags that best match the passage and application. Include Bible Study when appropriate. Always set includeQuiz true with 3–5 quiz questions from the study content.",
       tags: [],
       title: "Study title",
       description: "Short description for search previews.",

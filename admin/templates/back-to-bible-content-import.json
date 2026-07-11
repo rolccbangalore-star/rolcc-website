@@ -1,5 +1,5 @@
 {
-  "_instructions": "Convert the draft below into this JSON. For each quiz question: write one correct answer and three plausible wrong answers based on the study (not silly or random). Set correctIndex to the 0-based index of the correct option. REQUIRED: fill the tags array with 1–2 tags from _allowedTags based on content relevance (see _tagInstructions). Include Bible Study when it fits. Do not include date, hero image, featured, or published.",
+  "_instructions": "Convert the draft below into this JSON. REQUIRED: always set includeQuiz to true and write 3–5 quiz questions from the study content (passage, sections, themes). If the source has no review questions, create them from Observe/Interpret/Apply. For each quiz question: one correct answer and three plausible wrong answers (not silly or random). Set correctIndex to the 0-based index of the correct option. REQUIRED: fill the tags array with 1–2 tags from _allowedTags based on content relevance (see _tagInstructions). Include Bible Study when it fits. Do not include date, hero image, featured, or published.",
   "title": "Study title",
   "description": "Short description for the study page and search previews.",
   "passage": "John 3:1-21",

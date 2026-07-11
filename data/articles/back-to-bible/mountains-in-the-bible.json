@@ -1,0 +1,66 @@
+{
+  "title": "Mountains in the Bible — Places of Revelation and God's Presence",
+  "description": "A Back to the Bible overview study on key mountains in Scripture — where God met His people, revealed His glory, and shaped salvation history.",
+  "passage": "Selected passages across the Old and New Testaments",
+  "author": "ROLCC Fellowship Team",
+  "category": "Bible Study",
+  "tags": ["Bible Study", "Teaching"],
+  "date": "2026-07-03",
+  "thumbnail": "/images/og-image.jpg",
+  "featured": false,
+  "sections": [
+    {
+      "heading": "Observe",
+      "body": "Mountains appear throughout the Bible as places where heaven meets earth. Jesus often ministered on mountains — to pray alone (Matthew 14:23), teach crowds (Matthew 5-7), reveal His glory (Matthew 17), feed the five thousand (John 6:3), give the Great Commission (Matthew 28:16-20), and ascend to heaven from the Mount of Olives (Acts 1:9-12). Key mountains include Ararat, where Noah's ark rested after the Flood (Genesis 8:4); Moriah, where Abraham offered Isaac and God provided a ram (Genesis 22); Sinai, where God gave the Law (Exodus 19-20); Carmel, where Elijah challenged the prophets of Baal (1 Kings 18); and Golgotha, where Jesus was crucified (Matthew 27:33)."
+    },
+    {
+      "heading": "Interpret",
+      "body": "Mountains in Scripture often symbolise God's presence, worship, prayer, revelation, covenant, faith, victory, and hope. Ararat points to new beginning after judgment. Moriah points to sacrifice and God's provision — foreshadowing Christ. Sinai points to God's holiness and covenant. Carmel points to victory when God alone is worshipped. Golgotha points to redemption and atonement. Mount Zion represents God's dwelling and kingdom. Each major mountain tells part of one story: God drawing near to His people and calling them to know Him."
+    },
+    {
+      "heading": "Apply",
+      "body": "We all need mountain moments — times of prayer, Bible reading, worship, and quiet with God — but God does not take us to the mountain to escape life. He prepares us there for the valley. Where do you meet with God? What distracts you from hearing Him? Let the mountains of Scripture remind you that God is present in both revelation and daily obedience."
+    }
+  ],
+  "discussionQuestions": [
+    "Can you name a Bible verse that mentions a mountain?",
+    "Which mountain story in Scripture speaks to you most, and why?",
+    "Where do you go — or could you go — for quiet time with God?",
+    "How does Jesus' use of mountains shape the way you think about prayer and teaching?"
+  ],
+  "activities": [],
+  "includeQuiz": true,
+  "quiz": [
+    {
+      "question": "On which mountain did Noah's ark come to rest?",
+      "options": ["Mount Ararat", "Mount Sinai", "Mount Carmel", "Mount Zion"],
+      "correctIndex": 0,
+      "explanation": "Genesis 8:4 places the ark on Ararat after the Flood."
+    },
+    {
+      "question": "What significant event happened at Mount Moriah?",
+      "options": ["Abraham offered Isaac and God provided a ram", "The Ten Commandments were given", "Elijah challenged Baal's prophets", "Jesus gave the Sermon on the Mount"],
+      "correctIndex": 0,
+      "explanation": "Moriah points to sacrifice and God's provision."
+    },
+    {
+      "question": "Where was Jesus crucified?",
+      "options": ["Golgotha (Calvary)", "Mount Tabor", "Mount Nebo", "Mount Carmel"],
+      "correctIndex": 0,
+      "explanation": "Golgotha is the mountain of redemption."
+    },
+    {
+      "question": "What do mountains often symbolise in Scripture?",
+      "options": ["God's presence, worship, and revelation", "Human achievement alone", "Escape from obedience", "Political power only"],
+      "correctIndex": 0,
+      "explanation": "Mountains are places where God met His people."
+    },
+    {
+      "question": "Why does God take us to 'mountain' experiences?",
+      "options": ["To prepare us for life in the valley", "So we can avoid daily responsibility", "To replace Scripture reading", "Only for special leaders"],
+      "correctIndex": 0,
+      "explanation": "Mountain moments prepare believers for everyday obedience."
+    }
+  ],
+  "publish": true
+}

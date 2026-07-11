@@ -28,6 +28,25 @@
     return normalize(text).replace(/\s*\(optional\)$/i, "").trim();
   }
 
+  function getActiveCollection() {
+    if (window.AdminComposer && window.AdminComposer.getActiveCollection) {
+      return window.AdminComposer.getActiveCollection();
+    }
+    var match = (location.hash || "").match(/\/collections\/([^/?]+)/);
+    return match ? match[1].replace(/_/g, "-") : "";
+  }
+
+  function isBibleStudyEditor() {
+    if (window.AdminComposer && window.AdminComposer.isBibleStudyCollection) {
+      return window.AdminComposer.isBibleStudyCollection(getActiveCollection());
+    }
+    return getActiveCollection() === "bible-study";
+  }
+
+  function getMinTagsForPublish() {
+    return isBibleStudyEditor() ? 1 : 2;
+  }
+
   function isEditorRoute() {
     return /\/entries\/|\/new$/.test(location.hash || "");
   }
@@ -350,20 +369,43 @@
     }
   }
 
+  function coerceTagName(item) {
+    if (item === undefined || item === null) return "";
+    if (typeof item === "string") return item.trim();
+    if (typeof item === "number" || typeof item === "boolean") return String(item).trim();
+    if (typeof item === "object") {
+      if (typeof item.toJS === "function") return coerceTagName(item.toJS());
+      if (typeof item.get === "function") {
+        var fromMap = item.get("tag") || item.get("name") || item.get("label");
+        if (fromMap !== undefined) return coerceTagName(fromMap);
+      }
+      if (item.tag !== undefined) return coerceTagName(item.tag);
+      if (item.name !== undefined) return coerceTagName(item.name);
+      if (item.label !== undefined) return coerceTagName(item.label);
+    }
+    return "";
+  }
+
   function normalizeTagsList(raw, fallbackCategory, applyLegacy) {
     if (applyLegacy === undefined) applyLegacy = true;
     var tags = [];
     if (Array.isArray(raw)) {
       raw.forEach(function (item) {
-        if (typeof item === "string" && item.trim()) tags.push(item.trim());
-        else if (item && item.tag && String(item.tag).trim()) tags.push(String(item.tag).trim());
+        var name = coerceTagName(item);
+        if (name) tags.push(name);
       });
+    } else if (raw) {
+      var single = coerceTagName(raw);
+      if (single) tags.push(single);
     }
-    if (!tags.length && fallbackCategory) tags.push(String(fallbackCategory).trim());
+    if (!tags.length && fallbackCategory) {
+      var cat = coerceTagName(fallbackCategory);
+      if (cat) tags.push(cat);
+    }
     if (applyLegacy) tags = mapLegacyTags(tags);
     var seen = Object.create(null);
     return tags.filter(function (tag) {
-      if (!tag || seen[tag]) return false;
+      if (!tag || tag === "[object Object]" || seen[tag]) return false;
       seen[tag] = true;
       return true;
     });
@@ -468,16 +510,18 @@
 
   function updateTagHint(hintEl, count) {
     if (!hintEl) return;
-    var needed = Math.max(0, 2 - count);
+    var minTags = getMinTagsForPublish();
+    var needed = Math.max(0, minTags - count);
     hintEl.classList.toggle("admin-tags-field__hint--warn", needed > 0);
-    if (needed === 2) {
-      hintEl.textContent = "Type to find tags. Add at least 2 before publishing.";
+    if (needed === minTags) {
+      hintEl.textContent =
+        "Type to find tags. Add at least " + minTags + " before publishing.";
     } else if (needed === 1) {
       hintEl.textContent = "1 more tag needed to publish.";
     } else if (count >= MAX_TAGS) {
       hintEl.textContent = "Maximum of " + MAX_TAGS + " tags reached.";
     } else {
-      hintEl.textContent = count + " tags added.";
+      hintEl.textContent = count + " tag" + (count === 1 ? "" : "s") + " added.";
     }
   }
 
@@ -501,7 +545,7 @@
         "</div>" +
         '<ul class="admin-tags-combobox__list" id="admin-editor-tag-list" role="listbox" hidden></ul>' +
         "</div>" +
-        '<p class="admin-editor-field-hint admin-tags-field__hint" id="admin-editor-tag-hint">Type to find tags. Add at least 2 before publishing.</p>';
+        '<p class="admin-editor-field-hint admin-tags-field__hint" id="admin-editor-tag-hint">Type to find tags.</p>';
 
       positionTagField(wrap, insertPoint);
     } else {
@@ -684,9 +728,15 @@
     (function syncLegacyTagsOnLoad() {
       var data = readDraftData();
       var raw = normalizeTagsList(data.tags, data.category, false);
+      var sourceLen = Array.isArray(data.tags) ? data.tags.length : 0;
       var hasLegacy = raw.some(function (tag) {
         return LEGACY_TAG_MAP[tag];
       });
+      var hadMalformed = sourceLen > 0 && raw.length === 0;
+      if (hadMalformed) {
+        applyTags([]);
+        return;
+      }
       if (!hasLegacy) return;
       applyTags(mapLegacyTags(raw));
     })();

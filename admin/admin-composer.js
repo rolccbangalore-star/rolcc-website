@@ -48,7 +48,8 @@
 
   function normalizeCollectionId(id) {
     if (!id) return "";
-    return COLLECTION_ALIASES[id] || id;
+    var key = String(id).replace(/_/g, "-");
+    return COLLECTION_ALIASES[key] || COLLECTION_ALIASES[id] || key;
   }
 
   function isArticlesCollection(collection) {

@@ -26,7 +26,26 @@
     "How have you experienced God's provision or guidance recently?"
   ],
   "activities": [],
-  "includeQuiz": false,
-  "quiz": [],
+  "includeQuiz": true,
+  "quiz": [
+    {
+      "question": "How does David describe the Lord in Psalm 23?",
+      "options": ["As a shepherd", "As a warrior king", "As a judge", "As a distant ruler"],
+      "correctIndex": 0,
+      "explanation": "The opening verse says, 'The Lord is my shepherd.'"
+    },
+    {
+      "question": "What does the shepherd provide according to this psalm?",
+      "options": ["Provision, guidance, protection, and restoration", "Wealth and public honour only", "Freedom from all difficulty", "Victory over every enemy by force"],
+      "correctIndex": 0,
+      "explanation": "David portrays God as caring for every need of the sheep."
+    },
+    {
+      "question": "What image helps us trust God in hard seasons?",
+      "options": ["Walking through the valley with the Shepherd present", "Facing the valley alone", "Avoiding valleys completely", "Relying only on our own strength"],
+      "correctIndex": 0,
+      "explanation": "The psalm promises the Shepherd's presence in the valley."
+    }
+  ],
   "publish": true
 }

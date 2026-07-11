@@ -119,6 +119,14 @@
     return normalize(text).replace(/\s*\(optional\)$/i, "").trim();
   }
 
+  function escapeHtml(value) {
+    return String(value)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
   function isEditorRoute() {
     return /\/entries\/|\/new$/.test(location.hash || "");
   }
@@ -136,7 +144,8 @@
       "everyday-faith": "articles",
       "back-to-bible": "bible-study",
     };
-    return aliases[id] || id;
+    var key = String(id).replace(/_/g, "-");
+    return aliases[key] || aliases[id] || key;
   }
 
   function isArticlesCollection(collection) {
@@ -865,7 +874,10 @@
     tags: ["tags", "tag"],
     summary: ["summary"],
     description: ["search preview"],
-    blocks: ["article content"],
+    passage: ["passage"],
+    sections: ["sections"],
+    "discussion questions": ["discussion questions"],
+    quiz: ["quiz"],
   };
 
   function normalizeDraftTags(data) {
@@ -873,11 +885,26 @@
     var tags = [];
     if (Array.isArray(data.tags)) {
       data.tags.forEach(function (item) {
-        if (typeof item === "string" && item.trim()) tags.push(item.trim());
-        else if (item && item.tag && String(item.tag).trim()) tags.push(String(item.tag).trim());
+        var name = "";
+        if (typeof item === "string" && item.trim()) name = item.trim();
+        else if (item && typeof item === "object") {
+          if (item.tag !== undefined) name = String(item.tag).trim();
+          else if (item.name !== undefined) name = String(item.name).trim();
+          else if (typeof item.toJS === "function") {
+            var plain = item.toJS();
+            if (plain && plain.tag) name = String(plain.tag).trim();
+          } else if (typeof item.get === "function") {
+            var mapped = item.get("tag") || item.get("name");
+            if (mapped !== undefined) name = String(mapped).trim();
+          }
+        }
+        if (name && name !== "[object Object]") tags.push(name);
       });
     }
-    if (!tags.length && data.category) tags.push(String(data.category).trim());
+    if (!tags.length && data.category) {
+      var cat = String(data.category).trim();
+      if (cat && cat !== "[object Object]") tags.push(cat);
+    }
     if (window.AdminEditorFields && window.AdminEditorFields.mapLegacyTags) {
       tags = window.AdminEditorFields.mapLegacyTags(tags);
     }
@@ -901,12 +928,38 @@
 
   function validatePublishRequirements() {
     var data = readDraftData();
+    var collection = getCollection();
     var headerInput = $("admin-editor-title-input");
     var title = (headerInput && headerInput.value.trim()) || (data.title && String(data.title).trim()) || "";
     var missing = [];
 
     if (!title) missing.push({ key: "title", label: "Title" });
     if (!data.date) missing.push({ key: "date", label: "Date" });
+
+    if (isBibleStudyCollection(collection)) {
+      var studyTags = normalizeDraftTags(data);
+      if (studyTags.length < 1) missing.push({ key: "tags", label: "Tags (at least 1)" });
+      if (!data.description || !String(data.description).trim()) {
+        missing.push({ key: "description", label: "Description" });
+      }
+      if (!data.passage || !String(data.passage).trim()) {
+        missing.push({ key: "passage", label: "Passage" });
+      }
+      var sections = data.sections || [];
+      var hasSectionContent = sections.some(function (section) {
+        return section && (String(section.heading || "").trim() || String(section.body || "").trim());
+      });
+      if (!hasSectionContent) missing.push({ key: "sections", label: "Sections" });
+      if (!data.discussionQuestions || !data.discussionQuestions.length) {
+        missing.push({ key: "discussionQuestions", label: "Discussion questions" });
+      }
+      var quizCount = (data.quiz || []).length;
+      if (data.includeQuiz !== true || quizCount < 3) {
+        missing.push({ key: "quiz", label: "Quiz (at least 3 questions)" });
+      }
+      return missing;
+    }
+
     var tags = normalizeDraftTags(data);
     if (tags.length < 2) missing.push({ key: "tags", label: "Tags (at least 2)" });
     if (!data.summary || !String(data.summary).trim()) missing.push({ key: "summary", label: "Summary" });
@@ -947,7 +1000,13 @@
     }
 
     var labelKey =
-      item.key === "description" ? "search preview" : item.key === "blocks" ? "article content" : item.key;
+      item.key === "description"
+        ? "search preview"
+        : item.key === "blocks"
+          ? "article content"
+          : item.key === "discussionQuestions"
+            ? "discussion questions"
+            : item.key;
     var wrap = findFieldByLabel(root, labelKey);
     if (wrap) return wrap;
 
@@ -1511,6 +1570,10 @@
 
   function ensureModal() {
     var modal = $("admin-import-modal");
+    if (modal && !modal.querySelector(".admin-import-modal__checklist")) {
+      modal.remove();
+      modal = null;
+    }
     if (modal) return modal;
 
     modal = document.createElement("div");
@@ -1520,11 +1583,11 @@
     modal.innerHTML =
       '<div class="admin-import-modal__backdrop" data-import-close></div>' +
       '<div class="admin-import-modal__panel" role="dialog" aria-labelledby="admin-import-title">' +
-      '<h2 id="admin-import-title" class="admin-import-modal__title">Import article</h2>' +
-      '<p class="admin-import-modal__summary" id="admin-import-summary"></p>' +
+      '<h2 id="admin-import-title" class="admin-import-modal__title">Import content</h2>' +
+      '<ul class="admin-import-modal__checklist" id="admin-import-summary"></ul>' +
       '<label class="admin-import-modal__label"><input type="checkbox" id="admin-import-replace" /> Replace fields that already have content</label>' +
-      '<p class="admin-import-modal__hint">Imports title, summary, content, quiz, and suggested tags. Set date, hero image, featured, and published manually in the editor.</p>' +
-      '<details class="admin-import-modal__help"><summary>Article import JSON template</summary><pre id="admin-import-example"></pre></details>' +
+      '<p class="admin-import-modal__hint" id="admin-import-hint"></p>' +
+      '<details class="admin-import-modal__help"><summary id="admin-import-template-label">Import JSON template</summary><pre id="admin-import-example"></pre></details>' +
       '<div class="admin-import-modal__actions">' +
       '<button type="button" class="btn-outline" data-import-close>Cancel</button>' +
       '<button type="button" class="btn-outline" id="admin-import-download">Download repo JSON</button>' +
@@ -1621,29 +1684,135 @@
     if (!parseApi) return;
     pendingEntry = entry;
     var modal = ensureModal();
-    var summary = summarizeText(entry);
-    $("admin-import-summary").textContent = summary;
+    var collection = getCollection();
+    var titleEl = $("admin-import-title");
+    var summaryEl = $("admin-import-summary");
+    var hintEl = $("admin-import-hint");
+    var templateLabel = $("admin-import-template-label");
+    if (titleEl) {
+      titleEl.textContent = isBibleStudyCollection(collection) ? "Import Bible study" : "Import sermon summary";
+    }
+    if (summaryEl) summaryEl.innerHTML = summarizeText(entry);
+    if (hintEl) hintEl.textContent = getImportHint(collection);
+    if (templateLabel) {
+      templateLabel.textContent = isBibleStudyCollection(collection)
+        ? "Bible study import JSON template"
+        : "Sermon import JSON template";
+    }
     var example = $("admin-import-example");
     loadImportTags().then(function () {
       if (example) {
-        example.textContent = JSON.stringify(getImportExampleTemplate(getCollection()), null, 2);
+        example.textContent = JSON.stringify(getImportExampleTemplate(collection), null, 2);
       }
     });
     modal.hidden = false;
   }
 
+  function importRow(label, value) {
+    return (
+      '<li class="admin-import-modal__row">' +
+      '<span class="admin-import-modal__label-text">' +
+      escapeHtml(label) +
+      "</span>" +
+      '<span class="admin-import-modal__value">' +
+      escapeHtml(value) +
+      "</span>" +
+      "</li>"
+    );
+  }
+
+  function includedOrMissing(present, includedText, missingText) {
+    return present ? includedText || "Included" : missingText || "Not included";
+  }
+
+  function buildImportSummaryHtml(entry, collection) {
+    if (!parseApi) return "";
+    var s = parseApi.summarizeContentEntry(entry, collection);
+    var rows = [];
+    var isStudy = s.isBibleStudy;
+
+    rows.push(importRow("Title", s.title ? "Included" : "Missing"));
+    rows.push(
+      importRow(
+        isStudy ? "Description" : "Meta description",
+        includedOrMissing(Boolean(s.description && String(s.description).trim()))
+      )
+    );
+
+    if (isStudy) {
+      rows.push(importRow("Passage", includedOrMissing(Boolean(s.passage && String(s.passage).trim())));
+      rows.push(
+        importRow(
+          "Sections",
+          s.sectionCount
+            ? s.sectionCount + " section" + (s.sectionCount === 1 ? "" : "s") + " included"
+            : "Not included"
+        )
+      );
+      rows.push(
+        importRow(
+          "Discussion questions",
+          s.questionCount
+            ? s.questionCount + " question" + (s.questionCount === 1 ? "" : "s") + " included"
+            : "Not included"
+        )
+      );
+      if (s.activityCount) {
+        rows.push(importRow("Activities", s.activityCount + " included"));
+      }
+    } else {
+      rows.push(
+        importRow("Summary", includedOrMissing(Boolean(s.summaryText && String(s.summaryText).trim())))
+      );
+      rows.push(
+        importRow(
+          "Article content",
+          s.blockCount
+            ? s.blockCount + " block" + (s.blockCount === 1 ? "" : "s") + " included"
+            : "Not included"
+        )
+      );
+      if (s.takeawayCount) {
+        rows.push(importRow("Key takeaways", s.takeawayCount + " included"));
+      }
+    }
+
+    if (s.author && String(s.author).trim()) {
+      rows.push(importRow("Author", "Included"));
+    }
+
+    rows.push(
+      importRow(
+        "Quiz",
+        s.quizCount
+          ? s.quizCount + " question" + (s.quizCount === 1 ? "" : "s") + " and answers included"
+          : "Not included"
+      )
+    );
+
+    rows.push(
+      importRow(
+        "Tags",
+        s.tagCount
+          ? s.tagCount + " tag" + (s.tagCount === 1 ? "" : "s") + " included"
+          : "Not included"
+      )
+    );
+
+    return rows.join("");
+  }
+
+  function getImportHint(collection) {
+    if (isBibleStudyCollection(collection)) {
+      return "Imports title, description, passage, sections, discussion questions, quiz, and tags. Set date, hero image, featured, and published manually in the editor.";
+    }
+    return "Imports title, summary, description, article content, quiz, and tags. Set date, hero image, featured, and published manually in the editor.";
+  }
+
   function summarizeText(entry) {
     if (!parseApi) return "";
-    var s = parseApi.summarizeContentEntry(entry, getCollection());
-    var parts = [];
-    if (s.title) parts.push('"' + s.title + '"');
-    else parts.push("Article import");
-    if (s.blockCount) parts.push(s.blockCount + " blocks");
-    if (s.sectionCount) parts.push(s.sectionCount + " sections");
-    if (s.takeawayCount) parts.push(s.takeawayCount + " takeaways");
-    if (s.questionCount) parts.push(s.questionCount + " discussion questions");
-    if (s.quizCount) parts.push(s.quizCount + " quiz questions");
-    return parts.join(" · ");
+    var collection = getCollection();
+    return buildImportSummaryHtml(entry, collection);
   }
 
   function handleParsedEntry(entry, options) {

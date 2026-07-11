@@ -129,6 +129,34 @@
     }
   },
   "bible-study": {
+    "2-kings-4-widows-oil": {
+      "title": "2 Kings 4:1-7 — The Widow's Oil & God's Provision",
+      "author": "ROLCC Fellowship Team",
+      "category": "Bible Study",
+      "tags": [
+        "Bible Study",
+        "Faith"
+      ],
+      "date": "2026-07-10",
+      "thumbnail": "/images/og-image.jpg",
+      "publish": true,
+      "featured": false,
+      "modified": "2026-07-11"
+    },
+    "armor-fruit-gifts-spirit": {
+      "title": "Armor of God, Fruit of the Spirit, Gifts of the Spirit",
+      "author": "ROLCC Fellowship Team",
+      "category": "Bible Study",
+      "tags": [
+        "Bible Study",
+        "Holy Spirit"
+      ],
+      "date": "2026-07-05",
+      "thumbnail": "/images/og-image.jpg",
+      "publish": true,
+      "featured": false,
+      "modified": "2026-07-11"
+    },
     "genesis-1-in-the-beginning": {
       "title": "Genesis 1 — In the beginning",
       "author": "ROLCC Fellowship Team",
@@ -136,7 +164,63 @@
       "date": "2026-07-02",
       "publish": false,
       "featured": false,
-      "modified": "2026-07-06"
+      "modified": "2026-07-11"
+    },
+    "mark-6-five-loaves-two-fish": {
+      "title": "Mark 6:35-44 — Five Loaves and Two Fish",
+      "author": "ROLCC Fellowship Team",
+      "category": "Bible Study",
+      "tags": [
+        "Bible Study",
+        "Faith"
+      ],
+      "date": "2026-07-08",
+      "thumbnail": "/images/og-image.jpg",
+      "publish": true,
+      "featured": false,
+      "modified": "2026-07-11"
+    },
+    "matthew-17-mount-of-transfiguration": {
+      "title": "Matthew 17:1-9 — The Mount of Transfiguration",
+      "author": "ROLCC Fellowship Team",
+      "category": "Bible Study",
+      "tags": [
+        "Bible Study",
+        "Discipleship"
+      ],
+      "date": "2026-06-17",
+      "thumbnail": "/images/og-image.jpg",
+      "publish": true,
+      "featured": false,
+      "modified": "2026-07-11"
+    },
+    "matthew-25-parable-of-the-talents": {
+      "title": "Matthew 25:14-30 — The Parable of the Talents",
+      "author": "ROLCC Fellowship Team",
+      "category": "Bible Study",
+      "tags": [
+        "Bible Study",
+        "Stewardship"
+      ],
+      "date": "2026-07-01",
+      "thumbnail": "/images/og-image.jpg",
+      "publish": true,
+      "featured": false,
+      "modified": "2026-07-11"
+    },
+    "mountains-in-the-bible": {
+      "title": "Mountains in the Bible — Places of Revelation and God's Presence",
+      "author": "ROLCC Fellowship Team",
+      "category": "Bible Study",
+      "tags": [
+        "Bible Study",
+        "Teaching"
+      ],
+      "date": "2026-07-03",
+      "thumbnail": "/images/og-image.jpg",
+      "publish": true,
+      "featured": false,
+      "modified": "2026-07-11"
     },
     "psalm-23-the-lord-is-my-shepherd": {
       "title": "Psalm 23 — The Lord Is My Shepherd",
@@ -146,7 +230,7 @@
       "thumbnail": "/images/og-image.jpg",
       "publish": true,
       "featured": false,
-      "modified": "2026-07-05"
+      "modified": "2026-07-11"
     },
     "romans-8-life-in-the-spirit": {
       "title": "Romans 8:1-11 — Life in the Spirit",

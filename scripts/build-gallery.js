@@ -599,10 +599,6 @@ function renderYoutubeSection(items, pageMeta) {
   }
 
   const cards = items.map((video) => renderYoutubeCard(video)).join("");
-  const resultsMeta =
-    pageMeta && pageMeta.total > 0
-      ? `<p class="gallery-results-meta text-sm text-slate-500" aria-live="polite">Showing ${pageMeta.start}–${pageMeta.end} of ${pageMeta.total} sermons</p>`
-      : "";
   const paginationHtml =
     pageMeta && pageMeta.totalPages > 1
       ? `<div class="mt-10">${renderSermonsPagination(pageMeta.pageNum, pageMeta.totalPages)}</div>`
@@ -610,7 +606,6 @@ function renderYoutubeSection(items, pageMeta) {
 
   return `<section class="gallery-section" aria-label="Sermons">
       ${renderSermonsToolbar()}
-      ${resultsMeta}
       <div class="gallery-youtube-grid" data-gallery-youtube-grid>${cards}</div>
       ${paginationHtml}
     </section>`;

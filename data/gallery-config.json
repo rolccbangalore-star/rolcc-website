@@ -1,0 +1,20 @@
+{
+  "page": {
+    "eyebrow": "Gallery",
+    "title": "Moments from River of Life",
+    "description": "Watch sermons and highlights from River of Life Christian Church. Latest messages from our YouTube channel."
+  },
+  "instagram": {
+    "enabled": false,
+    "limit": 12,
+    "types": ["REEL", "IMAGE", "CAROUSEL_ALBUM", "VIDEO"]
+  },
+  "youtube": {
+    "enabled": true,
+    "mode": "playlist",
+    "playlistId": "PLsw46xZ8GNNqIe3BdQ1mz59hooV6rYPIa",
+    "channelHandle": "rolccindia",
+    "limit": 12,
+    "videos": []
+  }
+}

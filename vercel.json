@@ -63,6 +63,10 @@
       "destination": "/rolf.html"
     },
     {
+      "source": "/gallery",
+      "destination": "/gallery.html"
+    },
+    {
       "source": "/faq",
       "destination": "/faq.html"
     },
@@ -188,6 +192,11 @@
     {
       "source": "/rolf.html",
       "destination": "/rolf",
+      "permanent": true
+    },
+    {
+      "source": "/gallery.html",
+      "destination": "/gallery",
       "permanent": true
     },
     {

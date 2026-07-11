@@ -1,0 +1,675 @@
+const fs = require("fs");
+const path = require("path");
+const https = require("https");
+const { writeSitemap } = require("./build-sitemap");
+const { loadProjectEnv } = require("./load-env");
+
+const ROOT = path.join(__dirname, "..");
+loadProjectEnv(ROOT);
+const SITE_ORIGIN = "https://www.rolcc.in";
+const CONFIG_PATH = path.join(ROOT, "data", "gallery-config.json");
+const DATA_PATH = path.join(ROOT, "data", "gallery.json");
+
+function escapeHtml(value) {
+  return String(value || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+function readJson(filePath, fallback) {
+  try {
+    return JSON.parse(fs.readFileSync(filePath, "utf8"));
+  } catch {
+    return fallback;
+  }
+}
+
+function writeJson(filePath, data) {
+  fs.writeFileSync(filePath, JSON.stringify(data, null, 2) + "\n", "utf8");
+}
+
+function httpsGetJson(url) {
+  return new Promise((resolve, reject) => {
+    https
+      .get(url, (res) => {
+        let body = "";
+        res.on("data", (chunk) => {
+          body += chunk;
+        });
+        res.on("end", () => {
+          if (res.statusCode && res.statusCode >= 400) {
+            reject(new Error(`HTTP ${res.statusCode} for ${url}`));
+            return;
+          }
+          try {
+            resolve(JSON.parse(body));
+          } catch (error) {
+            reject(error);
+          }
+        });
+      })
+      .on("error", reject);
+  });
+}
+
+function parseVideoId(value) {
+  const raw = String(value || "").trim();
+  if (!raw) return "";
+  if (/^[a-zA-Z0-9_-]{6,}$/.test(raw) && !raw.includes("/")) return raw;
+  const match = raw.match(/(?:v=|youtu\.be\/|embed\/)([a-zA-Z0-9_-]{6,})/);
+  return match ? match[1] : "";
+}
+
+function buildYoutubeFromConfig(config) {
+  const videos = (config.youtube && config.youtube.videos) || [];
+  return videos
+    .map((video) => {
+      const id = parseVideoId(video.id || video.url);
+      if (!id) return null;
+      return {
+        id,
+        title: String(video.title || "River of Life Christian Church").trim(),
+        thumbnail: `https://i.ytimg.com/vi/${id}/hqdefault.jpg`,
+      };
+    })
+    .filter(Boolean);
+}
+
+function parsePlaylistId(value) {
+  const raw = String(value || "").trim();
+  if (!raw) return "";
+  if (raw.startsWith("PL") && !raw.includes("/")) return raw;
+  const match = raw.match(/[?&]list=([^&]+)/);
+  return match ? match[1] : "";
+}
+
+function normalizeYoutubeItem(snippet) {
+  const resource = snippet && snippet.resourceId;
+  const id = resource && resource.videoId;
+  if (!id || (resource.kind && resource.kind !== "youtube#video")) return null;
+  const thumbs = snippet.thumbnails || {};
+  return {
+    id,
+    title: String(snippet.title || "River of Life Christian Church").trim(),
+    thumbnail:
+      (thumbs.high && thumbs.high.url) ||
+      (thumbs.medium && thumbs.medium.url) ||
+      `https://i.ytimg.com/vi/${id}/hqdefault.jpg`,
+  };
+}
+
+async function fetchYoutubePlaylistItems(playlistId, limit) {
+  const apiKey = process.env.YOUTUBE_API_KEY;
+  if (!apiKey) {
+    console.warn("Gallery: YouTube fetch skipped — missing YOUTUBE_API_KEY.");
+    return null;
+  }
+  if (!playlistId) {
+    console.warn("Gallery: YouTube fetch skipped — missing playlistId in gallery-config.json.");
+    return null;
+  }
+
+  const videos = [];
+  let pageToken = "";
+
+  try {
+    while (videos.length < limit) {
+      const maxResults = Math.min(50, limit - videos.length);
+      const url =
+        "https://www.googleapis.com/youtube/v3/playlistItems?part=snippet" +
+        `&playlistId=${encodeURIComponent(playlistId)}` +
+        `&maxResults=${maxResults}` +
+        (pageToken ? `&pageToken=${encodeURIComponent(pageToken)}` : "") +
+        `&key=${encodeURIComponent(apiKey)}`;
+
+      const payload = await httpsGetJson(url);
+      for (const item of payload.items || []) {
+        const video = normalizeYoutubeItem(item.snippet);
+        if (!video) continue;
+        videos.push(video);
+        if (videos.length >= limit) break;
+      }
+
+      pageToken = payload.nextPageToken || "";
+      if (!pageToken) break;
+    }
+
+    return videos;
+  } catch (error) {
+    console.warn("Gallery: YouTube playlist fetch failed —", error.message);
+    return null;
+  }
+}
+
+async function fetchYoutubeFromConfig(config) {
+  const youtube = config.youtube || {};
+  const mode = String(youtube.mode || "manual").trim().toLowerCase();
+  const limit = Number(youtube.limit) || 12;
+
+  if (mode === "playlist") {
+    const playlistId = parsePlaylistId(youtube.playlistId);
+    return fetchYoutubePlaylistItems(playlistId, limit);
+  }
+
+  if (mode === "channel") {
+    const handle = String(youtube.channelHandle || "rolccindia").replace(/^@/, "");
+    const apiKey = process.env.YOUTUBE_API_KEY;
+    if (!apiKey) {
+      console.warn("Gallery: YouTube channel fetch skipped — missing YOUTUBE_API_KEY.");
+      return null;
+    }
+
+    try {
+      const channelUrl =
+        "https://www.googleapis.com/youtube/v3/channels?part=contentDetails" +
+        `&forHandle=${encodeURIComponent(handle)}` +
+        `&key=${encodeURIComponent(apiKey)}`;
+      const channelPayload = await httpsGetJson(channelUrl);
+      const uploadsPlaylistId =
+        channelPayload.items &&
+        channelPayload.items[0] &&
+        channelPayload.items[0].contentDetails &&
+        channelPayload.items[0].contentDetails.relatedPlaylists &&
+        channelPayload.items[0].contentDetails.relatedPlaylists.uploads;
+
+      if (!uploadsPlaylistId) {
+        throw new Error(`Could not find uploads playlist for @${handle}.`);
+      }
+
+      console.log(`Gallery: fetching latest ${limit} uploads from @${handle}.`);
+      return fetchYoutubePlaylistItems(uploadsPlaylistId, limit);
+    } catch (error) {
+      console.warn("Gallery: YouTube channel fetch failed —", error.message);
+      return null;
+    }
+  }
+
+  return null;
+}
+
+async function buildYoutubeVideos(config, cached) {
+  if (config.youtube && config.youtube.enabled === false) return [];
+
+  const manualVideos = buildYoutubeFromConfig(config);
+  const mode = String((config.youtube && config.youtube.mode) || "manual")
+    .trim()
+    .toLowerCase();
+
+  if (manualVideos.length) {
+    return enrichYoutubeTitles(manualVideos);
+  }
+
+  if (mode === "manual") {
+    return [];
+  }
+
+  const fetched = await fetchYoutubeFromConfig(config);
+  if (fetched !== null && fetched.length) {
+    return fetched;
+  }
+
+  if (Array.isArray(cached.youtube) && cached.youtube.length) {
+    console.warn("Gallery: using cached YouTube videos from data/gallery.json.");
+    return cached.youtube;
+  }
+
+  return [];
+}
+
+async function enrichYoutubeTitles(videos) {
+  const apiKey = process.env.YOUTUBE_API_KEY;
+  if (!apiKey || !videos.length) return videos;
+
+  const ids = videos.map((video) => video.id).join(",");
+  const url =
+    "https://www.googleapis.com/youtube/v3/videos?part=snippet&id=" +
+    encodeURIComponent(ids) +
+    "&key=" +
+    encodeURIComponent(apiKey);
+
+  try {
+    const payload = await httpsGetJson(url);
+    const titleMap = new Map(
+      (payload.items || []).map((item) => [item.id, item.snippet && item.snippet.title])
+    );
+    return videos.map((video) => ({
+      ...video,
+      title: titleMap.get(video.id) || video.title,
+    }));
+  } catch (error) {
+    console.warn("Gallery: YouTube metadata fetch skipped —", error.message);
+    return videos;
+  }
+}
+
+async function discoverInstagramUserId(token) {
+  const payload = await httpsGetJson(
+    `https://graph.facebook.com/v19.0/me/accounts?fields=id,name,instagram_business_account&access_token=${encodeURIComponent(token)}`
+  );
+  const accounts = payload.data || [];
+  for (const page of accounts) {
+    if (page.instagram_business_account && page.instagram_business_account.id) {
+      return page.instagram_business_account.id;
+    }
+  }
+  throw new Error("No Instagram Business account linked to your Facebook Pages.");
+}
+
+async function fetchInstagramMedia(config) {
+  const instagram = config.instagram || {};
+  if (!instagram.enabled) return [];
+
+  const token = process.env.INSTAGRAM_ACCESS_TOKEN;
+  let userId = process.env.INSTAGRAM_USER_ID;
+  if (!token) {
+    console.warn("Gallery: Instagram fetch skipped — missing INSTAGRAM_ACCESS_TOKEN.");
+    return null;
+  }
+
+  if (!userId) {
+    try {
+      userId = await discoverInstagramUserId(token);
+      console.log("Gallery: discovered INSTAGRAM_USER_ID =", userId);
+      console.log("Gallery: add INSTAGRAM_USER_ID to .env or Vercel env vars to skip discovery.");
+    } catch (error) {
+      console.warn("Gallery: Instagram fetch skipped —", error.message);
+      return null;
+    }
+  }
+
+  const limit = Number(instagram.limit) || 12;
+  const allowedTypes = new Set(instagram.types || ["REEL", "IMAGE", "CAROUSEL_ALBUM", "VIDEO"]);
+  const fields = "id,caption,media_type,media_url,thumbnail_url,permalink,timestamp";
+  const url =
+    `https://graph.facebook.com/v19.0/${encodeURIComponent(userId)}/media` +
+    `?fields=${fields}&limit=${limit}&access_token=${encodeURIComponent(token)}`;
+
+  try {
+    const payload = await httpsGetJson(url);
+    return (payload.data || [])
+      .filter((item) => allowedTypes.has(item.media_type))
+      .map((item) => ({
+        id: item.id,
+        caption: item.caption || "",
+        mediaType: item.media_type,
+        permalink: item.permalink,
+        thumbnail: item.thumbnail_url || item.media_url || "",
+        timestamp: item.timestamp || "",
+      }));
+  } catch (error) {
+    console.warn("Gallery: Instagram fetch failed —", error.message);
+    return null;
+  }
+}
+
+async function buildGalleryData(config, cached) {
+  const youtube = await buildYoutubeVideos(config, cached);
+
+  const instagramEnabled = config.instagram && config.instagram.enabled !== false;
+  let instagram = [];
+  if (instagramEnabled) {
+    const fetchedInstagram = await fetchInstagramMedia(config);
+    if (fetchedInstagram !== null) {
+      instagram = fetchedInstagram;
+    } else if (Array.isArray(cached.instagram)) {
+      instagram = cached.instagram;
+    }
+  }
+
+  return {
+    fetchedAt: new Date().toISOString(),
+    instagram,
+    youtube,
+  };
+}
+
+function renderInstagramItem(item) {
+  const permalink = escapeHtml(item.permalink);
+  return `<div class="gallery-instagram-item">
+      <blockquote class="instagram-media" data-instgrm-permalink="${permalink}" data-instgrm-version="14" style="background:#FFF; border:0; border-radius:12px; margin:0; max-width:100%; min-width:0; width:100%; padding:0;">
+        <a href="${permalink}" target="_blank" rel="noopener noreferrer">View this post on Instagram</a>
+      </blockquote>
+    </div>`;
+}
+
+function renderInstagramSection(items) {
+  if (!items.length) {
+    return `<section class="gallery-section" data-gallery-instagram aria-label="Instagram highlights">
+        <div class="gallery-section__head">
+          <div>
+            <h2 class="gallery-section__title">Instagram</h2>
+            <p class="gallery-section__intro">Reels and posts from @rolccindia.</p>
+          </div>
+          <a href="https://www.instagram.com/rolccindia" class="gallery-section__link" target="_blank" rel="noopener noreferrer">Follow on Instagram</a>
+        </div>
+        <p class="gallery-empty">Instagram highlights will appear here after API credentials are configured for the build. See <code>docs/gallery-setup.md</code>.</p>
+      </section>`;
+  }
+
+  return `<section class="gallery-section" data-gallery-instagram aria-label="Instagram highlights">
+      <div class="gallery-section__head">
+        <div>
+          <h2 class="gallery-section__title">Instagram</h2>
+          <p class="gallery-section__intro">Recent reels and posts from our community.</p>
+        </div>
+        <a href="https://www.instagram.com/rolccindia" class="gallery-section__link" target="_blank" rel="noopener noreferrer">Follow on Instagram</a>
+      </div>
+      <div class="gallery-instagram-grid">${items.map(renderInstagramItem).join("")}</div>
+    </section>`;
+}
+
+function renderYoutubeSection(items) {
+  if (!items.length) {
+    return `<section class="gallery-section" aria-label="Selected YouTube videos">
+        <div class="gallery-section__head">
+          <div>
+            <h2 class="gallery-section__title">YouTube</h2>
+            <p class="gallery-section__intro">Selected messages from River of Life Christian Church.</p>
+          </div>
+          <a href="https://www.youtube.com/@rolccindia" class="gallery-section__link" target="_blank" rel="noopener noreferrer">Visit our channel</a>
+        </div>
+        <p class="gallery-empty">Set a YouTube playlist in <code>data/gallery-config.json</code> and add <code>YOUTUBE_API_KEY</code> to your build env. See <code>docs/gallery-setup.md</code>.</p>
+      </section>`;
+  }
+
+  const cards = items
+    .map((video) => {
+      const id = escapeHtml(video.id);
+      const title = escapeHtml(video.title);
+      return `<article class="gallery-youtube-card">
+          <div class="gallery-youtube-card__frame">
+            <iframe
+              src="https://www.youtube-nocookie.com/embed/${id}"
+              title="${title}"
+              loading="lazy"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowfullscreen
+            ></iframe>
+          </div>
+          <h3 class="gallery-youtube-card__title">${title}</h3>
+        </article>`;
+    })
+    .join("");
+
+  return `<section class="gallery-section" aria-label="Selected YouTube videos">
+      <div class="gallery-section__head">
+        <div>
+          <h2 class="gallery-section__title">YouTube</h2>
+            <p class="gallery-section__intro">Sermons and messages from our Sunday services.</p>
+        </div>
+        <a href="https://www.youtube.com/@rolccindia" class="gallery-section__link" target="_blank" rel="noopener noreferrer">Visit our channel</a>
+      </div>
+      <div class="gallery-youtube-grid">${cards}</div>
+    </section>`;
+}
+
+function readHeaderNavTemplate() {
+  return `<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{TITLE}}</title>
+    <meta name="description" content="{{DESCRIPTION}}" />
+    <meta property="og:title" content="{{TITLE}}" />
+    <meta property="og:description" content="{{DESCRIPTION}}" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="{{CANONICAL}}" />
+    <meta property="og:image" content="https://www.rolcc.in/images/og-image.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="{{TITLE}}" />
+    <meta name="twitter:description" content="{{DESCRIPTION}}" />
+    <meta name="twitter:image" content="https://www.rolcc.in/images/og-image.jpg" />
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
+    <link rel="icon" type="image/png" sizes="48x48" href="/images/favicon-48x48.png" />
+    <link rel="icon" type="image/png" sizes="96x96" href="/images/favicon-96x96.png" />
+    <link rel="apple-touch-icon" href="/images/apple-touch-icon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = { theme: { extend: { colors: { primary: "#ffffff", primaryDark: "#f6f9fc", accent: "#635bff", accentSoft: "#818cf8" } } } };
+    </script>
+    <link rel="stylesheet" href="css/styles.css" />
+    {{HEAD_EXTRA}}
+  </head>
+  <body class="bg-slate-50 text-slate-900">
+    <div id="announce-banner" class="announce-banner" role="banner" aria-label="Announcement">
+      <div class="announce-banner__inner">
+        <p class="announce-banner__title">Join with us Online <a href="#" id="announce-watch-live" class="announce-banner__btn" aria-label="Watch Live"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m22 8-6 4 6 4V8Z"/><rect width="14" height="12" x="2" y="6" rx="2" ry="2"/></svg></a></p>
+        <button type="button" id="announce-banner-close" class="announce-banner__close" aria-label="Dismiss announcement"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+      </div>
+    </div>
+    <header class="header-top" id="header">
+      <nav class="header-top__bar mx-auto max-w-6xl px-4 py-3 sm:px-6 lg:px-8 flex items-center justify-between">
+        <a href="/" class="header-top__brand flex items-center gap-3">
+          <img src="assets/logo.svg" alt="River of Life Christian Church" class="header-top__logo-img" width="36" height="44" />
+          <div class="leading-tight"><p class="text-sm font-semibold tracking-wide">River of Life</p><p class="text-[11px] text-slate-500">Christian Church · Bangalore</p></div>
+        </a>
+        <div class="hidden lg:flex items-center gap-6 text-sm font-medium">
+          <a href="/" class="header-top__link hidden xl:inline-flex" data-nav="index">Home</a>
+          <a href="/about" class="header-top__link" data-nav="about">About Us</a>
+          <div class="header-top__dropdown relative" id="ministries-dropdown">
+            <button type="button" class="header-top__link flex items-center gap-0.5" aria-expanded="false" aria-haspopup="true" aria-controls="ministries-menu" id="ministries-trigger">Ministries <span class="text-[10px] ml-0.5" aria-hidden="true">▾</span></button>
+            <div class="header-top__dropdown-panel absolute top-full left-0 mt-1 py-2 min-w-[10rem] rounded-lg border border-slate-200 bg-white shadow-lg z-50 hidden" id="ministries-menu" role="menu">
+              <a href="/services" class="header-top__dropdown-link block px-4 py-2 text-slate-700 hover:bg-slate-50 rounded-t-lg" role="menuitem" data-nav="services">Worship Services</a>
+              <a href="/river-kids" class="header-top__dropdown-link block px-4 py-2 text-slate-700 hover:bg-slate-50" role="menuitem" data-nav="river-kids">River Kids</a>
+              <a href="/fellowship" class="header-top__dropdown-link block px-4 py-2 text-slate-700 hover:bg-slate-50" role="menuitem" data-nav="fellowship">Cell Fellowship</a>
+              <a href="/pmd" class="header-top__dropdown-link block px-4 py-2 text-slate-700 hover:bg-slate-50" role="menuitem" data-nav="pmd">PMD</a>
+              <a href="/counselling" class="header-top__dropdown-link block px-4 py-2 text-slate-700 hover:bg-slate-50" role="menuitem" data-nav="counselling">Counselling</a>
+              <a href="/rolf" class="header-top__dropdown-link block px-4 py-2 text-slate-700 hover:bg-slate-50 rounded-b-lg" role="menuitem" data-nav="rolf">ROLF</a>
+            </div>
+          </div>
+          <a href="/giving" class="header-top__link hidden xl:inline-flex" data-nav="giving">Giving</a>
+          <a href="/contact" class="header-top__link" data-nav="contact">Contact Us</a>
+        </div>
+        <div class="hidden lg:block">
+          <a href="/contact#location" class="header-top__cta inline-flex items-center rounded-full bg-accent px-4 py-2 text-xs font-semibold text-white shadow-sm ring-1 ring-accent/70 hover:bg-accentSoft transition">Join Us This Sunday</a></div>
+        <button id="nav-toggle" type="button" class="header-top__hamburger lg:hidden inline-flex items-center justify-center w-10 h-10 rounded-md border border-slate-300 text-slate-700 hover:bg-slate-100" aria-label="Open menu" aria-expanded="false" aria-controls="nav-menu"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+      </nav>
+      <div id="nav-menu" class="header-top__menu hidden lg:hidden border-t border-slate-200 bg-white" aria-hidden="true">
+        <div class="mx-auto max-w-6xl px-4 py-3 space-y-1 sm:px-6 lg:px-8">
+          <a href="/" class="header-top__menu-link block rounded-md px-3 py-2 text-slate-700 hover:bg-slate-100" data-nav="index">Home</a>
+          <a href="/about" class="header-top__menu-link block rounded-md px-3 py-2 text-slate-700 hover:bg-slate-100" data-nav="about">About Us</a>
+          <p class="px-3 py-1.5 text-xs font-semibold uppercase tracking-wider text-slate-500 mt-2">Ministries</p>
+          <a href="/services" class="header-top__menu-link block rounded-md px-3 py-2 pl-5 text-slate-700 hover:bg-slate-100" data-nav="services">Worship Services</a>
+          <a href="/river-kids" class="header-top__menu-link block rounded-md px-3 py-2 pl-5 text-slate-700 hover:bg-slate-100" data-nav="river-kids">River Kids</a>
+          <a href="/fellowship" class="header-top__menu-link block rounded-md px-3 py-2 pl-5 text-slate-700 hover:bg-slate-100" data-nav="fellowship">Cell Fellowship</a>
+          <a href="/pmd" class="header-top__menu-link block rounded-md px-3 py-2 pl-5 text-slate-700 hover:bg-slate-100" data-nav="pmd">PMD</a>
+          <a href="/counselling" class="header-top__menu-link block rounded-md px-3 py-2 pl-5 text-slate-700 hover:bg-slate-100" data-nav="counselling">Counselling</a>
+          <a href="/rolf" class="header-top__menu-link block rounded-md px-3 py-2 pl-5 text-slate-700 hover:bg-slate-100" data-nav="rolf">ROLF</a>
+          <a href="/events" class="header-top__menu-link block rounded-md px-3 py-2 pl-5 text-slate-700 hover:bg-slate-100" data-nav="events">Events</a>
+          <a href="/membership" class="header-top__menu-link block rounded-md px-3 py-2 pl-5 text-slate-700 hover:bg-slate-100" data-nav="membership">Membership</a>
+          <a href="/giving" class="header-top__menu-link block rounded-md px-3 py-2 text-slate-700 hover:bg-slate-100" data-nav="giving">Giving</a>
+          <a href="/contact" class="header-top__menu-link block rounded-md px-3 py-2 text-slate-700 hover:bg-slate-100" data-nav="contact">Contact Us</a>
+          <a href="contact.html#location" class="header-top__menu-cta mt-3 inline-flex rounded-full bg-accent px-4 py-2 text-sm font-semibold text-white">Join Us This Sunday</a>
+        </div>
+      </div>
+    </header>`;
+}
+
+function readFooterTemplate() {
+  const contactPath = path.join(ROOT, "contact.html");
+  const contactHtml = fs.readFileSync(contactPath, "utf8");
+  const footerMatch = contactHtml.match(
+    /<!-- Footer: fixed at bottom[\s\S]*?<\/button>/
+  );
+  if (!footerMatch) {
+    throw new Error("Could not read footer template from contact.html");
+  }
+  return `\n    ${footerMatch[0].trim()}\n`;
+}
+
+function renderGallerySchema(data, canonical) {
+  const items = [];
+  (data.youtube || []).forEach((video, index) => {
+    items.push({
+      "@type": "ListItem",
+      position: items.length + 1,
+      item: {
+        "@type": "VideoObject",
+        name: video.title,
+        url: `https://www.youtube.com/watch?v=${video.id}`,
+        thumbnailUrl: video.thumbnail,
+        embedUrl: `https://www.youtube.com/embed/${video.id}`,
+      },
+    });
+  });
+  (data.instagram || []).forEach((post) => {
+    items.push({
+      "@type": "ListItem",
+      position: items.length + 1,
+      item: {
+        "@type": "SocialMediaPosting",
+        url: post.permalink,
+        headline: (post.caption || "Instagram post").slice(0, 120),
+      },
+    });
+  });
+
+  if (!items.length) return "";
+
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: "Gallery | River of Life Christian Church",
+    url: canonical,
+    mainEntity: {
+      "@type": "ItemList",
+      itemListElement: items,
+    },
+  };
+
+  return `<script type="application/ld+json">${JSON.stringify(schema)}</script>`;
+}
+
+function buildGalleryHtml(config, data) {
+  const page = config.page || {};
+  const title = "Gallery | River of Life Christian Church, Bangalore";
+  const description =
+    page.description ||
+    "Photos and reels from River of Life Christian Church in Bangalore.";
+  const canonical = `${SITE_ORIGIN}/gallery`;
+  const eyebrow = escapeHtml(page.eyebrow || "Gallery");
+  const heading = escapeHtml(page.title || "Moments from River of Life");
+  const intro = escapeHtml(page.description || description);
+  const youtubeEnabled = config.youtube && config.youtube.enabled !== false;
+  const instagramEnabled = config.instagram && config.instagram.enabled !== false;
+  const youtubeSection = youtubeEnabled ? renderYoutubeSection(data.youtube || []) : "";
+  const instagramSection = instagramEnabled ? renderInstagramSection(data.instagram || []) : "";
+
+  const headExtra = `<link rel="stylesheet" href="css/articles.css" />
+    <link rel="stylesheet" href="css/gallery.css" />
+    <link rel="canonical" href="${canonical}" />
+    ${renderGallerySchema(data, canonical)}`;
+
+  const header = readHeaderNavTemplate()
+    .replaceAll("{{TITLE}}", title)
+    .replaceAll("{{DESCRIPTION}}", description)
+    .replace("{{CANONICAL}}", canonical)
+    .replace("{{HEAD_EXTRA}}", headExtra);
+
+  return `${header}
+    <main class="main-no-top-gap relative z-10">
+      <div class="articles-hub-page">
+      <div class="articles-hub-top">
+      <section class="articles-hero contact-hero relative">
+        <div class="relative z-10 mx-auto max-w-6xl px-4 pt-6 pb-12 sm:px-6 sm:pt-24 sm:pb-16 md:pt-28 md:pb-20 lg:px-8 lg:pt-32 lg:pb-24">
+          <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-accent">${eyebrow}</p>
+          <h1 class="mt-3 text-balance text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl md:text-4xl">${heading}</h1>
+          <p class="mt-5 max-w-2xl text-sm text-slate-600 sm:text-base leading-relaxed">${intro}</p>
+        </div>
+      </section>
+
+      <section class="articles-list-section border-b border-slate-200" aria-label="Gallery content">
+        <div class="mx-auto max-w-6xl px-4 pb-10 sm:px-6 md:pb-14 lg:px-8">
+          ${youtubeSection}
+          ${instagramSection}
+        </div>
+      </section>
+      </div>
+      </div>
+
+      <div class="serve-unveil-spacer min-h-screen" aria-hidden="true"></div>
+    </main>
+${readFooterTemplate()}
+    <button
+      id="scroll-top-btn"
+      class="scroll-to-top hidden fixed bottom-5 right-4 z-40 rounded-full bg-slate-900/90 p-2 text-xs text-slate-100 shadow-lg ring-1 ring-slate-600 hover:bg-slate-800 sm:bottom-6 sm:right-6"
+      aria-label="Scroll to top"
+      type="button"
+    >↑</button>
+    <script src="js/main.js"></script>
+    <script src="js/gallery.js"></script>
+  </body>
+</html>`;
+}
+
+function syncGalleryFooterLink() {
+  const marker = '<a href="/gallery" class="footer-link hover:text-white">Gallery</a>';
+  const files = [];
+
+  function walk(dir) {
+    fs.readdirSync(dir, { withFileTypes: true }).forEach((entry) => {
+      const fullPath = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        if (entry.name === "node_modules" || entry.name === "admin" || entry.name === ".git") return;
+        walk(fullPath);
+        return;
+      }
+      if (entry.isFile() && entry.name.endsWith(".html")) files.push(fullPath);
+    });
+  }
+
+  walk(ROOT);
+
+  files.forEach((filePath) => {
+    let html = fs.readFileSync(filePath, "utf8");
+    if (html.includes(marker)) return;
+    const oldBlock =
+      /<li><a href="\/faq" class="footer-link hover:text-white">FAQ<\/a><\/li>\s*<li><a href="\/articles" class="footer-link hover:text-white">Articles<\/a><\/li>\s*<li><a href="\/#latest-sermon" class="footer-link hover:text-white">Latest Sermon<\/a><\/li>/;
+    if (!oldBlock.test(html)) return;
+    html = html.replace(
+      oldBlock,
+      `<li><a href="/faq" class="footer-link hover:text-white">FAQ</a></li>
+                  <li><a href="/articles" class="footer-link hover:text-white">Articles</a></li>
+                  <li><a href="/gallery" class="footer-link hover:text-white">Gallery</a></li>
+                  <li><a href="/#latest-sermon" class="footer-link hover:text-white">Latest Sermon</a></li>`
+    );
+    fs.writeFileSync(filePath, html, "utf8");
+  });
+}
+
+async function main() {
+  const config = readJson(CONFIG_PATH, {});
+  const cached = readJson(DATA_PATH, { instagram: [], youtube: [] });
+  const data = await buildGalleryData(config, cached);
+  writeJson(DATA_PATH, data);
+
+  const html = buildGalleryHtml(config, data);
+  fs.writeFileSync(path.join(ROOT, "gallery.html"), html, "utf8");
+  syncGalleryFooterLink();
+
+  try {
+    const articlesIndex = readJson(path.join(ROOT, "data", "articles.json"), { articles: [] });
+    writeSitemap({
+      articles: articlesIndex.articles || [],
+      faqTotalPages: 10,
+      today: new Date().toISOString().slice(0, 10),
+    });
+  } catch (error) {
+    console.warn("Gallery: sitemap update skipped —", error.message);
+  }
+
+  console.log(
+    `Wrote gallery.html (${data.instagram.length} Instagram, ${data.youtube.length} YouTube videos).`
+  );
+}
+
+main().catch((error) => {
+  console.error(error);
+  process.exit(1);
+});

@@ -20,6 +20,7 @@ function writeSitemap({ articles = [], faqTotalPages = 1, today } = {}) {
     ["/counselling", "monthly", "0.7"],
     ["/rolf", "monthly", "0.7"],
     ["/articles", "weekly", "0.85"],
+    ["/gallery", "weekly", "0.7"],
   ];
 
   const urls = staticPages.map(

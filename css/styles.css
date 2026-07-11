@@ -577,12 +577,15 @@ body {
   margin-top: -11rem;
   padding-top: 0;
   overflow: hidden;
+  background-color: #0f172a;
+  isolation: isolate;
 }
 .hero-carousel--with-bg .carousel-track {
   position: absolute;
   inset: 0;
   width: 100%;
   min-height: 100%;
+  background-color: #0f172a;
 }
 .hero-carousel--with-bg .carousel-slide {
   background-size: cover;
@@ -602,6 +605,7 @@ body {
   inset: 0;
   z-index: 0;
   overflow: hidden;
+  background-color: #0f172a;
 }
 .carousel-slide--video::after {
   content: "";
@@ -857,9 +861,10 @@ body {
   text-align: center;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.5s ease;
+  transition: opacity 0s;
   padding: 0;
   box-sizing: border-box;
+  background-color: #0f172a;
 }
 .hero-carousel--with-bg .carousel-slide {
   padding-top: 11rem; /* keep content below header/announcement */
@@ -870,6 +875,7 @@ body {
   min-height: 100%;
   opacity: 1;
   pointer-events: auto;
+  transition: opacity 0.45s ease;
 }
 /* Dots overlay bottom of banner (no light patch below) */
 .carousel-dots-wrapper {

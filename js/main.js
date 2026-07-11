@@ -1,4 +1,90 @@
 var LIVE_BANNER_DISMISS_PREFIX = "rolcc-live-banner-hidden:";
+var youtubeLivePromise = null;
+
+function fetchYoutubeLive() {
+  if (!youtubeLivePromise) {
+    youtubeLivePromise = fetch("/api/youtube-live", { credentials: "same-origin" })
+      .then(function (response) {
+        if (!response.ok) throw new Error("Live status unavailable");
+        return response.json();
+      })
+      .catch(function () {
+        return { live: false };
+      });
+  }
+  return youtubeLivePromise;
+}
+
+function buildYoutubeLiveEmbedSrc(videoId) {
+  return (
+    "https://www.youtube-nocookie.com/embed/" +
+    encodeURIComponent(videoId) +
+    "?autoplay=1&mute=1&controls=1&rel=0&modestbranding=1&playsinline=1"
+  );
+}
+
+function applyHeroLiveSlide(live) {
+  if (!live || !live.videoId) return false;
+
+  var carousel = document.querySelector(".hero-carousel");
+  if (!carousel) return false;
+
+  var firstSlide = carousel.querySelector(".carousel-slide");
+  if (!firstSlide) return false;
+
+  var wrap = firstSlide.querySelector(".hero-carousel__video-wrap");
+  if (!wrap) return false;
+
+  var embedSrc = buildYoutubeLiveEmbedSrc(live.videoId);
+  var watchUrl = live.watchUrl || "https://www.youtube.com/watch?v=" + live.videoId;
+
+  firstSlide.classList.add("carousel-slide--youtube-live");
+  wrap.innerHTML =
+    '<iframe class="hero-carousel__youtube-live" data-live-src="' +
+    embedSrc +
+    '" src="' +
+    embedSrc +
+    '" title="' +
+    (live.title || "Live stream").replace(/"/g, "") +
+    '" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen loading="lazy"></iframe>';
+
+  var inner = firstSlide.querySelector(".carousel-slide-inner");
+  if (inner) {
+    var eyebrow = inner.querySelector("p.text-xs");
+    var heading = inner.querySelector("h1, h2");
+    var lead = inner.querySelector("p.mt-4");
+    var watchBtn = inner.querySelector(".btn-primary");
+
+    if (eyebrow) eyebrow.textContent = "We're Live Now";
+    if (heading) heading.textContent = "Join Us Live on YouTube";
+    if (lead) lead.textContent = "Watch our English service as it happens. You're welcome to worship with us online.";
+    if (watchBtn) {
+      watchBtn.href = watchUrl;
+      watchBtn.textContent = "Watch on YouTube";
+      watchBtn.setAttribute("target", "_blank");
+      watchBtn.setAttribute("rel", "noopener noreferrer");
+    }
+  }
+
+  return true;
+}
+
+function syncHeroYoutubeEmbeds(slides, currentIndex) {
+  slides.forEach(function (slide, index) {
+    var iframe = slide.querySelector(".hero-carousel__youtube-live");
+    if (!iframe) return;
+
+    var liveSrc = iframe.getAttribute("data-live-src");
+    if (index === currentIndex && slide.classList.contains("active") && liveSrc) {
+      if (!iframe.getAttribute("src") || iframe.getAttribute("src") === "about:blank") {
+        iframe.setAttribute("src", liveSrc);
+      }
+      return;
+    }
+
+    iframe.setAttribute("src", "about:blank");
+  });
+}
 
 document.addEventListener("DOMContentLoaded", function () {
   const navToggle = document.getElementById("nav-toggle");
@@ -56,17 +142,11 @@ document.addEventListener("DOMContentLoaded", function () {
       });
     }
 
-    fetch("/api/youtube-live", { credentials: "same-origin" })
-      .then(function (response) {
-        if (!response.ok) throw new Error("Live status unavailable");
-        return response.json();
-      })
-      .then(function (data) {
-        if (data && data.live) showLiveBanner(data);
-      })
-      .catch(function () {
-        /* Keep banner hidden when live status cannot be checked */
-      });
+    fetchYoutubeLive().then(function (data) {
+      if (!data || !data.live) return;
+      showLiveBanner(data);
+      applyHeroLiveSlide(data);
+    });
   }
 
   function setMenuOpen(open) {
@@ -336,6 +416,10 @@ document.addEventListener("DOMContentLoaded", function () {
     const HERO_VIDEO_TABLET_MAX = 1023;
     let current = 0;
 
+    function isYoutubeLiveSlide(slide) {
+      return !!(slide && slide.classList.contains("carousel-slide--youtube-live"));
+    }
+
     function getActiveVideoSlide() {
       var slide = slides[current];
       return slide && slide.classList.contains("carousel-slide--video") ? slide : null;
@@ -343,7 +427,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function getActiveVideo() {
       var slide = getActiveVideoSlide();
-      return slide ? slide.querySelector(".hero-carousel__video") : null;
+      if (!slide || isYoutubeLiveSlide(slide)) return null;
+      return slide.querySelector(".hero-carousel__video");
     }
 
     function isHeroVideoManualMode() {
@@ -354,9 +439,11 @@ document.addEventListener("DOMContentLoaded", function () {
       var activeVideoSlide = getActiveVideoSlide();
       var onVideoSlide = !!activeVideoSlide;
       var paused = activeVideoSlide && activeVideoSlide.classList.contains("is-video-paused");
+      var onYoutubeLive = activeVideoSlide && isYoutubeLiveSlide(activeVideoSlide);
       heroBanner.classList.toggle("is-video-slide-active", onVideoSlide);
-      heroBanner.classList.toggle("is-video-paused", !!(onVideoSlide && paused));
-      if (heroVideoPlayBtn) heroVideoPlayBtn.hidden = !(onVideoSlide && paused);
+      heroBanner.classList.toggle("is-video-paused", !!(onVideoSlide && paused && !onYoutubeLive));
+      heroBanner.classList.toggle("is-youtube-live-active", !!onYoutubeLive);
+      if (heroVideoPlayBtn) heroVideoPlayBtn.hidden = !(onVideoSlide && paused && !onYoutubeLive);
     }
 
     function showHeroVideoPlayButton() {
@@ -386,6 +473,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function initHeroVideo() {
       var activeVideoSlide = getActiveVideoSlide();
+      if (isYoutubeLiveSlide(activeVideoSlide)) {
+        syncHeroYoutubeEmbeds(slides, current);
+        updateHeroVideoUi();
+        return;
+      }
+
       var heroVideo = getActiveVideo();
       if (!heroVideo || !activeVideoSlide) return;
 
@@ -509,7 +602,9 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function syncHeroVideos() {
+      syncHeroYoutubeEmbeds(slides, current);
       slides.forEach(function (s) {
+        if (isYoutubeLiveSlide(s)) return;
         var video = s.querySelector(".hero-carousel__video");
         if (!video) return;
         if (s.classList.contains("active")) {
@@ -526,7 +621,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function applyHeroThemeForSlide(activeSlide) {
-      if (activeSlide && activeSlide.classList.contains("carousel-slide--video")) {
+      if (activeSlide && (activeSlide.classList.contains("carousel-slide--video") || isYoutubeLiveSlide(activeSlide))) {
         heroBanner.classList.remove("hero-theme-light", "hero-theme-dark");
         heroBanner.classList.add("hero-theme-dark");
         if (window.updateHeaderScrolled) window.updateHeaderScrolled();
@@ -592,11 +687,14 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Initial theme, video, and navigation
-    initHeroVideo();
-    var initialSlide = carousel.querySelector(".carousel-slide.active");
-    syncHeroVideos();
-    updateHeroVideoUi();
-    applyHeroThemeForSlide(initialSlide);
+    fetchYoutubeLive().then(function (data) {
+      if (data && data.live) applyHeroLiveSlide(data);
+      initHeroVideo();
+      var initialSlide = carousel.querySelector(".carousel-slide.active");
+      syncHeroVideos();
+      updateHeroVideoUi();
+      applyHeroThemeForSlide(initialSlide);
+    });
   } else if (heroBanner) {
     heroBanner.classList.add("hero-theme-light");
     if (window.updateHeaderScrolled) window.updateHeaderScrolled();

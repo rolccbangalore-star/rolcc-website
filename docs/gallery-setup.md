@@ -183,7 +183,12 @@ npm run build:gallery
 
 ## Live stream banner (automatic)
 
-When [@rolccindia](https://www.youtube.com/@rolccindia) is **actually live** on YouTube, the top site banner appears automatically with a **Watch on YouTube** link to the current stream. No manual embed is needed each week.
+When [@rolccindia](https://www.youtube.com/@rolccindia) is **actually live** on YouTube:
+
+1. The top site banner appears with **Watch on YouTube**
+2. On the **homepage hero carousel**, slide 1 plays the live stream automatically (replacing the usual banner video)
+
+No manual embed is needed each week.
 
 ### How it works
 

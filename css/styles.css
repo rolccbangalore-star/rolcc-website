@@ -632,6 +632,29 @@ body {
   -webkit-object-fit: cover;
   -webkit-object-position: top center;
 }
+
+.hero-carousel__youtube-live {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100vw;
+  height: 56.25vw;
+  min-width: 177.78vh;
+  min-height: 100%;
+  transform: translate(-50%, -50%);
+  border: 0;
+  pointer-events: auto;
+}
+
+.carousel-slide--youtube-live::after {
+  background: linear-gradient(
+    to bottom,
+    rgba(15, 23, 42, 0.5) 0%,
+    rgba(15, 23, 42, 0.25) 40%,
+    rgba(15, 23, 42, 0.35) 70%,
+    rgba(15, 23, 42, 0.55) 100%
+  );
+}
 .hero-carousel__video-play {
   position: relative;
   z-index: 3;

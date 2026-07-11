@@ -8,10 +8,6 @@
   margin-top: 1rem;
 }
 
-.gallery-sermons-pagination--top {
-  padding-top: 0.15rem;
-}
-
 .gallery-sermons-pagination-wrap {
   position: relative;
   z-index: 25;

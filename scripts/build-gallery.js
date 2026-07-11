@@ -9,7 +9,7 @@ const { renderSermonsPageSections } = require("./sermons-page-sections");
 const ROOT = path.join(__dirname, "..");
 loadProjectEnv(ROOT);
 const SITE_ORIGIN = "https://www.rolcc.in";
-const GALLERY_ASSET_VERSION = "sermons-sections-v1";
+const GALLERY_ASSET_VERSION = "sermons-sort-menu-v2";
 const SERMONS_PATH = "/sermons";
 const DEFAULT_SERMONS_PER_PAGE = 12;
 const MAX_PLAYLIST_FETCH = 200;
@@ -517,16 +517,7 @@ function renderInstagramSection(items) {
     </section>`;
 }
 
-function renderSermonsToolbar(pageMeta) {
-  const topPaginationHtml =
-    pageMeta && pageMeta.totalPages > 1
-      ? `<div class="gallery-sermons-pagination gallery-sermons-pagination--top">${renderSermonsPagination(
-          pageMeta.pageNum,
-          pageMeta.totalPages,
-          "gallery-sermons-pagination__nav"
-        )}</div>`
-      : "";
-
+function renderSermonsToolbar() {
   return `<div class="gallery-toolbar">
     <div class="gallery-toolbar__row">
       ${renderSiteSortMenu({
@@ -537,7 +528,6 @@ function renderSermonsToolbar(pageMeta) {
       })}
       <a href="https://www.youtube.com/@rolccindia" class="gallery-section__link gallery-toolbar__channel" target="_blank" rel="noopener noreferrer">Visit our channel</a>
     </div>
-    ${topPaginationHtml}
   </div>`;
 }
 
@@ -605,7 +595,7 @@ function renderYoutubeSection(items, pageMeta) {
       : "";
 
   return `<section class="gallery-section" aria-label="Sermons">
-      ${renderSermonsToolbar(pageMeta)}
+      ${renderSermonsToolbar()}
       <div class="gallery-youtube-grid" data-gallery-youtube-grid>${cards}</div>
       ${paginationHtml}
     </section>`;

@@ -153,7 +153,7 @@ function readHubFooterTemplate() {
 
 const ROOT = path.join(__dirname, "..");
 const TODAY = new Date().toISOString().slice(0, 10);
-const ASSET_CACHE_VERSION = "quiz-spacing-v2";
+const ASSET_CACHE_VERSION = "sort-menu-v2";
 const DATA_DIR = path.join(ROOT, "data");
 const EF_DIR = path.join(DATA_DIR, "articles", "everyday-faith");
 const BTB_DIR = path.join(DATA_DIR, "articles", "back-to-bible");
@@ -851,8 +851,8 @@ function buildHubPage(articles, faqs) {
     featuredSlug,
     latestSlug,
   })}</script>
-    <script src="/js/site-sort-menu.js"></script>
-    <script src="/js/articles/hub.js"></script>
+    <script src="/js/site-sort-menu.js?v=${ASSET_CACHE_VERSION}"></script>
+    <script src="/js/articles/hub.js?v=${ASSET_CACHE_VERSION}"></script>
     <script src="/js/faq/accordion.js"></script>`;
 
   return {

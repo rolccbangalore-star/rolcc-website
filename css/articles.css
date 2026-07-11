@@ -165,8 +165,76 @@
   border-radius: 1rem;
   background: #fff;
   box-shadow: 0 10px 25px -8px rgba(15, 23, 42, 0.18);
+  pointer-events: auto;
 }
 
+.site-sort-menu__menu .site-sort-menu__option {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  width: 100%;
+  padding: 0.55rem 0.65rem;
+  border: none;
+  border-radius: 0.65rem;
+  background: transparent;
+  color: #334155;
+  font-family: inherit;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  line-height: 1.4;
+  text-align: left;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.site-sort-menu__menu .site-sort-menu__option:hover {
+  background: #f8fafc;
+  color: #0f172a;
+}
+
+.site-sort-menu__menu .site-sort-menu__option.is-active,
+.site-sort-menu__menu .site-sort-menu__option.is-active:hover,
+.site-sort-menu__menu .site-sort-menu__option.is-active:focus,
+.site-sort-menu__menu .site-sort-menu__option.is-active:focus-visible {
+  background: rgba(99, 91, 255, 0.1);
+  color: #635bff;
+}
+
+.site-sort-menu__menu .site-sort-menu__option:focus,
+.site-sort-menu__menu .site-sort-menu__option:focus-visible {
+  outline: none;
+}
+
+.site-sort-menu__option-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 1rem;
+  height: 1rem;
+}
+
+.site-sort-menu__option-icon .site-sort-menu__icon {
+  width: 1rem;
+  height: 1rem;
+  color: #64748b;
+  flex-shrink: 0;
+}
+
+.site-sort-menu__menu .site-sort-menu__option.is-active .site-sort-menu__option-icon .site-sort-menu__icon {
+  color: #635bff;
+}
+
+.site-sort-menu__option-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Legacy selectors kept for specificity over global button styles */
 .site-sort-menu__option {
   display: flex;
   align-items: center;
@@ -194,19 +262,8 @@
   color: #635bff;
 }
 
-.site-sort-menu__option-icon .site-sort-menu__icon {
-  width: 1rem;
-  height: 1rem;
-  color: #64748b;
-  flex-shrink: 0;
-}
-
 .site-sort-menu__option.is-active .site-sort-menu__option-icon .site-sort-menu__icon {
   color: #635bff;
-}
-
-.site-sort-menu__option-label {
-  min-width: 0;
 }
 
 .articles-results-meta {

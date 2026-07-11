@@ -1,4 +1,4 @@
-var ANNOUNCE_BANNER_KEY = "rolcc-announce-banner-hidden";
+var LIVE_BANNER_DISMISS_PREFIX = "rolcc-live-banner-hidden:";
 
 document.addEventListener("DOMContentLoaded", function () {
   const navToggle = document.getElementById("nav-toggle");
@@ -8,49 +8,65 @@ document.addEventListener("DOMContentLoaded", function () {
   const announceBanner = document.getElementById("announce-banner");
   const announceBannerClose = document.getElementById("announce-banner-close");
 
-  // Announcement banner: only visible on Sunday before 12 noon or Friday 11 AM–1:30 PM (IST)
+  // Live stream banner: shown only when @rolccindia is live on YouTube (via /api/youtube-live)
   if (announceBanner && announceBannerClose) {
-    var now = new Date();
-    var istOffset = 5.5 * 60;
-    var utcMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
-    var istMinutes = utcMinutes + istOffset;
-    var istHour = Math.floor(istMinutes / 60) % 24;
-    var istMin = istMinutes % 60;
-    var istDay = new Date(now.getTime() + istOffset * 60000).getUTCDay();
+    announceBanner.setAttribute("data-hidden", "true");
 
-    var showBanner = false;
-    var liveLink = "#";
-    var bannerText = "Join with us Online";
-
-    if (istDay === 0 && istHour < 12) {
-      showBanner = true;
-      liveLink = "https://www.youtube.com/@rolccindia/live";
-      bannerText = "Join with us Online \u00B7 Sunday English Service";
-    } else if (istDay === 5 && (istHour > 11 || (istHour === 11 && istMin >= 0)) && (istHour < 13 || (istHour === 13 && istMin <= 30))) {
-      showBanner = true;
-      liveLink = "https://www.youtube.com/@riveroflifechristianchurch3694/streams";
-      bannerText = "Join with us Online \u00B7 Friday Tamil Service";
+    function liveBannerDismissKey(videoId) {
+      return LIVE_BANNER_DISMISS_PREFIX + videoId;
     }
 
-    if (!showBanner || localStorage.getItem(ANNOUNCE_BANNER_KEY) === "true") {
-      announceBanner.setAttribute("data-hidden", "true");
-    } else {
+    function showLiveBanner(live) {
+      if (!live || !live.videoId) return;
+      if (localStorage.getItem(liveBannerDismissKey(live.videoId)) === "true") return;
+
       var watchLink = document.getElementById("announce-watch-live");
       var bannerTitle = announceBanner.querySelector(".announce-banner__title");
+      var watchUrl = live.watchUrl || "https://www.youtube.com/watch?v=" + live.videoId;
+
+      announceBanner.classList.add("announce-banner--live");
+      announceBanner.removeAttribute("data-hidden");
+
+      if (bannerTitle) {
+        var label = document.getElementById("announce-banner-label");
+        if (!label) {
+          label = document.createElement("span");
+          label.id = "announce-banner-label";
+          bannerTitle.insertBefore(label, bannerTitle.firstChild || null);
+        }
+        label.textContent = "We're live now \u00B7 ";
+      }
+
       if (watchLink) {
-        watchLink.href = liveLink;
+        watchLink.href = watchUrl;
         watchLink.target = "_blank";
         watchLink.rel = "noopener noreferrer";
+        watchLink.setAttribute("aria-label", "Watch live on YouTube");
+        watchLink.innerHTML =
+          '<span class="announce-banner__live-dot" aria-hidden="true"></span>' +
+          '<span class="announce-banner__btn-text">Watch on YouTube</span>' +
+          '<svg class="announce-banner__btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+          '<path d="m22 8-6 4 6 4V8Z"/><rect width="14" height="12" x="2" y="6" rx="2" ry="2"/>' +
+          "</svg>";
       }
-      if (bannerTitle) {
-        bannerTitle.firstChild.textContent = bannerText + " ";
-      }
+
+      announceBannerClose.addEventListener("click", function () {
+        localStorage.setItem(liveBannerDismissKey(live.videoId), "true");
+        announceBanner.setAttribute("data-hidden", "true");
+      });
     }
 
-    announceBannerClose.addEventListener("click", function () {
-      localStorage.setItem(ANNOUNCE_BANNER_KEY, "true");
-      announceBanner.setAttribute("data-hidden", "true");
-    });
+    fetch("/api/youtube-live", { credentials: "same-origin" })
+      .then(function (response) {
+        if (!response.ok) throw new Error("Live status unavailable");
+        return response.json();
+      })
+      .then(function (data) {
+        if (data && data.live) showLiveBanner(data);
+      })
+      .catch(function () {
+        /* Keep banner hidden when live status cannot be checked */
+      });
   }
 
   function setMenuOpen(open) {
@@ -316,38 +332,51 @@ document.addEventListener("DOMContentLoaded", function () {
     const dots = carousel.querySelectorAll(".carousel-dots button");
     const prevBtn = carousel.querySelector(".hero-carousel__arrow--prev");
     const nextBtn = carousel.querySelector(".hero-carousel__arrow--next");
-    const heroVideoSlide = carousel.querySelector(".carousel-slide--video");
-    const heroVideo = heroVideoSlide ? heroVideoSlide.querySelector(".hero-carousel__video") : null;
     const heroVideoPlayBtn = carousel.querySelector(".hero-carousel__video-play");
     const HERO_VIDEO_TABLET_MAX = 1023;
     let current = 0;
+
+    function getActiveVideoSlide() {
+      var slide = slides[current];
+      return slide && slide.classList.contains("carousel-slide--video") ? slide : null;
+    }
+
+    function getActiveVideo() {
+      var slide = getActiveVideoSlide();
+      return slide ? slide.querySelector(".hero-carousel__video") : null;
+    }
 
     function isHeroVideoManualMode() {
       return window.matchMedia("(max-width: " + HERO_VIDEO_TABLET_MAX + "px)").matches;
     }
 
     function updateHeroVideoUi() {
-      var onVideoSlide = slides[current] && slides[current].classList.contains("carousel-slide--video");
-      var paused = heroVideoSlide && heroVideoSlide.classList.contains("is-video-paused");
-      heroBanner.classList.toggle("is-video-slide-active", !!onVideoSlide);
+      var activeVideoSlide = getActiveVideoSlide();
+      var onVideoSlide = !!activeVideoSlide;
+      var paused = activeVideoSlide && activeVideoSlide.classList.contains("is-video-paused");
+      heroBanner.classList.toggle("is-video-slide-active", onVideoSlide);
       heroBanner.classList.toggle("is-video-paused", !!(onVideoSlide && paused));
       if (heroVideoPlayBtn) heroVideoPlayBtn.hidden = !(onVideoSlide && paused);
     }
 
     function showHeroVideoPlayButton() {
-      if (!heroVideoSlide) return;
-      heroVideoSlide.classList.add("is-video-paused");
+      var activeVideoSlide = getActiveVideoSlide();
+      if (!activeVideoSlide) return;
+      activeVideoSlide.classList.add("is-video-paused");
       updateHeroVideoUi();
     }
 
     function hideHeroVideoPlayButton() {
-      if (!heroVideoSlide) return;
-      heroVideoSlide.classList.remove("is-video-paused");
+      var activeVideoSlide = getActiveVideoSlide();
+      if (!activeVideoSlide) return;
+      activeVideoSlide.classList.remove("is-video-paused");
       updateHeroVideoUi();
     }
 
     function tryPlayHeroVideo() {
-      if (!heroVideo || !heroVideoSlide || !heroVideoSlide.classList.contains("active")) return;
+      var activeVideoSlide = getActiveVideoSlide();
+      var heroVideo = getActiveVideo();
+      if (!heroVideo || !activeVideoSlide) return;
       heroVideo.play().then(function () {
         hideHeroVideoPlayButton();
       }).catch(function () {
@@ -356,7 +385,9 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function initHeroVideo() {
-      if (!heroVideo || !heroVideoSlide) return;
+      var activeVideoSlide = getActiveVideoSlide();
+      var heroVideo = getActiveVideo();
+      if (!heroVideo || !activeVideoSlide) return;
 
       if (isHeroVideoManualMode()) {
         heroVideo.preload = "none";
@@ -368,7 +399,7 @@ document.addEventListener("DOMContentLoaded", function () {
       tryPlayHeroVideo();
 
       var loadTimeout = window.setTimeout(function () {
-        if (heroVideoSlide.classList.contains("is-video-paused")) return;
+        if (activeVideoSlide.classList.contains("is-video-paused")) return;
         if (heroVideo.readyState < 2 || heroVideo.paused) {
           showHeroVideoPlayButton();
         }
@@ -386,8 +417,10 @@ document.addEventListener("DOMContentLoaded", function () {
       updateHeroVideoUi();
     }
 
-    if (heroVideoPlayBtn && heroVideo) {
+    if (heroVideoPlayBtn) {
       heroVideoPlayBtn.addEventListener("click", function () {
+        var heroVideo = getActiveVideo();
+        if (!heroVideo) return;
         heroVideo.preload = "auto";
         if (heroVideo.readyState === 0) {
           heroVideo.load();
@@ -397,12 +430,19 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     window.matchMedia("(max-width: " + HERO_VIDEO_TABLET_MAX + "px)").addEventListener("change", function () {
-      if (!heroVideo || !heroVideoSlide) return;
+      var activeVideoSlide = getActiveVideoSlide();
+      var heroVideo = getActiveVideo();
+      if (!heroVideo || !activeVideoSlide) return;
       if (isHeroVideoManualMode()) {
-        heroVideo.pause();
-        heroVideo.preload = "none";
+        slides.forEach(function (s) {
+          var video = s.querySelector(".hero-carousel__video");
+          if (video) {
+            video.pause();
+            video.preload = "none";
+          }
+        });
         showHeroVideoPlayButton();
-      } else if (heroVideoSlide.classList.contains("active")) {
+      } else if (activeVideoSlide.classList.contains("active")) {
         heroVideo.preload = "auto";
         tryPlayHeroVideo();
       }
@@ -498,10 +538,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function goToSlide(index) {
       current = (index + slides.length) % slides.length;
-      slides.forEach((s, i) => s.classList.toggle("active", i === current));
+      slides.forEach(function (s, i) {
+        s.classList.toggle("active", i === current);
+        if (i !== current) s.classList.remove("is-video-paused");
+      });
       dots.forEach((d, i) => d.classList.toggle("active", i === current));
       syncHeroVideos();
-      if (slides[current].classList.contains("carousel-slide--video") && heroVideo && heroVideo.paused) {
+      var activeVideo = getActiveVideo();
+      if (slides[current].classList.contains("carousel-slide--video") && activeVideo && activeVideo.paused) {
         showHeroVideoPlayButton();
       } else {
         updateHeroVideoUi();

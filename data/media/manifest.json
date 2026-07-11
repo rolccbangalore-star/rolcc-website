@@ -65,40 +65,16 @@
     ]
   },
   {
-    "path": "/assets/carousel- banner-1.webp",
-    "name": "carousel- banner-1.webp",
-    "source": "site",
-    "folder": "assets",
-    "width": 2400,
-    "height": 1600,
-    "usageCount": 0
-  },
-  {
     "path": "/assets/carousel- banner-2.webp",
     "name": "carousel- banner-2.webp",
     "source": "site",
     "folder": "assets",
     "width": 1920,
     "height": 1080,
-    "usageCount": 0
-  },
-  {
-    "path": "/assets/carousel- banner-3.webp",
-    "name": "carousel- banner-3.webp",
-    "source": "site",
-    "folder": "assets",
-    "width": 1920,
-    "height": 1080,
-    "usageCount": 0
-  },
-  {
-    "path": "/assets/carousel- banner-4.webp",
-    "name": "carousel- banner-4.webp",
-    "source": "site",
-    "folder": "assets",
-    "width": 2400,
-    "height": 1600,
-    "usageCount": 0
+    "usageCount": 1,
+    "usedOn": [
+      "Home"
+    ]
   },
   {
     "path": "/assets/cf/Cell_fellowship (1).png",

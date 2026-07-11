@@ -739,6 +739,7 @@ body {
   .hero-carousel__arrow { display: none !important; }
 }
 
+.carousel-slide-bg-2 { background-image: url("../assets/carousel- banner-2.webp"); }
 .hero-carousel--with-bg::before {
   content: "";
   position: absolute;

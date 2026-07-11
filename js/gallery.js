@@ -102,6 +102,11 @@
         String(b.getAttribute("data-sort-title") || "")
       );
     }
+    if (sort === "oldest") {
+      return String(a.getAttribute("data-sort-published") || "").localeCompare(
+        String(b.getAttribute("data-sort-published") || "")
+      );
+    }
     return String(b.getAttribute("data-sort-published") || "").localeCompare(
       String(a.getAttribute("data-sort-published") || "")
     );

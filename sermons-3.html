@@ -26,8 +26,8 @@
       tailwind.config = { theme: { extend: { colors: { primary: "#ffffff", primaryDark: "#f6f9fc", accent: "#635bff", accentSoft: "#818cf8" } } } };
     </script>
     <link rel="stylesheet" href="/css/styles.css" />
-    <link rel="stylesheet" href="/css/articles.css?v=sermons-sort-menu-v2" />
-    <link rel="stylesheet" href="/css/gallery.css?v=sermons-sort-menu-v2" />
+    <link rel="stylesheet" href="/css/articles.css?v=sermons-spacing-v1" />
+    <link rel="stylesheet" href="/css/gallery.css?v=sermons-spacing-v1" />
     <link rel="stylesheet" href="/css/faq.css" />
     <link rel="canonical" href="https://www.rolcc.in/sermons/3" />
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"CollectionPage","name":"Sermons | River of Life Christian Church","url":"https://www.rolcc.in/sermons/3","mainEntity":{"@type":"ItemList","itemListElement":[{"@type":"ListItem","position":1,"item":{"@type":"VideoObject","name":"The Power of God’s Grace in Our Lives | Pr. Benson K Sunny | 14th11 2024","url":"https://www.youtube.com/watch?v=XrNFyPJalCY","thumbnailUrl":"https://i.ytimg.com/vi/XrNFyPJalCY/hqdefault.jpg","embedUrl":"https://www.youtube.com/embed/XrNFyPJalCY"}},{"@type":"ListItem","position":2,"item":{"@type":"VideoObject","name":"Elements of Worship | Pr. Benson K Sunny | 08th11 2024","url":"https://www.youtube.com/watch?v=9dTtmm5St70","thumbnailUrl":"https://i.ytimg.com/vi/9dTtmm5St70/hqdefault.jpg","embedUrl":"https://www.youtube.com/embed/9dTtmm5St70"}},{"@type":"ListItem","position":3,"item":{"@type":"VideoObject","name":"\"Living Fully in Christ’s Love: A Life of Growth, Grace, and Freedom (Romans 8:1)\"","url":"https://www.youtube.com/watch?v=apSdiacGsJs","thumbnailUrl":"https://i.ytimg.com/vi/apSdiacGsJs/hqdefault.jpg","embedUrl":"https://www.youtube.com/embed/apSdiacGsJs"}},{"@type":"ListItem","position":4,"item":{"@type":"VideoObject","name":"\"Living Sacrifice: The Call of Romans 12:1\" | Pr. Benson K Sunny | 24th 10 2024","url":"https://www.youtube.com/watch?v=Uzr5lT5-U1k","thumbnailUrl":"https://i.ytimg.com/vi/Uzr5lT5-U1k/hqdefault.jpg","embedUrl":"https://www.youtube.com/embed/Uzr5lT5-U1k"}},{"@type":"ListItem","position":5,"item":{"@type":"VideoObject","name":"\"Unashamed of the Gospel: The Power of God for Salvation\" | Pr. Benson K Sunny | 10th October 2024","url":"https://www.youtube.com/watch?v=2E3wT2aKdLY","thumbnailUrl":"https://i.ytimg.com/vi/2E3wT2aKdLY/hqdefault.jpg","embedUrl":"https://www.youtube.com/embed/2E3wT2aKdLY"}},{"@type":"ListItem","position":6,"item":{"@type":"VideoObject","name":"Scripture Reading | Pr. Benson K Sunny | Theme: Year of Victory |","url":"https://www.youtube.com/watch?v=DVuL-7dLk34","thumbnailUrl":"https://i.ytimg.com/vi/DVuL-7dLk34/hqdefault.jpg","embedUrl":"https://www.youtube.com/embed/DVuL-7dLk34"}},{"@type":"ListItem","position":7,"item":{"@type":"VideoObject","name":"August 2024 | Sunday Service |Theme: Year of Victory | Pr. Benson K Sunny","url":"https://www.youtube.com/watch?v=SqqNWTpcRE8","thumbnailUrl":"https://i.ytimg.com/vi/SqqNWTpcRE8/hqdefault.jpg","embedUrl":"https://www.youtube.com/embed/SqqNWTpcRE8"}},{"@type":"ListItem","position":8,"item":{"@type":"VideoObject","name":"Capture it by faith, message by #Pr.Benson #River_Of_Life_Christian_Church_Bangalore","url":"https://www.youtube.com/watch?v=USWqVmoPom8","thumbnailUrl":"https://i.ytimg.com/vi/USWqVmoPom8/hqdefault.jpg","embedUrl":"https://www.youtube.com/embed/USWqVmoPom8"}}]}}</script>
@@ -106,24 +106,27 @@
       <span class="site-sort-menu__trigger-icon"><svg class="site-sort-menu__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="m8 9 4-4 4 4"/><path d="m8 15 4 4 4-4"/></svg></span>
       <span class="site-sort-menu__trigger-text">
         <span class="site-sort-menu__prefix">Sort by</span>
-        <span class="site-sort-menu__value" data-gallery-sort-value-label>Date Latest to Oldest</span>
+        <span class="site-sort-menu__value" data-gallery-sort-value-label>Latest</span>
       </span>
       <span class="site-sort-menu__chevron"><svg class="site-sort-menu__chevron-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></span>
     </button>
     <div class="site-sort-menu__menu" data-gallery-sort-menu hidden role="listbox" aria-label="Sort sermons">
       <button type="button" class="site-sort-menu__option is-active" data-gallery-sort-value="newest" role="option" aria-selected="true">
     <span class="site-sort-menu__option-icon"><svg class="site-sort-menu__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
-    <span class="site-sort-menu__option-label">Date Latest to Oldest</span>
+    <span class="site-sort-menu__option-label">Latest</span>
+  </button><button type="button" class="site-sort-menu__option" data-gallery-sort-value="oldest" role="option" aria-selected="false">
+    <span class="site-sort-menu__option-icon"><svg class="site-sort-menu__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 11h18"/></svg></span>
+    <span class="site-sort-menu__option-label">Oldest</span>
   </button><button type="button" class="site-sort-menu__option" data-gallery-sort-value="popular" role="option" aria-selected="false">
     <span class="site-sort-menu__option-icon"><svg class="site-sort-menu__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M3 3v18h18"/><path d="M7 16l4-8 4 5 5-9"/></svg></span>
     <span class="site-sort-menu__option-label">Popular</span>
   </button><button type="button" class="site-sort-menu__option" data-gallery-sort-value="alphabet" role="option" aria-selected="false">
     <span class="site-sort-menu__option-icon"><svg class="site-sort-menu__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M4 6h16M4 12h10M4 18h6"/></svg></span>
-    <span class="site-sort-menu__option-label">Alphabet</span>
+    <span class="site-sort-menu__option-label">Alphabetically</span>
   </button>
     </div>
   </div>
-      <a href="https://www.youtube.com/@rolccindia" class="gallery-section__link gallery-toolbar__channel" target="_blank" rel="noopener noreferrer">Visit our channel</a>
+      <a href="https://www.youtube.com/@rolccindia" class="gallery-section__link gallery-toolbar__channel" target="_blank" rel="noopener noreferrer"><svg class="gallery-channel-link__icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21.8 8.001a2.5 2.5 0 0 0-1.76-1.77C18.36 6 12 6 12 6s-6.36 0-8.04.23A2.5 2.5 0 0 0 2.2 8.001 26.4 26.4 0 0 0 2 12c0 1.33.07 2.66.2 3.999a2.5 2.5 0 0 0 1.76 1.77C5.64 18 12 18 12 18s6.36 0 8.04-.23a2.5 2.5 0 0 0 1.76-1.77c.13-1.34.2-2.67.2-4.001 0-1.33-.07-2.66-.2-3.999zM10 15V9l5 3-5 3z"/></svg><span>Visit our channel</span></a>
     </div>
   </div>
       <div class="gallery-youtube-grid" data-gallery-youtube-grid><article class="gallery-youtube-card" data-sort-published="2024-11-14T15:00:06Z" data-sort-views="37" data-sort-title="the power of god’s grace in our lives | pr. benson k sunny | 14th11 2024">
@@ -417,7 +420,7 @@
       type="button"
     >↑</button>
     <script src="/js/main.js"></script>
-    <script src="/js/site-sort-menu.js?v=sermons-sort-menu-v2"></script>
-    <script src="/js/gallery.js?v=sermons-sort-menu-v2"></script>
+    <script src="/js/site-sort-menu.js?v=sermons-spacing-v1"></script>
+    <script src="/js/gallery.js?v=sermons-spacing-v1"></script>
   </body>
 </html>

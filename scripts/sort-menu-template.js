@@ -32,9 +32,10 @@ const ARTICLES_SORT_OPTIONS = [
 ];
 
 const SERMONS_SORT_OPTIONS = [
-  { value: "newest", label: "Date Latest to Oldest", icon: "clock" },
+  { value: "newest", label: "Latest", icon: "clock" },
+  { value: "oldest", label: "Oldest", icon: "calendar" },
   { value: "popular", label: "Popular", icon: "popular" },
-  { value: "alphabet", label: "Alphabet", icon: "title" },
+  { value: "alphabet", label: "Alphabetically", icon: "title" },
 ];
 
 function renderSortOption(option, dataAttr, isActive) {

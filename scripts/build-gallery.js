@@ -9,7 +9,7 @@ const { renderSermonsPageSections } = require("./sermons-page-sections");
 const ROOT = path.join(__dirname, "..");
 loadProjectEnv(ROOT);
 const SITE_ORIGIN = "https://www.rolcc.in";
-const GALLERY_ASSET_VERSION = "sermons-sort-menu-v2";
+const GALLERY_ASSET_VERSION = "sermons-spacing-v1";
 const SERMONS_PATH = "/sermons";
 const DEFAULT_SERMONS_PER_PAGE = 12;
 const MAX_PLAYLIST_FETCH = 200;
@@ -22,6 +22,14 @@ function escapeHtml(value) {
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;");
+}
+
+const YOUTUBE_CHANNEL_ICON =
+  '<svg class="gallery-channel-link__icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21.8 8.001a2.5 2.5 0 0 0-1.76-1.77C18.36 6 12 6 12 6s-6.36 0-8.04.23A2.5 2.5 0 0 0 2.2 8.001 26.4 26.4 0 0 0 2 12c0 1.33.07 2.66.2 3.999a2.5 2.5 0 0 0 1.76 1.77C5.64 18 12 18 12 18s6.36 0 8.04-.23a2.5 2.5 0 0 0 1.76-1.77c.13-1.34.2-2.67.2-4.001 0-1.33-.07-2.66-.2-3.999zM10 15V9l5 3-5 3z"/></svg>';
+
+function renderYoutubeChannelLink(extraClass) {
+  const className = extraClass ? `gallery-section__link ${extraClass}` : "gallery-section__link";
+  return `<a href="https://www.youtube.com/@rolccindia" class="${className}" target="_blank" rel="noopener noreferrer">${YOUTUBE_CHANNEL_ICON}<span>Visit our channel</span></a>`;
 }
 
 function readJson(filePath, fallback) {
@@ -526,7 +534,7 @@ function renderSermonsToolbar() {
         options: SERMONS_SORT_OPTIONS,
         defaultValue: "newest",
       })}
-      <a href="https://www.youtube.com/@rolccindia" class="gallery-section__link gallery-toolbar__channel" target="_blank" rel="noopener noreferrer">Visit our channel</a>
+      ${renderYoutubeChannelLink("gallery-toolbar__channel")}
     </div>
   </div>`;
 }
@@ -579,7 +587,7 @@ function renderYoutubeSection(items, pageMeta) {
             <h2 class="gallery-section__title">YouTube</h2>
             <p class="gallery-section__intro">Selected messages from River of Life Christian Church.</p>
           </div>
-          <a href="https://www.youtube.com/@rolccindia" class="gallery-section__link" target="_blank" rel="noopener noreferrer">Visit our channel</a>
+          ${renderYoutubeChannelLink()}
         </div>
         <p class="gallery-empty">Set a YouTube playlist in <code>data/gallery-config.json</code> and add <code>YOUTUBE_API_KEY</code> to your build env. See <code>docs/gallery-setup.md</code>.</p>
       </section>`;
@@ -588,10 +596,16 @@ function renderYoutubeSection(items, pageMeta) {
   const cards = items.map((video) => renderYoutubeCard(video)).join("");
   const paginationHtml =
     pageMeta && pageMeta.totalPages > 1
-      ? `<div class="gallery-sermons-pagination-wrap">
+      ? (() => {
+          const bufferHtml =
+            pageMeta.pageNum > 1
+              ? `<div class="gallery-sermons-pagination-buffer" aria-hidden="true"></div>`
+              : "";
+          return `<div class="gallery-sermons-pagination-wrap">
       ${renderSermonsPagination(pageMeta.pageNum, pageMeta.totalPages, "gallery-sermons-pagination__nav")}
-      <div class="gallery-sermons-pagination-buffer" aria-hidden="true"></div>
-    </div>`
+      ${bufferHtml}
+    </div>`;
+        })()
       : "";
 
   return `<section class="gallery-section" aria-label="Sermons">

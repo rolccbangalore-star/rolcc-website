@@ -44,6 +44,7 @@ const {
   formatAnswerHtml,
   FAQ_CHIP_TOPICS,
 } = require("./faq-config");
+const { renderSiteSortMenu, ARTICLES_SORT_OPTIONS } = require("./sort-menu-template");
 
 function loadApprovedFaqs() {
   const csvPath = path.join(DATA_DIR, "faqs-source-v2.csv");
@@ -451,28 +452,12 @@ function renderHubToolbar() {
   return `<div class="articles-toolbar">
     <div class="articles-toolbar__row">
       ${renderFilterChips({ toolbar: true })}
-      <div class="articles-sort-wrap">
-        <label class="articles-sort articles-sort--desktop">
-          <span class="articles-sort__label">Sort by</span>
-          <select class="articles-sort__select" data-articles-sort aria-label="Sort articles">
-            <option value="newest" selected>Newest</option>
-            <option value="oldest">Oldest</option>
-            <option value="title">Title A–Z</option>
-          </select>
-        </label>
-        <div class="articles-sort-mobile">
-          <button type="button" class="articles-sort-icon" data-articles-sort-toggle aria-label="Sort articles" aria-haspopup="listbox" aria-expanded="false">
-            <svg class="articles-sort-icon__svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M4 6h10"/><path d="M4 12h7"/><path d="M4 18h4"/><path d="M15 8l3-3 3 3"/><path d="M18 5v14"/><path d="M15 16l3 3 3-3"/>
-            </svg>
-          </button>
-          <div class="articles-sort-menu" data-articles-sort-menu hidden role="listbox" aria-label="Sort articles">
-            <button type="button" class="articles-sort-menu__item is-active" data-articles-sort-value="newest" role="option">Newest</button>
-            <button type="button" class="articles-sort-menu__item" data-articles-sort-value="oldest" role="option">Oldest</button>
-            <button type="button" class="articles-sort-menu__item" data-articles-sort-value="title" role="option">Title A–Z</button>
-          </div>
-        </div>
-      </div>
+      ${renderSiteSortMenu({
+        dataPrefix: "articles",
+        ariaLabel: "Sort articles",
+        options: ARTICLES_SORT_OPTIONS,
+        defaultValue: "newest",
+      })}
     </div>
   </div>`;
 }
@@ -866,6 +851,7 @@ function buildHubPage(articles, faqs) {
     featuredSlug,
     latestSlug,
   })}</script>
+    <script src="/js/site-sort-menu.js"></script>
     <script src="/js/articles/hub.js"></script>
     <script src="/js/faq/accordion.js"></script>`;
 

@@ -1,38 +1,130 @@
 {
   "articles": {
-    "finding-rest-when-work-never-stops": {
-      "title": "Finding rest when work never stops",
-      "author": "ROLCC Pastoral Team",
-      "category": "Work & Calling",
-      "date": "2026-06-15",
-      "thumbnail": "/images/og-image.jpg",
+    "finding-anchor-in-the-tsunami-practical-wisdom-and-spiritual-accountability-in-times-of-crisis": {
+      "title": "Finding Anchor in the Tsunami: Practical Wisdom and Spiritual Accountability in Times of Crisis",
+      "author": "Rev. Benson K Sunny",
+      "category": "Everyday Life",
+      "tags": [
+        "Everyday Life",
+        "Prayer",
+        "Faith"
+      ],
+      "date": "2026-07-06",
+      "thumbnail": "https://www.karmactive.com/wp-content/uploads/2025/08/Cascadia-Megaquake-15-Chance-by-2075-Will-Trigger-100-Foot-Tsunami-and-Permanent-Coastal-Sinking.webp",
       "publish": true,
-      "modified": "2026-07-05"
-    },
-    "god-is-still-with-you-in-grief": {
-      "title": "God is still with you in grief",
-      "author": "Pastor Samuel",
-      "category": "Faith & Peace",
-      "date": "2026-07-03",
-      "thumbnail": "/images/og-image.jpg",
-      "publish": true,
+      "featured": false,
       "modified": "2026-07-06"
     },
-    "how-to-stop-stressing-and-trust-god": {
-      "title": "How to Stop Stressing and Trust God with Your Problems",
-      "author": "ROLCC Pastoral Team",
-      "category": "Faith & Peace",
-      "date": "2026-06-25",
-      "thumbnail": "/images/og-image.jpg",
+    "overcoming-burnout-and-panic-finding-your-peace-in-a-chaotic-world": {
+      "title": "Overcoming Burnout and Panic: Finding Your Peace in a Chaotic World",
+      "author": "Rev. Benson K Sunny",
+      "category": "Anxiety & Stress",
+      "tags": [
+        "Anxiety & Stress",
+        "Everyday Life"
+      ],
+      "date": "2026-07-06",
+      "thumbnail": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTvfpjd1TpdprHGP8mX1m41H2wqrspuLjaerpDCyNVOGZzJQrfHtlZoyAQ&s=10",
       "publish": true,
-      "modified": "2026-07-05"
+      "featured": false,
+      "modified": "2026-07-06"
     },
-    "praying-when-you-dont-have-words": {
-      "title": "Praying when you don't have words",
-      "author": "ROLCC Pastoral Team",
-      "category": "Prayer",
-      "date": "2026-07-01",
-      "publish": false,
+    "stop-waiting-for-a-miracle-use-whats-already-in-your-hands": {
+      "title": "Stop Waiting for a Miracle: Use What's Already in Your Hands",
+      "author": "Rev. Benson K Sunny",
+      "category": "Finance & Budget",
+      "tags": [
+        "Finance & Budget",
+        "Everyday Life"
+      ],
+      "date": "2026-07-06",
+      "thumbnail": "https://live.staticflickr.com/2177/5699011149_2943335f10_b.jpg",
+      "publish": true,
+      "featured": false,
+      "modified": "2026-07-06"
+    },
+    "stressed-and-overthinking-how-to-stay-calm-when-life-spins-out-of-control": {
+      "title": "Stressed and Overthinking? How to Stay Calm When Life Spins Out of Control",
+      "author": "Rev. Benson K Sunny",
+      "category": "Anxiety & Stress",
+      "tags": [
+        "Anxiety & Stress",
+        "Faith"
+      ],
+      "date": "2026-07-06",
+      "thumbnail": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS4GwDPnqF0p29KBHY9LNsFAR6_N52cJzNsmjfcQFubfyZSbwUPYa5Xun4&s=10",
+      "publish": true,
+      "featured": false,
+      "modified": "2026-07-06"
+    },
+    "when-systems-collapse-practical-steps-to-protect-your-family-and-faith-in-a-crisis": {
+      "title": "When Systems Collapse: Practical Steps to Protect Your Family and Faith in a Crisis",
+      "author": "Rev. Benson K Sunny",
+      "category": "Anxiety & Stress",
+      "tags": [
+        "Anxiety & Stress",
+        "Family"
+      ],
+      "date": "2026-07-06",
+      "thumbnail": "https://images.squarespace-cdn.com/content/v1/66afb00c1b398675930f0e4a/3cc68767-42f4-4f0a-8c64-41349cd8a6b7/AdobeStock_459477114.jpg",
+      "publish": true,
+      "featured": false,
+      "modified": "2026-07-06"
+    },
+    "why-am-i-so-anxious-how-to-overcome-widespread-panic-and-find-rest": {
+      "title": "Why Am I So Anxious? How to Overcome Widespread Panic and Find Rest",
+      "author": "Rev. Benson K Sunny",
+      "category": "Anxiety & Stress",
+      "tags": [
+        "Anxiety & Stress",
+        "Everyday Life"
+      ],
+      "date": "2026-07-06",
+      "thumbnail": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT9qxR0CP51cX_WHhPTt6JUtxy45atodT4V6vs3MlimD9daj6hv08tEKSsP&s=10",
+      "publish": true,
+      "featured": false,
+      "modified": "2026-07-06"
+    },
+    "why-am-i-so-stressed-how-to-shift-from-constant-worry-to-true-peace": {
+      "title": "Why Am I So Stressed? How to Shift from Constant Worry to True Peace",
+      "author": "Rev. Benson K Sunny",
+      "category": "Anxiety & Stress",
+      "tags": [
+        "Anxiety & Stress",
+        "Everyday Life"
+      ],
+      "date": "2026-07-06",
+      "thumbnail": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRv_9rjlrb0ghyYidx7IqIfSoRUDj0Kd2aFsFzmMbfkC-mXx9HdhtcihJje&s=10",
+      "publish": true,
+      "featured": false,
+      "modified": "2026-07-06"
+    },
+    "why-everything-feels-heavy-right-now-and-how-to-fix-it": {
+      "title": "Why Everything Feels Heavy Right Now (And How to Fix It)",
+      "author": "Rev. Benson K Sunny",
+      "category": "Faith",
+      "tags": [
+        "Faith",
+        "Calling"
+      ],
+      "date": "2026-07-06",
+      "thumbnail": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSzNwYpE3_lmDSAgdyTM8BxxL6-jHFdVelJrdwQUfegGg&s=10",
+      "publish": true,
+      "featured": false,
+      "modified": "2026-07-06"
+    },
+    "why-real-life-doesnt-match-our-expectations-finding-direction-in-the-ground-reality": {
+      "title": "Why Real Life Doesn't Match Our Expectations: Finding Direction in the Ground Reality",
+      "author": "Rev. Benson K Sunny",
+      "category": "Everyday Life",
+      "tags": [
+        "Everyday Life",
+        "Faith"
+      ],
+      "date": "2026-07-06",
+      "thumbnail": "https://live.staticflickr.com/4042/4305366199_24617050de_b.jpg",
+      "publish": true,
+      "featured": true,
       "modified": "2026-07-06"
     }
   },
@@ -43,6 +135,7 @@
       "category": "Bible Study",
       "date": "2026-07-02",
       "publish": false,
+      "featured": false,
       "modified": "2026-07-06"
     },
     "psalm-23-the-lord-is-my-shepherd": {
@@ -52,6 +145,7 @@
       "date": "2026-06-10",
       "thumbnail": "/images/og-image.jpg",
       "publish": true,
+      "featured": false,
       "modified": "2026-07-05"
     },
     "romans-8-life-in-the-spirit": {
@@ -61,6 +155,7 @@
       "date": "2026-06-20",
       "thumbnail": "/images/og-image.jpg",
       "publish": true,
+      "featured": true,
       "modified": "2026-07-05"
     }
   }

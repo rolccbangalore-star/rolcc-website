@@ -72,11 +72,21 @@
   });
 
   var grid = document.querySelector("[data-gallery-youtube-grid]");
-  var sortSelect = document.querySelector("[data-gallery-sort]");
-  var sortToggle = document.querySelector("[data-gallery-sort-toggle]");
-  var sortMenu = document.querySelector("[data-gallery-sort-menu]");
-  var sortIcon = document.querySelector(".gallery-toolbar .articles-sort-icon");
   var currentSort = "newest";
+  var sortMenuControl =
+    typeof bindSiteSortMenu === "function"
+      ? bindSiteSortMenu({
+          wrap: "[data-gallery-sort-wrap]",
+          trigger: "[data-gallery-sort-toggle]",
+          menu: "[data-gallery-sort-menu]",
+          valueEl: "[data-gallery-sort-value-label]",
+          valueAttr: "data-gallery-sort-value",
+          defaultValue: "newest",
+          onChange: function (value) {
+            applySort(value);
+          },
+        })
+      : null;
 
   function getCards() {
     if (!grid) return [];
@@ -97,24 +107,10 @@
     );
   }
 
-  function updateSortUi() {
-    if (sortIcon) {
-      sortIcon.classList.toggle("is-sorted", currentSort !== "newest");
-    }
-    if (sortMenu) {
-      sortMenu.querySelectorAll("[data-gallery-sort-value]").forEach(function (btn) {
-        var active = btn.getAttribute("data-gallery-sort-value") === currentSort;
-        btn.classList.toggle("is-active", active);
-        btn.setAttribute("aria-selected", active ? "true" : "false");
-      });
-    }
-  }
-
   function applySort(sort) {
     if (!grid) return;
     currentSort = sort || "newest";
-    if (sortSelect) sortSelect.value = currentSort;
-    updateSortUi();
+    if (sortMenuControl) sortMenuControl.updateUi(currentSort);
 
     var cards = getCards().sort(function (a, b) {
       return compareCards(a, b, currentSort);
@@ -124,35 +120,7 @@
     });
   }
 
-  if (sortSelect) {
-    sortSelect.addEventListener("change", function () {
-      applySort(sortSelect.value || "newest");
-    });
-  }
-
-  if (sortToggle && sortMenu) {
-    sortToggle.addEventListener("click", function (event) {
-      event.stopPropagation();
-      var open = !sortMenu.hidden;
-      sortMenu.hidden = open;
-      sortToggle.setAttribute("aria-expanded", open ? "false" : "true");
-    });
-
-    sortMenu.addEventListener("click", function (e) {
-      var btn = e.target.closest("[data-gallery-sort-value]");
-      if (!btn) return;
-      applySort(btn.getAttribute("data-gallery-sort-value") || "newest");
-      sortMenu.hidden = true;
-      sortToggle.setAttribute("aria-expanded", "false");
-    });
-
-    document.addEventListener("click", function (e) {
-      if (sortMenu.hidden) return;
-      if (e.target.closest("[data-gallery-sort-toggle]") || e.target.closest("[data-gallery-sort-menu]")) return;
-      sortMenu.hidden = true;
-      sortToggle.setAttribute("aria-expanded", "false");
-    });
-  }
+  if (sortMenuControl) sortMenuControl.updateUi(currentSort);
 
   var instagramSection = document.querySelector("[data-gallery-instagram]");
   if (!instagramSection) return;

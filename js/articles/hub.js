@@ -13,10 +13,6 @@
   const grid = document.querySelector("[data-articles-grid]");
   const empty = document.querySelector("[data-articles-empty]");
   const meta = document.querySelector("[data-articles-results-meta]");
-  const sortSelect = document.querySelector("[data-articles-sort]");
-  const sortToggle = document.querySelector("[data-articles-sort-toggle]");
-  const sortMenu = document.querySelector("[data-articles-sort-menu]");
-  const sortIcon = document.querySelector(".articles-sort-icon");
   const paginationWrap = document.querySelector("[data-articles-pagination-wrap]");
   if (!chips || !grid) return;
 
@@ -25,6 +21,20 @@
   let filter = "all";
   let sort = "newest";
   let page = 1;
+  const sortMenuControl =
+    typeof bindSiteSortMenu === "function"
+      ? bindSiteSortMenu({
+          wrap: "[data-articles-sort-wrap]",
+          trigger: "[data-articles-sort-toggle]",
+          menu: "[data-articles-sort-menu]",
+          valueEl: "[data-articles-sort-value-label]",
+          valueAttr: "data-articles-sort-value",
+          defaultValue: "newest",
+          onChange: function (value) {
+            setSort(value);
+          },
+        })
+      : null;
 
   function articleKey(article) {
     return `${article.type}/${article.slug}`;
@@ -102,35 +112,8 @@
   function setSort(nextSort) {
     sort = nextSort || "newest";
     page = 1;
-    if (sortSelect) sortSelect.value = sort;
-    updateSortUi();
+    if (sortMenuControl) sortMenuControl.updateUi(sort);
     render();
-  }
-
-  function updateSortUi() {
-    if (sortIcon) {
-      sortIcon.classList.toggle("is-sorted", sort !== "newest");
-    }
-    if (sortMenu) {
-      sortMenu.querySelectorAll("[data-articles-sort-value]").forEach(function (btn) {
-        const active = btn.getAttribute("data-articles-sort-value") === sort;
-        btn.classList.toggle("is-active", active);
-        btn.setAttribute("aria-selected", active ? "true" : "false");
-      });
-    }
-  }
-
-  function closeSortMenu() {
-    if (!sortMenu || !sortToggle) return;
-    sortMenu.hidden = true;
-    sortToggle.setAttribute("aria-expanded", "false");
-  }
-
-  function toggleSortMenu() {
-    if (!sortMenu || !sortToggle) return;
-    const open = sortMenu.hidden;
-    sortMenu.hidden = !open;
-    sortToggle.setAttribute("aria-expanded", open ? "true" : "false");
   }
 
   function sortArticles(list) {
@@ -241,32 +224,6 @@
     render();
   });
 
-  if (sortSelect) {
-    sortSelect.addEventListener("change", function () {
-      setSort(sortSelect.value || "newest");
-    });
-  }
-
-  if (sortToggle && sortMenu) {
-    sortToggle.addEventListener("click", function (e) {
-      e.stopPropagation();
-      toggleSortMenu();
-    });
-
-    sortMenu.addEventListener("click", function (e) {
-      const btn = e.target.closest("[data-articles-sort-value]");
-      if (!btn) return;
-      setSort(btn.getAttribute("data-articles-sort-value") || "newest");
-      closeSortMenu();
-    });
-
-    document.addEventListener("click", function (e) {
-      if (!sortMenu.hidden && !e.target.closest(".articles-sort-mobile")) {
-        closeSortMenu();
-      }
-    });
-  }
-
   if (paginationWrap) {
     paginationWrap.addEventListener("click", function (e) {
       const btn = e.target.closest("[data-articles-page]");
@@ -280,6 +237,6 @@
     });
   }
 
-  updateSortUi();
+  if (sortMenuControl) sortMenuControl.updateUi(sort);
   render();
 })();

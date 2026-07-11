@@ -12,8 +12,20 @@
     "label": "About Us"
   },
   {
+    "id": "article-import-parse",
+    "label": "Article Import Parse"
+  },
+  {
+    "id": "article-render",
+    "label": "Article Render"
+  },
+  {
     "id": "articles",
     "label": "Articles"
+  },
+  {
+    "id": "build-gallery",
+    "label": "Build Gallery"
   },
   {
     "id": "cell-fellowship",
@@ -36,6 +48,10 @@
     "label": "FAQ"
   },
   {
+    "id": "gallery",
+    "label": "Gallery"
+  },
+  {
     "id": "giving",
     "label": "Giving"
   },
@@ -46,6 +62,10 @@
   {
     "id": "hub",
     "label": "Hub"
+  },
+  {
+    "id": "import-article-to-repo",
+    "label": "Import Article To Repo"
   },
   {
     "id": "main",

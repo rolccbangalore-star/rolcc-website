@@ -3,11 +3,13 @@ const path = require("path");
 const https = require("https");
 const { writeSitemap } = require("./build-sitemap");
 const { loadProjectEnv } = require("./load-env");
+const { renderSiteSortMenu, SERMONS_SORT_OPTIONS } = require("./sort-menu-template");
+const { renderSermonsPageSections } = require("./sermons-page-sections");
 
 const ROOT = path.join(__dirname, "..");
 loadProjectEnv(ROOT);
 const SITE_ORIGIN = "https://www.rolcc.in";
-const GALLERY_ASSET_VERSION = "sermons-pagination-v2";
+const GALLERY_ASSET_VERSION = "sermons-sections-v1";
 const SERMONS_PATH = "/sermons";
 const DEFAULT_SERMONS_PER_PAGE = 12;
 const MAX_PLAYLIST_FETCH = 200;
@@ -527,28 +529,12 @@ function renderSermonsToolbar(pageMeta) {
 
   return `<div class="gallery-toolbar">
     <div class="gallery-toolbar__row">
-      <div class="articles-sort-wrap">
-        <label class="articles-sort articles-sort--desktop">
-          <span class="articles-sort__label">Sort by</span>
-          <select class="articles-sort__select" data-gallery-sort aria-label="Sort sermons">
-            <option value="newest" selected>Date Latest to Oldest</option>
-            <option value="popular">Popular</option>
-            <option value="alphabet">Alphabet</option>
-          </select>
-        </label>
-        <div class="articles-sort-mobile">
-          <button type="button" class="articles-sort-icon" data-gallery-sort-toggle aria-label="Sort sermons" aria-haspopup="listbox" aria-expanded="false">
-            <svg class="articles-sort-icon__svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M4 6h10"/><path d="M4 12h7"/><path d="M4 18h4"/><path d="M15 8l3-3 3 3"/><path d="M18 5v14"/><path d="M15 16l3 3 3-3"/>
-            </svg>
-          </button>
-          <div class="articles-sort-menu" data-gallery-sort-menu hidden role="listbox" aria-label="Sort sermons">
-            <button type="button" class="articles-sort-menu__item is-active" data-gallery-sort-value="newest" role="option">Date Latest to Oldest</button>
-            <button type="button" class="articles-sort-menu__item" data-gallery-sort-value="popular" role="option">Popular</button>
-            <button type="button" class="articles-sort-menu__item" data-gallery-sort-value="alphabet" role="option">Alphabet</button>
-          </div>
-        </div>
-      </div>
+      ${renderSiteSortMenu({
+        dataPrefix: "gallery",
+        ariaLabel: "Sort sermons",
+        options: SERMONS_SORT_OPTIONS,
+        defaultValue: "newest",
+      })}
       <a href="https://www.youtube.com/@rolccindia" class="gallery-section__link gallery-toolbar__channel" target="_blank" rel="noopener noreferrer">Visit our channel</a>
     </div>
     ${topPaginationHtml}
@@ -788,6 +774,7 @@ function buildGalleryHtml(config, data, pageOptions = {}) {
   const youtubeSection = youtubeEnabled ? renderYoutubeSection(pageVideos, pageMeta) : "";
   const instagramSection =
     pageNum === 1 && instagramEnabled ? renderInstagramSection(data.instagram || []) : "";
+  const pageSections = pageNum === 1 ? renderSermonsPageSections() : "";
 
   const headExtra = `<link rel="stylesheet" href="/css/articles.css?v=${GALLERY_ASSET_VERSION}" />
     <link rel="stylesheet" href="/css/gallery.css?v=${GALLERY_ASSET_VERSION}" />
@@ -822,6 +809,8 @@ function buildGalleryHtml(config, data, pageOptions = {}) {
       </div>
       </div>
 
+      ${pageSections}
+
       <div class="serve-unveil-spacer min-h-screen" aria-hidden="true"></div>
     </main>
 ${readFooterTemplate()}
@@ -832,7 +821,10 @@ ${readFooterTemplate()}
       type="button"
     >↑</button>
     <script src="/js/main.js"></script>
-    <script src="/js/gallery.js?v=${GALLERY_ASSET_VERSION}"></script>
+    <script src="/js/site-sort-menu.js?v=${GALLERY_ASSET_VERSION}"></script>
+    <script src="/js/gallery.js?v=${GALLERY_ASSET_VERSION}"></script>${pageNum === 1 ? `
+    <script src="/js/faq/core.js"></script>
+    <script src="/js/faq/accordion.js"></script>` : ""}
   </body>
 </html>`;
 }

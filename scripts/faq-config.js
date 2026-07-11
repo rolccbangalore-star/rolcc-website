@@ -82,6 +82,7 @@ const PAGE_FAQ_MAP = {
   events: ["Q0034", "Q0131", "Q0108", "Q0064", "Q0290", "Q0144", "Q0095", "Q0079"],
   membership: ["Q0088", "Q0228", "Q0100", "Q0201", "Q0043", "Q0105", "Q0311", "Q0079"],
   articles: ["Q0155", "Q0206", "Q0010", "Q0217", "Q0408", "Q0311", "Q0016", "Q0053"],
+  sermons: ["Q0044", "Q0045", "Q0043", "Q0361", "Q0024", "Q0022", "Q0023", "Q0010"],
 };
 
 /** Section copy for page-specific FAQ blocks */
@@ -138,6 +139,10 @@ const PAGE_FAQ_META = {
     heading: "Questions about sermons & Bible study",
     description: "How our articles connect to Sunday messages, cell fellowship, and growing in Scripture.",
   },
+  sermons: {
+    heading: "Serving, ministry & pastoral care",
+    description: "Questions about volunteering, joining a ministry team, finding your calling, and connecting with pastoral support or counselling.",
+  },
 };
 
 /** Maps site page slugs to FAQ topics (fallback when PAGE_FAQ_MAP entry is missing) */
@@ -155,6 +160,7 @@ const PAGE_TOPIC_MAP = {
   membership: ["belonging-community", "visiting"],
   contact: ["visiting", "prayer-support"],
   articles: ["faith-questions", "belonging-community"],
+  sermons: ["serving-ministry", "prayer-support", "belonging-community"],
 };
 
 /** @deprecated use PAGE_TOPIC_MAP */

@@ -458,11 +458,11 @@ function renderYoutubeSection(items) {
     })
     .join("");
 
-  return `<section class="gallery-section" aria-label="Selected YouTube videos">
+  return `<section class="gallery-section" aria-label="Sermons">
       <div class="gallery-section__head">
         <div>
-          <h2 class="gallery-section__title">YouTube</h2>
-            <p class="gallery-section__intro">Sermons and messages from our Sunday services.</p>
+          <h2 class="gallery-section__title">Sunday Sermons</h2>
+            <p class="gallery-section__intro">Messages from our Sunday worship services.</p>
         </div>
         <a href="https://www.youtube.com/@rolccindia" class="gallery-section__link" target="_blank" rel="noopener noreferrer">Visit our channel</a>
       </div>
@@ -600,7 +600,7 @@ function renderGallerySchema(data, canonical) {
   const schema = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
-    name: "Gallery | River of Life Christian Church",
+    name: "Sermons | River of Life Christian Church",
     url: canonical,
     mainEntity: {
       "@type": "ItemList",
@@ -613,13 +613,13 @@ function renderGallerySchema(data, canonical) {
 
 function buildGalleryHtml(config, data) {
   const page = config.page || {};
-  const title = "Gallery | River of Life Christian Church, Bangalore";
+  const title = "Sermons | River of Life Christian Church, Bangalore";
   const description =
     page.description ||
-    "Photos and reels from River of Life Christian Church in Bangalore.";
+    "Watch Sunday sermons and messages from River of Life Christian Church in Bangalore.";
   const canonical = `${SITE_ORIGIN}/gallery`;
-  const eyebrow = escapeHtml(page.eyebrow || "Gallery");
-  const heading = escapeHtml(page.title || "Moments from River of Life");
+  const eyebrow = escapeHtml(page.eyebrow || "Sermons");
+  const heading = escapeHtml(page.title || "Messages from River of Life");
   const intro = escapeHtml(page.description || description);
   const youtubeEnabled = config.youtube && config.youtube.enabled !== false;
   const instagramEnabled = config.instagram && config.instagram.enabled !== false;
@@ -674,7 +674,9 @@ ${readFooterTemplate()}
 }
 
 function syncGalleryFooterLink() {
-  const marker = '<a href="/gallery" class="footer-link hover:text-white">Gallery</a>';
+  const galleryMarker = '<a href="/gallery" class="footer-link hover:text-white">Gallery</a>';
+  const latestSermonFrom = 'href="/#latest-sermon" class="footer-link hover:text-white">Latest Sermon';
+  const latestSermonTo = 'href="/gallery" class="footer-link hover:text-white">Latest Sermon';
   const files = [];
 
   function walk(dir) {
@@ -693,18 +695,29 @@ function syncGalleryFooterLink() {
 
   files.forEach((filePath) => {
     let html = fs.readFileSync(filePath, "utf8");
-    if (html.includes(marker)) return;
-    const oldBlock =
-      /<li><a href="\/faq" class="footer-link hover:text-white">FAQ<\/a><\/li>\s*<li><a href="\/articles" class="footer-link hover:text-white">Articles<\/a><\/li>\s*<li><a href="\/#latest-sermon" class="footer-link hover:text-white">Latest Sermon<\/a><\/li>/;
-    if (!oldBlock.test(html)) return;
-    html = html.replace(
-      oldBlock,
-      `<li><a href="/faq" class="footer-link hover:text-white">FAQ</a></li>
+    let changed = false;
+
+    if (!html.includes(galleryMarker)) {
+      const oldBlock =
+        /<li><a href="\/faq" class="footer-link hover:text-white">FAQ<\/a><\/li>\s*<li><a href="\/articles" class="footer-link hover:text-white">Articles<\/a><\/li>\s*<li><a href="\/#latest-sermon" class="footer-link hover:text-white">Latest Sermon<\/a><\/li>/;
+      if (oldBlock.test(html)) {
+        html = html.replace(
+          oldBlock,
+          `<li><a href="/faq" class="footer-link hover:text-white">FAQ</a></li>
                   <li><a href="/articles" class="footer-link hover:text-white">Articles</a></li>
                   <li><a href="/gallery" class="footer-link hover:text-white">Gallery</a></li>
-                  <li><a href="/#latest-sermon" class="footer-link hover:text-white">Latest Sermon</a></li>`
-    );
-    fs.writeFileSync(filePath, html, "utf8");
+                  <li><a href="/gallery" class="footer-link hover:text-white">Latest Sermon</a></li>`
+        );
+        changed = true;
+      }
+    }
+
+    if (html.includes(latestSermonFrom)) {
+      html = html.replaceAll(latestSermonFrom, latestSermonTo);
+      changed = true;
+    }
+
+    if (changed) fs.writeFileSync(filePath, html, "utf8");
   });
 }
 

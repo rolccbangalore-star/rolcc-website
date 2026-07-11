@@ -1434,6 +1434,54 @@
     });
   }
 
+  function isGitBackendError(err) {
+    var msg = (err && err.message) || String(err || "");
+    return msg.indexOf("BadObjectState") !== -1 || msg.indexOf("GitRPC") !== -1 || msg.indexOf("API_ERROR") !== -1;
+  }
+
+  function clearEntryLocalDraft(meta) {
+    var slug = meta.slug || getEntrySlugFromHash();
+    var folder = getArticleDataFolder(meta.collectionName || getCollection());
+    if (!slug) return;
+    var markers = [slug];
+    if (folder) {
+      markers.push("data/articles/" + folder + "/" + slug);
+      markers.push(folder + "/" + slug);
+    }
+    try {
+      Object.keys(localStorage).forEach(function (key) {
+        if (!/netlify|decap|nc-|backstage|persist/i.test(key)) return;
+        var val = localStorage.getItem(key);
+        if (!val) return;
+        for (var i = 0; i < markers.length; i++) {
+          if (val.indexOf(markers[i]) !== -1) {
+            localStorage.removeItem(key);
+            break;
+          }
+        }
+      });
+    } catch (err) {
+      /* ignore */
+    }
+    var store = getCmsStore();
+    if (store) {
+      try {
+        store.dispatch({ type: "DRAFT_DISCARD" });
+      } catch (err2) {
+        /* ignore */
+      }
+    }
+  }
+
+  function deleteEntryReliably(meta) {
+    var collectionName = meta.collectionName || getCollection();
+    var slug = meta.slug || getEntrySlugFromHash();
+    return deleteEntryOnGithub(collectionName, slug).then(function () {
+      clearEntryLocalDraft(meta);
+      return true;
+    });
+  }
+
   function deleteEntryViaBackend(meta) {
     var store = getCmsStore();
     var collectionName = meta.collectionName || getCollection();
@@ -1442,19 +1490,26 @@
       return Promise.reject(new Error("No article open — missing entry slug"));
     }
 
-    var collection = meta.collection;
-    if (!collection && store) {
-      collection = getCollectionFromStore(store);
-    }
+    return deleteEntryOnGithub(collectionName, slug).catch(function (githubErr) {
+      var collection = meta.collection;
+      if (!collection && store) {
+        collection = getCollectionFromStore(store);
+      }
 
-    var cms = window.CMS;
-    var backend = cms && typeof cms.getBackend === "function" ? cms.getBackend() : null;
-    if (backend && typeof backend.deleteEntry === "function" && store && collection) {
-      var state = store.getState();
-      return Promise.resolve(backend.deleteEntry(state, collection, slug));
-    }
+      var cms = window.CMS;
+      var backend = cms && typeof cms.getBackend === "function" ? cms.getBackend() : null;
+      if (backend && typeof backend.deleteEntry === "function" && store && collection) {
+        var state = store.getState();
+        return Promise.resolve(backend.deleteEntry(state, collection, slug)).catch(function (backendErr) {
+          if (isGitBackendError(backendErr) && !isGitBackendError(githubErr)) {
+            throw backendErr;
+          }
+          throw githubErr;
+        });
+      }
 
-    return deleteEntryOnGithub(collectionName, slug);
+      throw githubErr;
+    });
   }
 
   function deleteExistingEntry(root, meta, attempt) {
@@ -1466,6 +1521,12 @@
 
     if ((editorApi && editorApi.newEntry) || (isNewEntryRoute() && !slug)) {
       return discardDraftEntry();
+    }
+
+    if (slug && getArticleDataFolder(collectionName)) {
+      return deleteEntryReliably(meta).then(function () {
+        navigateToCollection(collectionName);
+      });
     }
 
     var handleDelete =
@@ -1494,9 +1555,17 @@
     var resolvedSlug = (editorApi && editorApi.slug) || slug;
 
     if (typeof deleteFn === "function" && collection && resolvedSlug) {
-      return invokeDeleteEntry(deleteFn, collection, resolvedSlug).then(function () {
-        navigateToCollection(collectionName);
-      });
+      return invokeDeleteEntry(deleteFn, collection, resolvedSlug)
+        .then(function () {
+          clearEntryLocalDraft(meta);
+          navigateToCollection(collectionName);
+        })
+        .catch(function (err) {
+          if (!isGitBackendError(err)) throw err;
+          return deleteEntryReliably(meta).then(function () {
+            navigateToCollection(collectionName);
+          });
+        });
     }
 
     if (attempt < 10) {
@@ -1508,6 +1577,7 @@
     }
 
     return deleteEntryViaBackend(meta).then(function () {
+      clearEntryLocalDraft(meta);
       navigateToCollection(collectionName);
     });
   }

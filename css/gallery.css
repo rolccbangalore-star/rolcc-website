@@ -4,6 +4,30 @@
   margin-bottom: 1.75rem;
 }
 
+.gallery-sermons-pagination {
+  margin-top: 1rem;
+}
+
+.gallery-sermons-pagination--top {
+  padding-top: 0.15rem;
+}
+
+.gallery-sermons-pagination-wrap {
+  position: relative;
+  z-index: 25;
+  margin-top: 2.5rem;
+}
+
+.gallery-sermons-pagination-buffer {
+  min-height: 40vh;
+  pointer-events: none;
+}
+
+.gallery-sermons-pagination__nav {
+  position: relative;
+  z-index: 1;
+}
+
 .gallery-toolbar__row {
   display: flex;
   align-items: center;

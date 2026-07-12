@@ -6,16 +6,27 @@ Use this prompt with your study notes, PDF text, or Word document. ChatGPT will 
 
 You are preparing a Back to the Bible cell fellowship study for River of Life Christian Church (ROLCC), Bangalore. Audience: cell group members and first-time visitors exploring Scripture. Tone: warm, clear, human, confident — not preachy or insider-heavy.
 
-## Critical rule: do NOT over-summarise
+## Headings vs body (important)
 
-This is a **Bible study**, not a blog summary. **Retain 80–90% of the original source material** — section headings, scripture quotes, teaching points, lists, tables, and discussion prompts. It is fine if the study is long and the read time is higher.
+| Part | Rule |
+|------|------|
+| **Section headings** | Keep **largely as-is** from the source — same titles, numbering, and scene labels |
+| **Section body** | **Smartly recompose** for reading on the web — fix PDF mess, merge fragments, keep the essence |
 
-- Keep the author's structure wherever possible (numbered sections, sub-points, memory verses, icebreakers).
-- Do **not** merge many sections into one short paragraph.
-- Do **not** condense lists longer than 6 items — keep full lists.
-- Remove only: emojis, PDF page numbers (`-- 1 of 5 --`), and exact duplicate headers.
-- Emoji bullets from PDFs often become `??` in text — never output `??`; use plain bullets or numbered lists instead.
-- Shorten only when the source repeats the same sentence twice.
+## Smart cleanup for body copy
+
+PDF and Word imports often produce broken formatting. **Fix these intelligently:**
+
+- Emoji bullets that became `??` — remove; use plain text or real bullets
+- Scripture quotes split mid-sentence across lines (`man…` / `And I was afraid…` / `yours.'"`) — **merge into one complete quote**
+- One thought split across many short lines — merge into **1–2 readable sentences or a short paragraph**
+- Parallel notes (`The servant acted out of fear` / `The servant blamed the master`) — merge: *"The servant acted out of fear, blamed the master, and wasted his opportunity."*
+- Orphan word fragments on their own line — join to the previous or next sentence
+- Duplicate headers and page numbers (`-- 1 of 5 --`) — remove
+
+**Do not lose the teaching.** Keep scripture references, key points, lists, memory verses, icebreakers, and application. You may add a few connecting words for clarity.
+
+**Do not** flatten the whole study into one generic Observe / Interpret / Apply workflow unless the source uses only those headings.
 
 ## Output format (use these exact section headings)
 
@@ -35,11 +46,11 @@ e.g. Matthew 17:1-9
 ROLCC Fellowship Team
 
 **SECTIONS**  
-Use the **source document's own section headings** — numbered scenes, passage blocks, teaching titles, memory verses, icebreakers, summaries, and conclusions. **Do not** collapse the study into a generic Observe / Interpret / Apply workflow unless the source itself uses only those three headings.
+Use the **source document's own section headings** — numbered scenes, passage blocks, teaching titles, memory verses, icebreakers, summaries, and conclusions.
 
 Each section becomes one entry in `sections[]`:
-- `heading`: the source section title (e.g. `1. THE WIDOW'S CRY FOR HELP (2 Kings 4:1)`, `SERVANT 1: FIVE TALENTS`, `MOUNT ARARAT`)
-- `body`: the full teaching content for that section, with lists and scripture quotes preserved
+- `heading`: the source section title, kept largely unchanged (e.g. `SERVANT 3: ONE TALENT`, `1. MOUNT ARARAT`)
+- `body`: recomposed for readability — full quotes intact, teaching points clear, short paragraphs where helpful
 
 **DISCUSSION QUESTIONS**  
 Write **3–8** open-ended questions for cell fellowship from the source. Do **not** include answer keys here.
@@ -55,7 +66,7 @@ Write **3–5** multiple-choice questions from the study content. For each:
 - `Explanation:` one line
 
 ## Rules
-- Preserve the source's section structure in `sections[]` — one JSON section per source heading
+- Preserve the source's section structure — one section per source heading
 - Never publish answer keys as discussion questions — fixed answers go in QUIZ only
 - Do not include date, hero image, featured, or published status
 
@@ -77,4 +88,4 @@ After Step 1, open `prompts/bible-study/02-import-template.json` and paste **bot
 
 Then say:
 
-> Convert the study below into valid JSON matching this template exactly. **Retain 80–90% of the source wording in sections[]** — use the source's own section headings (not a generic Observe/Interpret/Apply split unless the source uses only those). Map discussion questions to `discussionQuestions[]`. Always set `includeQuiz` to true with **3–5** quiz questions. For quiz: exactly 4 options per question, **vary `correctIndex`** (not always 0). Fill `tags` from `_allowedTags` only. Do not include date, hero image, featured, or published.
+> Convert the study below into valid JSON matching this template exactly. **Keep section headings largely as-is from the source.** **Recompose each section `body` for readable web copy** — merge broken PDF lines and quotes, fix `??` artifacts, combine parallel bullet-thoughts into short paragraphs, but keep all scripture references and teaching essence. Map discussion questions to `discussionQuestions[]`. Always set `includeQuiz` to true with **3–5** quiz questions. For quiz: exactly 4 options per question, **vary `correctIndex`** (not always 0). Fill `tags` from `_allowedTags` only. Do not include date, hero image, featured, or published.

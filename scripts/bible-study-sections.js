@@ -232,8 +232,218 @@ function scrubBodyLine(line) {
   return t;
 }
 
+const SCRIPTURE_REF =
+  /^(?:\d\s+)?(?:Matthew|Mark|Luke|John|Acts|Romans|(?:\d\s+)?Corinthians|Galatians|Ephesians|Philippians|Colossians|Hebrews|James|(?:\d\s+)?Peter|Revelation|Genesis|Exodus|Leviticus|Numbers|Deuteronomy|Joshua|Judges|Ruth|(?:\d\s+)?Samuel|(?:\d\s+)?Kings|(?:\d\s+)?Chronicles|Ezra|Nehemiah|Esther|Job|Psalm|Proverbs|Ecclesiastes|Isaiah|Jeremiah|Lamentations|Ezekiel|Daniel|Hosea|Joel|Amos|Obadiah|Jonah|Micah|Nahum|Habakkuk|Zephaniah|Haggai|Zechariah|Malachi)\s+\d+/i;
+
+function isScriptureRefLine(line) {
+  return SCRIPTURE_REF.test(String(line || "").trim());
+}
+
+function lineHasBulletPrefix(line) {
+  return /^[\uF0B7\u2022\u25CF\u25AA\u2023●•▪\-–—]\s*/.test(String(line || "").trim());
+}
+
+function stripBulletPrefix(line) {
+  return String(line || "")
+    .trim()
+    .replace(/^[\uF0B7\u2022\u25CF\u25AA\u2023●•▪\-–—]\s*/, "");
+}
+
+function opensQuote(line) {
+  const t = String(line || "").trim();
+  return /^[""'\u201c]/.test(t);
+}
+
+function countQuoteMarks(text) {
+  const opens = (String(text || "").match(/[""'\u201c]/g) || []).length;
+  const closes = (String(text || "").match(/[""'\u201d]/g) || []).length;
+  return { opens, closes };
+}
+
+function quoteBlockComplete(text) {
+  const t = String(text || "").trim();
+  if (!/[""'\u201c\u2018]/.test(t)) return false;
+  if (/…\s*$/.test(t)) return false;
+  if (/[""'\u201c\u2018]/.test(t) && !/[""'\u201d\u2019]\s*$/.test(t) && !/['\u2019][""'\u201d]\s*$/.test(t)) {
+    return false;
+  }
+  return /['\u2019][""'\u201d]\s*$/.test(t) || /[""'\u201d]\s*$/.test(t) || /[.!?][""'\u201d]\s*$/.test(t);
+}
+
+function isQuoteContinuation(line) {
+  const t = String(line || "").trim();
+  if (!t) return false;
+  if (isParallelObservation(t)) return false;
+  if (isScriptureRefLine(t)) return false;
+  if (isLabelLine(t)) return false;
+  if (opensQuote(t)) return true;
+  if (/^[a-z]/.test(t)) return true;
+  if (/^(and|or|but|for|to|in|with|look|there|who|which|his|her|their|you|your)\b/i.test(t)) return true;
+  if (/…$/.test(t)) return true;
+  if (/^yours\.[""'\u201d]?$/i.test(t)) return true;
+  return false;
+}
+
+function isParallelObservation(line) {
+  const t = String(line || "").trim();
+  return (
+    /^The (servant|master|faithful|unfaithful|second|first)\b/i.test(t) ||
+    /^[A-Z][a-z]+ (can|will|expects|gives|does|did|was|were|is|are)\b/.test(t) ||
+    /^Fear\b/.test(t) ||
+    /^Success in\b/.test(t) ||
+    /^We are\b/.test(t) ||
+    /^Gifts\b/.test(t) ||
+    /^Small\b/.test(t) ||
+    /^Everything\b/.test(t)
+  );
+}
+
+function mergeParallelObservations(lines) {
+  if (!lines.length) return [];
+  if (lines.length === 1) return [lines[0]];
+
+  const servantLines = lines.filter((line) => /^The servant\s+/i.test(line.trim()));
+  if (servantLines.length >= 2) {
+    const verbs = servantLines.map((line) =>
+      line
+        .trim()
+        .replace(/^The servant\s+/i, "")
+        .replace(/\.$/, "")
+        .toLowerCase()
+    );
+    const tail = lines.filter((line) => !/^The servant\s+/i.test(line.trim()));
+    let merged = `The servant ${verbs.slice(0, -1).join(", ")}${verbs.length > 1 ? ", and " : ""}${verbs[verbs.length - 1]}.`;
+    merged = merged.charAt(0).toUpperCase() + merged.slice(1);
+    if (tail.length) return [merged, ...tail];
+    return [merged];
+  }
+
+  if (!lines.every(isParallelObservation)) return lines;
+
+  const parts = lines.map((line) => line.trim().replace(/\.$/, ""));
+  if (parts.every((p) => p.length < 90)) {
+    const merged =
+      parts.length === 2
+        ? `${parts[0]} and ${parts[1].replace(/^./, (c) => c.toLowerCase())}.`
+        : `${parts.slice(0, -1).join(". ")}. ${parts[parts.length - 1]}.`;
+    return [merged];
+  }
+  return lines;
+}
+
+function normalizeQuoteText(text) {
+  return String(text || "")
+    .replace(/\s+/g, " ")
+    .replace(/\s+([,.;:!?])/g, "$1")
+    .replace(/…/g, ".")
+    .replace(/\s*\n\s*/g, " ")
+    .trim();
+}
+
+function recomposeStudyBody(body) {
+  const rawLines = String(body || "")
+    .split("\n")
+    .map(scrubBodyLine)
+    .filter(Boolean);
+  if (!rawLines.length) return "";
+
+  const output = [];
+  let i = 0;
+
+  while (i < rawLines.length) {
+    const line = rawLines[i];
+
+    if (isScriptureRefLine(line)) {
+      output.push(line.trim());
+      i++;
+      continue;
+    }
+
+    if (isLabelLine(line)) {
+      output.push(line.trim());
+      i++;
+      continue;
+    }
+
+    if (lineHasBulletPrefix(line) || hasInlineBullets(line)) {
+      output.push(line.trim());
+      i++;
+      continue;
+    }
+
+    if (opensQuote(line)) {
+      const quoteParts = [];
+      while (i < rawLines.length) {
+        const part = rawLines[i];
+        if (quoteParts.length && (isLabelLine(part) || isScriptureRefLine(part) || lineHasBulletPrefix(part))) {
+          break;
+        }
+        if (
+          quoteParts.length &&
+          !opensQuote(part) &&
+          !isQuoteContinuation(part) &&
+          quoteBlockComplete(quoteParts.join(" "))
+        ) {
+          break;
+        }
+        quoteParts.push(part);
+        i++;
+        if (quoteBlockComplete(quoteParts.join(" "))) break;
+      }
+      const quoteText = normalizeQuoteText(
+        quoteParts.join(" ").replace(/^["'\u201c]+|["'\u201d]+$/g, "")
+      );
+      output.push(`"${quoteText}"`);
+      continue;
+    }
+
+    const observationRun = [];
+    while (i < rawLines.length) {
+      const part = rawLines[i];
+      if (
+        isScriptureRefLine(part) ||
+        isLabelLine(part) ||
+        opensQuote(part) ||
+        lineHasBulletPrefix(part) ||
+        hasInlineBullets(part)
+      ) {
+        break;
+      }
+      observationRun.push(part);
+      i++;
+      if (!isParallelObservation(part) && observationRun.length) break;
+      if (observationRun.length >= 6) break;
+    }
+
+    if (observationRun.length) {
+      mergeParallelObservations(observationRun).forEach((merged) => output.push(merged));
+      continue;
+    }
+
+    const paragraphRun = [line];
+    i++;
+    while (i < rawLines.length) {
+      const part = rawLines[i];
+      if (
+        isScriptureRefLine(part) ||
+        isLabelLine(part) ||
+        opensQuote(part) ||
+        lineHasBulletPrefix(part) ||
+        isParallelObservation(part)
+      ) {
+        break;
+      }
+      paragraphRun.push(part);
+      i++;
+    }
+    output.push(normalizeQuoteText(paragraphRun.join(" ")));
+  }
+
+  return output.join("\n");
+}
+
 function preprocessBodyLines(body) {
-  return String(body || "")
+  return recomposeStudyBody(body)
     .split("\n")
     .map(scrubBodyLine)
     .filter(Boolean);
@@ -387,6 +597,20 @@ function renderQaBlock(entries) {
     .join("")}</div>`;
 }
 
+function shouldRenderAsList(lines) {
+  if (!lines || lines.length < 2) return false;
+  if (lines.some((line) => /[""'\u201c\u201d]/.test(line))) return false;
+  if (lines.some((line) => isScriptureRefLine(line))) return false;
+  if (lines.some((line) => isParallelObservation(line))) return false;
+  const joined = lines.join(" ");
+  if (joined.length > 220) return false;
+  if (lines.every((line) => line.length < 90) && lines.length >= 2) {
+    const startsWithThe = lines.filter((line) => /^The \w+/i.test(line)).length;
+    if (startsWithThe >= 2) return false;
+  }
+  return true;
+}
+
 function renderBibleStudyBodyHtml(body) {
   const lines = preprocessBodyLines(body);
   if (!lines.length) return "";
@@ -474,7 +698,7 @@ function renderBibleStudyBodyHtml(body) {
       i++;
     }
 
-    if (paragraphLines.length > 1 && paragraphLines.every((part) => part.length < 140)) {
+    if (paragraphLines.length > 1 && paragraphLines.every((part) => part.length < 140) && shouldRenderAsList(paragraphLines)) {
       html += `<ul class="study-list">${paragraphLines.map((part) => `<li>${escapeHtml(part)}</li>`).join("")}</ul>`;
     } else {
       html += `<p>${escapeHtml(paragraphLines.join(" "))}</p>`;
@@ -542,4 +766,7 @@ module.exports = {
   normalizePassageReading,
   renderPassageReadingAccordion,
   sanitizeStudyHeading,
+  recomposeStudyBody,
+  quoteBlockComplete,
+  countQuoteMarks,
 };

@@ -35,7 +35,13 @@
     }
   }
 
-  function inlineMarkdown(text) {
+  function sanitizeStudyHeading(rawHeading) {
+    var t = String(rawHeading || "").trim().replace(/^\?+\s*/g, "");
+    var mountMatch = t.match(/^(\d+)\??\s*(MOUNT\b.+)$/i);
+    if (mountMatch) return mountMatch[1] + ". " + mountMatch[2].trim();
+    return t.replace(/^(\d+)\?\?\s+/g, "$1. ");
+  }
+
     return escapeHtml(String(text || ""))
       .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
       .replace(/\*(.+?)\*/g, "<em>$1</em>");
@@ -530,7 +536,7 @@
       .map(function (s) {
         return (
           '<section class="article-section"><h2 class="text-lg font-semibold text-slate-900">' +
-          escapeHtml(s.heading || "") +
+          escapeHtml(sanitizeStudyHeading(s.heading || "")) +
           '</h2><p class="mt-3 text-slate-700 leading-relaxed">' +
           escapeHtml(s.body || "") +
           "</p></section>"

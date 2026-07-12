@@ -47,7 +47,7 @@ const {
   FAQ_CHIP_TOPICS,
 } = require("./faq-config");
 const { renderSiteSortMenu, ARTICLES_SORT_OPTIONS } = require("./sort-menu-template");
-const { renderBibleStudyBodyHtml, normalizePassageReading, renderPassageReadingAccordion } = require("./bible-study-sections");
+const { renderBibleStudyBodyHtml, normalizePassageReading, renderPassageReadingAccordion, sanitizeStudyHeading } = require("./bible-study-sections");
 
 function loadApprovedFaqs() {
   const csvPath = path.join(DATA_DIR, "faqs-source-v2.csv");
@@ -1241,7 +1241,7 @@ function buildBackToBiblePage(article, allArticles) {
   const sectionsHtml = (article.sections || [])
     .map(
       (s) => `<section class="article-section bible-study-section">
-      <h2 class="bible-study-section__heading text-lg font-semibold text-slate-900">${escapeHtml(s.heading)}</h2>
+      <h2 class="bible-study-section__heading text-lg font-semibold text-slate-900">${escapeHtml(sanitizeStudyHeading(s.heading))}</h2>
       <div class="bible-study-section__body mt-3 text-slate-700 leading-relaxed">${renderBibleStudyBodyHtml(s.body)}</div>
     </section>`
     )

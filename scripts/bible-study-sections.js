@@ -7,6 +7,7 @@ function cleanBibleStudySource(text) {
     .replace(/--\s*\d+\s+of\s+\d+\s*--/g, "")
     .replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\uFE0F\u20E3]/gu, "")
     .replace(/\uFFFD/g, "")
+    .replace(/\u001a/g, " → ")
     .replace(/&quot;/g, '"')
     .replace(/[ \t]+\n/g, "\n")
     .replace(/\n{3,}/g, "\n\n")
@@ -69,7 +70,11 @@ function formatSectionHeading(rawLine) {
   if (mountMatch) {
     return `${mountMatch[1]}. ${mountMatch[2].trim()}`;
   }
-  return t.replace(/^\?+\s*/, "");
+  return t.replace(/^\?+\s*/, "").replace(/^(\d+)\?\?\s+/g, "$1. ");
+}
+
+function sanitizeStudyHeading(rawHeading) {
+  return formatSectionHeading(String(rawHeading || "").trim()) || String(rawHeading || "").trim();
 }
 
 function isHeadingLine(line) {
@@ -215,7 +220,10 @@ const STUDY_LABELS =
 const BULLET_SPLIT = /\s*[\uF0B7\u2022\u25CF\u25AA\u2023●•▪\-–—]\s+/;
 
 function scrubBodyLine(line) {
-  const t = String(line || "").trim();
+  const t = String(line || "")
+    .trim()
+    .replace(/^\?\?\s+/g, "")
+    .replace(/^(\d+)\?\?\s+/g, "$1. ");
   if (!t) return "";
   if (isRepeatTitle(t)) return "";
   if (/^\(?2 Kings 4:1/i.test(t)) return "";
@@ -533,4 +541,5 @@ module.exports = {
   renderBibleStudyBodyHtml,
   normalizePassageReading,
   renderPassageReadingAccordion,
+  sanitizeStudyHeading,
 };

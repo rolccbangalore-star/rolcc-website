@@ -7,6 +7,8 @@
     "What do empty vessels represent spiritually in this story?",
     "Have you ever experienced God's provision in a season of need?"
   ],
+  "scheduleDate": "",
+  "scheduleWindow": "",
   "author": "ROLCC Fellowship Team",
   "thumbnail": "https://www.worldhistory.org/uploads/images/10598.jpg",
   "activities": [],
@@ -75,7 +77,7 @@
   ],
   "passage": "2 Kings 4:1-7",
   "date": "2026-07-10",
-  "publish": false,
+  "publish": true,
   "quiz": [
     {
       "question": "Who was the prophet in this story?",

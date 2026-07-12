@@ -1491,6 +1491,13 @@ function main() {
     const { fileName, html } = buildHubPage(articles, faqs, hubConfig);
     fs.writeFileSync(path.join(ROOT, fileName), html, "utf8");
     console.log(`Wrote ${fileName}`);
+
+    if (fileName === "bible-study.html") {
+      const hubDir = path.join(ROOT, "bible-study");
+      fs.mkdirSync(hubDir, { recursive: true });
+      fs.writeFileSync(path.join(hubDir, "index.html"), html, "utf8");
+      console.log("Wrote bible-study/index.html");
+    }
   });
 
   fs.readdirSync(ROOT)

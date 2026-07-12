@@ -1,19 +1,16 @@
 {
-  "author": "ROLCC Fellowship Team",
-  "category": "Bible Study",
-  "thumbnail": "/images/og-image.jpg",
-  "featured": false,
-  "includeQuiz": true,
-  "publish": true,
-  "activities": [],
-  "title": "Mountains in the Bible — Places of Revelation and God's Presence",
-  "description": "A Back to the Bible overview study on key mountains in Scripture — where God met His people, revealed His glory, and shaped salvation history.",
-  "passage": "Selected passages across the Old and New Testaments",
-  "tags": [
-    "Bible Study",
-    "Teaching"
+  "discussionQuestions": [
+    "Can you name a Bible verse that mentions a mountain?",
+    "Which mountain story in Scripture speaks to you most, and why?",
+    "Where do you go — or could you go — for quiet time with God?",
+    "How does Jesus' use of mountains shape the way you think about prayer and teaching?"
   ],
-  "date": "2026-07-03",
+  "scheduleDate": "",
+  "scheduleWindow": "",
+  "author": "ROLCC Fellowship Team",
+  "thumbnail": "https://www.stockvault.net/data/2016/02/21/184677/preview16.jpg",
+  "activities": [],
+  "featured": false,
   "sections": [
     {
       "heading": "Overview",
@@ -76,12 +73,9 @@
       "body": "Every major mountain points to God's work:\nArarat \u001a New Beginning\nMoriah \u001a Sacrifice\nSinai \u001a Covenant\nCarmel \u001a Victory\nNebo \u001a Promise\nTransfiguration \u001a Glory\nBeatitudes \u001a Teaching\nOlives \u001a Prayer & Hope\nGolgotha \u001a Redemption\nZion \u001a God's Kingdom"
     }
   ],
-  "discussionQuestions": [
-    "Can you name a Bible verse that mentions a mountain?",
-    "Which mountain story in Scripture speaks to you most, and why?",
-    "Where do you go — or could you go — for quiet time with God?",
-    "How does Jesus' use of mountains shape the way you think about prayer and teaching?"
-  ],
+  "passage": "Selected passages across the Old and New Testaments",
+  "date": "2026-07-03",
+  "publish": true,
   "quiz": [
     {
       "question": "On which mountain did Noah's ark come to rest?",
@@ -139,6 +133,18 @@
       "explanation": "1 Kings 18 — keyword: Victory."
     }
   ],
+  "title": "Mountains in the Bible — Places of Revelation and God's Presence",
+  "tags": [
+    {
+      "tag": "Bible Study"
+    },
+    {
+      "tag": "Teaching"
+    }
+  ],
+  "description": "A Back to the Bible overview study on key mountains in Scripture — where God met His people, revealed His glory, and shaped salvation history.",
+  "includeQuiz": true,
+  "category": "Bible Study",
   "passageReading": {
     "reference": "Psalm 121:1-4",
     "text": "1 I will lift up my eyes to the hills—From whence comes my help?\n2 My help comes from the LORD, Who made heaven and earth.\n3 He will not allow your foot to be moved; He who keeps you will not slumber.\n4 Behold, He who keeps Israel Shall neither slumber nor sleep."

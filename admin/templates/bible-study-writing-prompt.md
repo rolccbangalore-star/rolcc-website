@@ -27,17 +27,18 @@ Include the passage, e.g. `Matthew 17:1-9 — The Mount of Transfiguration`
 **PASSAGE**  
 e.g. Matthew 17:1-9
 
+**SCRIPTURE READING (NKJV)**  
+5–7 verses from the passage above — the core text visitors read before the study. One verse per line, each line starting with its verse number. Use NKJV wording.
+
 **AUTHOR**  
 ROLCC Fellowship Team
 
-**OBSERVE**  
-What happens in the passage — scenes, characters, facts, scripture quotes, and the source's section-by-section walkthrough. **Keep most of the source text here.** Use the source's sub-headings as plain lines if helpful.
+**SECTIONS**  
+Use the **source document's own section headings** — numbered scenes, passage blocks, teaching titles, memory verses, icebreakers, summaries, and conclusions. **Do not** collapse the study into a generic Observe / Interpret / Apply workflow unless the source itself uses only those three headings.
 
-**INTERPRET**  
-What it means — teaching points, themes, cross-references, "Main Point", "Teaching", and "Significance" blocks from the source. **Keep the source's teaching content; do not replace it with a short summary.**
-
-**APPLY**  
-How it changes everyday life — practical lessons, application blocks, summary, and closing thought from the source.
+Each section becomes one entry in `sections[]`:
+- `heading`: the source section title (e.g. `1. THE WIDOW'S CRY FOR HELP (2 Kings 4:1)`, `SERVANT 1: FIVE TALENTS`, `MOUNT ARARAT`)
+- `body`: the full teaching content for that section, with lists and scripture quotes preserved
 
 **DISCUSSION QUESTIONS**  
 Write **3–8** open-ended questions for cell fellowship from the source. Do **not** include answer keys here.
@@ -53,7 +54,7 @@ Write **3–5** multiple-choice questions from the study content. For each:
 - `Explanation:` one line
 
 ## Rules
-- Always use exactly three study headings in JSON: Observe, Interpret, Apply — but each may contain multiple paragraphs and lists from the source
+- Preserve the source's section structure in `sections[]` — one JSON section per source heading
 - Never publish answer keys as discussion questions — fixed answers go in QUIZ only
 - Do not include date, hero image, featured, or published status
 
@@ -75,4 +76,4 @@ After Step 1, open `admin/templates/back-to-bible-content-import.json` and paste
 
 Then say:
 
-> Convert the study below into valid JSON matching this template exactly. **Retain 80–90% of the source wording in sections[]** — Observe, Interpret, and Apply should be substantial, not short summaries. Map discussion questions to `discussionQuestions[]`. Always set `includeQuiz` to true with **3–5** quiz questions. For quiz: exactly 4 options per question, **vary `correctIndex`** (not always 0). Fill `tags` from `_allowedTags` only. Do not include date, hero image, featured, or published.
+> Convert the study below into valid JSON matching this template exactly. **Retain 80–90% of the source wording in sections[]** — use the source's own section headings (not a generic Observe/Interpret/Apply split unless the source uses only those). Map discussion questions to `discussionQuestions[]`. Always set `includeQuiz` to true with **3–5** quiz questions. For quiz: exactly 4 options per question, **vary `correctIndex`** (not always 0). Fill `tags` from `_allowedTags` only. Do not include date, hero image, featured, or published.

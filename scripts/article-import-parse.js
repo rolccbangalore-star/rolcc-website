@@ -547,7 +547,7 @@
     collection = normalizeCollectionId(collection);
     var keys = isArticlesCollection(collection)
       ? ["title", "summary", "description", "author", "scripture", "sermonSeries", "blocks", "keyTakeaways", "includeQuiz", "quiz"]
-      : ["title", "description", "passage", "author", "sections", "discussionQuestions", "includeQuiz", "quiz"];
+      : ["title", "description", "passage", "passageReading", "author", "sections", "discussionQuestions", "includeQuiz", "quiz"];
     var picked = {};
     keys.forEach(function (key) {
       if (entry[key] !== undefined && entry[key] !== null && entry[key] !== "") {
@@ -659,6 +659,7 @@
       description: entry.description || "",
       summaryText: entry.summary || "",
       passage: entry.passage || "",
+      passageReadingText: entry.passageReading && entry.passageReading.text ? String(entry.passageReading.text).trim() : "",
       author: entry.author || "",
       blockCount: 0,
       sectionCount: 0,
@@ -714,6 +715,10 @@
       title: "Study title",
       description: "Short description for search previews.",
       passage: "John 3:1-21",
+      passageReading: {
+        reference: "John 3:1-21",
+        text: "1 There was a man of the Pharisees named Nicodemus, a ruler of the Jews.\n2 This man came to Jesus by night and said to Him, \"Rabbi, we know that You are a teacher come from God; for no one can do these signs that You do unless God is with him.\"\n3 Jesus answered and said to him, \"Most assuredly, I say to you, unless one is born again, he cannot see the kingdom of God.\"",
+      },
       author: "ROLCC Fellowship Team",
       sections: [
         { heading: "Read the passage", body: "Notes for this section." },

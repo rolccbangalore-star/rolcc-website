@@ -448,6 +448,50 @@
     return buildPreviewShell(bodyMain, renderQuizScripts(article), title);
   }
 
+  function renderPassageReadingPreview(passageReading, passage) {
+    var reading = passageReading || {};
+    var text = String(reading.text || "").trim();
+    if (!text) return "";
+    var ref = String(reading.reference || passage || "Scripture").trim();
+    var verses = text
+      .split(/\n+/)
+      .map(function (line) {
+        return line.trim();
+      })
+      .filter(Boolean)
+      .map(function (line) {
+        var match = line.match(/^(\d{1,3})\s+(.+)$/);
+        if (match) {
+          return (
+            '<p class="passage-reading__verse"><sup class="passage-reading__verse-num">' +
+            escapeHtml(match[1]) +
+            "</sup> " +
+            escapeHtml(match[2]) +
+            "</p>"
+          );
+        }
+        return '<p class="passage-reading__verse">' + escapeHtml(line) + "</p>";
+      })
+      .join("");
+    return (
+      '<section class="article-section passage-reading-section" aria-label="Scripture reading">' +
+      '<details class="passage-reading">' +
+      '<summary class="passage-reading__summary">' +
+      '<span class="passage-reading__summary-main">' +
+      '<span class="passage-reading__title">Scripture Reading</span>' +
+      '<span class="passage-reading__ref">' +
+      escapeHtml(ref) +
+      "</span></span>" +
+      '<span class="passage-reading__meta">NKJV · Tap to read</span>' +
+      "</summary>" +
+      '<div class="passage-reading__panel">' +
+      '<p class="passage-reading__label">New King James Version</p>' +
+      '<div class="passage-reading__text">' +
+      verses +
+      "</div></div></details></section>"
+    );
+  }
+
   function buildBibleStudyPreview(data) {
     var date = data.date || new Date().toISOString().slice(0, 10);
     var sections = data.sections || [];
@@ -473,6 +517,7 @@
       dateFormatted: formatDate(date),
       thumbnail: data.thumbnail || DEFAULT_THUMBNAIL,
       passage: data.passage || "",
+      passageReading: data.passageReading || null,
       sections: sections,
       discussionQuestions: discussionQuestions,
       activities: data.activities || [],
@@ -538,6 +583,7 @@
       '<img class="mt-8 w-full rounded-2xl border border-slate-200" src="' +
       escapeHtml(article.thumbnail) +
       '" alt="" width="960" height="540" loading="lazy" />' +
+      renderPassageReadingPreview(data.passageReading, data.passage) +
       sectionsHtml +
       questionsHtml +
       activitiesHtml +

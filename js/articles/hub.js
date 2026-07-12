@@ -14,11 +14,12 @@
   const empty = document.querySelector("[data-articles-empty]");
   const meta = document.querySelector("[data-articles-results-meta]");
   const paginationWrap = document.querySelector("[data-articles-pagination-wrap]");
-  if (!chips || !grid) return;
+  if (!grid) return;
 
   const perPage = payload.perPage || 12;
   const featuredSlug = payload.featuredSlug || "";
-  let filter = "all";
+  const itemLabel = payload.itemLabel || "articles";
+  let filter = payload.hubType || "all";
   let sort = "newest";
   let page = 1;
   const sortMenuControl =
@@ -73,9 +74,18 @@
     return `<span class="article-tag article-tag--sm article-tag--muted">${escapeHtml(label)}</span>`;
   }
 
-  function renderMeta(article) {
-    if (!article.readTime) return "";
-    return `${article.readTime} min read`;
+  function renderMeta(article, options) {
+    const parts = [];
+    if (!options || !options.related) {
+      if (article.type === "everyday-faith" && article.author) {
+        parts.push(escapeHtml(article.author));
+      } else if (article.type === "back-to-bible") {
+        const ref = String(article.passage || article.scripture || "").trim();
+        if (ref) parts.push(escapeHtml(ref));
+      }
+    }
+    if (article.readTime) parts.push(`${article.readTime} min read`);
+    return parts.join(" · ");
   }
 
   function cardHtml(article, options) {
@@ -95,7 +105,7 @@
       <div class="articles-card__body">
         <div class="articles-card__tags">${renderTagsHtml(article)}</div>
         <h2 class="articles-card__title">${escapeHtml(article.title)}</h2>
-        <p class="articles-card__meta">${renderMeta(article)}</p>
+        <p class="articles-card__meta">${renderMeta(article, options)}</p>
       </div>
     </a>`;
   }
@@ -203,26 +213,28 @@
     if (empty) empty.classList.toggle("hidden", pageItems.length > 0);
     if (meta) {
       if (!pool.length) {
-        meta.textContent = "No articles match this filter.";
+        meta.textContent = `No ${itemLabel} match this filter.`;
       } else {
         const end = Math.min(start + perPage, pool.length);
-        meta.textContent = `Showing ${start + 1}–${end} of ${pool.length} articles`;
+        meta.textContent = `Showing ${start + 1}–${end} of ${pool.length} ${itemLabel}`;
       }
     }
 
     renderPagination(totalPages);
   }
 
-  chips.addEventListener("click", function (e) {
-    const btn = e.target.closest("[data-articles-filter]");
-    if (!btn) return;
-    filter = btn.getAttribute("data-articles-filter") || "all";
-    page = 1;
-    chips.querySelectorAll(".articles-chip").forEach(function (chip) {
-      chip.classList.toggle("is-active", chip === btn);
+  if (chips) {
+    chips.addEventListener("click", function (e) {
+      const btn = e.target.closest("[data-articles-filter]");
+      if (!btn) return;
+      filter = btn.getAttribute("data-articles-filter") || "all";
+      page = 1;
+      chips.querySelectorAll(".articles-chip").forEach(function (chip) {
+        chip.classList.toggle("is-active", chip === btn);
+      });
+      render();
     });
-    render();
-  });
+  }
 
   if (paginationWrap) {
     paginationWrap.addEventListener("click", function (e) {

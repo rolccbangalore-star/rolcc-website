@@ -80,6 +80,10 @@
   gap: 0;
 }
 
+.articles-toolbar__row--sort-only {
+  justify-content: flex-end;
+}
+
 .articles-sort-wrap,
 .site-sort-menu {
   flex-shrink: 0;
@@ -909,10 +913,189 @@
   border-top: 1px solid #e2e8f0;
 }
 
-.article-section:first-of-type {
-  margin-top: 0;
+.passage-reading-section {
+  margin-top: 2rem;
   padding-top: 0;
   border-top: 0;
+}
+
+.passage-reading {
+  border: 1px solid #dbe3ec;
+  border-radius: 1rem;
+  background: #f8fafc;
+  overflow: hidden;
+}
+
+.passage-reading__summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.1rem;
+  cursor: pointer;
+  list-style: none;
+}
+
+.passage-reading__summary::-webkit-details-marker {
+  display: none;
+}
+
+.passage-reading__summary-main {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.passage-reading__title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.passage-reading__ref {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #0d6e6e;
+}
+
+.passage-reading__meta {
+  flex-shrink: 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #64748b;
+}
+
+.passage-reading__panel {
+  padding: 0 1.1rem 1.1rem;
+  border-top: 1px solid #e2e8f0;
+  background: #fff;
+}
+
+.passage-reading__label {
+  margin: 0.85rem 0 0.5rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #94a3b8;
+}
+
+.passage-reading__text {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1rem;
+  line-height: 1.7;
+  color: #1e293b;
+}
+
+.passage-reading__verse {
+  margin: 0.55rem 0 0;
+}
+
+.passage-reading__verse-num {
+  margin-right: 0.2rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #0d6e6e;
+}
+
+.bible-study-section__heading {
+  font-size: 1.125rem;
+  letter-spacing: 0.01em;
+  line-height: 1.35;
+}
+
+.bible-study-section__body {
+  font-size: 0.975rem;
+}
+
+.bible-study-section__body > *:first-child {
+  margin-top: 0;
+}
+
+.bible-study-section__body p {
+  margin-top: 0.75rem;
+  line-height: 1.65;
+}
+
+.study-subheading {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #334155;
+  letter-spacing: 0.01em;
+}
+
+.study-subheading--major {
+  margin-top: 1.25rem;
+  font-size: 0.95rem;
+  color: #1e293b;
+}
+
+.study-subheading:first-child,
+.study-subheading--major:first-child {
+  margin-top: 0;
+}
+
+.study-label {
+  margin-top: 0.85rem;
+  color: #334155;
+}
+
+.study-quote {
+  margin-top: 0.85rem;
+  margin-bottom: 0.25rem;
+  padding: 0.75rem 0 0.75rem 1rem;
+  border-left: 3px solid #c4b5fd;
+  color: #475569;
+  font-style: italic;
+  line-height: 1.6;
+}
+
+.study-list {
+  margin-top: 0.45rem;
+  margin-bottom: 0.25rem;
+  padding-left: 1.35rem;
+  list-style: disc;
+}
+
+.study-list li {
+  line-height: 1.6;
+}
+
+.study-list li + li {
+  margin-top: 0.4rem;
+}
+
+.study-qa {
+  margin-top: 0.5rem;
+}
+
+.study-qa__question {
+  margin-top: 0.85rem;
+  font-weight: 500;
+  color: #1e293b;
+  line-height: 1.55;
+}
+
+.study-qa__answer {
+  margin-top: 0.35rem;
+  margin-left: 0.25rem;
+  color: #475569;
+  line-height: 1.55;
+}
+
+.study-qa__num {
+  display: inline-block;
+  min-width: 1.35rem;
+  font-weight: 600;
+  color: #7c3aed;
+}
+
+.study-qa__answer strong {
+  color: #334155;
 }
 
 .article-action-dock {

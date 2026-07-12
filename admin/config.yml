@@ -181,6 +181,13 @@ collections:
     format: json
     summary: "{{title}}"
     fields:
+      - label: Scripture reading (NKJV)
+        name: passageReading
+        widget: object
+        hint: "Required. 5–7 verses visitors read before the study. Shown in an accordion above the first section."
+        fields:
+          - { label: Reference, name: reference, widget: string, hint: "e.g. Matthew 17:1-9 — should match Passage below." }
+          - { label: NKJV text, name: text, widget: text, hint: "Paste 5–7 verses in NKJV. Start each verse on a new line with its number (e.g. 1 In the beginning...)." }
       - label: Sections
         name: sections
         widget: list

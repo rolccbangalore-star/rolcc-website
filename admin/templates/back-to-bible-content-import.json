@@ -1,17 +1,21 @@
 {
-  "_instructions": "Convert the draft below into this JSON. REQUIRED: retain 80–90% of the source wording in sections[] — Bible studies must not be over-summarised. Keep section headings, scripture quotes, lists, and teaching points from the source. REQUIRED: always set includeQuiz to true and write 3–5 quiz questions from the study content. Vary correctIndex — do not put every correct answer as option A (index 0). For each quiz question: one correct answer and three plausible wrong answers. Set correctIndex to the 0-based index of the correct option after ordering options. REQUIRED: fill tags from _allowedTags. Do not include date, hero image, featured, or published.",
+  "_instructions": "Convert the draft below into this JSON. REQUIRED: retain 80–90% of the source wording in sections[] — Bible studies must not be over-summarised. REQUIRED: include passageReading with 5–7 verses in NKJV (reference + text, one verse per line numbered). REQUIRED: always set includeQuiz to true and write 3–5 quiz questions from the study content. Vary correctIndex — do not put every correct answer as option A (index 0). REQUIRED: fill tags from _allowedTags. REQUIRED: fill the tags array with 1–2 tags from _allowedTags based on content relevance (see _tagInstructions). Include Bible Study when it fits. Do not include date, hero image, featured, or published.",
   "title": "Study title",
   "description": "Short description for the study page and search previews.",
   "passage": "John 3:1-21",
+  "passageReading": {
+    "reference": "John 3:1-21",
+    "text": "1 There was a man of the Pharisees named Nicodemus, a ruler of the Jews.\n2 This man came to Jesus by night and said to Him, \"Rabbi, we know that You are a teacher come from God; for no one can do these signs that You do unless God is with him.\"\n3 Jesus answered and said to him, \"Most assuredly, I say to you, unless one is born again, he cannot see the kingdom of God.\""
+  },
   "author": "ROLCC Fellowship Team",
   "sections": [
     {
-      "heading": "Read the passage",
-      "body": "Teaching notes or discussion text for this section."
+      "heading": "1. THE WIDOW'S CRY FOR HELP (2 Kings 4:1)",
+      "body": "Teaching notes for this scene or block from the source."
     },
     {
-      "heading": "Discuss together",
-      "body": "Prompts or guidance for the group."
+      "heading": "MAIN THEMES OF THE PASSAGE",
+      "body": "Themes, application, or summary blocks using the source headings."
     }
   ],
   "discussionQuestions": [

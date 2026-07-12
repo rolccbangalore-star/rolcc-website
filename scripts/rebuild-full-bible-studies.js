@@ -1,6 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const { shuffleQuizItem, hashSeed } = require("./article-config");
+const { splitSourceIntoSections, splitStructuredBody, readStudySourceFile } = require("./bible-study-sections");
 
 const DATA_DIR = path.join(__dirname, "..", "data", "articles", "back-to-bible");
 
@@ -716,6 +717,26 @@ God often separates us from distractions before He gives revelation. We need pra
     },
   ],
 };
+
+const sourceSectionFiles = {
+  "2-kings-4-widows-oil": "_source-back-to-bible.txt",
+  "matthew-25-parable-of-the-talents": "_source-parable-of-the-talents.txt",
+  "mark-6-five-loaves-two-fish": "_source-miracle-in-5-bread-2-fish-back-to-bible.txt",
+  "mountains-in-the-bible": "_source-mountains.txt",
+  "armor-fruit-gifts-spirit": "_source-armor.txt",
+};
+
+Object.entries(sourceSectionFiles).forEach(([slug, fileName]) => {
+  if (!studies[slug]) return;
+  const filePath = path.join(__dirname, "..", "data", fileName);
+  if (!fs.existsSync(filePath)) return;
+  studies[slug].sections = splitSourceIntoSections(readStudySourceFile(filePath));
+});
+
+if (studies["matthew-17-mount-of-transfiguration"]) {
+  const combined = studies["matthew-17-mount-of-transfiguration"].sections.map((section) => section.body).join("\n\n");
+  studies["matthew-17-mount-of-transfiguration"].sections = splitStructuredBody(combined);
+}
 
 for (const [slug, data] of Object.entries(studies)) {
   writeStudy(slug, {

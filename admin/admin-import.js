@@ -585,6 +585,10 @@
       changeDraftFieldValue(store, "includeQuiz", mergedData.includeQuiz);
     }
 
+    if (mergedData.passageReading !== undefined) {
+      changeDraftFieldValue(store, "passageReading", toStoreValue(mergedData.passageReading));
+    }
+
     if (mergedData.quiz !== undefined) {
       var quizValue = toStoreValue(mergedData.quiz);
       if (mergedData.includeQuiz) {
@@ -955,6 +959,11 @@
       }
       if (!data.passage || !String(data.passage).trim()) {
         missing.push({ key: "passage", label: "Passage" });
+      }
+      var passageReading = data.passageReading || {};
+      var passageReadingText = String(passageReading.text || "").trim();
+      if (!passageReadingText) {
+        missing.push({ key: "passageReading", label: "Scripture reading (NKJV)" });
       }
       var sections = data.sections || [];
       var hasSectionContent = sections.some(function (section) {
@@ -2000,6 +2009,12 @@
       rows.push(importRow("Passage", includedOrMissing(Boolean(s.passage && String(s.passage).trim()))));
       rows.push(
         importRow(
+          "Scripture reading",
+          includedOrMissing(Boolean(s.passageReadingText && String(s.passageReadingText).trim()))
+        )
+      );
+      rows.push(
+        importRow(
           "Sections",
           s.sectionCount
             ? s.sectionCount + " section" + (s.sectionCount === 1 ? "" : "s") + " included"
@@ -2061,7 +2076,7 @@
 
   function getImportHint(collection) {
     if (isBibleStudyCollection(collection)) {
-      return "Imports title, description, passage, sections, discussion questions, quiz, and tags. Set date, hero image, featured, and published manually in the editor.";
+      return "Imports title, description, passage, scripture reading (NKJV), sections, discussion questions, quiz, and tags. Set date, hero image, featured, and published manually in the editor.";
     }
     return "Imports title, summary, description, article content, quiz, and tags. Set date, hero image, featured, and published manually in the editor.";
   }

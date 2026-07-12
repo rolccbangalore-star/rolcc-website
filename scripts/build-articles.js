@@ -47,6 +47,7 @@ const {
   FAQ_CHIP_TOPICS,
 } = require("./faq-config");
 const { renderSiteSortMenu, ARTICLES_SORT_OPTIONS } = require("./sort-menu-template");
+const { renderBibleStudyBodyHtml, normalizePassageReading, renderPassageReadingAccordion } = require("./bible-study-sections");
 
 function loadApprovedFaqs() {
   const csvPath = path.join(DATA_DIR, "faqs-source-v2.csv");
@@ -162,7 +163,7 @@ function readHubFooterTemplate() {
 
 const ROOT = path.join(__dirname, "..");
 const TODAY = new Date().toISOString().slice(0, 10);
-const ASSET_CACHE_VERSION = "sort-menu-v2";
+const ASSET_CACHE_VERSION = "bible-study-format-v3";
 const DATA_DIR = path.join(ROOT, "data");
 const EF_DIR = path.join(DATA_DIR, "articles", "everyday-faith");
 const BTB_DIR = path.join(DATA_DIR, "articles", "back-to-bible");
@@ -262,6 +263,7 @@ function loadBackToBible() {
       if (data.publish === false) return null;
       const textParts = [
         data.passage,
+        normalizePassageReading(data).text,
         ...(data.sections || []).map((s) => `${s.heading} ${s.body}`),
         ...(data.discussionQuestions || []),
       ];
@@ -280,6 +282,7 @@ function loadBackToBible() {
         thumbnail: data.thumbnail || DEFAULT_THUMBNAIL,
         featured: data.featured === true,
         passage: data.passage || "",
+        passageReading: normalizePassageReading(data),
         sections: data.sections || [],
         discussionQuestions: (data.discussionQuestions || []).map((q) =>
           typeof q === "string" ? q : q.question || ""
@@ -301,8 +304,8 @@ function loadArticles() {
   return articles.sort((a, b) => new Date(b.date) - new Date(a.date));
 }
 
-function articlesHref(pageNum) {
-  return pageNum === 1 ? "/articles" : `/articles/${pageNum}`;
+function hubHref(basePath, pageNum) {
+  return pageNum === 1 ? basePath : `${basePath}/${pageNum}`;
 }
 
 function readHeaderNavTemplate(assetRoot) {
@@ -400,9 +403,18 @@ function readFooterTemplate() {
   return readHubFooterTemplate();
 }
 
-function renderArticleCardMeta(article) {
-  if (!article.readTime) return "";
-  return `${article.readTime} min read`;
+function renderArticleCardMeta(article, options = {}) {
+  const parts = [];
+  if (!options.related) {
+    if (article.type === "everyday-faith" && article.author) {
+      parts.push(escapeHtml(article.author));
+    } else if (article.type === "back-to-bible") {
+      const ref = (article.passage || article.scripture || "").trim();
+      if (ref) parts.push(escapeHtml(ref));
+    }
+  }
+  if (article.readTime) parts.push(`${article.readTime} min read`);
+  return parts.join(" · ");
 }
 
 function renderArticleCard(article, options = {}) {
@@ -423,15 +435,15 @@ function renderArticleCard(article, options = {}) {
         ${renderArticleCardTag(article)}
       </div>
       <h2 class="articles-card__title">${escapeHtml(article.title)}</h2>
-      <p class="articles-card__meta">${renderArticleCardMeta(article)}</p>
+      <p class="articles-card__meta">${renderArticleCardMeta(article, options)}</p>
     </div>
   </a>`;
 }
 
-function renderPagination(pageNum, totalPages) {
+function renderPagination(pageNum, totalPages, basePath) {
   if (totalPages <= 1) return "";
   const mkLink = (num, label, current) => {
-    const href = articlesHref(num);
+    const href = hubHref(basePath, num);
     if (num === current) return `<span class="articles-pagination__page is-current" aria-current="page">${label}</span>`;
     return `<a class="articles-pagination__page" href="${href}">${label}</a>`;
   };
@@ -439,11 +451,11 @@ function renderPagination(pageNum, totalPages) {
   for (let i = 1; i <= totalPages; i++) pages += mkLink(i, String(i), pageNum);
   const prev =
     pageNum > 1
-      ? `<a class="articles-pagination__nav" href="${articlesHref(pageNum - 1)}" rel="prev">Previous</a>`
+      ? `<a class="articles-pagination__nav" href="${hubHref(basePath, pageNum - 1)}" rel="prev">Previous</a>`
       : `<span class="articles-pagination__nav is-disabled">Previous</span>`;
   const next =
     pageNum < totalPages
-      ? `<a class="articles-pagination__nav" href="${articlesHref(pageNum + 1)}" rel="next">Next</a>`
+      ? `<a class="articles-pagination__nav" href="${hubHref(basePath, pageNum + 1)}" rel="next">Next</a>`
       : `<span class="articles-pagination__nav is-disabled">Next</span>`;
   return `<nav class="articles-pagination" aria-label="Articles pages">${prev}<div class="flex flex-wrap gap-1">${pages}</div>${next}</nav>`;
 }
@@ -457,10 +469,13 @@ function renderFilterChips(options = {}) {
   </div>`;
 }
 
-function renderHubToolbar() {
+function renderHubToolbar(options = {}) {
+  const showFilters = options.showFilters !== false;
+  const filters = showFilters ? renderFilterChips({ toolbar: true }) : "";
+  const rowClass = showFilters ? "articles-toolbar__row" : "articles-toolbar__row articles-toolbar__row--sort-only";
   return `<div class="articles-toolbar">
-    <div class="articles-toolbar__row">
-      ${renderFilterChips({ toolbar: true })}
+    <div class="${rowClass}">
+      ${filters}
       ${renderSiteSortMenu({
         dataPrefix: "articles",
         ariaLabel: "Sort articles",
@@ -487,33 +502,45 @@ function hubCardOptions(article, featuredSlug, latestSlug) {
 const BLOG_SECTION_PAGES = {
   "index.html": {
     slug: "index",
-    eyebrow: "Articles & Studies",
+    eyebrow: "Articles",
     title: "Faith for everyday life",
-    description: "Sermon reflections and Bible studies written for real life — featured picks and the latest reads.",
+    description: "Sermon reflections written for real life — featured picks and the latest reads.",
+    articleType: "everyday-faith",
+    hubUrl: "/articles",
+    ctaLabel: "View All Articles",
     limit: 4,
     gridClass: "grid gap-6 sm:grid-cols-2 lg:grid-cols-4",
   },
   "fellowship.html": {
     slug: "fellowship",
-    eyebrow: "Articles & Studies",
+    eyebrow: "Bible Study",
     title: "Grow together in the Word",
-    description: "Bible studies and readings chosen for cell fellowship and walking with Jesus in community.",
+    description: "Bible studies chosen for cell fellowship and walking with Jesus in community.",
+    articleType: "back-to-bible",
+    hubUrl: "/bible-study",
+    ctaLabel: "View All Bible Studies",
     limit: 3,
     gridClass: "grid gap-6 sm:grid-cols-2 lg:grid-cols-3",
   },
   "pmd.html": {
     slug: "pmd",
-    eyebrow: "Articles & Studies",
+    eyebrow: "Articles",
     title: "Calling, work, and ministry",
     description: "Articles on purpose, leadership, and serving with your gifts — matched to PMD themes.",
+    articleType: "everyday-faith",
+    hubUrl: "/articles",
+    ctaLabel: "View All Articles",
     limit: 3,
     gridClass: "grid gap-6 sm:grid-cols-2 lg:grid-cols-3",
   },
   "counselling.html": {
     slug: "counselling",
-    eyebrow: "Articles & Studies",
+    eyebrow: "Articles",
     title: "Hope for hard seasons",
     description: "Reads on stress, grief, and finding rest in God — selected for pastoral care and support.",
+    articleType: "everyday-faith",
+    hubUrl: "/articles",
+    ctaLabel: "View All Articles",
     limit: 3,
     gridClass: "grid gap-6 sm:grid-cols-2 lg:grid-cols-3",
   },
@@ -627,7 +654,10 @@ function pickFeaturedFromPool(pool, pageSlug) {
 function selectBlogShowcaseArticles(articles, pageConfig) {
   const limit = pageConfig.limit;
   const pageSlug = pageConfig.slug;
-  const pool = rankArticlesForPage(articles, pageSlug);
+  const scoped = pageConfig.articleType
+    ? articles.filter((article) => article.type === pageConfig.articleType)
+    : articles;
+  const pool = rankArticlesForPage(scoped, pageSlug);
   if (!pool.length) return [];
 
   const featuredArticle = pickFeaturedFromPool(pool, pageSlug);
@@ -676,7 +706,7 @@ function renderBlogSection(articles, pageConfig) {
             <div class="${pageConfig.gridClass}">${cardHtml}</div>
           </div>
           <div class="mt-8 scroll-reveal scroll-reveal--delay-2">
-            <a href="/articles" class="btn-outline inline-flex items-center rounded-full border border-slate-300 px-6 py-2.5 text-sm font-semibold text-slate-800 hover:border-accent hover:text-accentSoft">View All Articles</a>
+            <a href="${pageConfig.hubUrl || "/articles"}" class="btn-outline inline-flex items-center rounded-full border border-slate-300 px-6 py-2.5 text-sm font-semibold text-slate-800 hover:border-accent hover:text-accentSoft">${escapeHtml(pageConfig.ctaLabel || "View All Articles")}</a>
           </div>
         </div>
       </section>
@@ -780,20 +810,55 @@ ${footer}
 </html>`;
 }
 
-function buildHubPage(articles, faqs) {
+const HUB_PAGE_CONFIGS = [
+  {
+    fileName: "articles.html",
+    basePath: "/articles",
+    articleType: "everyday-faith",
+    breadcrumbName: "Articles",
+    collectionName: "Articles",
+    eyebrow: "Articles",
+    h1: "Sermon reflections for everyday life",
+    heroDescription:
+      "Read sermon summaries and practical faith articles from River of Life Christian Church in Bangalore.",
+    title: "Articles & Sermon Summaries | River of Life Christian Church, Bangalore",
+    description:
+      "Everyday Faith sermon summaries and practical reads from River of Life Christian Church in Bangalore.",
+    ariaLabel: "Articles",
+    itemLabel: "articles",
+    showFilters: false,
+  },
+  {
+    fileName: "bible-study.html",
+    basePath: "/bible-study",
+    articleType: "back-to-bible",
+    breadcrumbName: "Bible Study",
+    collectionName: "Bible Study",
+    eyebrow: "Bible Study",
+    h1: "Back to the Bible for cell fellowship",
+    heroDescription:
+      "Guided Bible study outlines with discussion questions for small groups and personal study.",
+    title: "Bible Study Guides | River of Life Christian Church, Bangalore",
+    description:
+      "Back to the Bible cell fellowship studies from River of Life Christian Church in Bangalore.",
+    ariaLabel: "Bible studies",
+    itemLabel: "studies",
+    showFilters: false,
+  },
+];
+
+function buildHubPage(allArticles, faqs, hubConfig) {
+  const articles = allArticles.filter((article) => article.type === hubConfig.articleType);
   const featuredArticle = pickFeaturedArticle(articles);
   const featuredSlug = featuredArticle ? `${featuredArticle.type}/${featuredArticle.slug}` : "";
   const latestSlug = hubLatestSlug(articles, featuredSlug);
-  const canonical = `${SITE_ORIGIN}/articles`;
-  const title = "Articles & Bible Studies | River of Life Christian Church, Bangalore";
-  const description =
-    "Everyday Faith sermon summaries and Back to the Bible cell fellowship studies from River of Life Christian Church in Bangalore.";
+  const canonical = `${SITE_ORIGIN}${hubConfig.basePath}`;
 
   const hubFaqs = selectRelatedFaqs(faqs, "articles");
   const hubSchemaScripts = [
-    renderHubCollectionSchema(articles, canonical),
+    renderHubCollectionSchema(articles, canonical, hubConfig.collectionName, hubConfig.description),
     hubFaqs.length ? renderFaqPageSchema(hubFaqs, canonical) : "",
-    renderHubBreadcrumbSchema(),
+    renderHubBreadcrumbSchema(hubConfig),
   ]
     .filter(Boolean)
     .map((json) => `<script type="application/ld+json">${json}</script>`)
@@ -813,20 +878,20 @@ function buildHubPage(articles, faqs) {
       <div class="articles-hub-top">
       <section class="articles-hero contact-hero relative">
         <div class="relative z-10 mx-auto max-w-6xl px-4 pt-6 pb-12 sm:px-6 sm:pt-24 sm:pb-16 md:pt-28 md:pb-20 lg:px-8 lg:pt-32 lg:pb-24">
-          <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-accent">Articles &amp; Studies</p>
-          <h1 class="mt-3 text-balance text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl md:text-4xl">Faith for everyday life and deeper Bible study</h1>
-          <p class="mt-5 max-w-2xl text-sm text-slate-600 sm:text-base leading-relaxed">Read sermon reflections and Bible study guides written for everyday life and cell fellowship.</p>
+          <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-accent">${escapeHtml(hubConfig.eyebrow)}</p>
+          <h1 class="mt-3 text-balance text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl md:text-4xl">${escapeHtml(hubConfig.h1)}</h1>
+          <p class="mt-5 max-w-2xl text-sm text-slate-600 sm:text-base leading-relaxed">${escapeHtml(hubConfig.heroDescription)}</p>
         </div>
       </section>
 
-      <section class="articles-list-section border-b border-slate-200" aria-label="Articles">
+      <section class="articles-list-section border-b border-slate-200" aria-label="${escapeHtml(hubConfig.ariaLabel)}">
         <div class="mx-auto max-w-6xl px-4 pb-10 sm:px-6 md:pb-14 lg:px-8">
-          ${renderHubToolbar()}
+          ${renderHubToolbar({ showFilters: hubConfig.showFilters })}
           <p class="articles-results-meta hidden sm:block mt-2 text-sm text-slate-500" data-articles-results-meta></p>
           <div class="mt-6" data-articles-grid>
             <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">${initialCards.join("")}</div>
           </div>
-          <p class="articles-empty hidden mt-8 text-center text-sm text-slate-500" data-articles-empty>No articles match this filter.</p>
+          <p class="articles-empty hidden mt-8 text-center text-sm text-slate-500" data-articles-empty>No ${escapeHtml(hubConfig.itemLabel)} match this filter.</p>
           <div class="mt-10" data-articles-pagination-wrap hidden></div>
         </div>
       </section>
@@ -847,6 +912,8 @@ function buildHubPage(articles, faqs) {
     category: a.category,
     tags: normalizeArticleTags(a),
     author: a.author,
+    passage: a.passage || "",
+    scripture: a.scripture || "",
     date: a.date,
     dateFormatted: a.dateFormatted,
     readTime: a.readTime,
@@ -859,16 +926,19 @@ function buildHubPage(articles, faqs) {
     perPage: ARTICLES_PER_PAGE,
     featuredSlug,
     latestSlug,
+    hubType: hubConfig.articleType,
+    basePath: hubConfig.basePath,
+    itemLabel: hubConfig.itemLabel,
   })}</script>
     <script src="/js/site-sort-menu.js?v=${ASSET_CACHE_VERSION}"></script>
     <script src="/js/articles/hub.js?v=${ASSET_CACHE_VERSION}"></script>
     <script src="/js/faq/accordion.js"></script>`;
 
   return {
-    fileName: "articles.html",
+    fileName: hubConfig.fileName,
     html: buildPageShell({
-      title,
-      description,
+      title: hubConfig.title,
+      description: hubConfig.description,
       canonical,
       headExtra,
       bodyMain,
@@ -965,14 +1035,13 @@ function renderFaqPageSchema(faqItems, pageUrl) {
   );
 }
 
-function renderHubCollectionSchema(articles, canonical) {
+function renderHubCollectionSchema(articles, canonical, name, description) {
   return JSON.stringify(
     {
       "@context": "https://schema.org",
       "@type": "CollectionPage",
-      name: "Articles & Bible Studies",
-      description:
-        "Everyday Faith sermon summaries and Back to the Bible cell fellowship studies from River of Life Christian Church in Bangalore.",
+      name,
+      description,
       url: canonical,
       isPartOf: { "@type": "WebSite", name: "River of Life Christian Church", url: SITE_ORIGIN },
       mainEntity: {
@@ -990,14 +1059,14 @@ function renderHubCollectionSchema(articles, canonical) {
   );
 }
 
-function renderHubBreadcrumbSchema() {
+function renderHubBreadcrumbSchema(hubConfig) {
   return JSON.stringify(
     {
       "@context": "https://schema.org",
       "@type": "BreadcrumbList",
       itemListElement: [
         { "@type": "ListItem", position: 1, name: "Home", item: `${SITE_ORIGIN}/` },
-        { "@type": "ListItem", position: 2, name: "Articles", item: `${SITE_ORIGIN}/articles` },
+        { "@type": "ListItem", position: 2, name: hubConfig.breadcrumbName, item: `${SITE_ORIGIN}${hubConfig.basePath}` },
       ],
     },
     null,
@@ -1085,7 +1154,7 @@ function renderRelated(articles, current) {
   if (!related.length) return "";
   return `<section class="mt-14 border-t border-slate-200 pt-10" aria-labelledby="related-articles-heading">
     <h2 id="related-articles-heading" class="text-xl font-semibold text-slate-900">More to read</h2>
-    <div class="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">${related.map(renderArticleCard).join("")}</div>
+    <div class="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">${related.map((article) => renderArticleCard(article, { related: true })).join("")}</div>
   </section>`;
 }
 
@@ -1139,7 +1208,7 @@ function buildEverydayFaithPage(article, allArticles) {
         ${renderKeyTakeaways(article.keyTakeaways)}
         ${renderQuizSection(article)}
         ${renderRelated(allArticles, article)}
-        <p class="mt-10"><a href="/articles" class="text-sm font-medium text-accent hover:underline">← Back to all articles</a></p>
+        <p class="mt-10"><a href="/articles" class="text-sm font-medium text-accent hover:underline">← Back to articles</a></p>
       </article>
       </div>
       <div class="serve-unveil-spacer min-h-screen" aria-hidden="true"></div>`;
@@ -1167,11 +1236,13 @@ function buildBackToBiblePage(article, allArticles) {
     <link rel="canonical" href="${canonical}" />
     <script type="application/ld+json">${articleSchema(article, canonical)}</script>`;
 
+  const passageReadingHtml = renderPassageReadingAccordion(article.passageReading);
+
   const sectionsHtml = (article.sections || [])
     .map(
-      (s) => `<section class="article-section">
-      <h2 class="text-lg font-semibold text-slate-900">${escapeHtml(s.heading)}</h2>
-      <p class="mt-3 text-slate-700 leading-relaxed">${escapeHtml(s.body)}</p>
+      (s) => `<section class="article-section bible-study-section">
+      <h2 class="bible-study-section__heading text-lg font-semibold text-slate-900">${escapeHtml(s.heading)}</h2>
+      <div class="bible-study-section__body mt-3 text-slate-700 leading-relaxed">${renderBibleStudyBodyHtml(s.body)}</div>
     </section>`
     )
     .join("");
@@ -1207,12 +1278,13 @@ function buildBackToBiblePage(article, allArticles) {
         <p class="mt-4 text-sm text-slate-500">${escapeHtml(article.dateFormatted)} · ${article.readTime} min read</p>
         ${article.passage ? `<p class="mt-2 text-sm font-medium text-slate-700">Passage: ${escapeHtml(article.passage)}</p>` : ""}
         <img class="mt-8 w-full rounded-2xl border border-slate-200" src="${escapeHtml(article.thumbnail)}" alt="${escapeHtml(articleImageAlt(article))}" width="960" height="540" loading="lazy" />
+        ${passageReadingHtml}
         ${sectionsHtml}
         ${questionsHtml}
         ${activitiesHtml}
         ${quizHtml}
         ${renderRelated(allArticles, article)}
-        <p class="mt-10"><a href="/articles" class="text-sm font-medium text-accent hover:underline">← Back to all articles</a></p>
+        <p class="mt-10"><a href="/bible-study" class="text-sm font-medium text-accent hover:underline">← Back to Bible studies</a></p>
       </article>
       </div>
       <div class="serve-unveil-spacer min-h-screen" aria-hidden="true"></div>`;
@@ -1250,6 +1322,7 @@ const FOOTER_RESOURCES_COLUMN = `              <div>
                 <ul class="mt-4 space-y-2.5 text-sm text-slate-300">
                   <li><a href="/faq" class="footer-link hover:text-white">FAQ</a></li>
                   <li><a href="/articles" class="footer-link hover:text-white">Articles</a></li>
+                  <li><a href="/bible-study" class="footer-link hover:text-white">Bible Study</a></li>
                   <li><a href="/gallery" class="footer-link hover:text-white">Gallery</a></li>
                   <li><a href="/sermons" class="footer-link hover:text-white">Latest Sermon</a></li>
                 </ul>
@@ -1372,6 +1445,14 @@ function syncSiteNav() {
       changed = true;
     }
 
+    if (html.includes('href="/articles" class="footer-link hover:text-white">Articles</a>') && !html.includes('href="/bible-study"')) {
+      html = html.replace(
+        /<li><a href="\/articles" class="footer-link hover:text-white">Articles<\/a><\/li>/,
+        `<li><a href="/articles" class="footer-link hover:text-white">Articles</a></li>\n                  <li><a href="/bible-study" class="footer-link hover:text-white">Bible Study</a></li>`
+      );
+      changed = true;
+    }
+
     const footerArticlesNavPattern =
       /(<li><a href="\/about" class="footer-link hover:text-white">About Us<\/a><\/li>\s*)<li><a href="\/articles" class="footer-link hover:text-white">Articles<\/a><\/li>\s*(<li><a href="\/contact" class="footer-link hover:text-white">Contact<\/a><\/li>)/;
     if (footerArticlesNavPattern.test(html)) {
@@ -1406,12 +1487,14 @@ function main() {
     JSON.stringify({ articles: articles.map(({ bodyHtml, blocks, ...rest }) => rest), total: articles.length, perPage: ARTICLES_PER_PAGE }, null, 0)
   );
 
-  const { fileName, html } = buildHubPage(articles, faqs);
-  fs.writeFileSync(path.join(ROOT, fileName), html, "utf8");
-  console.log(`Wrote ${fileName}`);
+  HUB_PAGE_CONFIGS.forEach((hubConfig) => {
+    const { fileName, html } = buildHubPage(articles, faqs, hubConfig);
+    fs.writeFileSync(path.join(ROOT, fileName), html, "utf8");
+    console.log(`Wrote ${fileName}`);
+  });
 
   fs.readdirSync(ROOT)
-    .filter((name) => /^articles-\d+\.html$/.test(name))
+    .filter((name) => /^(articles|bible-study)-\d+\.html$/.test(name))
     .forEach((name) => {
       fs.unlinkSync(path.join(ROOT, name));
       console.log(`Removed stale ${name}`);

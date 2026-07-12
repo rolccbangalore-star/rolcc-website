@@ -1,19 +1,16 @@
 {
-  "author": "ROLCC Fellowship Team",
-  "category": "Bible Study",
-  "thumbnail": "/images/og-image.jpg",
-  "featured": false,
-  "includeQuiz": true,
-  "publish": true,
-  "activities": [],
-  "title": "Mark 6:35-44 — Five Loaves and Two Fish",
-  "description": "A cell fellowship study on Jesus feeding the five thousand — how God sees provision where we see shortage.",
-  "passage": "Mark 6:35-44",
-  "tags": [
-    "Bible Study",
-    "Faith"
+  "discussionQuestions": [
+    "Where do you tend to see shortage before you see God's provision?",
+    "What has God already placed in your hands that you may be overlooking?",
+    "What would surrender look like for you this week?",
+    "Why do you think the disciples' hearts were hardened even after the miracle of the loaves?"
   ],
-  "date": "2026-07-08",
+  "scheduleDate": "",
+  "scheduleWindow": "",
+  "author": "ROLCC Fellowship Team",
+  "thumbnail": "https://upload.wikimedia.org/wikipedia/commons/e/e4/Gospel_of_John_Chapter_6-8_%28Bible_Illustrations_by_Sweet_Media%29.jpg",
+  "activities": [],
+  "featured": false,
   "sections": [
     {
       "heading": "Overview",
@@ -68,12 +65,9 @@
       "body": "Mark 6:52\n\"For they had not understood about the loaves, because their heart was hardened.\""
     }
   ],
-  "discussionQuestions": [
-    "Where do you tend to see shortage before you see God's provision?",
-    "What has God already placed in your hands that you may be overlooking?",
-    "What would surrender look like for you this week?",
-    "Why do you think the disciples' hearts were hardened even after the miracle of the loaves?"
-  ],
+  "passage": "Mark 6:35-44",
+  "date": "2026-07-08",
+  "publish": true,
   "quiz": [
     {
       "question": "What did the disciples want to do when evening came?",
@@ -131,6 +125,18 @@
       "explanation": "Their hearts were hardened to the lesson of the miracle."
     }
   ],
+  "title": "Mark 6:35-44 — Five Loaves and Two Fish",
+  "tags": [
+    {
+      "tag": "Bible Study"
+    },
+    {
+      "tag": "Faith"
+    }
+  ],
+  "description": "A cell fellowship study on Jesus feeding the five thousand — how God sees provision where we see shortage.",
+  "includeQuiz": true,
+  "category": "Bible Study",
   "passageReading": {
     "reference": "Mark 6:35-41",
     "text": "35 When the day was now far spent, His disciples came to Him and said, \"This is a deserted place, and already the hour is late.\n36 Send them away, that they may go into the surrounding country and villages and buy themselves bread; for they have nothing to eat.\"\n37 But He answered and said to them, \"You give them something to eat.\" And they said to Him, \"Shall we go and buy two hundred denarii worth of bread and give them something to eat?\"\n38 But He said to them, \"How many loaves do you have? Go and see.\" And when they found out they said, \"Five, and two fish.\"\n39 Then He commanded them to make them all sit down in groups on the green grass.\n40 So they sat down in ranks, in hundreds and in fifties.\n41 And when He had taken the five loaves and the two fish, He looked up to heaven, blessed and broke the loaves, and gave them to His disciples to set before them; and the two fish He divided among them all."

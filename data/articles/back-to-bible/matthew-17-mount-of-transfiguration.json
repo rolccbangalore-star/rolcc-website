@@ -1,24 +1,22 @@
 {
+  "discussionQuestions": [
+    "If Jesus invited you to spend one whole day alone with Him, what would you ask Him?",
+    "What part of this story impacted you most?",
+    "What voice distracts you most from hearing Jesus?",
+    "What mountain experience has strengthened your faith?",
+    "What valley are you currently facing, and what is one thing Jesus is asking you to obey this week?"
+  ],
+  "scheduleDate": "",
+  "scheduleWindow": "",
   "author": "ROLCC Fellowship Team",
-  "category": "Bible Study",
-  "thumbnail": "/images/og-image.jpg",
-  "featured": false,
-  "includeQuiz": true,
-  "publish": true,
+  "thumbnail": "https://live.staticflickr.com/65535/49935268742_d56dfaab15_b.jpg",
   "activities": [
     {
       "title": "Closing prayer",
       "body": "Lord Jesus, open our eyes to see You more clearly, open our ears to hear You more faithfully, and give us hearts that will follow You completely. Amen."
     }
   ],
-  "title": "Matthew 17:1-9 — The Mount of Transfiguration",
-  "description": "A cell fellowship study on seeing Jesus clearly, hearing Him fully, and following Him faithfully.",
-  "passage": "Matthew 17:1-9",
-  "tags": [
-    "Bible Study",
-    "Discipleship"
-  ],
-  "date": "2026-06-17",
+  "featured": false,
   "sections": [
     {
       "heading": "THE MOUNT OF TRANSFIGURATION",
@@ -73,13 +71,9 @@
       "body": "The Mount of Transfiguration was not about changing Jesus. It was about changing the disciples' understanding of Jesus.\n\nGod often separates us from distractions before He gives revelation. We need prayer, Bible reading, worship, and quiet time — not only on special days, but as a way of life. Worship Jesus. Trust Him. Put Him first. Obey His Word. Walk with Him daily, and face your challenges with faith."
     }
   ],
-  "discussionQuestions": [
-    "If Jesus invited you to spend one whole day alone with Him, what would you ask Him?",
-    "What part of this story impacted you most?",
-    "What voice distracts you most from hearing Jesus?",
-    "What mountain experience has strengthened your faith?",
-    "What valley are you currently facing, and what is one thing Jesus is asking you to obey this week?"
-  ],
+  "passage": "Matthew 17:1-9",
+  "date": "2026-06-17",
+  "publish": true,
   "quiz": [
     {
       "question": "Who appeared with Jesus on the mountain?",
@@ -137,6 +131,18 @@
       "explanation": "The event prepared them to understand Jesus' glory."
     }
   ],
+  "title": "Matthew 17:1-9 — The Mount of Transfiguration",
+  "tags": [
+    {
+      "tag": "Bible Study"
+    },
+    {
+      "tag": "Discipleship"
+    }
+  ],
+  "description": "A cell fellowship study on seeing Jesus clearly, hearing Him fully, and following Him faithfully.",
+  "includeQuiz": true,
+  "category": "Bible Study",
   "passageReading": {
     "reference": "Matthew 17:1-9",
     "text": "1 Now after six days Jesus took Peter, James, and John his brother, led them up on a high mountain by themselves;\n2 and He was transfigured before them. His face shone like the sun, and His clothes became as white as the light.\n3 And behold, Moses and Elijah appeared to them, talking with Him.\n4 Then Peter answered and said to Jesus, \"Lord, it is good for us to be here; if You wish, let us make here three tabernacles: one for You, one for Moses, and one for Elijah.\"\n5 While he was still speaking, behold, a bright cloud overshadowed them; and suddenly a voice came out of the cloud, saying, \"This is My beloved Son, in whom I am well pleased. Hear Him!\"\n6 And when the disciples heard it, they fell on their faces and were greatly afraid.\n7 But Jesus came and touched them and said, \"Arise, and do not be afraid.\"\n8 When they had lifted up their eyes, they saw no one but Jesus only.\n9 Now as they came down from the mountain, Jesus commanded them, saying, \"Tell the vision to no one until the Son of Man is risen from the dead.\""

@@ -482,6 +482,7 @@ function renderHubToolbar(options = {}) {
         options: ARTICLES_SORT_OPTIONS,
         defaultValue: "newest",
       })}
+      <p class="articles-results-meta hidden sm:block text-sm text-slate-500" data-articles-results-meta></p>
     </div>
   </div>`;
 }
@@ -887,7 +888,6 @@ function buildHubPage(allArticles, faqs, hubConfig) {
       <section class="articles-list-section border-b border-slate-200" aria-label="${escapeHtml(hubConfig.ariaLabel)}">
         <div class="mx-auto max-w-6xl px-4 pb-10 sm:px-6 md:pb-14 lg:px-8">
           ${renderHubToolbar({ showFilters: hubConfig.showFilters })}
-          <p class="articles-results-meta hidden sm:block mt-2 text-sm text-slate-500" data-articles-results-meta></p>
           <div class="mt-6" data-articles-grid>
             <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">${initialCards.join("")}</div>
           </div>

@@ -81,7 +81,13 @@
 }
 
 .articles-toolbar__row--sort-only {
-  justify-content: flex-end;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.articles-toolbar__row--sort-only .articles-results-meta {
+  margin-left: auto;
+  text-align: right;
 }
 
 .articles-sort-wrap,

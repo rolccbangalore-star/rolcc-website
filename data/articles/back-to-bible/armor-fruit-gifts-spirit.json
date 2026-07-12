@@ -1,19 +1,16 @@
 {
-  "author": "ROLCC Fellowship Team",
-  "category": "Bible Study",
-  "thumbnail": "/images/og-image.jpg",
-  "featured": false,
-  "includeQuiz": true,
-  "publish": true,
-  "activities": [],
-  "title": "Armor of God, Fruit of the Spirit, Gifts of the Spirit",
-  "description": "A Back to the Bible study comparing three essential aspects of the Christian life — standing firm, growing in character, and serving others.",
-  "passage": "Ephesians 6:10-18; Galatians 5:22-23; 1 Corinthians 12:7-11",
-  "tags": [
-    "Bible Study",
-    "Holy Spirit"
+  "discussionQuestions": [
+    "Which of the three areas — armor, fruit, or gifts — do you focus on most?",
+    "Which area do you tend to neglect?",
+    "Can someone have spiritual gifts without spiritual maturity?",
+    "How do the armor, fruit, and gifts work together in the life of a believer?"
   ],
-  "date": "2026-07-05",
+  "scheduleDate": "",
+  "scheduleWindow": "",
+  "author": "ROLCC Fellowship Team",
+  "thumbnail": "https://i0.pickpik.com/photos/415/224/999/knight-armor-helmet-weapons-preview.jpg",
+  "activities": [],
+  "featured": false,
   "sections": [
     {
       "heading": "Overview",
@@ -48,12 +45,9 @@
       "body": "1. Which of the three areas do you focus on most?\n2. Which area do you tend to neglect?\n3. Can someone have spiritual gifts without spiritual maturity?\n4. How do the Armor, Fruit, and Gifts work together in the life of a believer?\nClosing Thought\n\nThe Armor of God helps us stand.\nThe Fruit of the Spirit helps us grow.\nThe Gifts of the Spirit help us serve."
     }
   ],
-  "discussionQuestions": [
-    "Which of the three areas — armor, fruit, or gifts — do you focus on most?",
-    "Which area do you tend to neglect?",
-    "Can someone have spiritual gifts without spiritual maturity?",
-    "How do the armor, fruit, and gifts work together in the life of a believer?"
-  ],
+  "passage": "Ephesians 6:10-18; Galatians 5:22-23; 1 Corinthians 12:7-11",
+  "date": "2026-07-05",
+  "publish": true,
   "quiz": [
     {
       "question": "What is the main purpose of the armor of God?",
@@ -111,6 +105,18 @@
       "explanation": "God desires believers who are protected, transformed, and empowered."
     }
   ],
+  "title": "Armor of God, Fruit of the Spirit, Gifts of the Spirit",
+  "tags": [
+    {
+      "tag": "Bible Study"
+    },
+    {
+      "tag": "Holy Spirit"
+    }
+  ],
+  "description": "A Back to the Bible study comparing three essential aspects of the Christian life — standing firm, growing in character, and serving others.",
+  "includeQuiz": true,
+  "category": "Bible Study",
   "passageReading": {
     "reference": "Ephesians 6:10-17",
     "text": "10 Finally, my brethren, be strong in the Lord and in the power of His might.\n11 Put on the whole armor of God, that you may be able to stand against the wiles of the devil.\n12 For we do not wrestle against flesh and blood, but against principalities, against powers, against the rulers of the darkness of this age, against spiritual hosts of wickedness in the heavenly places.\n13 Therefore take up the whole armor of God, that you may be able to withstand in the evil day, and having done all, to stand.\n14 Stand therefore, having girded your waist with truth, having put on the breastplate of righteousness,\n15 and having shod your feet with the preparation of the gospel of peace;\n16 above all, taking the shield of faith with which you will be able to quench all the fiery darts of the wicked one.\n17 And take the helmet of salvation, and the sword of the Spirit, which is the word of God;"

@@ -213,6 +213,57 @@ function normalizeQuizOptions(options) {
     });
 }
 
+function hashSeed(str) {
+  let h = 2166136261;
+  const s = String(str || "");
+  for (let i = 0; i < s.length; i++) {
+    h ^= s.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return h >>> 0;
+}
+
+function mulberry32(seed) {
+  return function () {
+    seed |= 0;
+    seed = (seed + 0x6d2b79f5) | 0;
+    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+function shuffleQuizItem(item, seed) {
+  const options = normalizeQuizOptions(item?.options);
+  if (!options.length) {
+    return {
+      question: item?.question || "",
+      options,
+      correctIndex: 0,
+      explanation: item?.explanation || "",
+    };
+  }
+  let correctIndex = Number(item?.correctIndex) || 0;
+  if (correctIndex >= options.length) correctIndex = 0;
+  const correctAnswer = options[correctIndex];
+  const rand = typeof seed === "number" ? mulberry32(seed) : Math.random;
+  const shuffled = options.slice();
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(rand() * (i + 1));
+    const tmp = shuffled[i];
+    shuffled[i] = shuffled[j];
+    shuffled[j] = tmp;
+  }
+  let nextCorrectIndex = shuffled.indexOf(correctAnswer);
+  if (nextCorrectIndex < 0) nextCorrectIndex = 0;
+  return {
+    question: item?.question || "",
+    options: shuffled,
+    correctIndex: nextCorrectIndex,
+    explanation: item?.explanation || "",
+  };
+}
+
 function normalizeQuizItem(item) {
   const options = normalizeQuizOptions(item?.options);
   let correctIndex = Number(item?.correctIndex) || 0;
@@ -544,6 +595,8 @@ module.exports = {
   normalizeArticleTags,
   normalizeQuizOptions,
   normalizeQuizItem,
+  shuffleQuizItem,
+  hashSeed,
   renderArticleTagsHtml,
   renderArticleCardTag,
   primaryArticleTag,

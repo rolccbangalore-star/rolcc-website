@@ -1,67 +1,95 @@
 {
+  "author": "ROLCC Fellowship Team",
+  "category": "Bible Study",
+  "thumbnail": "/images/og-image.jpg",
+  "featured": false,
+  "includeQuiz": true,
+  "publish": true,
+  "activities": [],
   "title": "Matthew 25:14-30 — The Parable of the Talents",
   "description": "A Back to the Bible study on faithfulness with what God has given — gifts, time, opportunities, and calling.",
   "passage": "Matthew 25:14-30",
-  "author": "ROLCC Fellowship Team",
-  "category": "Bible Study",
-  "tags": ["Bible Study", "Stewardship"],
+  "tags": [
+    "Bible Study",
+    "Stewardship"
+  ],
   "date": "2026-07-01",
-  "thumbnail": "/images/og-image.jpg",
-  "featured": false,
   "sections": [
     {
       "heading": "Observe",
-      "body": "A master going on a journey entrusted his servants with talents — five to one, two to another, and one to a third, each according to his ability. The first two servants traded faithfully and doubled what they received. The third servant dug a hole and hid his talent. When the master returned, the faithful servants were praised: \"Well done, good and faithful servant.\" The unfaithful servant acted from fear, blamed the master, and returned only what he had been given. The master called him wicked and lazy, took the talent away, and gave it to the one who had ten."
+      "body": "PARABLE OF THE TALENTS\n“FAITHFULNESS WITH WHAT GOD HAS GIVEN”\n Reference: Gospel of Matthew 25:14–30\n THE PARABLE OF THE TALENTS\n Matthew 25:14–15\n“For the kingdom of heaven is like a man traveling to a far country, who called his own\nservants and delivered his goods to them.\nAnd to one he gave five talents, to another two, and to another one, to each according to his\nown ability; and immediately he went on a journey.”\n MAIN IDEA\n● A master gave talents (money/resources) to his servants\n● Each servant received different amounts\n● The master expected faithfulness and growth\n● The servants were accountable when the master returned\n God gives every person gifts, abilities, opportunities, and responsibilities.\n SERVANT 1: FIVE TALENTS\n Matthew 25:16\n“Then he who had received the five talents went and traded with them, and made another five\ntalents.”\n The servant used what was given\n The servant worked faithfully\n The servant doubled the talents\n Teaching:\n● Faithfulness produces increase\n● God blesses diligence\n\n God expects us to use what He gives us.\n SERVANT 2: TWO TALENTS\n Matthew 25:17\n“And likewise he who had received two gained two more also.”\n The second servant also worked faithfully\n He received less than the first servant\n But he was equally faithful\n Teaching:\n● God does not compare amounts\n● God looks for faithfulness\n Success in God’s kingdom is measured by faithfulness, not comparison.\n SERVANT 3: ONE TALENT\n Matthew 25:18\n“But he who had received one went and dug in the ground, and hid his lord’s money.”\n The servant hid the talent\n The servant did nothing with it\n Fear stopped him from acting\n Fear can bury God-given potential.\n THE MASTER RETURNS\n Matthew 25:19\n“After a long time the lord of those servants came and settled accounts with them.”\n The master returned\n The servants were accountable\n\n Teaching:\n● One day we will give account to God\n● God examines our stewardship\n We are responsible for what God entrusted to us."
     },
     {
       "heading": "Interpret",
-      "body": "God gives every person gifts, abilities, opportunities, and responsibilities — and He expects faithfulness, not comparison. The servant with two talents received the same praise as the one with five because God measures faithfulness, not amount. Fear buried the third servant's potential. One day we will give account to God for how we stewarded what He entrusted to us. Faithfulness in little leads to greater responsibility; neglect brings loss. To everyone who has, more will be given — but gifts unused can become opportunities lost."
+      "body": "REWARD FOR FAITHFULNESS\n Matthew 25:21\n“His lord said to him, ‘Well done, good and faithful servant; you were faithful over a few\nthings, I will make you ruler over many things. Enter into the joy of your lord.’”\n Matthew 25:23\n“His lord said to him, ‘Well done, good and faithful servant; you have been faithful over a\nfew things, I will make you ruler over many things. Enter into the joy of your lord.’”\n The faithful servants were praised\n The faithful servants received greater responsibility\n The faithful servants entered joy\n Main Teaching:\n● Faithfulness in little leads to greater responsibility\n● God honors faithful service\n Small obedience matters to God.\n THE UNFAITHFUL SERVANT\n Matthew 25:24–25\n“Then he who had received the one talent came and said, ‘Lord, I knew you to be a hard\nman…\nAnd I was afraid, and went and hid your talent in the ground. Look, there you have what is\nyours.’”\n The servant acted out of fear\n The servant blamed the master\n The servant wasted opportunity\n Fear and laziness can prevent spiritual growth.\n\n THE MASTER’S RESPONSE\n Matthew 25:26–27\n“But his lord answered and said to him, ‘You wicked and lazy servant… You ought to have\ndeposited my money with the bankers, and at my coming I would have received back my\nown with interest.’”\n The master rebuked laziness\n The servant lost what he had\n Main Teaching:\n● God expects growth from what He gives\n● Neglect brings loss\n Gifts unused can become opportunities lost.\n TALENT TAKEN AWAY\n Matthew 25:28–29\n“So take the talent from him, and give it to him who has ten talents.\nFor to everyone who has, more will be given, and he will have abundance…”\n The faithful servant received more\n The unfaithful servant lost his talent\n Faithfulness increases capacity."
     },
     {
       "heading": "Apply",
-      "body": "Sometimes we want reward without responsibility, harvest without work, or promotion without faithfulness. God calls us to use our gifts, time, money, talents, opportunities, and spiritual calling for His glory. Fear and laziness can prevent spiritual growth. Ask yourself honestly: what has God given you, and are you using it or hiding it?"
+      "body": "PROBLEM\nSometimes we want:\n● Reward without responsibility\n● Harvest without work\n● Promotion without faithfulness\n APPLICATION\n\nWe must use our:\n● Gifts\n● Time\n● Money\n● Talents\n● Opportunities\n● Spiritual calling\n Everything God gives should be used for His glory.\n SUMMARY\n● God gives differently to each person\n● God expects faithfulness\n● Fear can bury purpose\n● Faithful servants are rewarded\n● Unused gifts can be lost\n QUICK CLOSING QUESTIONS\n What talents has God given me?\n Am I using or hiding my gifts?\n Am I faithful in small things?\n Is fear stopping my obedience?\n What can I invest for God’s kingdom today?"
     }
   ],
   "discussionQuestions": [
-    "What talents has God given you?",
-    "Are you using or hiding your gifts?",
-    "Are you faithful in small things?",
-    "Is fear stopping your obedience?",
-    "What can you invest for God's kingdom today?"
+    "What talents has God given me?",
+    "Am I using or hiding my gifts?",
+    "Am I faithful in small things?",
+    "Is fear stopping my obedience?",
+    "What can I invest for God's kingdom today?"
   ],
-  "activities": [],
-  "includeQuiz": true,
   "quiz": [
     {
       "question": "How many talents did the first faithful servant receive?",
-      "options": ["Five", "Two", "One", "Ten"],
+      "options": [
+        "Five",
+        "One",
+        "Ten",
+        "Two"
+      ],
       "correctIndex": 0,
-      "explanation": "The master gave five talents to the first servant according to his ability."
+      "explanation": "Matthew 25:15 — each received according to his ability."
     },
     {
       "question": "What did the servant with one talent do?",
-      "options": ["He hid it in the ground", "He invested it with bankers", "He gave it to the poor", "He doubled it through trade"],
-      "correctIndex": 0,
-      "explanation": "Fear led him to bury his talent instead of using it."
+      "options": [
+        "He invested it with bankers",
+        "He hid it in the ground",
+        "He doubled it",
+        "He gave it away"
+      ],
+      "correctIndex": 1,
+      "explanation": "Fear led him to bury his talent."
     },
     {
       "question": "What did the master say to the faithful servants?",
-      "options": ["Well done, good and faithful servant", "You should have hidden more", "Return what you were given only", "You received too much"],
-      "correctIndex": 0,
-      "explanation": "Both faithful servants heard the same praise despite different amounts."
+      "options": [
+        "You received too much",
+        "You should have hidden more",
+        "Return only what you received",
+        "Well done, good and faithful servant"
+      ],
+      "correctIndex": 3,
+      "explanation": "Both faithful servants received the same praise."
     },
     {
       "question": "What kept the unfaithful servant from acting?",
-      "options": ["Fear", "Lack of ability", "Sickness", "Travel"],
+      "options": [
+        "Fear",
+        "Sickness",
+        "Lack of ability",
+        "Travel"
+      ],
       "correctIndex": 0,
-      "explanation": "He acted from fear and blamed the master."
+      "explanation": "He said he was afraid and hid the talent."
     },
     {
-      "question": "What does this parable teach about stewardship?",
-      "options": ["God expects faithfulness with what He gives", "God only rewards the most gifted", "Hiding gifts is wise", "Comparison is the main measure"],
+      "question": "What happens to unused gifts in this parable?",
+      "options": [
+        "They can be taken away and given to the faithful",
+        "They automatically double",
+        "They remain safely buried",
+        "They are never examined"
+      ],
       "correctIndex": 0,
-      "explanation": "Faithfulness in little leads to greater responsibility."
+      "explanation": "Matthew 25:28-29 — faithfulness increases capacity."
     }
-  ],
-  "publish": true
+  ]
 }

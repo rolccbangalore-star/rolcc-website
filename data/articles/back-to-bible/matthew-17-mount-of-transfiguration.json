@@ -1,25 +1,36 @@
 {
-  "title": "Matthew 17:1-9 — The Mount of Transfiguration",
-  "description": "A cell fellowship study on seeing Jesus clearly, hearing Him fully, and following Him faithfully — with group discussion questions.",
-  "passage": "Matthew 17:1-9",
   "author": "ROLCC Fellowship Team",
   "category": "Bible Study",
-  "tags": ["Bible Study", "Discipleship"],
-  "date": "2026-06-17",
   "thumbnail": "/images/og-image.jpg",
   "featured": false,
+  "includeQuiz": true,
+  "publish": true,
+  "activities": [
+    {
+      "title": "Closing prayer",
+      "body": "Lord Jesus, open our eyes to see You more clearly, open our ears to hear You more faithfully, and give us hearts that will follow You completely. Amen."
+    }
+  ],
+  "title": "Matthew 17:1-9 — The Mount of Transfiguration",
+  "description": "A cell fellowship study on seeing Jesus clearly, hearing Him fully, and following Him faithfully.",
+  "passage": "Matthew 17:1-9",
+  "tags": [
+    "Bible Study",
+    "Discipleship"
+  ],
+  "date": "2026-06-17",
   "sections": [
     {
       "heading": "Observe",
-      "body": "Jesus took Peter, James, and John up a high mountain. There His appearance changed — His face shone like the sun and His clothes became dazzling white. Moses and Elijah appeared, talking with Him. Peter offered to build three shelters, but a bright cloud overshadowed them and God's voice spoke: \"This is My beloved Son, in whom I am well pleased. Hear Him!\" The disciples fell on their faces in fear. Jesus came and touched them, saying, \"Arise, and do not be afraid.\" When they looked up, they saw no one except Jesus alone."
+      "body": "THE MOUNT OF TRANSFIGURATION\nSeeing Jesus Clearly · Listening to Jesus Fully · Following Jesus Faithfully\n\nMain Scripture: Matthew 17:1-9\nTheme Verse: \"This is My beloved Son, in whom I am well pleased. Hear Him!\" — Matthew 17:5\n\nIcebreaker: If Jesus invited you to spend one whole day alone with Him, what would you ask Him?\n\nWHAT IS THE TRANSFIGURATION?\nA change in appearance that reveals true glory. Jesus did not become someone else. For a moment, the disciples saw His divine glory.\n\nTHE PEOPLE ON THE MOUNTAIN\nJesus — The Son of God\nPeter — Human enthusiasm\nJames — Faithful witness\nJohn — The beloved disciple\nMoses — The Law\nElijah — The Prophets\nGod the Father — Divine confirmation\n\nTHREE GREAT REVELATIONS\n1. Jesus is the Son of God.\n2. Jesus is greater than everything else.\n3. Jesus must be heard.\n\nTHE MOUNTAIN EXPERIENCE\nGod separates us from distractions before giving us revelation. We all need prayer, Bible reading, worship, and quiet time.\n\nTHE VALLEY EXPERIENCE\nGod does not take us to the mountain to escape life. He takes us there to prepare us for life.\n\nPETER'S RESPONSE\nPeter wanted to build three tabernacles. God corrected him and pointed everyone to Jesus.\n\nTHE MOST BEAUTIFUL MOMENT\nJesus came and touched the fearful disciples and comforted them."
     },
     {
       "heading": "Interpret",
-      "body": "The transfiguration was not Jesus becoming someone else — for a moment, the disciples saw His true divine glory. Moses (the Law) and Elijah (the Prophets) pointed to Jesus as the fulfilment of all Scripture. God's command to hear Jesus means He is greater than every other voice. The mountain experience was not an escape from life but preparation for the valley ahead. Peter's instinct to build tabernacles shows how easily we try to preserve a spiritual moment instead of obeying what God is saying."
+      "body": "The transfiguration was not Jesus becoming someone else — for a moment, the disciples saw His true divine glory. Moses (the Law) and Elijah (the Prophets) pointed to Jesus as the fulfilment of all Scripture. God's command to hear Jesus means He is greater than every other voice.\n\nThe mountain experience was not an escape from life but preparation for the valley ahead. Peter's instinct to build tabernacles shows how easily we try to preserve a spiritual moment instead of obeying what God is saying.\n\nPRACTICAL LIFE LESSONS FROM THE PASSAGE\n- Worship Jesus.\n- Trust Him.\n- Put Him first.\n- Obey His Word.\n- Spend time with God.\n- Walk with Jesus daily.\n- Face challenges with faith."
     },
     {
       "heading": "Apply",
-      "body": "God often separates us from distractions before He gives revelation. We need prayer, Bible reading, worship, and quiet time — not only on special days, but as a way of life. Worship Jesus. Trust Him. Put Him first. Obey His Word. Walk with Him daily, and face your challenges with faith. The transfiguration was not about changing Jesus — it was about changing how the disciples understood Him."
+      "body": "CONCLUSION\nThe Mount of Transfiguration was not about changing Jesus. It was about changing the disciples' understanding of Jesus.\n\nGod often separates us from distractions before He gives revelation. We need prayer, Bible reading, worship, and quiet time — not only on special days, but as a way of life. Worship Jesus. Trust Him. Put Him first. Obey His Word. Walk with Him daily, and face your challenges with faith."
     }
   ],
   "discussionQuestions": [
@@ -29,44 +40,61 @@
     "What mountain experience has strengthened your faith?",
     "What valley are you currently facing, and what is one thing Jesus is asking you to obey this week?"
   ],
-  "activities": [
-    {
-      "title": "Closing prayer",
-      "body": "Lord Jesus, open our eyes to see You more clearly, open our ears to hear You more faithfully, and give us hearts that will follow You completely. Amen."
-    }
-  ],
-  "includeQuiz": true,
   "quiz": [
     {
       "question": "Who appeared with Jesus on the mountain?",
-      "options": ["Moses and Elijah", "Peter and John", "Angels from heaven", "David and Solomon"],
+      "options": [
+        "Moses and Elijah",
+        "Peter and John",
+        "Angels from heaven",
+        "David and Solomon"
+      ],
       "correctIndex": 0,
-      "explanation": "Moses and Elijah talked with Jesus, representing the Law and the Prophets."
+      "explanation": "Moses and Elijah talked with Jesus."
     },
     {
       "question": "What did God's voice from the cloud say?",
-      "options": ["This is My beloved Son; hear Him!", "Build three tabernacles here", "Return to Jerusalem at once", "The kingdom has fully come"],
-      "correctIndex": 0,
-      "explanation": "The Father confirmed Jesus' identity and commanded the disciples to listen to Him."
+      "options": [
+        "The kingdom has fully come",
+        "This is My beloved Son; hear Him!",
+        "Build three tabernacles here",
+        "Return to Jerusalem at once"
+      ],
+      "correctIndex": 1,
+      "explanation": "The Father confirmed Jesus' identity."
     },
     {
       "question": "What was Peter's response on the mountain?",
-      "options": ["He offered to build three shelters", "He ran down the mountain", "He denied knowing Jesus", "He fell asleep"],
-      "correctIndex": 0,
-      "explanation": "Peter wanted to preserve the moment by building tabernacles."
+      "options": [
+        "He denied knowing Jesus",
+        "He ran down the mountain",
+        "He offered to build three shelters",
+        "He fell asleep"
+      ],
+      "correctIndex": 2,
+      "explanation": "Peter wanted to preserve the moment."
     },
     {
       "question": "What did Jesus do when the disciples were afraid?",
-      "options": ["He touched them and told them not to be afraid", "He sent them away alone", "He rebuked them harshly", "He hid from them"],
-      "correctIndex": 0,
-      "explanation": "Jesus came to them with compassion and comfort."
+      "options": [
+        "He hid from them",
+        "He sent them away alone",
+        "He rebuked them harshly",
+        "He touched them and told them not to be afraid"
+      ],
+      "correctIndex": 3,
+      "explanation": "Jesus comforted them with His presence."
     },
     {
       "question": "What is the main purpose of the transfiguration for the disciples?",
-      "options": ["To reveal who Jesus truly is before the cross", "To escape from ministry demands", "To replace the need for faith", "To begin a new religion"],
+      "options": [
+        "To reveal who Jesus truly is before the cross",
+        "To begin a new religion",
+        "To escape ministry demands",
+        "To replace the need for faith"
+      ],
       "correctIndex": 0,
-      "explanation": "The event prepared them to understand Jesus' glory and obey His voice."
+      "explanation": "The event prepared them to understand Jesus' glory."
     }
-  ],
-  "publish": true
+  ]
 }

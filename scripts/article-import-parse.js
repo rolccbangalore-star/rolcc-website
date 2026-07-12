@@ -337,16 +337,57 @@
     return tags.slice(0, 2);
   }
 
-  function normalizeQuizItem(item) {
+  function hashSeed(str) {
+    var h = 2166136261;
+    var s = String(str || "");
+    for (var i = 0; i < s.length; i++) {
+      h ^= s.charCodeAt(i);
+      h = Math.imul(h, 16777619);
+    }
+    return h >>> 0;
+  }
+
+  function mulberry32(seed) {
+    return function () {
+      seed |= 0;
+      seed = (seed + 0x6d2b79f5) | 0;
+      var t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  function shuffleQuizItem(item, seed) {
     if (!item || typeof item !== "object") return null;
+    var options = (item.options || [])
+      .map(function (o) {
+        return typeof o === "string" ? trim(o) : trim(o.option || o.text || "");
+      })
+      .filter(Boolean);
+    if (!options.length) return null;
+    var correctIndex = typeof item.correctIndex === "number" ? item.correctIndex : 0;
+    if (correctIndex >= options.length) correctIndex = 0;
+    var correctAnswer = options[correctIndex];
+    var rand = typeof seed === "number" ? mulberry32(seed) : Math.random;
+    var shuffled = options.slice();
+    for (var i = shuffled.length - 1; i > 0; i--) {
+      var j = Math.floor(rand() * (i + 1));
+      var tmp = shuffled[i];
+      shuffled[i] = shuffled[j];
+      shuffled[j] = tmp;
+    }
+    var nextCorrectIndex = shuffled.indexOf(correctAnswer);
+    if (nextCorrectIndex < 0) nextCorrectIndex = 0;
     return {
       question: trim(item.question),
-      options: (item.options || []).map(function (o) {
-        return typeof o === "string" ? o : trim(o.option || o.text || "");
-      }),
-      correctIndex: typeof item.correctIndex === "number" ? item.correctIndex : 0,
+      options: shuffled,
+      correctIndex: nextCorrectIndex,
       explanation: trim(item.explanation),
     };
+  }
+
+  function normalizeQuizItem(item) {
+    return shuffleQuizItem(item, hashSeed(trim(item && item.question)));
   }
 
   function prepareQuizEntry(entry) {

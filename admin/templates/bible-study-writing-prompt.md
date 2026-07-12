@@ -4,7 +4,17 @@ Use this prompt with your study notes, PDF text, or Word document. ChatGPT will 
 
 ---
 
-You are writing a Back to the Bible cell fellowship study for River of Life Christian Church (ROLCC), Bangalore. Audience: cell group members and first-time visitors exploring Scripture. Tone: warm, clear, human, confident — not preachy or insider-heavy.
+You are preparing a Back to the Bible cell fellowship study for River of Life Christian Church (ROLCC), Bangalore. Audience: cell group members and first-time visitors exploring Scripture. Tone: warm, clear, human, confident — not preachy or insider-heavy.
+
+## Critical rule: do NOT over-summarise
+
+This is a **Bible study**, not a blog summary. **Retain 80–90% of the original source material** — section headings, scripture quotes, teaching points, lists, tables, and discussion prompts. It is fine if the study is long and the read time is higher.
+
+- Keep the author's structure wherever possible (numbered sections, sub-points, memory verses, icebreakers).
+- Do **not** merge many sections into one short paragraph.
+- Do **not** condense lists longer than 6 items — keep full lists.
+- Remove only: emojis, PDF page numbers (`-- 1 of 5 --`), and exact duplicate headers.
+- Shorten only when the source repeats the same sentence twice.
 
 ## Output format (use these exact section headings)
 
@@ -21,37 +31,33 @@ e.g. Matthew 17:1-9
 ROLCC Fellowship Team
 
 **OBSERVE**  
-What happens in the passage — scenes, characters, facts. Write 2–4 short paragraphs. Include key scripture references inline.
+What happens in the passage — scenes, characters, facts, scripture quotes, and the source's section-by-section walkthrough. **Keep most of the source text here.** Use the source's sub-headings as plain lines if helpful.
 
 **INTERPRET**  
-What it means — teaching points, themes, cross-references. Write 2–4 short paragraphs. Pull from "Main Point", "Teaching", or "Significance" blocks in the source.
+What it means — teaching points, themes, cross-references, "Main Point", "Teaching", and "Significance" blocks from the source. **Keep the source's teaching content; do not replace it with a short summary.**
 
 **APPLY**  
-How it changes everyday life — practical lessons and one clear closing thought. Write 1–3 short paragraphs.
+How it changes everyday life — practical lessons, application blocks, summary, and closing thought from the source.
 
 **DISCUSSION QUESTIONS**  
-Write **3–5** open-ended questions for cell fellowship. Use icebreaker or group questions from the source when present. Do **not** include answer keys here.
+Write **3–8** open-ended questions for cell fellowship from the source. Do **not** include answer keys here.
 
 **ACTIVITIES** (optional)  
-One short activity or closing prayer if the source includes one. Format: `Title: …` then body text.
+One short activity or closing prayer if the source includes one.
 
 **QUIZ** (always required)  
-Write **3–5** multiple-choice questions based on the study content (passage, sections, and themes). Use existing review Q&A from the source when present; otherwise create questions from what you wrote in Observe, Interpret, and Apply. For each:
+Write **3–5** multiple-choice questions from the study content. For each:
 - `Q:` question line
 - `A:` `B:` `C:` `D:` options — mark correct with `(correct)`
+- **Vary which option is correct** — do not put every correct answer as option A
 - `Explanation:` one line
 
-Never skip the quiz. Wrong options must be plausible but clearly incorrect based on the study — not silly or random.
-
 ## Rules
-- Always use exactly three study headings: Observe, Interpret, Apply
+- Always use exactly three study headings in JSON: Observe, Interpret, Apply — but each may contain multiple paragraphs and lists from the source
 - Never publish answer keys as discussion questions — fixed answers go in QUIZ only
-- Strip emojis, PDF page numbers, and repeated headers from the source
-- Keep paragraphs short for mobile readers
-- Condense lists longer than 6 items
 - Do not include date, hero image, featured, or published status
 
-**Tags (for Step 2):** You do not pick tags in Step 1. In Step 2, choose 1–2 tags from `_allowedTags` in the import template. Always include `Bible Study` when appropriate.
+**Tags (for Step 2):** Choose 1–2 tags from `_allowedTags` in the import template. Always include `Bible Study` when appropriate.
 
 ---
 
@@ -63,10 +69,10 @@ Never skip the quiz. Wrong options must be plausible but clearly incorrect based
 
 # Step 2 — Convert to JSON (second ChatGPT step)
 
-After Step 1, open `admin/templates/back-to-bible-content-import.json` in this repo and paste **both**:
+After Step 1, open `admin/templates/back-to-bible-content-import.json` and paste **both**:
 1. That JSON template (including `_instructions`)
 2. The study text from Step 1
 
 Then say:
 
-> Convert the study below into valid JSON matching this template exactly. Map Observe, Interpret, and Apply into `sections[]` with those headings. Put discussion questions in `discussionQuestions[]`. Always set `includeQuiz` to true and include **3–5** quiz questions from the study content. For quiz: exactly 4 options per question, one correct, `correctIndex` is 0-based. **Read the full study and fill the `tags` array with 1–2 best-matching tags from `_allowedTags` only** (see `_tagInstructions`). Do not include date, hero image, featured, or published.
+> Convert the study below into valid JSON matching this template exactly. **Retain 80–90% of the source wording in sections[]** — Observe, Interpret, and Apply should be substantial, not short summaries. Map discussion questions to `discussionQuestions[]`. Always set `includeQuiz` to true with **3–5** quiz questions. For quiz: exactly 4 options per question, **vary `correctIndex`** (not always 0). Fill `tags` from `_allowedTags` only. Do not include date, hero image, featured, or published.

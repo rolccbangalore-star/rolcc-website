@@ -34,10 +34,20 @@
       });
     let correctIndex = Number(q.correctIndex) || 0;
     if (options.length && correctIndex >= options.length) correctIndex = 0;
+    const correctAnswer = options[correctIndex];
+    const shuffled = options.slice();
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      const tmp = shuffled[i];
+      shuffled[i] = shuffled[j];
+      shuffled[j] = tmp;
+    }
+    let nextCorrectIndex = shuffled.indexOf(correctAnswer);
+    if (nextCorrectIndex < 0) nextCorrectIndex = 0;
     return {
       question: q.question,
-      options: options,
-      correctIndex: correctIndex,
+      options: shuffled,
+      correctIndex: nextCorrectIndex,
       explanation: q.explanation,
     };
   });
@@ -269,14 +279,38 @@
     });
   }
 
-  if (retakeBtn) {
+    if (retakeBtn) {
     retakeBtn.hidden = true;
     retakeBtn.textContent = "Retake quiz";
     retakeBtn.addEventListener("click", function () {
       index = 0;
       score = 0;
       answers.length = 0;
+      questions = reshuffleQuestions(questions);
       renderQuestion();
+    });
+  }
+
+  function reshuffleQuestions(list) {
+    return list.map(function (q) {
+      const options = (q.options || []).slice();
+      let correctIndex = Number(q.correctIndex) || 0;
+      if (options.length && correctIndex >= options.length) correctIndex = 0;
+      const correctAnswer = options[correctIndex];
+      for (let i = options.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        const tmp = options[i];
+        options[i] = options[j];
+        options[j] = tmp;
+      }
+      let nextCorrectIndex = options.indexOf(correctAnswer);
+      if (nextCorrectIndex < 0) nextCorrectIndex = 0;
+      return {
+        question: q.question,
+        options: options,
+        correctIndex: nextCorrectIndex,
+        explanation: q.explanation,
+      };
     });
   }
 

@@ -25,6 +25,8 @@ const {
   renderArticleCardTag,
   normalizeArticleTags,
   normalizeQuizItem,
+  shuffleQuizItem,
+  hashSeed,
   renderSummaryBox,
   renderKeyTakeaways,
   selectRelatedArticles,
@@ -140,6 +142,13 @@ function pickFeaturedArticle(articles) {
   return articles[0] || null;
 }
 
+function normalizeArticleQuiz(slug, quiz) {
+  return (quiz || []).map((item) => {
+    const normalized = normalizeQuizItem(item);
+    return shuffleQuizItem(normalized, hashSeed(String(slug || "") + "|" + normalized.question));
+  });
+}
+
 function readHubFooterTemplate() {
   const contactPath = path.join(ROOT, "contact.html");
   if (!fs.existsSync(contactPath)) return readFooterTemplate();
@@ -203,7 +212,7 @@ function loadEverydayFaith() {
         includeQuiz: data.includeQuiz === true,
         quiz:
           data.includeQuiz === true
-            ? (data.quiz || []).map((item) => normalizeQuizItem(item))
+            ? normalizeArticleQuiz(slug, data.quiz)
             : [],
         readTime: computeReadTime(textForReadTime),
         bodyHtml: renderBlocks(blocks),
@@ -279,7 +288,7 @@ function loadBackToBible() {
         includeQuiz: data.includeQuiz === true,
         quiz:
           data.includeQuiz === true
-            ? (data.quiz || []).map((item) => normalizeQuizItem(item))
+            ? normalizeArticleQuiz(slug, data.quiz)
             : [],
         readTime,
       };
@@ -1105,7 +1114,7 @@ function renderQuizSection(article) {
 
 function renderQuizScripts(article) {
   if (!article.includeQuiz || !article.quiz?.length) return "";
-  return `\n    <script id="article-quiz-data" type="application/json">${JSON.stringify(article.quiz)}</script>\n    <script src="/js/articles/quiz.js"></script>`;
+  return `\n    <script id="article-quiz-data" type="application/json">${JSON.stringify(article.quiz)}</script>\n    <script src="/js/articles/quiz.js?v=20260712quiz1"></script>`;
 }
 
 function buildEverydayFaithPage(article, allArticles) {

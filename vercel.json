@@ -151,6 +151,10 @@
       "destination": "/articles.html"
     },
     {
+      "source": "/bible-study",
+      "destination": "/bible-study.html"
+    },
+    {
       "source": "/articles/everyday-faith/:slug",
       "destination": "/articles/everyday-faith/:slug.html"
     },
@@ -342,6 +346,11 @@
     {
       "source": "/articles.html",
       "destination": "/articles",
+      "permanent": true
+    },
+    {
+      "source": "/bible-study.html",
+      "destination": "/bible-study",
       "permanent": true
     },
     {

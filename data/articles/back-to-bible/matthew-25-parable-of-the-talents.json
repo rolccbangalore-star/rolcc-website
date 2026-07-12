@@ -1,19 +1,17 @@
 {
-  "author": "ROLCC Fellowship Team",
-  "category": "Bible Study",
-  "thumbnail": "/images/og-image.jpg",
-  "featured": false,
-  "includeQuiz": true,
-  "publish": true,
-  "activities": [],
-  "title": "Matthew 25:14-30 — The Parable of the Talents",
-  "description": "A Back to the Bible study on faithfulness with what God has given — gifts, time, opportunities, and calling.",
-  "passage": "Matthew 25:14-30",
-  "tags": [
-    "Bible Study",
-    "Stewardship"
+  "discussionQuestions": [
+    "What talents has God given me?",
+    "Am I using or hiding my gifts?",
+    "Am I faithful in small things?",
+    "Is fear stopping my obedience?",
+    "What can I invest for God's kingdom today?"
   ],
-  "date": "2026-07-01",
+  "scheduleDate": "",
+  "scheduleWindow": "",
+  "author": "ROLCC Fellowship Team",
+  "thumbnail": "https://cdn8.picryl.com/photo/2016/05/15/parabel-van-de-rijke-man-en-de-rentmeester-b8f152-1024.jpg",
+  "activities": [],
+  "featured": false,
   "sections": [
     {
       "heading": "Overview",
@@ -76,13 +74,9 @@
       "body": "What talents has God given me?\nAm I using or hiding my gifts?\nAm I faithful in small things?\nIs fear stopping my obedience?\nWhat can I invest for God’s kingdom today?"
     }
   ],
-  "discussionQuestions": [
-    "What talents has God given me?",
-    "Am I using or hiding my gifts?",
-    "Am I faithful in small things?",
-    "Is fear stopping my obedience?",
-    "What can I invest for God's kingdom today?"
-  ],
+  "passage": "Matthew 25:14-30",
+  "date": "2026-07-01",
+  "publish": true,
   "quiz": [
     {
       "question": "How many talents did the first faithful servant receive?",
@@ -140,6 +134,18 @@
       "explanation": "Matthew 25:28-29 — faithfulness increases capacity."
     }
   ],
+  "title": "Matthew 25:14-30 — The Parable of the Talents",
+  "tags": [
+    {
+      "tag": "Bible Study"
+    },
+    {
+      "tag": "Stewardship"
+    }
+  ],
+  "description": "A Back to the Bible study on faithfulness with what God has given — gifts, time, opportunities, and calling.",
+  "includeQuiz": true,
+  "category": "Bible Study",
   "passageReading": {
     "reference": "Matthew 25:14-21",
     "text": "14 \"For the kingdom of heaven is like a man traveling to a far country, who called his own servants and delivered his goods to them.\n15 And to one he gave five talents, to another two, and to another one, to each according to his own ability; and immediately he went on a journey.\n16 Then he who had received the five talents went and traded with them, and made another five talents.\n17 And likewise he who had received two gained two more also.\n18 But he who had received one went and dug in the ground, and hid his lord's money.\n19 After a long time the lord of those servants came and settled accounts with them.\n20 So he who had received five talents came and brought five other talents, saying, \"Lord, you delivered to me five talents; look, I have gained five more talents besides them.\"\n21 His lord said to him, \"Well done, good and faithful servant; you were faithful over a few things, I will make you ruler over many things. Enter into the joy of your lord.\""

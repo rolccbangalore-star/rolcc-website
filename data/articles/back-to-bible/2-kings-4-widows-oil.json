@@ -1,19 +1,16 @@
 {
-  "author": "ROLCC Fellowship Team",
-  "category": "Bible Study",
-  "thumbnail": "/images/og-image.jpg",
-  "featured": false,
-  "includeQuiz": true,
-  "publish": true,
-  "activities": [],
-  "title": "2 Kings 4:1-7 — The Widow's Oil & God's Provision",
-  "description": "A Back to the Bible cell fellowship study on God's provision through faith and obedience — walking through each scene in 2 Kings 4:1-7.",
-  "passage": "2 Kings 4:1-7",
-  "tags": [
-    "Bible Study",
-    "Faith"
+  "discussionQuestions": [
+    "Who was the prophet in this story, and what crisis did the widow face?",
+    "Why did Elisha ask her to borrow vessels — and why 'not a few'?",
+    "Why was the door shut before the oil began to flow?",
+    "When did the miracle begin, and when did the oil stop flowing?",
+    "What do empty vessels represent spiritually in this story?",
+    "Have you ever experienced God's provision in a season of need?"
   ],
-  "date": "2026-07-10",
+  "author": "ROLCC Fellowship Team",
+  "thumbnail": "https://www.worldhistory.org/uploads/images/10598.jpg",
+  "activities": [],
+  "featured": false,
   "sections": [
     {
       "heading": "Overview",
@@ -76,14 +73,9 @@
       "body": "The story of the widow’s oil teaches us:\n God sees our pain\n God can use small things\n Faith requires obedience\n God’s provision is more than enough\nA small jar of oil became the answer to a great crisis because God’s power was working through it.\nWhen human resources ended, God’s provision began."
     }
   ],
-  "discussionQuestions": [
-    "Who was the prophet in this story, and what crisis did the widow face?",
-    "Why did Elisha ask her to borrow vessels — and why 'not a few'?",
-    "Why was the door shut before the oil began to flow?",
-    "When did the miracle begin, and when did the oil stop flowing?",
-    "What do empty vessels represent spiritually in this story?",
-    "Have you ever experienced God's provision in a season of need?"
-  ],
+  "passage": "2 Kings 4:1-7",
+  "date": "2026-07-10",
+  "publish": false,
   "quiz": [
     {
       "question": "Who was the prophet in this story?",
@@ -141,6 +133,18 @@
       "explanation": "Obedience and faith opened the way for provision."
     }
   ],
+  "title": "2 Kings 4:1-7 — The Widow's Oil & God's Provision",
+  "tags": [
+    {
+      "tag": "Bible Study"
+    },
+    {
+      "tag": "Faith"
+    }
+  ],
+  "description": "A Back to the Bible cell fellowship study on God's provision through faith and obedience — walking through each scene in 2 Kings 4:1-7.",
+  "includeQuiz": true,
+  "category": "Bible Study",
   "passageReading": {
     "reference": "2 Kings 4:1-7",
     "text": "1 A certain woman of the wives of the sons of the prophets cried out to Elisha, saying, \"Your servant my husband is dead, and you know that your servant feared the LORD. And the creditor is coming to take my two sons to be his slaves.\"\n2 So Elisha said to her, \"What shall I do for you? Tell me, what do you have in the house?\" And she said, \"Your maidservant has nothing in the house but a jar of oil.\"\n3 Then he said, \"Go, borrow vessels from everywhere, from all your neighbors—empty vessels; do not gather just a few.\n4 And when you have come in, you shall shut the door behind you and your sons; then pour it into all those vessels, and set aside the full ones.\"\n5 So she went from him and shut the door behind her and her sons, who brought the vessels to her; and she poured it out.\n6 Now it came to pass, when the vessels were full, that she said to her son, \"Bring me another vessel.\" And he said to her, \"There is not another vessel.\" So the oil ceased.\n7 Then she came and told the man of God. And he said, \"Go, sell the oil and pay your debt; and you and your sons live on the rest.\""

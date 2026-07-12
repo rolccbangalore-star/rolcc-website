@@ -20,6 +20,7 @@ function writeSitemap({ articles = [], faqTotalPages = 1, sermonsTotalPages = 1,
     ["/counselling", "monthly", "0.7"],
     ["/rolf", "monthly", "0.7"],
     ["/articles", "weekly", "0.85"],
+    ["/bible-study", "weekly", "0.85"],
   ];
 
   if (includeGallery) {

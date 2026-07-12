@@ -23,8 +23,20 @@ const SERMONS_ARTICLE_TAGS = {
     "Everyday Life",
     "Prayer",
   ],
-  types: ["back-to-bible", "everyday-faith"],
+  types: ["everyday-faith"],
 };
+
+function renderArticleCardMeta(article) {
+  const parts = [];
+  if (article.type === "everyday-faith" && article.author) {
+    parts.push(escapeHtml(article.author));
+  } else if (article.type === "back-to-bible") {
+    const ref = String(article.passage || article.scripture || "").trim();
+    if (ref) parts.push(escapeHtml(ref));
+  }
+  if (article.readTime) parts.push(`${article.readTime} min read`);
+  return parts.join(" · ");
+}
 
 function loadArticles() {
   const data = JSON.parse(fs.readFileSync(path.join(ROOT, "data", "articles.json"), "utf8"));
@@ -89,7 +101,7 @@ function renderArticleCard(article, options = {}) {
       ? '<span class="articles-card__badge articles-card__badge--latest">Latest</span>'
       : "";
 
-  const readTime = article.readTime ? `${article.readTime} min read` : "";
+  const readTime = renderArticleCardMeta(article);
 
   return `<a href="${articleUrl(article)}" class="articles-card articles-card--tall" data-article-type="${escapeHtml(article.type)}" data-article-category="${escapeHtml(article.category || "")}">
     <div class="articles-card__media-wrap">
@@ -107,7 +119,8 @@ function renderArticleCard(article, options = {}) {
 }
 
 function selectSermonsArticles(articles, limit = 3) {
-  const pool = rankArticlesForSermons(articles);
+  const sermonArticles = articles.filter((article) => article.type === "everyday-faith");
+  const pool = rankArticlesForSermons(sermonArticles);
   if (!pool.length) return [];
 
   const featured = pool.find((article) => article.featured) || pool[0];
@@ -140,9 +153,9 @@ function renderSermonsArticlesSection(articles) {
   return `<section id="articles-spotlight" class="home-blog border-b border-slate-200 bg-white" aria-labelledby="home-blog-heading-sermons">
         <div class="mx-auto max-w-6xl px-4 py-14 sm:px-6 md:py-16 lg:px-8">
           <div class="scroll-reveal max-w-2xl">
-            <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-accent">Articles &amp; Studies</p>
+            <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-accent">Articles</p>
             <h2 id="home-blog-heading-sermons" class="mt-3 text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">Grow beyond the sermon</h2>
-            <p class="mt-3 text-sm text-slate-600 sm:text-base">Bible studies, sermon reflections, and reads on faith, calling, and pastoral care — for ministry, volunteering, and life with Jesus.</p>
+            <p class="mx-auto mt-3 max-w-xl text-sm text-slate-600 sm:text-base">Sermon reflections and practical reads on faith, calling, and pastoral care — for ministry, volunteering, and life with Jesus.</p>
           </div>
           <div class="mt-8 scroll-reveal scroll-reveal--delay-1">
             <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">${cardHtml}</div>

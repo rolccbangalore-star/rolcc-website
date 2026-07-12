@@ -2309,6 +2309,104 @@ body.admin-composer-dropdown-open #nc-root .admin-custom-grid {
   font-weight: 600;
 }
 
+#nc-root.admin-view--list .admin-list-row__status--scheduled {
+  color: #1d4ed8;
+  font-weight: 600;
+}
+
+.admin-card-meta__scheduled {
+  color: #1d4ed8;
+  font-weight: 600;
+}
+
+.admin-schedule-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+}
+
+.admin-schedule-modal[hidden] {
+  display: none !important;
+}
+
+.admin-schedule-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+}
+
+.admin-schedule-modal__panel {
+  position: relative;
+  width: min(100%, 28rem);
+  padding: 1.5rem;
+  border-radius: 1rem;
+  background: #fff;
+  box-shadow: 0 20px 45px rgba(15, 23, 42, 0.18);
+}
+
+.admin-schedule-modal__title {
+  margin: 0 0 0.5rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--rolcc-slate-900);
+}
+
+.admin-schedule-modal__intro,
+.admin-schedule-modal__hint {
+  margin: 0 0 1rem;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--rolcc-slate-600);
+}
+
+.admin-schedule-modal__label,
+.admin-schedule-modal__legend {
+  display: block;
+  margin: 0 0 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--rolcc-slate-800);
+}
+
+.admin-schedule-modal__date {
+  width: 100%;
+  margin-bottom: 1rem;
+  min-height: 2.75rem;
+  padding: 0.625rem 0.875rem;
+  border: 1px solid var(--rolcc-slate-300);
+  border-radius: var(--rolcc-radius-lg);
+  font-size: 0.875rem;
+}
+
+.admin-schedule-modal__fieldset {
+  margin: 0 0 1rem;
+  padding: 0;
+  border: 0;
+}
+
+.admin-schedule-modal__option {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  margin-bottom: 0.625rem;
+  font-size: 0.875rem;
+  color: var(--rolcc-slate-700);
+}
+
+.admin-schedule-modal__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+body.admin-schedule-modal-open {
+  overflow: hidden;
+}
+
 #nc-root.admin-view--grid .admin-list-header {
   display: none;
 }
@@ -2423,6 +2521,7 @@ body.admin-page--authed:not(.admin-page--editor) .admin-import-btn,
 body.admin-page--authed:not(.admin-page--editor) .admin-preview-btn,
 body.admin-page--authed:not(.admin-page--editor) .admin-save-draft-btn,
 body.admin-page--authed:not(.admin-page--editor) .admin-delete-btn,
+body.admin-page--authed:not(.admin-page--editor) .admin-schedule-btn,
 body.admin-page--authed:not(.admin-page--editor) .admin-publish-btn,
 body.admin-page--authed:not(.admin-page--editor) .admin-publish-slot {
   display: none !important;
@@ -2497,6 +2596,7 @@ body.admin-page--authed:not(.admin-page--editor) .admin-publish-slot {
 
 .admin-save-draft-btn,
 .admin-delete-btn,
+.admin-schedule-btn,
 .admin-publish-btn {
   min-height: 2.5rem;
   padding: 0.625rem 1.25rem;

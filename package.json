@@ -7,6 +7,7 @@
     "build:composer-cards": "node scripts/build-composer-cards.js",
     "build:media-manifest": "node scripts/build-media-manifest.js",
     "build:gallery": "node scripts/build-gallery.js",
+    "publish:scheduled": "node scripts/publish-scheduled-articles.js",
     "test:instagram": "node scripts/test-instagram-api.js",
     "test:youtube": "node scripts/test-youtube-api.js",
     "preview": "node scripts/local-preview.js",

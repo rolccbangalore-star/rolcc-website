@@ -1,0 +1,56 @@
+name: Publish scheduled articles
+
+on:
+  schedule:
+    # 6:30 AM IST (01:00 UTC) and 4:30 PM IST (11:00 UTC)
+    - cron: "0 1 * * *"
+    - cron: "0 11 * * *"
+  workflow_dispatch:
+    inputs:
+      window:
+        description: "Publish window"
+        required: true
+        default: morning
+        type: choice
+        options:
+          - morning
+          - evening
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Publish due articles
+        id: publish
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            WINDOW="${{ inputs.window }}"
+          elif [ "${{ github.event.schedule }}" = "0 1 * * *" ]; then
+            WINDOW="morning"
+          else
+            WINDOW="evening"
+          fi
+          node scripts/publish-scheduled-articles.js "$WINDOW"
+          if git diff --quiet -- data/articles; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Commit and push
+        if: steps.publish.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/articles
+          git commit -m "Publish scheduled articles"
+          git push

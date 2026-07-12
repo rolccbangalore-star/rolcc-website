@@ -861,6 +861,15 @@
     if (!data.date) changeDraftFieldValue(store, "date", today);
     if (!data.thumbnail) changeDraftFieldValue(store, "thumbnail", "/images/og-image.jpg");
     changeDraftFieldValue(store, "publish", options.publish === true);
+
+    if (options.publish === true) {
+      changeDraftFieldValue(store, "scheduleDate", "");
+      changeDraftFieldValue(store, "scheduleWindow", "");
+    } else if (options.scheduleDate && options.scheduleWindow) {
+      changeDraftFieldValue(store, "scheduleDate", options.scheduleDate);
+      changeDraftFieldValue(store, "scheduleWindow", options.scheduleWindow);
+      changeDraftFieldValue(store, "date", options.scheduleDate);
+    }
     var tags = normalizeDraftTags(data);
     if (tags.length) {
       changeDraftFieldValue(store, "tags", tagsToStoreValue(tags));
@@ -1664,6 +1673,8 @@
     var mode = options.mode || "draft";
     prepareDraftForSave({
       publish: mode === "publish",
+      scheduleDate: mode === "schedule" ? options.scheduleDate : "",
+      scheduleWindow: mode === "schedule" ? options.scheduleWindow : "",
       allowIncomplete: mode === "draft",
     });
 

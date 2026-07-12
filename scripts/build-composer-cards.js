@@ -10,7 +10,19 @@ const COLLECTIONS = [
   { id: "bible-study", folder: "back-to-bible" },
 ];
 
-const CARD_FIELDS = ["title", "author", "category", "tags", "date", "modified", "thumbnail", "publish", "featured"];
+const CARD_FIELDS = [
+  "title",
+  "author",
+  "category",
+  "tags",
+  "date",
+  "modified",
+  "thumbnail",
+  "publish",
+  "featured",
+  "scheduleDate",
+  "scheduleWindow",
+];
 
 function toDateOnly(value) {
   if (!value) return "";

@@ -462,6 +462,21 @@
     if (out.publish === undefined) out.publish = false;
     if (out.featured === undefined) out.featured = false;
 
+    if (out.publish === true) {
+      delete out.scheduleDate;
+      delete out.scheduleWindow;
+    } else {
+      var scheduleDate = trim(out.scheduleDate || "");
+      var scheduleWindow = trim(out.scheduleWindow || "").toLowerCase();
+      if (scheduleDate && (scheduleWindow === "morning" || scheduleWindow === "evening")) {
+        out.scheduleDate = scheduleDate;
+        out.scheduleWindow = scheduleWindow;
+      } else {
+        delete out.scheduleDate;
+        delete out.scheduleWindow;
+      }
+    }
+
     var tags = normalizeImportTags(out, collection);
     if (tags.length) {
       out.tags = tags;

@@ -167,6 +167,8 @@ collections:
         default: false
         hint: "Only one article can be featured on the listing page at a time."
       - { label: Published, name: publish, widget: boolean, default: false, hint: "Use the Publish button in the top bar. This toggle is hidden in the editor." }
+      - { label: Schedule date, name: scheduleDate, widget: hidden, required: false }
+      - { label: Schedule window, name: scheduleWindow, widget: hidden, required: false }
       - { label: Main Scripture, name: scripture, widget: string, required: false, hint: "e.g. Matthew 11:28-30" }
       - { label: Sermon series, name: sermonSeries, widget: string, required: false }
 
@@ -232,3 +234,5 @@ collections:
         default: false
         hint: "Only one article can be featured on the listing page at a time."
       - { label: Published, name: publish, widget: boolean, default: true, hint: "Use the Publish button in the top bar. This toggle is hidden in the editor." }
+      - { label: Schedule date, name: scheduleDate, widget: hidden, required: false }
+      - { label: Schedule window, name: scheduleWindow, widget: hidden, required: false }

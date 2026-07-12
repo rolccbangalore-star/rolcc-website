@@ -197,8 +197,39 @@
     return parsed.toISOString().split("T")[0];
   }
 
+  function getIstTodayIso() {
+    return new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Kolkata" }).format(new Date());
+  }
+
+  function isScheduledArticle(data) {
+    if (!data || data.publish !== false) return false;
+    var window = String(data.scheduleWindow || "").trim().toLowerCase();
+    return Boolean(String(data.scheduleDate || "").trim() && (window === "morning" || window === "evening"));
+  }
+
+  function getScheduleWindowLabel(window) {
+    if (window === "morning") return "Morning (6–11 AM)";
+    if (window === "evening") return "Evening (4–9 PM)";
+    return "";
+  }
+
+  function getArticleStatusLabel(data) {
+    if (isScheduledArticle(data)) {
+      return (
+        "Scheduled · " +
+        getScheduleWindowLabel(String(data.scheduleWindow || "").toLowerCase()) +
+        " · " +
+        formatDate(data.scheduleDate)
+      );
+    }
+    if (data && data.publish === false) return "Draft";
+    return "Published";
+  }
+
   function getDisplayDate(data) {
-    if (!data || data.publish === false) return "";
+    if (!data) return "";
+    if (isScheduledArticle(data)) return formatDate(data.scheduleDate);
+    if (data.publish === false) return "";
     return formatDate(data.modified || data.date);
   }
 
@@ -861,6 +892,156 @@
     });
   }
 
+  function ensureScheduleModal() {
+    var modal = $("admin-schedule-modal");
+    if (modal) return modal;
+
+    modal = document.createElement("div");
+    modal.id = "admin-schedule-modal";
+    modal.className = "admin-schedule-modal";
+    modal.hidden = true;
+    modal.innerHTML =
+      '<div class="admin-schedule-modal__backdrop" data-schedule-close></div>' +
+      '<div class="admin-schedule-modal__panel" role="dialog" aria-modal="true" aria-labelledby="admin-schedule-title">' +
+      '<h2 id="admin-schedule-title" class="admin-schedule-modal__title">Schedule publish</h2>' +
+      '<p class="admin-schedule-modal__intro">Choose a date and time window. The article goes live automatically near the start of that window (IST).</p>' +
+      '<label class="admin-schedule-modal__label" for="admin-schedule-date">Publish date</label>' +
+      '<input type="date" id="admin-schedule-date" class="admin-schedule-modal__date" required />' +
+      '<fieldset class="admin-schedule-modal__fieldset">' +
+      '<legend class="admin-schedule-modal__legend">Time window</legend>' +
+      '<label class="admin-schedule-modal__option"><input type="radio" name="admin-schedule-window" value="morning" checked /> Morning · 6–11 AM IST</label>' +
+      '<label class="admin-schedule-modal__option"><input type="radio" name="admin-schedule-window" value="evening" /> Evening · 4–9 PM IST</label>' +
+      "</fieldset>" +
+      '<p class="admin-schedule-modal__hint" id="admin-schedule-hint"></p>' +
+      '<div class="admin-schedule-modal__actions">' +
+      '<button type="button" class="btn-outline" data-schedule-close>Cancel</button>' +
+      '<button type="button" class="btn-primary" id="admin-schedule-confirm-btn">Schedule publish</button>' +
+      "</div></div>";
+    document.body.appendChild(modal);
+
+    modal.querySelectorAll("[data-schedule-close]").forEach(function (el) {
+      el.addEventListener("click", closeScheduleModal);
+    });
+
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape" && modal && !modal.hidden) {
+        closeScheduleModal();
+      }
+    });
+
+    return modal;
+  }
+
+  function closeScheduleModal() {
+    var modal = $("admin-schedule-modal");
+    if (!modal) return;
+    modal.hidden = true;
+    document.body.classList.remove("admin-schedule-modal-open");
+    var trigger = modal._scheduleTrigger;
+    if (trigger && trigger.focus) trigger.focus();
+    modal._scheduleTrigger = null;
+  }
+
+  function openScheduleModal(root, trigger) {
+    if (!window.AdminImport) return;
+
+    syncTitleFromHeader(root);
+
+    if (window.AdminImport.clearFieldHighlights) {
+      window.AdminImport.clearFieldHighlights(root);
+    }
+
+    var missing = window.AdminImport.validatePublishRequirements
+      ? window.AdminImport.validatePublishRequirements()
+      : [];
+    if (missing.length) {
+      window.AdminImport.highlightPublishFields(root, missing);
+      var names = missing
+        .map(function (item) {
+          return item.label;
+        })
+        .join(", ");
+      setEditorStatus("To schedule, complete: " + names + ".", true);
+      return;
+    }
+
+    var modal = ensureScheduleModal();
+    var dateInput = modal.querySelector("#admin-schedule-date");
+    var hint = modal.querySelector("#admin-schedule-hint");
+    var data = window.AdminImport.readDraftData ? window.AdminImport.readDraftData() : {};
+    var minDate = getIstTodayIso();
+
+    dateInput.min = minDate;
+    dateInput.value = (isScheduledArticle(data) && data.scheduleDate) || minDate;
+
+    var windowValue = isScheduledArticle(data) ? String(data.scheduleWindow || "").toLowerCase() : "morning";
+    modal.querySelectorAll('input[name="admin-schedule-window"]').forEach(function (input) {
+      input.checked = input.value === windowValue;
+    });
+
+    if (hint) {
+      hint.textContent = isScheduledArticle(data)
+        ? "Updating the schedule replaces the current one."
+        : "The article stays hidden until the scheduled window.";
+    }
+
+    modal._scheduleTrigger = trigger || null;
+    modal._scheduleRoot = root;
+    modal.hidden = false;
+    document.body.classList.add("admin-schedule-modal-open");
+    dateInput.focus();
+  }
+
+  function confirmSchedulePublish() {
+    var modal = $("admin-schedule-modal");
+    if (!modal || modal.hidden) return;
+
+    var root = modal._scheduleRoot;
+    var dateInput = modal.querySelector("#admin-schedule-date");
+    var scheduleDate = dateInput ? dateInput.value : "";
+    var windowInput = modal.querySelector('input[name="admin-schedule-window"]:checked');
+    var scheduleWindow = windowInput ? windowInput.value : "";
+
+    if (!scheduleDate) {
+      setEditorStatus("Choose a publish date.", true);
+      return;
+    }
+    if (scheduleDate < getIstTodayIso()) {
+      setEditorStatus("Choose today or a future date.", true);
+      return;
+    }
+    if (scheduleWindow !== "morning" && scheduleWindow !== "evening") {
+      setEditorStatus("Choose a time window.", true);
+      return;
+    }
+
+    closeScheduleModal();
+    runPersistAction(root, {
+      mode: "schedule",
+      scheduleDate: scheduleDate,
+      scheduleWindow: scheduleWindow,
+      workingMessage: "Scheduling…",
+      successMessage:
+        "Scheduled for " + getScheduleWindowLabel(scheduleWindow) + " on " + formatDate(scheduleDate),
+    });
+  }
+
+  function bindScheduleButton(root) {
+    var btn = $("admin-schedule-btn");
+    if (!btn || btn.dataset.bound === "true") return;
+    btn.dataset.bound = "true";
+    btn.addEventListener("click", function () {
+      openScheduleModal(root, btn);
+    });
+
+    var modal = ensureScheduleModal();
+    var confirmBtn = modal.querySelector("#admin-schedule-confirm-btn");
+    if (confirmBtn && confirmBtn.dataset.bound !== "true") {
+      confirmBtn.dataset.bound = "true";
+      confirmBtn.addEventListener("click", confirmSchedulePublish);
+    }
+  }
+
   function ensureDeleteConfirmModal() {
     var modal = $("admin-delete-confirm-modal");
     if (modal) return modal;
@@ -999,7 +1180,13 @@
     setEditorStatus(options.workingMessage || "Saving…");
 
     window.setTimeout(function () {
-      window.AdminImport.saveEntry({ mode: options.mode || "draft" })
+      var saveOptions = { mode: options.mode || "draft" };
+      if (options.mode === "schedule") {
+        saveOptions.scheduleDate = options.scheduleDate;
+        saveOptions.scheduleWindow = options.scheduleWindow;
+      }
+
+      window.AdminImport.saveEntry(saveOptions)
         .then(function () {
           editorState.dirty = false;
           if (window.AdminImport.clearFieldHighlights) {
@@ -1103,6 +1290,7 @@
     var previewBtn = $("admin-preview-btn");
     var saveDraftBtn = $("admin-save-draft-btn");
     var deleteBtn = $("admin-delete-btn");
+    var scheduleBtn = $("admin-schedule-btn");
     var publishBtn = $("admin-publish-btn");
     var publishSlot = $("admin-publish-slot");
     var websiteLink = document.querySelector(".admin-website-link");
@@ -1117,6 +1305,7 @@
       deleteBtn.hidden = !onEditor;
       syncDeleteButtonLabel();
     }
+    if (scheduleBtn) scheduleBtn.hidden = !onEditor;
     if (publishBtn) publishBtn.hidden = !onEditor;
 
     if (publishSlot) {
@@ -1179,6 +1368,7 @@
     scheduleTitleSync(root);
     bindSaveDraftButton(root);
     bindDeleteButton(root);
+    bindScheduleButton(root);
     bindPublishButton(root);
     relocatePublishButton(root);
     mountEditorDirtyWatcher(root);
@@ -1806,6 +1996,14 @@
 
   function buildMetaLine(data) {
     var author = data.author || "ROLCC";
+    if (isScheduledArticle(data)) {
+      return (
+        escapeHtml(author) +
+        ' · <span class="admin-card-meta__scheduled">' +
+        escapeHtml(getArticleStatusLabel(data)) +
+        "</span>"
+      );
+    }
     if (data.publish === false) {
       return escapeHtml(author) + ' · <span class="admin-card-meta__draft">Draft</span>';
     }
@@ -1955,7 +2153,9 @@
 
   function renderListRow(link, data, collection) {
     var typeLabel = COLLECTION_LABELS[collection] || collection;
-    var isDraft = data.publish === false;
+    var statusLabel = getArticleStatusLabel(data);
+    var isDraft = data.publish === false && !isScheduledArticle(data);
+    var isScheduled = isScheduledArticle(data);
     link.textContent = "";
     link.className = "admin-list-row__link";
     link.innerHTML =
@@ -1975,8 +2175,9 @@
       "</span>" +
       '<span class="admin-list-row__cell admin-list-row__status' +
       (isDraft ? " admin-list-row__status--draft" : "") +
+      (isScheduled ? " admin-list-row__status--scheduled" : "") +
       '">' +
-      (isDraft ? "Draft" : "Published") +
+      escapeHtml(statusLabel) +
       "</span>";
   }
 
@@ -2030,7 +2231,13 @@
   function matchesSearch(data, collection, query) {
     if (!query) return true;
     var hay = normalize(
-      [data.title, data.author, data.category, COLLECTION_LABELS[collection], data.publish === false ? "draft" : "published"].join(" ")
+      [
+        data.title,
+        data.author,
+        data.category,
+        COLLECTION_LABELS[collection],
+        getArticleStatusLabel(data).toLowerCase(),
+      ].join(" ")
     );
     return hay.indexOf(query) !== -1;
   }
@@ -2131,6 +2338,7 @@
     var options = [
       { key: "all", label: "All articles", icon: "all" },
       { key: "draft", label: "Draft", icon: "draft" },
+      { key: "scheduled", label: "Scheduled", icon: "calendar" },
     ];
     var entries = cardManifest && cardManifest[collection];
     if (!entries) return options;
@@ -2159,11 +2367,18 @@
 
   function matchesFilter(data, filterKey) {
     if (!filterKey || filterKey === "all") return true;
-    if (filterKey === "draft") return data.publish === false;
+    if (filterKey === "draft") return data.publish === false && !isScheduledArticle(data);
+    if (filterKey === "scheduled") return isScheduledArticle(data);
     if (filterKey.indexOf("author:") === 0) {
       return (data.author || "ROLCC") === filterKey.slice(7);
     }
     return true;
+  }
+
+  function getStatusSortRank(data) {
+    if (isScheduledArticle(data)) return 2;
+    if (data.publish === false) return 1;
+    return 0;
   }
 
   function createComposerMenu(root, config) {
@@ -2311,13 +2526,13 @@
         cmp = normalize(ea.author || "ROLCC").localeCompare(normalize(eb.author || "ROLCC"));
         if (cmp === 0) cmp = normalize(ea.title).localeCompare(normalize(eb.title));
       } else if (field === "date") {
-        var da = ea.publish === false ? "" : ea.date || "";
-        var db = eb.publish === false ? "" : eb.date || "";
+        var da = getDisplayDate(ea) || "";
+        var db = getDisplayDate(eb) || "";
         cmp = da.localeCompare(db);
         if (cmp === 0) cmp = normalize(ea.title).localeCompare(normalize(eb.title));
       } else if (field === "status") {
-        var sa = ea.publish === false ? 1 : 0;
-        var sb = eb.publish === false ? 1 : 0;
+        var sa = getStatusSortRank(ea);
+        var sb = getStatusSortRank(eb);
         cmp = sa - sb;
         if (cmp === 0) cmp = normalize(ea.title).localeCompare(normalize(eb.title));
       } else {

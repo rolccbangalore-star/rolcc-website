@@ -149,14 +149,31 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
+  function syncMegaMenuTop() {
+    if (!navMenu) return;
+    var header = document.getElementById("header");
+    var top = 0;
+    if (header) {
+      top = Math.round(header.getBoundingClientRect().bottom);
+    }
+    document.documentElement.style.setProperty("--mega-menu-top", top + "px");
+  }
+
   function setMenuOpen(open) {
     const expanded = !!open;
-    if (navToggle) navToggle.setAttribute("aria-expanded", expanded);
+    if (navToggle) {
+      navToggle.setAttribute("aria-expanded", expanded);
+      navToggle.setAttribute("aria-label", expanded ? "Close menu" : "Open menu");
+    }
     if (navMenu) {
+      if (expanded) syncMegaMenuTop();
       navMenu.classList.toggle("is-open", expanded);
       navMenu.classList.toggle("hidden", !expanded);
+      if (expanded) navMenu.removeAttribute("hidden");
+      else navMenu.setAttribute("hidden", "");
       navMenu.setAttribute("aria-hidden", !expanded);
     }
+    document.body.classList.toggle("mega-menu-open", expanded);
   }
 
   function closeMenu() {
@@ -169,6 +186,18 @@ document.addEventListener("DOMContentLoaded", function () {
     });
     navMenu.querySelectorAll("a").forEach((link) => {
       link.addEventListener("click", closeMenu);
+    });
+    navMenu.querySelectorAll("[data-mega-close]").forEach((btn) => {
+      btn.addEventListener("click", closeMenu);
+    });
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && navMenu.classList.contains("is-open")) {
+        closeMenu();
+        navToggle.focus();
+      }
+    });
+    window.addEventListener("resize", function () {
+      if (navMenu.classList.contains("is-open")) syncMegaMenuTop();
     });
   }
 
@@ -242,11 +271,11 @@ document.addEventListener("DOMContentLoaded", function () {
   updateHeaderScrolled();
   window.updateHeaderScrolled = updateHeaderScrolled;
 
-  // Set active nav link from current page (desktop + mobile + ministries dropdown)
-  var navLinks = document.querySelectorAll(".header-top__link[data-nav], .header-top__menu-link[data-nav], .header-top__dropdown-link[data-nav]");
+  // Set active nav link from current page (desktop + mega menu + ministries dropdown)
+  var navLinks = document.querySelectorAll(".header-top__link[data-nav], .header-top__menu-link[data-nav], .header-top__dropdown-link[data-nav], .mega-menu__primary-link[data-nav], .mega-menu__links a[data-nav]");
   var currentPage = (function () {
     var path = window.location.pathname || "";
-    var name = path.split("/").pop() || "index.html";
+    var name = path.split("/").filter(Boolean).pop() || "index";
     return name.replace(/\.html$/, "") || "index";
   })();
   navLinks.forEach(function (link) {

@@ -48,6 +48,7 @@ const {
 } = require("./faq-config");
 const { renderSiteSortMenu, ARTICLES_SORT_OPTIONS } = require("./sort-menu-template");
 const { renderBibleStudyBodyHtml, normalizePassageReading, renderPassageReadingAccordion, sanitizeStudyHeading } = require("./bible-study-sections");
+const { getMegaMenuPanelHtml, getHamburgerButtonHtml } = require("./mega-menu-template");
 
 function loadApprovedFaqs() {
   const csvPath = path.join(DATA_DIR, "faqs-source-v2.csv");
@@ -376,26 +377,9 @@ function readHeaderNavTemplate(assetRoot) {
         </div>
         <div class="hidden lg:block">
           <a href="/contact#location" class="header-top__cta inline-flex items-center rounded-full bg-accent px-4 py-2 text-xs font-semibold text-white shadow-sm ring-1 ring-accent/70 hover:bg-accentSoft transition">Join Us This Sunday</a></div>
-        <button id="nav-toggle" type="button" class="header-top__hamburger lg:hidden inline-flex items-center justify-center w-10 h-10 rounded-md border border-slate-300 text-slate-700 hover:bg-slate-100" aria-label="Open menu" aria-expanded="false" aria-controls="nav-menu"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+        ${getHamburgerButtonHtml()}
       </nav>
-      <div id="nav-menu" class="header-top__menu hidden lg:hidden border-t border-slate-200 bg-white" aria-hidden="true">
-        <div class="mx-auto max-w-6xl px-4 py-3 space-y-1 sm:px-6 lg:px-8">
-          <a href="/" class="header-top__menu-link block rounded-md px-3 py-2 text-slate-700 hover:bg-slate-100" data-nav="index">Home</a>
-          <a href="/about" class="header-top__menu-link block rounded-md px-3 py-2 text-slate-700 hover:bg-slate-100" data-nav="about">About Us</a>
-          <p class="px-3 py-1.5 text-xs font-semibold uppercase tracking-wider text-slate-500 mt-2">Ministries</p>
-          <a href="/services" class="header-top__menu-link block rounded-md px-3 py-2 pl-5 text-slate-700 hover:bg-slate-100" data-nav="services">Worship Services</a>
-          <a href="/river-kids" class="header-top__menu-link block rounded-md px-3 py-2 pl-5 text-slate-700 hover:bg-slate-100" data-nav="river-kids">River Kids</a>
-          <a href="/fellowship" class="header-top__menu-link block rounded-md px-3 py-2 pl-5 text-slate-700 hover:bg-slate-100" data-nav="fellowship">Cell Fellowship</a>
-          <a href="/pmd" class="header-top__menu-link block rounded-md px-3 py-2 pl-5 text-slate-700 hover:bg-slate-100" data-nav="pmd">PMD</a>
-          <a href="/counselling" class="header-top__menu-link block rounded-md px-3 py-2 pl-5 text-slate-700 hover:bg-slate-100" data-nav="counselling">Counselling</a>
-          <a href="/rolf" class="header-top__menu-link block rounded-md px-3 py-2 pl-5 text-slate-700 hover:bg-slate-100" data-nav="rolf">ROLF</a>
-          <a href="/events" class="header-top__menu-link block rounded-md px-3 py-2 pl-5 text-slate-700 hover:bg-slate-100" data-nav="events">Events</a>
-          <a href="/membership" class="header-top__menu-link block rounded-md px-3 py-2 pl-5 text-slate-700 hover:bg-slate-100" data-nav="membership">Membership</a>
-          <a href="/giving" class="header-top__menu-link block rounded-md px-3 py-2 text-slate-700 hover:bg-slate-100" data-nav="giving">Giving</a>
-          <a href="/contact" class="header-top__menu-link block rounded-md px-3 py-2 text-slate-700 hover:bg-slate-100" data-nav="contact">Contact Us</a>
-          <a href="/contact#location" class="header-top__menu-cta mt-3 inline-flex rounded-full bg-accent px-4 py-2 text-sm font-semibold text-white">Join Us This Sunday</a>
-        </div>
-      </div>
+${getMegaMenuPanelHtml()}
     </header>`;
 }
 

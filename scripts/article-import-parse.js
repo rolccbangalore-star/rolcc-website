@@ -16,6 +16,32 @@
     return String(value || "").trim();
   }
 
+  /** Strip Gemini/NotebookLM-style citation leftovers like [cite: 4] from imported text. */
+  function stripAiCitationMarkers(value) {
+    return String(value || "")
+      .replace(/\s*\[cite:\s*\d+\]/gi, "")
+      .replace(/\s{2,}/g, " ")
+      .replace(/\s+([,.;:!?])/g, "$1");
+  }
+
+  function scrubImportedStrings(value) {
+    if (value === undefined || value === null) return value;
+    if (typeof value === "string") return stripAiCitationMarkers(value);
+    if (Array.isArray(value)) return value.map(scrubImportedStrings);
+    if (typeof value === "object") {
+      var out = {};
+      Object.keys(value).forEach(function (key) {
+        if (key.charAt(0) === "_") {
+          out[key] = value[key];
+          return;
+        }
+        out[key] = scrubImportedStrings(value[key]);
+      });
+      return out;
+    }
+    return value;
+  }
+
   function normalizeCollectionId(id) {
     if (!id) return "";
     var key = String(id).replace(/_/g, "-");
@@ -205,7 +231,7 @@
     var entry = {};
     Object.keys(data).forEach(function (key) {
       if (key.charAt(0) === "_") return;
-      entry[key] = data[key];
+      entry[key] = scrubImportedStrings(data[key]);
     });
     return entry;
   }

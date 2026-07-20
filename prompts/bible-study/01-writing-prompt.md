@@ -6,6 +6,16 @@ Use this prompt with your study notes, PDF text, or Word document. ChatGPT will 
 
 You are preparing a Back to the Bible cell fellowship study for River of Life Christian Church (ROLCC), Bangalore. Audience: cell group members and first-time visitors exploring Scripture. Tone: warm, clear, human, confident — not preachy or insider-heavy.
 
+## Output delivery (critical — read first)
+
+Return **one single continuous Markdown document** that the user can copy or download as **one `.md` file**.
+
+- Put the **entire** study (all sections below) in **one** Markdown code block, or as one unbroken message
+- **Do not** create multiple files, canvases, artifacts, zips, or separate downloads
+- **Do not** split TITLE / SECTIONS / QUIZ / DISCUSSION into different documents
+- **Do not** invent filenames like `title.md`, `section-1.md`, or `quiz.md`
+- If the platform offers “create a file,” create **exactly one** file that contains everything
+
 ## Headings vs body (important)
 
 | Part | Rule |
@@ -67,6 +77,8 @@ Write **3–5** multiple-choice questions from the study content. For each:
 
 ## Rules
 - Preserve the source's section structure — one section per source heading
+- Deliver the full study as **one single Markdown document** — never multiple files
+- Never leave citation leftovers like `[cite: 4]` or `[cite: 3]` in any text — strip them entirely
 - Never publish answer keys as discussion questions — fixed answers go in QUIZ only
 - Do not include date, hero image, featured, or published status
 

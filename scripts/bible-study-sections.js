@@ -468,32 +468,7 @@ function labelText(line) {
 }
 
 function hasInlineBullets(line) {
-  const hit = BULLET_SPLIT.test(line) && line.split(BULLET_SPLIT).filter(Boolean).length > 1;
-  // #region agent log
-  if (hit && /Armor|Belt of Truth|Ephesians 6:1[4-7]/i.test(String(line || ""))) {
-    try {
-      const fs = require("fs");
-      const path = require("path");
-      const logPath = path.join(__dirname, "..", "debug-f812b1.log");
-      fs.appendFileSync(
-        logPath,
-        JSON.stringify({
-          sessionId: "f812b1",
-          hypothesisId: "H3",
-          location: "bible-study-sections.js:hasInlineBullets",
-          message: "Hyphen treated as bullet split",
-          data: {
-            line: String(line).slice(0, 180),
-            parts: line.split(BULLET_SPLIT).filter(Boolean),
-          },
-          timestamp: Date.now(),
-          runId: "pre-fix",
-        }) + "\n"
-      );
-    } catch (err) {}
-  }
-  // #endregion
-  return hit;
+  return BULLET_SPLIT.test(line) && line.split(BULLET_SPLIT).filter(Boolean).length > 1;
 }
 
 function expandToListItems(lines) {

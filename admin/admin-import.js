@@ -499,6 +499,9 @@
     if (typeof value === "boolean" && key === "includeQuiz" && value === false) return true;
     if (key === "author" && typeof value === "string" && AUTHOR_DEFAULTS.indexOf(value.trim()) !== -1) return true;
     if (Array.isArray(value) && value.length === 0) return true;
+    if (key === "passageReading" && typeof value === "object" && !Array.isArray(value)) {
+      return !String(value.text || "").trim();
+    }
     return false;
   }
 
@@ -545,16 +548,37 @@
     return null;
   }
 
+  function deepClonePlain(value) {
+    if (value === undefined || value === null) return value;
+    if (typeof value !== "object") return value;
+    try {
+      return JSON.parse(JSON.stringify(value));
+    } catch (err) {
+      return value;
+    }
+  }
+
+  /**
+   * Decap 3 widgets expect Immutable v3 Maps/Lists (or plain values Decap converts).
+   * Immutable v4 from the CDN breaks nested object/list editing after import.
+   */
+  function getDecapCompatibleImmutable() {
+    var Imm = window.Immutable;
+    if (!Imm || typeof Imm.fromJS !== "function") return null;
+    var major = parseInt(String(Imm.version || "0").split(".")[0], 10);
+    if (major >= 4) return null;
+    return Imm;
+  }
+
   function toStoreValue(value) {
     if (value === undefined || value === null) return value;
     if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") return value;
-    if (window.Immutable && typeof window.Immutable.fromJS === "function") {
-      return window.Immutable.fromJS(value);
-    }
-    return value;
+    var Imm = getDecapCompatibleImmutable();
+    if (Imm) return Imm.fromJS(deepClonePlain(value));
+    return deepClonePlain(value);
   }
 
-  function changeDraftFieldValue(store, fieldName, value) {
+  function changeDraftFieldValue(store, fieldName, value, entries) {
     var field = getFieldSchema(store, fieldName);
     if (!field) return false;
     store.dispatch({
@@ -563,10 +587,57 @@
         field: field,
         value: value,
         metadata: {},
-        entries: [],
+        entries: entries || [],
       },
     });
     return true;
+  }
+
+  function getNestedFieldSchema(store, parentName, childName) {
+    var parent = getFieldSchema(store, parentName);
+    if (!parent) return null;
+    var fields = parent.get ? parent.get("fields") : parent.fields;
+    if (!fields) return null;
+    if (fields.find) {
+      return (
+        fields.find(function (f) {
+          return (f.get ? f.get("name") : f.name) === childName;
+        }) || null
+      );
+    }
+    var list = fields.toArray ? fields.toArray() : fields;
+    for (var i = 0; i < (list || []).length; i++) {
+      var f = list[i];
+      if ((f.get ? f.get("name") : f.name) === childName) return f;
+    }
+    return null;
+  }
+
+  function changeNestedObjectField(store, parentName, childName, value) {
+    var childField = getNestedFieldSchema(store, parentName, childName);
+    if (!childField) return false;
+    store.dispatch({
+      type: "DRAFT_CHANGE_FIELD",
+      payload: {
+        field: childField,
+        value: value,
+        metadata: {},
+        entries: [parentName],
+      },
+    });
+    return true;
+  }
+
+  function applyPassageReadingToStore(store, passageReading) {
+    if (!passageReading || typeof passageReading !== "object") return;
+    var reference = String(passageReading.reference || "").trim();
+    var text = String(passageReading.text || "").trim();
+    var wroteNested = false;
+    if (reference) wroteNested = changeNestedObjectField(store, "passageReading", "reference", reference) || wroteNested;
+    if (text) wroteNested = changeNestedObjectField(store, "passageReading", "text", text) || wroteNested;
+    if (!wroteNested) {
+      changeDraftFieldValue(store, "passageReading", toStoreValue({ reference: reference, text: text }));
+    }
   }
 
   function applyImportFieldsToStore(store, mergedData, collection) {
@@ -586,7 +657,7 @@
     }
 
     if (mergedData.passageReading !== undefined) {
-      changeDraftFieldValue(store, "passageReading", toStoreValue(mergedData.passageReading));
+      applyPassageReadingToStore(store, mergedData.passageReading);
     }
 
     if (mergedData.quiz !== undefined) {
@@ -634,6 +705,15 @@
     if (importData.sermonSeries && data.sermonSeries === importData.sermonSeries) verified.meta += 1;
     if (importData.passage && data.passage === importData.passage) verified.meta += 1;
 
+    if (importData.passageReading) {
+      var expectedReading = importData.passageReading || {};
+      var actualReading = data.passageReading || {};
+      var expectedText = String(expectedReading.text || "").trim();
+      var actualText = String(actualReading.text || "").trim();
+      if (expectedText && actualText) verified.content += 1;
+      else if (expectedText) verified.warnings.push("Scripture reading (NKJV) did not apply.");
+    }
+
     if (importData.blocks && importData.blocks.length) {
       var blockLen = countImportedList(data.blocks, importData.blocks);
       if (blockLen > 0) verified.content += blockLen;
@@ -646,12 +726,16 @@
     }
     if (importData.sections && importData.sections.length) {
       var secLen = (data.sections || []).length;
-      if (secLen > 0) verified.content += secLen;
+      var firstSection = (data.sections || [])[0] || {};
+      var firstHeading = String(firstSection.heading || "").trim();
+      if (secLen > 0 && firstHeading) verified.content += secLen;
+      else if (secLen > 0) verified.content += secLen;
       else verified.warnings.push("Sections did not apply.");
     }
     if (importData.discussionQuestions && importData.discussionQuestions.length) {
       var qLen = (data.discussionQuestions || []).length;
       if (qLen > 0) verified.content += qLen;
+      else verified.warnings.push("Discussion questions did not apply.");
     }
     if (importData.includeQuiz === true && data.includeQuiz === true) verified.meta += 1;
     if (importData.quiz && importData.quiz.length) {
@@ -700,13 +784,19 @@
 
     applyImportFieldsToStore(store, mergedData, collection);
 
+    var root = getRoot();
     if (mergedData.title) {
       var headerInput = $("admin-editor-title-input");
       if (headerInput) setInputValue(headerInput, mergedData.title);
-      var root = getRoot();
       if (root && window.AdminComposer && window.AdminComposer.syncTitleFromDecap) {
         window.AdminComposer.syncTitleFromDecap(root);
       }
+    }
+
+    if (root && window.AdminEditorFields && typeof window.AdminEditorFields.mount === "function") {
+      window.setTimeout(function () {
+        window.AdminEditorFields.mount(getRoot());
+      }, 120);
     }
 
     if (window.AdminComposer && window.AdminComposer.resetEditorSnapshot) {
@@ -721,7 +811,7 @@
       return verified;
     }
 
-    window.setTimeout(finish, mergedData.quiz && mergedData.includeQuiz ? 200 : 80);
+    window.setTimeout(finish, mergedData.quiz && mergedData.includeQuiz ? 280 : 160);
     return null;
   }
 
@@ -935,10 +1025,7 @@
     var list = (tags || []).map(function (tag) {
       return { tag: tag };
     });
-    if (window.Immutable && typeof window.Immutable.fromJS === "function") {
-      return window.Immutable.fromJS(list);
-    }
-    return list;
+    return toStoreValue(list);
   }
 
   function validatePublishRequirements() {
@@ -961,6 +1048,12 @@
         missing.push({ key: "passage", label: "Passage" });
       }
       var passageReading = data.passageReading || {};
+      if (passageReading && typeof passageReading.get === "function") {
+        passageReading = {
+          reference: passageReading.get("reference") || "",
+          text: passageReading.get("text") || "",
+        };
+      }
       var passageReadingText = String(passageReading.text || "").trim();
       if (!passageReadingText) {
         missing.push({ key: "passageReading", label: "Scripture reading (NKJV)" });

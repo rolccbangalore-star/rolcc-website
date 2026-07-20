@@ -450,7 +450,13 @@
         })
         .filter(Boolean);
     } else if (isBibleStudyCollection(collection)) {
-      out.sections = out.sections || [];
+      out.sections = normalizeSectionsForCms(out.sections).map(function (section) {
+        return { heading: section.heading, body: section.body };
+      });
+      if (out.passageReading && typeof out.passageReading === "object") {
+        out.passageReading = normalizePassageReadingForCms(out.passageReading, out.passage);
+        if (!out.passageReading.text) delete out.passageReading;
+      }
       out.discussionQuestions = (out.discussionQuestions || [])
         .map(function (q) {
           return typeof q === "string" ? q : trim(q.question || "");
@@ -516,6 +522,26 @@
     }).filter(Boolean);
   }
 
+  function normalizePassageReadingForCms(raw, passage) {
+    var source = raw && typeof raw === "object" ? raw : {};
+    return {
+      reference: trim(source.reference || passage || ""),
+      text: trim(source.text || ""),
+    };
+  }
+
+  function normalizeSectionsForCms(sections) {
+    return (sections || [])
+      .map(function (section) {
+        if (!section || typeof section !== "object") return null;
+        var heading = trim(section.heading || "");
+        var body = typeof section.body === "string" ? section.body : trim(section.body || "");
+        if (!heading && !String(body || "").trim()) return null;
+        return { heading: heading, body: body };
+      })
+      .filter(Boolean);
+  }
+
   function normalizeEntryForCms(entry, collection) {
     collection = normalizeCollectionId(collection);
     var out = stripInternalKeys(Object.assign({}, entry || {}));
@@ -528,7 +554,8 @@
         return text ? { item: text } : null;
       }).filter(Boolean);
     } else if (isBibleStudyCollection(collection)) {
-      out.sections = out.sections || [];
+      out.passageReading = normalizePassageReadingForCms(out.passageReading, out.passage);
+      out.sections = normalizeSectionsForCms(out.sections);
       out.discussionQuestions = (out.discussionQuestions || []).map(function (q) {
         return typeof q === "string" ? { question: q } : { question: trim(q.question || "") };
       }).filter(function (q) {

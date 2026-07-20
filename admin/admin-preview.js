@@ -27,6 +27,32 @@
       data = Object.assign({}, data, { title: titleInput.value.trim() });
     }
 
+    // #region agent log
+    try {
+      var sections = data.sections || [];
+      var armor = sections.find(function (s) {
+        return s && String(s.heading || "").indexOf("ARMOR OF GOD") !== -1;
+      });
+      fetch("http://127.0.0.1:7663/ingest/a8dab655-487d-4443-a923-c6ebc86b6891", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "f812b1" },
+        body: JSON.stringify({
+          sessionId: "f812b1",
+          hypothesisId: "H2",
+          location: "admin-preview.js:getPreviewData",
+          message: "Preview data snapshot",
+          data: {
+            title: data.title || "",
+            sectionCount: sections.length,
+            armorBodyPreview: armor ? String(armor.body || "").slice(0, 260) : null,
+          },
+          timestamp: Date.now(),
+          runId: "pre-fix",
+        }),
+      }).catch(function () {});
+    } catch (err) {}
+    // #endregion
+
     return data;
   }
 

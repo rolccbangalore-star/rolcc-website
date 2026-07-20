@@ -217,7 +217,10 @@ function splitStructuredBody(text) {
 const STUDY_LABELS =
   /^(What's happening|What is|Important(?:\s+Background|\s+Lesson|\s+Insight)?|Main (?:Point|Idea|Event|Teaching|Scripture)|Reference[s]?|Spiritual (?:Meaning|Lesson)|Possible Reasons?|Teaching|Significance|Keyword|Icebreaker|Memory Verse|Key Verse|Theme Verse|Purpose|Then|He tells her to|God provided|This miracle shows that God cares about|This required|The story of the widow's oil teaches us)(?::)?$/i;
 
-const BULLET_SPLIT = /\s*[\uF0B7\u2022\u25CF\u25AA\u2023●•▪\-–—]\s+/;
+// Real bullet glyphs only — do NOT treat ASCII/en/em dashes as bullets (breaks "Armor - Reference").
+const BULLET_CHARS = "\uF0B7\u2022\u25CF\u25AA\u2023●•▪";
+const BULLET_SPLIT = new RegExp("\\s*[" + BULLET_CHARS + "]\\s+");
+const BULLET_LINE_PREFIX = new RegExp("^[" + BULLET_CHARS + "\\-–—]\\s*");
 
 function scrubBodyLine(line) {
   const t = String(line || "")
@@ -240,13 +243,13 @@ function isScriptureRefLine(line) {
 }
 
 function lineHasBulletPrefix(line) {
-  return /^[\uF0B7\u2022\u25CF\u25AA\u2023●•▪\-–—]\s*/.test(String(line || "").trim());
+  return BULLET_LINE_PREFIX.test(String(line || "").trim());
 }
 
 function stripBulletPrefix(line) {
   return String(line || "")
     .trim()
-    .replace(/^[\uF0B7\u2022\u25CF\u25AA\u2023●•▪\-–—]\s*/, "");
+    .replace(BULLET_LINE_PREFIX, "");
 }
 
 function opensQuote(line) {
@@ -465,7 +468,32 @@ function labelText(line) {
 }
 
 function hasInlineBullets(line) {
-  return BULLET_SPLIT.test(line) && line.split(BULLET_SPLIT).filter(Boolean).length > 1;
+  const hit = BULLET_SPLIT.test(line) && line.split(BULLET_SPLIT).filter(Boolean).length > 1;
+  // #region agent log
+  if (hit && /Armor|Belt of Truth|Ephesians 6:1[4-7]/i.test(String(line || ""))) {
+    try {
+      const fs = require("fs");
+      const path = require("path");
+      const logPath = path.join(__dirname, "..", "debug-f812b1.log");
+      fs.appendFileSync(
+        logPath,
+        JSON.stringify({
+          sessionId: "f812b1",
+          hypothesisId: "H3",
+          location: "bible-study-sections.js:hasInlineBullets",
+          message: "Hyphen treated as bullet split",
+          data: {
+            line: String(line).slice(0, 180),
+            parts: line.split(BULLET_SPLIT).filter(Boolean),
+          },
+          timestamp: Date.now(),
+          runId: "pre-fix",
+        }) + "\n"
+      );
+    } catch (err) {}
+  }
+  // #endregion
+  return hit;
 }
 
 function expandToListItems(lines) {
@@ -479,9 +507,8 @@ function expandToListItems(lines) {
         .forEach((part) => items.push(part));
       return;
     }
-    const bulletMatch = line.match(/^[\uF0B7\u2022\u25CF\u25AA\u2023●•▪\-–—]\s*(.+)$/);
-    if (bulletMatch) {
-      items.push(bulletMatch[1].trim());
+    if (lineHasBulletPrefix(line)) {
+      items.push(stripBulletPrefix(line));
       return;
     }
     items.push(line.trim());
@@ -502,7 +529,7 @@ function shouldUseList(label, lines) {
   if (/reference|reason|provided|required|teaching|happening|tells her|cares about|teaches us/i.test(label)) {
     return true;
   }
-  if (lines.some((line) => hasInlineBullets(line) || /^[\uF0B7\u2022●•▪\-–—]/.test(line))) return true;
+  if (lines.some((line) => hasInlineBullets(line) || lineHasBulletPrefix(line))) return true;
   if (lines.length > 1) return true;
   return false;
 }
@@ -668,11 +695,11 @@ function renderBibleStudyBodyHtml(body) {
       continue;
     }
 
-    if (hasInlineBullets(line) || /^[\uF0B7\u2022●•▪\-–—]/.test(line)) {
+    if (hasInlineBullets(line) || lineHasBulletPrefix(line)) {
       const bulletLines = [];
       while (
         i < lines.length &&
-        (hasInlineBullets(lines[i]) || /^[\uF0B7\u2022●•▪\-–—]/.test(lines[i])) &&
+        (hasInlineBullets(lines[i]) || lineHasBulletPrefix(lines[i])) &&
         !isLabelLine(lines[i])
       ) {
         bulletLines.push(lines[i]);
@@ -691,7 +718,7 @@ function renderBibleStudyBodyHtml(body) {
       !isQuoteLine(lines[i]) &&
       !isSubheadingLine(lines[i]) &&
       !hasInlineBullets(lines[i]) &&
-      !/^[\uF0B7\u2022●•▪\-–—]/.test(lines[i]) &&
+      !lineHasBulletPrefix(lines[i]) &&
       !parseQaLine(lines[i])
     ) {
       paragraphLines.push(lines[i]);

@@ -581,6 +581,39 @@
   function changeDraftFieldValue(store, fieldName, value, entries) {
     var field = getFieldSchema(store, fieldName);
     if (!field) return false;
+    // #region agent log
+    try {
+      var valuePreview = value;
+      if (value && typeof value.toJS === "function") valuePreview = value.toJS();
+      var armorBody = "";
+      if (fieldName === "sections" && valuePreview && valuePreview.length) {
+        var armor = valuePreview.find(function (s) {
+          return s && String(s.heading || "").indexOf("ARMOR OF GOD") !== -1;
+        });
+        armorBody = armor ? String(armor.body || "").slice(0, 220) : "";
+      }
+      fetch("http://127.0.0.1:7663/ingest/a8dab655-487d-4443-a923-c6ebc86b6891", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "f812b1" },
+        body: JSON.stringify({
+          sessionId: "f812b1",
+          hypothesisId: "H1",
+          location: "admin-import.js:changeDraftFieldValue",
+          message: "Draft field write",
+          data: {
+            fieldName: fieldName,
+            entries: entries || [],
+            valueType: value && value.toJS ? "immutable" : typeof value,
+            armorBodyPreview: armorBody,
+            isArray: Array.isArray(valuePreview),
+            listLen: Array.isArray(valuePreview) ? valuePreview.length : null,
+          },
+          timestamp: Date.now(),
+          runId: "pre-fix",
+        }),
+      }).catch(function () {});
+    } catch (err) {}
+    // #endregion
     store.dispatch({
       type: "DRAFT_CHANGE_FIELD",
       payload: {
@@ -683,7 +716,34 @@
 
   function readDraftData() {
     var entryObj = getDraftEntryJs();
-    return entryObj && entryObj.data ? entryObj.data : {};
+    var data = entryObj && entryObj.data ? entryObj.data : {};
+    // #region agent log
+    try {
+      var sections = data.sections || [];
+      var armor = sections.find(function (s) {
+        return s && String(s.heading || "").indexOf("ARMOR OF GOD") !== -1;
+      });
+      fetch("http://127.0.0.1:7663/ingest/a8dab655-487d-4443-a923-c6ebc86b6891", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "f812b1" },
+        body: JSON.stringify({
+          sessionId: "f812b1",
+          hypothesisId: "H2",
+          location: "admin-import.js:readDraftData",
+          message: "Draft data read",
+          data: {
+            sectionCount: sections.length,
+            armorHeading: armor ? armor.heading : null,
+            armorBodyPreview: armor ? String(armor.body || "").slice(0, 260) : null,
+            hasDashInArmorBody: armor ? String(armor.body || "").indexOf(" - ") !== -1 : null,
+          },
+          timestamp: Date.now(),
+          runId: "pre-fix",
+        }),
+      }).catch(function () {});
+    } catch (err) {}
+    // #endregion
+    return data;
   }
 
   function countImportedList(actual, expected) {

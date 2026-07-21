@@ -43,6 +43,22 @@
       "destination": "/membership.html"
     },
     {
+      "source": "/salvation",
+      "destination": "/salvation.html"
+    },
+    {
+      "source": "/prayer-request",
+      "destination": "/prayer-request.html"
+    },
+    {
+      "source": "/baptism",
+      "destination": "/baptism.html"
+    },
+    {
+      "source": "/marriage",
+      "destination": "/marriage.html"
+    },
+    {
       "source": "/river-kids",
       "destination": "/river-kids.html"
     },
@@ -211,6 +227,26 @@
     {
       "source": "/membership.html",
       "destination": "/membership",
+      "permanent": true
+    },
+    {
+      "source": "/salvation.html",
+      "destination": "/salvation",
+      "permanent": true
+    },
+    {
+      "source": "/prayer-request.html",
+      "destination": "/prayer-request",
+      "permanent": true
+    },
+    {
+      "source": "/baptism.html",
+      "destination": "/baptism",
+      "permanent": true
+    },
+    {
+      "source": "/marriage.html",
+      "destination": "/marriage",
       "permanent": true
     },
     {

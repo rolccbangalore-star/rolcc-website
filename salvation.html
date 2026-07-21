@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Salvation | Follow Jesus | River of Life Christian Church, Bangalore</title>
+    <meta
+      name="description"
+      content="Learn what salvation means and how to begin a relationship with Jesus. Prayer, next steps, baptism, and community at River of Life Christian Church in Bangalore."
+    />
+    <meta
+      name="keywords"
+      content="salvation, follow Jesus, gospel, baptism, ROLCC Bangalore"
+    />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Salvation | Follow Jesus | River of Life Christian Church, Bangalore" />
+    <meta
+      property="og:description"
+      content="Learn what salvation means and how to begin a relationship with Jesus. Prayer, next steps, baptism, and community at River of Life Christian Church in Bangalore."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://www.rolcc.in/salvation" />
+    <meta property="og:image" content="https://www.rolcc.in/images/og-image.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Salvation | Follow Jesus | River of Life Christian Church, Bangalore" />
+    <meta name="twitter:description" content="Learn what salvation means and how to begin a relationship with Jesus. Prayer, next steps, baptism, and community at River of Life Christian Church in Bangalore." />
+    <meta name="twitter:image" content="https://www.rolcc.in/images/og-image.jpg" />
+
+    <link rel="canonical" href="https://www.rolcc.in/salvation" />
+
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
+    <link rel="icon" type="image/png" sizes="48x48" href="/images/favicon-48x48.png" />
+    <link rel="icon" type="image/png" sizes="96x96" href="/images/favicon-96x96.png" />
+    <link rel="apple-touch-icon" href="/images/apple-touch-icon.png" />
+
+    <!-- Sora font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: "#ffffff",
+              primaryDark: "#f6f9fc",
+              accent: "#635bff",
+              accentSoft: "#818cf8",
+            },
+          },
+        },
+      };
+    </script>
+
+    <link rel="stylesheet" href="css/styles.css" />
+    <link rel="stylesheet" href="css/faq.css" />
+  </head>
+  <body class="bg-slate-50 text-slate-900">
+    <!-- Announcement -->
+    <div id="announce-banner" class="announce-banner" role="banner" aria-label="Announcement">
+      <div class="announce-banner__inner">
+        <p class="announce-banner__title">
+          Join with us Online
+          <a href="#" id="announce-watch-live" class="announce-banner__btn" aria-label="Watch Live"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 8-6 4 6 4V8Z"/><rect width="14" height="12" x="2" y="6" rx="2" ry="2"/></svg></a>
+        </p>
+        <button type="button" id="announce-banner-close" class="announce-banner__close" aria-label="Dismiss announcement">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Header -->
+    <header class="header-top" id="header">
+      <nav class="header-top__bar mx-auto max-w-6xl px-4 py-3 sm:px-6 lg:px-8 flex items-center justify-between">
+        <a href="/" class="header-top__brand flex items-center gap-3">
+          <img src="assets/logo.svg" alt="River of Life Christian Church" class="header-top__logo-img" width="36" height="44" />
+          <div class="leading-tight">
+            <p class="text-sm font-semibold tracking-wide">River of Life</p>
+            <p class="text-xs text-slate-500">Christian Church · Bangalore</p>
+          </div>
+        </a>
+
+        <div class="hidden lg:flex items-center gap-6 text-sm font-medium">
+          <a href="/" class="header-top__link hidden xl:inline-flex" data-nav="index">Home</a>
+          <a href="/about" class="header-top__link" data-nav="about">About Us</a>
+          <div class="header-top__dropdown relative" id="ministries-dropdown">
+            <button type="button" class="header-top__link flex items-center gap-0.5 text-slate-900 font-semibold" aria-expanded="false" aria-haspopup="true" aria-controls="ministries-menu" id="ministries-trigger">Ministries <span class="text-[10px] ml-0.5" aria-hidden="true">▾</span></button>
+            <div class="header-top__dropdown-panel absolute top-full left-0 mt-1 py-2 min-w-[10rem] rounded-lg border border-slate-200 bg-white shadow-lg z-50 hidden" id="ministries-menu" role="menu">
+              <a href="/services" class="header-top__dropdown-link block px-4 py-2 text-slate-700 hover:bg-slate-50 rounded-t-lg" role="menuitem" data-nav="services">Worship Services</a>
+              <a href="/river-kids" class="header-top__dropdown-link block px-4 py-2 text-slate-700 hover:bg-slate-50" role="menuitem" data-nav="river-kids">River Kids</a>
+              <a href="/fellowship" class="header-top__dropdown-link block px-4 py-2 text-slate-700 hover:bg-slate-50" role="menuitem" data-nav="fellowship">Cell Fellowship</a>
+              <a href="/pmd" class="header-top__dropdown-link block px-4 py-2 text-slate-700 hover:bg-slate-50" role="menuitem" data-nav="pmd">PMD</a>
+              <a href="/counselling" class="header-top__dropdown-link block px-4 py-2 text-slate-700 hover:bg-slate-50" role="menuitem" data-nav="counselling">Counselling</a>
+              <a href="/rolf" class="header-top__dropdown-link block px-4 py-2 text-slate-700 hover:bg-slate-50 rounded-b-lg" role="menuitem" data-nav="rolf">ROLF</a>
+            </div>
+          </div>
+          <a href="/giving" class="header-top__link hidden xl:inline-flex" data-nav="giving">Giving</a>
+          <a href="/contact" class="header-top__link" data-nav="contact">Contact Us</a>
+        </div>
+
+        <div class="hidden lg:block">
+          <a href="/contact#location" class="header-top__cta inline-flex items-center rounded-full bg-accent px-4 py-2 text-xs font-semibold text-white shadow-sm ring-1 ring-accent/70 hover:bg-accentSoft transition">Join Us This Sunday</a>
+        </div>
+
+        <button id="nav-toggle" type="button" class="header-top__hamburger mega-menu__toggle inline-flex items-center justify-center w-10 h-10 rounded-md border border-slate-300 text-slate-700 hover:bg-slate-100" aria-label="Open menu" aria-expanded="false" aria-controls="nav-menu">
+          <span class="mega-menu__toggle-icon mega-menu__toggle-icon--open" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg></span>
+          <span class="mega-menu__toggle-icon mega-menu__toggle-icon--close" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></span>
+        </button>
+      </nav>
+
+      <!-- @mega-menu:start -->
+      <div id="nav-menu" class="mega-menu" aria-hidden="true" hidden>
+        <div class="mega-menu__backdrop" data-mega-close tabindex="-1" aria-hidden="true"></div>
+        <div class="mega-menu__frame">
+          <div class="mega-menu__shell">
+            <button type="button" class="mega-menu__close" data-mega-close aria-label="Close menu">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+            </button>
+
+            <div class="mega-menu__main">
+              <div class="mega-menu__nav-block">
+                <ul class="mega-menu__primary" role="list">
+                  <li><a href="/" class="mega-menu__primary-link" data-nav="index">Home</a></li>
+                  <li><a href="/about" class="mega-menu__primary-link" data-nav="about">About Us</a></li>
+                  <li><a href="/services" class="mega-menu__primary-link" data-nav="services">Worship Services</a></li>
+                  <li><a href="/giving" class="mega-menu__primary-link" data-nav="giving">Giving</a></li>
+                  <li><a href="/contact" class="mega-menu__primary-link" data-nav="contact">Contact Us</a></li>
+                </ul>
+              </div>
+
+              <div class="mega-menu__columns">
+                <div class="mega-menu__col">
+                  <p class="mega-menu__col-title">Ministries</p>
+                  <ul class="mega-menu__links" role="list">
+                    <li><a href="/services" data-nav="services">Worship Services</a></li>
+                    <li><a href="/river-kids" data-nav="river-kids">River Kids</a></li>
+                    <li><a href="/fellowship" data-nav="fellowship">Cell Fellowship</a></li>
+                    <li><a href="/pmd" data-nav="pmd">PMD</a></li>
+                    <li><a href="/counselling" data-nav="counselling">Counselling</a></li>
+                    <li><a href="/rolf" data-nav="rolf">ROLF</a></li>
+                  </ul>
+                </div>
+                <div class="mega-menu__col">
+                  <p class="mega-menu__col-title">Connect</p>
+                  <ul class="mega-menu__links" role="list">
+                    <li><a href="/events" data-nav="events">Events</a></li>
+                    <li><a href="/membership" data-nav="membership">Membership</a></li>
+                    <li><a href="/giving" data-nav="giving">Giving</a></li>
+                    <li><a href="/contact" data-nav="contact">Contact</a></li>
+                  </ul>
+                </div>
+                <div class="mega-menu__col">
+                  <p class="mega-menu__col-title">Resources</p>
+                  <ul class="mega-menu__links" role="list">
+                    <li><a href="/faq" data-nav="faq">FAQ</a></li>
+                    <li><a href="/articles" data-nav="articles">Articles</a></li>
+                    <li><a href="/bible-study" data-nav="bible-study">Bible Study</a></li>
+                    <li><a href="/gallery" data-nav="gallery">Gallery</a></li>
+                    <li><a href="/sermons" data-nav="sermons">Latest Sermon</a></li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="mega-menu__footer">
+                <div class="mega-menu__social">
+                  <a href="https://www.facebook.com/rolccindia/" target="_blank" rel="noopener noreferrer" class="mega-menu__social-link" aria-label="Facebook"><svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></a>
+                  <a href="https://www.youtube.com/@rolccindia" target="_blank" rel="noopener noreferrer" class="mega-menu__social-link" aria-label="YouTube"><svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></a>
+                  <a href="https://www.instagram.com/rolccindia" target="_blank" rel="noopener noreferrer" class="mega-menu__social-link" aria-label="Instagram"><svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg></a>
+                </div>
+              </div>
+            </div>
+
+            <aside class="mega-menu__aside" aria-label="Visit invitation">
+              <div class="mega-menu__aside-body">
+                <h2 class="mega-menu__aside-title">Come worship with us</h2>
+                <ul class="mega-menu__schedule" role="list">
+                  <li>
+                    <span class="mega-menu__schedule-time">8:00 AM</span>
+                    <span class="mega-menu__schedule-label">Tamil</span>
+                  </li>
+                  <li>
+                    <span class="mega-menu__schedule-time">10:00 AM</span>
+                    <span class="mega-menu__schedule-label">English</span>
+                  </li>
+                </ul>
+                <p class="mega-menu__aside-place">HSR Layout, Bengaluru</p>
+                <a href="/contact#location" class="mega-menu__aside-cta">Plan Your Visit</a>
+              </div>
+            </aside>
+          </div>
+        </div>
+      </div>
+      <!-- @mega-menu:end -->
+
+
+</header>
+
+    <main class="main-no-top-gap relative z-10">
+
+      <section class="pcare-hero pcare-hero--banner" id="hero" aria-label="Salvation">
+        <div class="pcare-hero__media" aria-hidden="true">
+          <img src="assets/salvation-cover.png" alt="" width="1920" height="400" loading="eager" decoding="async" />
+        </div>
+        <div class="pcare-hero__content">
+          <p class="pcare-hero__eyebrow">Personal Caring</p>
+          <h1 class="pcare-hero__title">Salvation</h1>
+          <p class="pcare-hero__lead">Becoming a follower of Jesus. You can take this step today, wherever you are.</p>
+          <div class="pcare-hero__actions">
+            <a href="#how-to" class="btn-primary inline-flex rounded-full bg-accent px-6 py-2.5 text-sm font-semibold text-white shadow-sm ring-1 ring-accent/70 hover:bg-accentSoft">I have decided</a>
+            <a href="#about" class="btn-outline inline-flex rounded-full border border-slate-300 px-6 py-2.5 text-sm font-semibold text-slate-800 hover:border-accent hover:text-accentSoft">Learn more</a>
+          </div>
+        </div>
+      </section>
+
+      <nav class="pcare-section-rail" aria-label="Page sections">
+        <ul class="pcare-section-rail__list" role="list">
+          <li><a href="#about">About</a></li>
+          <li><a href="#how-to">How to</a></li>
+          <li><a href="#next">Next steps</a></li>
+          <li><a href="#resources">Resources</a></li>
+          <li><a href="#faqs">FAQs</a></li>
+        </ul>
+      </nav>
+
+      <section class="border-b border-slate-200 bg-white" id="about">
+        <div class="mx-auto max-w-6xl px-4 py-14 sm:px-6 md:py-20 lg:px-8">
+          <div class="pcare-reveal pcare-prose">
+            <h2 class="text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">Take the first step on your journey of faith</h2>
+            <p class="mt-4 text-sm leading-relaxed text-slate-600 sm:text-base">God loves you so much, just as you are right now. There is nothing you can do to make Him love you more or less. Because of that love, He sent His Son, Jesus, to die to pay the penalty for the sin that separates us from Him. Then He was resurrected. He came back to life as the ultimate victory over sin and death.</p>
+            <blockquote class="pcare-scripture">
+              &ldquo;Salvation is found in no one else, for there is no other name under heaven given to mankind by which we must be saved.&rdquo;
+              <cite>Acts 4:12</cite>
+            </blockquote>
+            <p class="mt-6 text-sm leading-relaxed text-slate-600 sm:text-base">Salvation is a gift from God. It cannot be earned through our own efforts. You accept this gift by placing your faith in the death and resurrection of Jesus and choosing to live according to His Word. If you are ready to receive this gift and commit your life to Him, you can do that right now.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="border-b border-slate-200 bg-slate-50" id="how-to">
+        <div class="mx-auto max-w-6xl px-4 py-14 sm:px-6 md:py-20 lg:px-8">
+          <div class="pcare-reveal max-w-2xl">
+            <h2 class="text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">Decide to follow Jesus</h2>
+            <p class="mt-3 text-sm leading-relaxed text-slate-600">You are a few simple steps away from entering into a relationship with Jesus Christ.</p>
+          </div>
+          <div class="pcare-steps mt-10">
+            <article class="pcare-step">
+              <span class="pcare-step__index" aria-hidden="true">01</span>
+              <h3>Admit</h3>
+              <p>Admit that you are a sinner in need of a Savior, and ask for forgiveness of your sins.</p>
+            </article>
+            <article class="pcare-step">
+              <span class="pcare-step__index" aria-hidden="true">02</span>
+              <h3>Believe</h3>
+              <p>Believe that Jesus died and rose again to pay the penalty for your sins and give you new life in Him.</p>
+            </article>
+            <article class="pcare-step">
+              <span class="pcare-step__index" aria-hidden="true">03</span>
+              <h3>Choose</h3>
+              <p>Giving your life to Jesus is the first step. Growing to become more like Christ is a lifelong commitment.</p>
+            </article>
+          </div>
+
+          <div class="pcare-prayer mt-12 md:mt-16">
+            <h3 class="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">Salvation prayer</h3>
+            <p class="mt-3 text-sm text-slate-600">If you are ready, pray the prayer below. There is nothing special about these exact words. Make them your own. What matters is a genuine need for God, belief in Jesus, and a commitment to Him.</p>
+            <div class="pcare-prayer__body">
+              <p>Heavenly Father,</p>
+              <p>I come to you as a sinner in need of a Savior. I believe that Jesus Christ is the Son of God and the Savior of the world. Today, I make Jesus the Lord of my life. I believe He died so I could be forgiven and rose again to give me life. I receive this new life. This is my new beginning. I am a child of God.</p>
+              <p>Amen.</p>
+            </div>
+            <div class="pcare-congrats">
+              <h4 class="text-lg font-semibold text-slate-900">Congratulations on making the best decision of your life</h4>
+              <p class="mt-3 text-sm leading-relaxed text-slate-600">When you decide to follow Christ, you get a new beginning. You are not just a better version of yourself. You are new. For whatever has held you back, there is healing and freedom in Christ. You are no longer walking alone. God&apos;s presence is with you every step of the way.</p>
+              <blockquote class="pcare-scripture">
+                Therefore, if anyone is in Christ, the new creation has come: the old has gone, the new is here!
+                <cite>2 Corinthians 5:17 (NIV)</cite>
+              </blockquote>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="border-b border-slate-200 bg-white" id="next">
+        <div class="mx-auto max-w-6xl px-4 py-14 sm:px-6 md:py-20 lg:px-8">
+          <div class="pcare-reveal max-w-2xl">
+            <h2 class="text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">Begin your journey of faith</h2>
+            <p class="mt-3 text-sm leading-relaxed text-slate-600">You have taken the first step. Here is what to do next at River of Life.</p>
+          </div>
+          <div class="pcare-next mt-10">
+            <div class="pcare-next__item pcare-reveal">
+              <h3>Grow with a community</h3>
+              <p>Get connected with believers who will walk alongside you. Join us on Sunday, or find a Cell Fellowship near you in Bangalore.</p>
+              <a href="/fellowship">Explore Cell Fellowship <span aria-hidden="true">→</span></a>
+            </div>
+            <div class="pcare-next__item pcare-next__item--alt pcare-reveal">
+              <h3>Take the next step of baptism</h3>
+              <p>Baptism is the outward declaration of your inward decision to follow Christ. We would love to walk with you.</p>
+              <a href="/baptism">Learn about baptism <span aria-hidden="true">→</span></a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="border-b border-slate-200 bg-slate-50" id="resources">
+        <div class="mx-auto max-w-6xl px-4 py-14 sm:px-6 md:py-20 lg:px-8">
+          <div class="pcare-reveal">
+            <h2 class="text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">Resources</h2>
+            <p class="mt-3 max-w-xl text-sm text-slate-600">Helpful next steps as you grow in faith with ROLCC.</p>
+          </div>
+          <div class="pcare-resources mt-8 pcare-reveal">
+            <a href="/bible-study">
+              <span>
+                <span class="pcare-resources__title">Bible Study</span>
+                <span class="pcare-resources__desc">Learn the basics of faith through Scripture, one passage at a time.</span>
+              </span>
+              <span class="pcare-resources__arrow" aria-hidden="true">→</span>
+            </a>
+            <a href="/articles">
+              <span>
+                <span class="pcare-resources__title">Articles</span>
+                <span class="pcare-resources__desc">Everyday Faith and Back to the Bible writing from our church family.</span>
+              </span>
+              <span class="pcare-resources__arrow" aria-hidden="true">→</span>
+            </a>
+            <a href="/sermons">
+              <span>
+                <span class="pcare-resources__title">Latest Sermon</span>
+                <span class="pcare-resources__desc">Listen and grow through the Word preached at ROLCC.</span>
+              </span>
+              <span class="pcare-resources__arrow" aria-hidden="true">→</span>
+            </a>
+            <a href="/membership">
+              <span>
+                <span class="pcare-resources__title">Membership &amp; Church Care</span>
+                <span class="pcare-resources__desc">Belong, grow, and walk with us through life&apos;s milestones.</span>
+              </span>
+              <span class="pcare-resources__arrow" aria-hidden="true">→</span>
+            </a>
+            <a href="/about">
+              <span>
+                <span class="pcare-resources__title">About ROLCC</span>
+                <span class="pcare-resources__desc">Discover the beliefs and values that guide our church.</span>
+              </span>
+              <span class="pcare-resources__arrow" aria-hidden="true">→</span>
+            </a>
+          </div>
+        </div>
+      </section>
+
+
+      <section class="border-b border-slate-200 bg-white pcare-faqs" id="faqs">
+        <div class="mx-auto max-w-6xl px-4 py-14 sm:px-6 md:py-20 lg:px-8">
+          <div class="pcare-reveal">
+            <h2 class="text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">Questions about salvation &amp; following Jesus</h2>
+            <p class="mt-3 max-w-2xl text-sm text-slate-600 sm:text-base">Clear answers about the gospel, faith in Christ, and what to do next.</p>
+          </div>
+          <div class="faq-accordion mt-8 pcare-reveal" data-faq-accordion role="list">
+            <article class="faq-accordion__item" role="listitem" data-faq-id="Q0464">
+              <h3 class="faq-accordion__heading">
+                <button type="button" class="faq-accordion__trigger" id="salvation-faq-q1" aria-expanded="false" aria-controls="salvation-faq-a1">
+                  <span class="faq-accordion__question">What does ROLCC believe about salvation?</span>
+                  <span class="faq-accordion__icon" aria-hidden="true"></span>
+                </button>
+              </h3>
+              <div class="faq-accordion__panel" id="salvation-faq-a1" role="region" aria-labelledby="salvation-faq-q1" hidden>
+                <div class="faq-accordion__answer"><p>Salvation is a gift from God. It cannot be earned. Because of God's love, He sent His Son, Jesus, to die for the sin that separates us from Him, and Jesus rose again in victory over sin and death. We receive this gift by faith in Jesus Christ.</p></div>
+              </div>
+            </article>
+            <article class="faq-accordion__item" role="listitem" data-faq-id="Q0465">
+              <h3 class="faq-accordion__heading">
+                <button type="button" class="faq-accordion__trigger" id="salvation-faq-q2" aria-expanded="false" aria-controls="salvation-faq-a2">
+                  <span class="faq-accordion__question">Why is following Jesus so important?</span>
+                  <span class="faq-accordion__icon" aria-hidden="true"></span>
+                </button>
+              </h3>
+              <div class="faq-accordion__panel" id="salvation-faq-a2" role="region" aria-labelledby="salvation-faq-q2" hidden>
+                <div class="faq-accordion__answer"><p>God made people to live in relationship with Him. Following Jesus is how you were created to live. Until we surrender our lives to God and live according to His Word, we remain separated from Him and misaligned from our purpose.</p></div>
+              </div>
+            </article>
+            <article class="faq-accordion__item" role="listitem" data-faq-id="Q0466">
+              <h3 class="faq-accordion__heading">
+                <button type="button" class="faq-accordion__trigger" id="salvation-faq-q3" aria-expanded="false" aria-controls="salvation-faq-a3">
+                  <span class="faq-accordion__question">Why did Jesus need to die for my sins?</span>
+                  <span class="faq-accordion__icon" aria-hidden="true"></span>
+                </button>
+              </h3>
+              <div class="faq-accordion__panel" id="salvation-faq-a3" role="region" aria-labelledby="salvation-faq-q3" hidden>
+                <div class="faq-accordion__answer"><p>Sin separates us from God, and the penalty for sin requires a perfect sacrifice. Jesus came as a human, lived a perfect life, and gave Himself so we no longer have to be separated from God.</p></div>
+              </div>
+            </article>
+            <article class="faq-accordion__item" role="listitem" data-faq-id="Q0467">
+              <h3 class="faq-accordion__heading">
+                <button type="button" class="faq-accordion__trigger" id="salvation-faq-q4" aria-expanded="false" aria-controls="salvation-faq-a4">
+                  <span class="faq-accordion__question">Where do I start reading the Bible?</span>
+                  <span class="faq-accordion__icon" aria-hidden="true"></span>
+                </button>
+              </h3>
+              <div class="faq-accordion__panel" id="salvation-faq-a4" role="region" aria-labelledby="salvation-faq-q4" hidden>
+                <div class="faq-accordion__answer"><p>Start with the Gospel of John. It clearly shows who Jesus is and what it means to believe in Him. You can also explore our Bible Study pages for guided passages and discussion.</p></div>
+              </div>
+            </article>
+            <article class="faq-accordion__item" role="listitem" data-faq-id="Q0468">
+              <h3 class="faq-accordion__heading">
+                <button type="button" class="faq-accordion__trigger" id="salvation-faq-q5" aria-expanded="false" aria-controls="salvation-faq-a5">
+                  <span class="faq-accordion__question">What should I do after I decide to follow Jesus?</span>
+                  <span class="faq-accordion__icon" aria-hidden="true"></span>
+                </button>
+              </h3>
+              <div class="faq-accordion__panel" id="salvation-faq-a5" role="region" aria-labelledby="salvation-faq-q5" hidden>
+                <div class="faq-accordion__answer"><p>Tell someone you trust at church, keep reading the Bible (start with John), and take your next steps in community—Sunday worship, Cell Fellowship, and baptism when you are ready. Our pastors and Caring Team are glad to walk with you.</p></div>
+              </div>
+            </article>
+          </div>
+          <div class="mt-10 pcare-reveal">
+            <p class="text-sm font-medium text-slate-500 mb-3">Personal Caring</p>
+            <div class="pcare-crosslinks" role="navigation" aria-label="Personal Caring">
+            <a href="/membership">Membership</a>
+            <a href="/salvation" class="is-current" aria-current="page">Salvation</a>
+            <a href="/prayer-request">Prayer Request</a>
+            <a href="/baptism">Baptism</a>
+            <a href="/marriage">Marriage</a>
+          </div>
+          </div>
+        </div>
+      </section>
+
+
+      <div class="serve-unveil-spacer min-h-screen" aria-hidden="true"></div>
+    </main>
+
+    <!-- Footer -->
+    <footer id="footer-section" class="footer-reveal fixed bottom-0 left-0 right-0 z-0 min-h-screen overflow-hidden">
+      <img src="https://images.unsplash.com/photo-1439066615861-d1af74d74000?auto=format&fit=crop&w=1920&q=70" alt="ROLCC Bangalore" class="footer-bg absolute inset-0 h-full w-full object-cover" loading="lazy" />
+      <div class="footer-overlay absolute inset-0 bg-gradient-to-b from-slate-900/40 via-slate-900/70 to-slate-950/95" aria-hidden="true"></div>
+      <div class="relative z-10 flex min-h-screen flex-col">
+        <section class="flex flex-1 flex-col items-center justify-center px-4 py-20 text-center sm:py-24">
+          <h2 class="text-3xl font-bold tracking-tight text-white sm:text-4xl md:text-5xl lg:text-6xl">
+            Your church family&apos;s<br /><em>church family</em>™
+          </h2>
+          <a href="/contact" class="btn-primary mt-8 inline-flex rounded-full bg-accent px-8 py-3.5 text-base font-semibold text-white shadow-lg ring-1 ring-accent/70 hover:bg-accentSoft">Get in touch</a>
+        </section>
+        <div class="border-t border-white/10">
+          <div class="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
+            <div class="grid gap-10 sm:grid-cols-2 lg:grid-cols-5 lg:gap-8">
+            <div>
+              <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-400">Services</p>
+              <ul class="mt-4 space-y-2.5 text-sm text-slate-300">
+                <li><a href="/services" class="footer-link inline-flex items-center gap-2 hover:text-white">Worship Services <span class="text-slate-500">→</span></a></li>
+                <li><a href="/river-kids" class="footer-link inline-flex items-center gap-2 hover:text-white">River Kids <span class="text-slate-500">→</span></a></li>
+                <li><a href="/fellowship" class="footer-link inline-flex items-center gap-2 hover:text-white">Cell Fellowship <span class="text-slate-500">→</span></a></li>
+                <li><a href="/pmd" class="footer-link inline-flex items-center gap-2 hover:text-white">PMD <span class="text-slate-500">→</span></a></li>
+                <li><a href="/counselling" class="footer-link inline-flex items-center gap-2 hover:text-white">Counselling <span class="text-slate-500">→</span></a></li>
+                <li><a href="/rolf" class="footer-link inline-flex items-center gap-2 hover:text-white">ROLF <span class="text-slate-500">→</span></a></li>
+                <li><a href="/giving" class="footer-link inline-flex items-center gap-2 hover:text-white">Giving <span class="text-slate-500">→</span></a></li>
+              </ul>
+            </div>
+            <div>
+              <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-400">Navigation</p>
+              <ul class="mt-4 space-y-2.5 text-sm text-slate-300">
+                <li><a href="/" class="footer-link hover:text-white">Home</a></li>
+                <li><a href="/services" class="footer-link hover:text-white">Our Ministries</a></li>
+                <li><a href="/events" class="footer-link hover:text-white">Events</a></li>
+                <li><a href="/about" class="footer-link hover:text-white">About Us</a></li>
+                <li><a href="/contact" class="footer-link hover:text-white">Contact</a></li>
+              </ul>
+            </div>
+            <div>
+              <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-400">Personal Caring</p>
+              <ul class="mt-4 space-y-2.5 text-sm text-slate-300">
+                <li><a href="/membership" class="footer-link hover:text-white">Membership</a></li>
+                <li><a href="/salvation" class="footer-link hover:text-white">Salvation</a></li>
+                <li><a href="/prayer-request" class="footer-link hover:text-white">Prayer Request</a></li>
+                <li><a href="/baptism" class="footer-link hover:text-white">Baptism</a></li>
+                <li><a href="/marriage" class="footer-link hover:text-white">Marriage</a></li>
+              </ul>
+            </div>
+            <div>
+              <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-400">Resources</p>
+              <ul class="mt-4 space-y-2.5 text-sm text-slate-300">
+                <li><a href="/faq" class="footer-link hover:text-white">FAQ</a></li>
+                <li><a href="/articles" class="footer-link hover:text-white">Articles</a></li>
+                <li><a href="/bible-study" class="footer-link hover:text-white">Bible Study</a></li>
+                <li><a href="/gallery" class="footer-link hover:text-white">Gallery</a></li>
+                <li><a href="/sermons" class="footer-link hover:text-white">Latest Sermon</a></li>
+              </ul>
+            </div>
+            <div>
+              <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-400">Connect</p>
+              <div class="mt-4 flex flex-nowrap items-center gap-2">
+                <a href="https://www.facebook.com/rolccindia/" target="_blank" rel="noopener noreferrer" class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/20 text-white transition hover:border-accent hover:bg-accent/20" aria-label="Facebook">
+                  <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                </a>
+                <a href="https://www.instagram.com/rolccindia" target="_blank" rel="noopener noreferrer" class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/20 text-white transition hover:border-accent hover:bg-accent/20" aria-label="Instagram">
+                  <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+                </a>
+                <a href="https://www.linkedin.com/company/142902442/" target="_blank" rel="noopener noreferrer" class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/20 text-white transition hover:border-accent hover:bg-accent/20" aria-label="LinkedIn">
+                  <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                </a>
+                <a href="https://www.youtube.com/@rolccindia" target="_blank" rel="noopener noreferrer" class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/20 text-white transition hover:border-accent hover:bg-accent/20" aria-label="YouTube">
+                  <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        </div>
+        <div class="mt-auto border-t border-white/10">
+          <div class="mx-auto flex max-w-6xl flex-col items-center justify-between gap-2 px-4 py-4 text-[11px] text-slate-400 sm:flex-row sm:px-6 lg:px-8">
+            <p>© <span id="year"></span> River of Life Christian Church. All rights reserved.</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <button id="scroll-top-btn" class="scroll-to-top hidden fixed bottom-5 right-4 z-40 rounded-full bg-slate-900/90 p-2 text-xs text-slate-100 shadow-lg ring-1 ring-slate-600 hover:bg-slate-800 sm:bottom-6 sm:right-6" aria-label="Scroll to top" type="button">↑</button>
+
+    <script src="js/main.js"></script>
+    <script src="js/faq/core.js"></script>
+    <script src="js/faq/accordion.js"></script>
+    <script src="js/vendor/gsap.min.js"></script>
+    <script src="js/vendor/ScrollTrigger.min.js"></script>
+    <script src="js/personal-caring.js"></script>
+  </body>
+</html>

@@ -43,6 +43,30 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://www.rolcc.in/salvation</loc>
+    <lastmod>2026-07-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://www.rolcc.in/prayer-request</loc>
+    <lastmod>2026-07-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://www.rolcc.in/baptism</loc>
+    <lastmod>2026-07-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://www.rolcc.in/marriage</loc>
+    <lastmod>2026-07-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
+  </url>
+  <url>
     <loc>https://www.rolcc.in/river-kids</loc>
     <lastmod>2026-07-20</lastmod>
     <changefreq>monthly</changefreq>
@@ -140,6 +164,12 @@
   </url>
   <url>
     <loc>https://www.rolcc.in/faq/10</loc>
+    <lastmod>2026-07-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.rolcc.in/faq/11</loc>
     <lastmod>2026-07-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>

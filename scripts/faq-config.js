@@ -80,7 +80,11 @@ const PAGE_FAQ_MAP = {
   counselling: ["Q0024", "Q0022", "Q0023", "Q0339", "Q0343", "Q0337", "Q0286", "Q0046"],
   rolf: ["Q0243", "Q0246", "Q0249", "Q0257", "Q0250", "Q0251", "Q0463", "Q0261"],
   events: ["Q0034", "Q0131", "Q0108", "Q0064", "Q0290", "Q0144", "Q0095", "Q0079"],
-  membership: ["Q0088", "Q0228", "Q0100", "Q0201", "Q0043", "Q0105", "Q0311", "Q0079"],
+  membership: ["Q0481", "Q0482", "Q0088", "Q0100", "Q0043", "Q0201", "Q0105", "Q0079"],
+  salvation: ["Q0464", "Q0465", "Q0466", "Q0467", "Q0468"],
+  "prayer-request": ["Q0469", "Q0470", "Q0471", "Q0472", "Q0115", "Q0022", "Q0048", "Q0343"],
+  baptism: ["Q0473", "Q0474", "Q0475", "Q0476", "Q0464", "Q0468"],
+  marriage: ["Q0477", "Q0478", "Q0479", "Q0480", "Q0353", "Q0230"],
   articles: ["Q0155", "Q0206", "Q0010", "Q0217", "Q0408", "Q0311", "Q0016", "Q0053"],
   sermons: ["Q0044", "Q0045", "Q0043", "Q0361", "Q0024", "Q0022", "Q0023", "Q0010"],
 };
@@ -135,6 +139,22 @@ const PAGE_FAQ_META = {
     heading: "Membership & next steps",
     description: "Attending without pressure, deciding at your pace, and what membership means at ROLCC.",
   },
+  salvation: {
+    heading: "Questions about salvation & following Jesus",
+    description: "Clear answers about the gospel, faith in Christ, and what to do next.",
+  },
+  "prayer-request": {
+    heading: "Prayer requests & pastoral care",
+    description: "How to ask for prayer, who sees your request, and what to do when you need more support.",
+  },
+  baptism: {
+    heading: "Baptism at ROLCC",
+    description: "Believer’s baptism by immersion—who it is for, how to prepare, and how it relates to salvation.",
+  },
+  marriage: {
+    heading: "Marriage, weddings & counselling",
+    description: "Church wedding support, pre-marital counselling, and care for couples at every stage.",
+  },
   articles: {
     heading: "Questions about sermons & Bible study",
     description: "How our articles connect to Sunday messages, cell fellowship, and growing in Scripture.",
@@ -158,6 +178,10 @@ const PAGE_TOPIC_MAP = {
   giving: ["giving-generosity", "serving-ministry"],
   events: ["belonging-community", "visiting"],
   membership: ["belonging-community", "visiting"],
+  salvation: ["faith-questions"],
+  "prayer-request": ["prayer-support"],
+  baptism: ["faith-questions", "belonging-community"],
+  marriage: ["families-kids", "prayer-support"],
   contact: ["visiting", "prayer-support"],
   articles: ["faith-questions", "belonging-community"],
   sermons: ["serving-ministry", "prayer-support", "belonging-community"],

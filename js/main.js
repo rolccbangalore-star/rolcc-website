@@ -433,6 +433,32 @@ document.addEventListener("DOMContentLoaded", function () {
     yearSpan.textContent = new Date().getFullYear();
   }
 
+  // Footer accordion: open all sections on desktop; collapse on mobile
+  (function footerAccordion() {
+    var items = document.querySelectorAll("[data-footer-accordion] details.footer-acc");
+    if (!items.length) return;
+
+    var mq = window.matchMedia("(min-width: 1024px)");
+
+    function syncOpenState() {
+      var desktop = mq.matches;
+      items.forEach(function (el) {
+        if (desktop) {
+          el.setAttribute("open", "");
+        } else {
+          el.removeAttribute("open");
+        }
+      });
+    }
+
+    syncOpenState();
+    if (typeof mq.addEventListener === "function") {
+      mq.addEventListener("change", syncOpenState);
+    } else if (typeof mq.addListener === "function") {
+      mq.addListener(syncOpenState);
+    }
+  })();
+
   // Hero carousel + dynamic text theme from current slide background
   var heroBanner = document.getElementById("hero-banner");
   const carousel = document.querySelector(".hero-carousel");

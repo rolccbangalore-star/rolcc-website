@@ -2526,7 +2526,8 @@ body.footer-in-view.has-fixed-footer .footer-reveal {
 
 body.footer-in-view.has-fixed-footer .footer-reveal .footer-links-panel,
 body.footer-in-view.has-fixed-footer .footer-reveal .footer-links-panel a,
-body.footer-in-view.has-fixed-footer .footer-reveal .footer-links-panel button {
+body.footer-in-view.has-fixed-footer .footer-reveal .footer-links-panel button,
+body.footer-in-view.has-fixed-footer .footer-reveal .footer-links-panel summary {
   pointer-events: auto;
 }
 
@@ -2578,6 +2579,116 @@ body.footer-in-view .article-action-dock > * {
 /* ========== Footer link hover ========== */
 .footer-link {
   transition: color 0.2s ease;
+}
+
+/* Footer accordion — collapsed on phones, 5-col open on lg+ */
+.footer-links-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.footer-acc {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.footer-acc:last-child {
+  border-bottom: none;
+}
+
+.footer-acc__title {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.9rem 0;
+  margin: 0;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #94a3b8;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.footer-acc__title::-webkit-details-marker,
+.footer-acc__title::marker {
+  display: none;
+  content: "";
+}
+
+.footer-acc__title::after {
+  content: "";
+  flex-shrink: 0;
+  width: 0.55rem;
+  height: 0.55rem;
+  border-right: 2px solid #94a3b8;
+  border-bottom: 2px solid #94a3b8;
+  transform: rotate(45deg);
+  transition: transform 0.2s ease;
+}
+
+.footer-acc[open] > .footer-acc__title::after {
+  transform: rotate(-135deg);
+  margin-top: 0.25rem;
+}
+
+.footer-acc__title--static {
+  cursor: default;
+  padding-bottom: 0.65rem;
+}
+
+.footer-acc__title--static::after {
+  display: none;
+}
+
+.footer-acc__list {
+  margin: 0 0 0.85rem;
+  padding: 0;
+  list-style: none;
+}
+
+.footer-acc__social {
+  margin-bottom: 0.5rem;
+}
+
+@media (min-width: 1024px) {
+  .footer-links-grid {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 2rem;
+  }
+
+  .footer-acc {
+    border-bottom: none;
+  }
+
+  .footer-acc__title {
+    padding: 0;
+    pointer-events: none;
+  }
+
+  .footer-acc__title::after {
+    display: none;
+  }
+
+  .footer-acc__list {
+    margin-top: 1rem;
+    margin-bottom: 0;
+  }
+
+  .footer-acc__social {
+    margin-top: 1rem;
+    margin-bottom: 0;
+  }
+
+  .footer-acc__title--static {
+    padding-bottom: 0;
+  }
 }
 
 /* ========== Carousel slide content subtle motion ========== */

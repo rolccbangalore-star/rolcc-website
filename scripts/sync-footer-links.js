@@ -10,7 +10,7 @@ const { getFooterLinksGridHtml } = require("./footer-links-template");
 
 const ROOT = path.join(__dirname, "..");
 const GRID_OPEN_RE =
-  /<div class="grid gap-10 sm:grid-cols-2 lg:grid-cols-\d[^"]*"[^>]*>/;
+  /<div class="(?:footer-links-grid|grid(?:\s+(?:gap-\d+|grid-cols-\d+|gap-x-\d+|gap-y-\d+|sm:grid-cols-\d+|lg:grid-cols-\d+|lg:gap-\d+))+)"[^>]*>/;
 
 function walk(dir, files = []) {
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {

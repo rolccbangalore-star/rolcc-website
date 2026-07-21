@@ -3,7 +3,7 @@
  * Personal Caring is column 3; Membership removed from Navigation.
  */
 function getFooterLinksGridHtml() {
-  return `          <div class="grid gap-10 sm:grid-cols-2 lg:grid-cols-5 lg:gap-8">
+  return `          <div class="grid grid-cols-2 gap-x-6 gap-y-8 lg:grid-cols-5 lg:gap-8">
             <div>
               <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-400">Services</p>
               <ul class="mt-4 space-y-2.5 text-sm text-slate-300">
@@ -46,7 +46,7 @@ function getFooterLinksGridHtml() {
                 <li><a href="/sermons" class="footer-link hover:text-white">Latest Sermon</a></li>
               </ul>
             </div>
-            <div>
+            <div class="col-span-2 lg:col-span-1">
               <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-400">Connect</p>
               <div class="mt-4 flex flex-nowrap items-center gap-2">
                 <a href="https://www.facebook.com/rolccindia/" target="_blank" rel="noopener noreferrer" class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/20 text-white transition hover:border-accent hover:bg-accent/20" aria-label="Facebook">

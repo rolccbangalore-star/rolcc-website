@@ -488,8 +488,9 @@ body.mega-menu-open .header-top .header-top__cta {
 
 .mega-menu__social {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.65rem;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .mega-menu__social-link {

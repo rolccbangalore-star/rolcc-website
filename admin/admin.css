@@ -3915,6 +3915,29 @@ body.admin-preview-modal-open {
     display: block;
   }
 
+  /* Listing: brand + hamburger only — no Website / Search / Sign out in header */
+  body.admin-page--authed:not(.admin-page--editor) .admin-shell-topbar {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.5rem;
+    padding-left: 0.85rem;
+    padding-right: 0.85rem;
+  }
+
+  body.admin-page--authed:not(.admin-page--editor) .admin-topbar__center,
+  body.admin-page--authed:not(.admin-page--editor) .admin-website-link,
+  body.admin-page--authed:not(.admin-page--editor) #admin-search-wrap,
+  body.admin-page--authed:not(.admin-page--editor) #admin-profile-slot {
+    display: none !important;
+  }
+
+  body.admin-page--authed:not(.admin-page--editor) .admin-topbar-brand__name-mobile,
+  body.admin-page--authed:not(.admin-page--editor) .admin-topbar-brand__sub {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 14rem;
+  }
+
   /* Right-most Hamburger */
   .admin-topbar__right {
     display: flex;
@@ -3972,6 +3995,31 @@ body.admin-preview-modal-open {
     align-items: center;
   }
 
+  #nc-root .admin-composer-menu__prefix,
+  #nc-root .admin-composer-menu__value,
+  #nc-root .admin-composer-menu__chevron {
+    display: none !important;
+  }
+
+  #nc-root .admin-composer-menu--sort,
+  #nc-root .admin-composer-menu--filter {
+    position: relative;
+  }
+
+  #nc-root .admin-composer-menu--sort.admin-has-active-sort::after,
+  #nc-root .admin-composer-menu--filter.admin-has-active-filter::after {
+    content: "";
+    position: absolute;
+    top: -0.15rem;
+    right: -0.15rem;
+    width: 0.55rem;
+    height: 0.55rem;
+    border-radius: 50%;
+    background-color: #ef4444;
+    border: 1.5px solid #fff;
+    z-index: 5;
+  }
+
   /* Hide Page Title in Mobile Editor Topbar */
   .admin-page--editor #admin-editor-title-block {
     display: none !important;
@@ -3980,6 +4028,95 @@ body.admin-preview-modal-open {
   /* Hide duplicate black create button */
   main a[href*="/new"],
   main a[href*="new"].btn {
+    display: none !important;
+  }
+
+  /* Mobile Editor Page Topbar Polish: Back button ONLY in header */
+  .admin-page--editor .admin-topbar-brand,
+  .admin-page--editor #admin-profile-slot,
+  .admin-page--editor .admin-website-link,
+  .admin-page--editor #admin-import-btn,
+  .admin-page--editor #admin-save-draft-btn,
+  .admin-page--editor #admin-publish-btn,
+  .admin-page--editor .admin-publish-slot {
+    display: none !important;
+  }
+}
+
+/* Scrim Overlay for Mobile Drawer */
+.admin-drawer-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 1050;
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(2px);
+}
+
+.admin-drawer-scrim[hidden] {
+  display: none !important;
+}
+
+/* Mobile Editor FAB */
+.admin-mobile-editor-fab-wrap {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.25rem;
+  z-index: 1200;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.admin-mobile-editor-fab-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 3.25rem;
+  padding: 0.75rem 1.25rem;
+  border-radius: 2rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  background: var(--rolcc-accent);
+  color: #fff;
+  box-shadow: 0 10px 25px rgba(99, 91, 255, 0.4);
+  border: none;
+  cursor: pointer;
+}
+
+.admin-mobile-editor-fab-menu {
+  position: absolute;
+  bottom: 4rem;
+  right: 0;
+  width: max-content;
+  min-width: 12rem;
+  padding: 0.5rem;
+  border-radius: 1rem;
+  background: #fff;
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  border: 1px solid var(--rolcc-slate-200);
+}
+
+.admin-mobile-editor-fab-menu .admin-mobile-fab-option {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+}
+
+.admin-mobile-editor-fab-menu .admin-mobile-fab-option svg {
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+/* Desktop Strict Isolation Rules (≥641px) */
+@media (min-width: 641px) {
+  .admin-mobile-fab-wrap,
+  .admin-mobile-editor-fab-wrap,
+  .admin-drawer-scrim,
+  .admin-mobile-nav-toggle {
     display: none !important;
   }
 }

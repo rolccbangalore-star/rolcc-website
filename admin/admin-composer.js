@@ -495,7 +495,26 @@
     );
   }
 
-  function closeAllDropdowns() {
+  function closeMobileDrawer() {
+    var sidebar = $("admin-sidebar");
+    var scrim = $("admin-drawer-scrim");
+    var mobileToggle = $("admin-mobile-nav-toggle");
+    if (sidebar) sidebar.classList.remove("admin-shell-sidebar--open");
+    if (scrim) scrim.hidden = true;
+    if (mobileToggle) mobileToggle.setAttribute("aria-expanded", "false");
+  }
+
+  function openMobileDrawer() {
+    var sidebar = $("admin-sidebar");
+    var scrim = $("admin-drawer-scrim");
+    var mobileToggle = $("admin-mobile-nav-toggle");
+    closeAllDropdownsWithoutDrawer();
+    if (sidebar) sidebar.classList.add("admin-shell-sidebar--open");
+    if (scrim) scrim.hidden = false;
+    if (mobileToggle) mobileToggle.setAttribute("aria-expanded", "true");
+  }
+
+  function closeAllDropdownsWithoutDrawer() {
     document.querySelectorAll(".admin-composer-menu.is-open").forEach(function (wrap) {
       wrap.classList.remove("is-open");
       var trigger = wrap.querySelector(".admin-composer-menu__trigger");
@@ -507,21 +526,41 @@
       var createTrigger = el.querySelector(".admin-create-dropdown__trigger");
       if (createTrigger) createTrigger.setAttribute("aria-expanded", "false");
     });
+    document.querySelectorAll(".admin-mobile-fab-wrap, .admin-mobile-editor-fab-wrap").forEach(function (wrap) {
+      wrap.classList.remove("is-open");
+      var menu = wrap.querySelector(".admin-mobile-fab-menu, .admin-mobile-editor-fab-menu");
+      if (menu) menu.hidden = true;
+    });
     syncComposerDropdownBodyClass();
+  }
+
+  function closeAllDropdowns() {
+    closeMobileDrawer();
+    closeAllDropdownsWithoutDrawer();
   }
 
   function bindShellDropdowns() {
     var switcher = $("admin-view-switcher");
     var mobileToggle = $("admin-mobile-nav-toggle");
     var sidebar = $("admin-sidebar");
+    var scrim = $("admin-drawer-scrim");
+
+    if (scrim && scrim.dataset.bound !== "true") {
+      scrim.dataset.bound = "true";
+      scrim.addEventListener("click", function (event) {
+        event.stopPropagation();
+        closeMobileDrawer();
+      });
+    }
 
     if (mobileToggle && mobileToggle.dataset.bound !== "true") {
       mobileToggle.dataset.bound = "true";
       mobileToggle.addEventListener("click", function (event) {
         event.stopPropagation();
-        if (sidebar) {
-          var open = sidebar.classList.toggle("admin-shell-sidebar--open");
-          mobileToggle.setAttribute("aria-expanded", open ? "true" : "false");
+        if (sidebar && sidebar.classList.contains("admin-shell-sidebar--open")) {
+          closeMobileDrawer();
+        } else {
+          openMobileDrawer();
         }
       });
     }
@@ -530,9 +569,8 @@
       sidebar.dataset.navBound = "true";
       sidebar.addEventListener("click", function (event) {
         var link = event.target.closest("a, button:not(.admin-view-switcher__trigger)");
-        if (link && sidebar.classList.contains("admin-shell-sidebar--open")) {
-          sidebar.classList.remove("admin-shell-sidebar--open");
-          if (mobileToggle) mobileToggle.setAttribute("aria-expanded", "false");
+        if (link) {
+          closeMobileDrawer();
         }
       });
     }
@@ -1690,8 +1728,6 @@
           menu.hidden = true;
           wrap.classList.remove("is-open");
           closeAllDropdowns();
-          var sidebar = $("admin-sidebar");
-          if (sidebar) sidebar.classList.remove("admin-shell-sidebar--open");
           navigateToNewArticle(opt.id);
         });
         menu.appendChild(item);
@@ -1700,7 +1736,7 @@
       btn.addEventListener("click", function (event) {
         event.stopPropagation();
         var open = !menu.hidden;
-        closeAllDropdowns();
+        closeAllDropdownsWithoutDrawer();
         menu.hidden = open;
         wrap.classList.toggle("is-open", !open);
       });
@@ -1712,6 +1748,99 @@
       wrap.appendChild(menu);
       wrap.appendChild(btn);
       document.body.appendChild(wrap);
+    } else {
+      wrap.classList.remove("is-open");
+      var existingMenu = wrap.querySelector(".admin-mobile-fab-menu");
+      if (existingMenu) existingMenu.hidden = true;
+    }
+  }
+
+  function mountEditorFab(root) {
+    if (!isEditorRoute() || isLoginView(root)) {
+      var stale = $("admin-mobile-editor-fab-wrap");
+      if (stale) stale.remove();
+      return;
+    }
+
+    var wrap = $("admin-mobile-editor-fab-wrap");
+    if (!wrap) {
+      wrap = document.createElement("div");
+      wrap.id = "admin-mobile-editor-fab-wrap";
+      wrap.className = "admin-mobile-editor-fab-wrap";
+
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.id = "admin-mobile-editor-fab-btn";
+      btn.className = "btn-primary admin-mobile-editor-fab-btn";
+      btn.setAttribute("aria-label", "Editor actions");
+      btn.innerHTML =
+        '<svg class="admin-fab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>' +
+        '<span>Actions</span>';
+
+      var menu = document.createElement("div");
+      menu.className = "admin-mobile-editor-fab-menu";
+      menu.hidden = true;
+
+      var importOpt = document.createElement("button");
+      importOpt.type = "button";
+      importOpt.className = "admin-mobile-fab-option";
+      importOpt.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M12 3v10"/><path d="m8 9 4-4 4 4"/><path d="M4 19h16"/></svg> Import JSON';
+      importOpt.addEventListener("click", function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        menu.hidden = true;
+        wrap.classList.remove("is-open");
+        if (window.AdminImport && window.AdminImport.openImportModal) {
+          window.AdminImport.openImportModal(null);
+        }
+      });
+      menu.appendChild(importOpt);
+
+      var saveOpt = document.createElement("button");
+      saveOpt.type = "button";
+      saveOpt.className = "admin-mobile-fab-option";
+      saveOpt.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z"/><path d="M17 21v-8H7v8"/><path d="M7 3v5h8"/></svg> Save draft';
+      saveOpt.addEventListener("click", function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        menu.hidden = true;
+        wrap.classList.remove("is-open");
+        saveDraftProgress(root);
+      });
+      menu.appendChild(saveOpt);
+
+      var publishOpt = document.createElement("button");
+      publishOpt.type = "button";
+      publishOpt.className = "btn-primary admin-mobile-fab-option admin-mobile-fab-option--publish";
+      publishOpt.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> Publish';
+      publishOpt.addEventListener("click", function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        menu.hidden = true;
+        wrap.classList.remove("is-open");
+        publishArticle(root);
+      });
+      menu.appendChild(publishOpt);
+
+      btn.addEventListener("click", function (event) {
+        event.stopPropagation();
+        var open = !menu.hidden;
+        closeAllDropdownsWithoutDrawer();
+        menu.hidden = open;
+        wrap.classList.toggle("is-open", !open);
+      });
+
+      menu.addEventListener("click", function (event) {
+        event.stopPropagation();
+      });
+
+      wrap.appendChild(menu);
+      wrap.appendChild(btn);
+      document.body.appendChild(wrap);
+    } else {
+      wrap.classList.remove("is-open");
+      var existingEditorMenu = wrap.querySelector(".admin-mobile-editor-fab-menu");
+      if (existingEditorMenu) existingEditorMenu.hidden = true;
     }
   }
 
@@ -2553,6 +2682,11 @@
       var current = config.getValue(composerRoot);
       var match = findMenuOption(options, current);
       valueEl.textContent = match ? match.label : config.fallbackLabel || "";
+      if (config.isActive) {
+        var active = !!config.isActive(composerRoot, current);
+        wrap.classList.toggle("admin-has-active-sort", config.wrapClass === "admin-composer-menu--sort" && active);
+        wrap.classList.toggle("admin-has-active-filter", config.wrapClass === "admin-composer-menu--filter" && active);
+      }
     }
 
     function renderOptions() {
@@ -2734,6 +2868,9 @@
           r.dataset.adminSortField = key;
           r.dataset.adminSortDir = defaultSortDirection(key);
         },
+        isActive: function (r, current) {
+          return current && current !== "modified";
+        },
         onChange: function (r) {
           refreshCollectionCards(r);
         },
@@ -2750,6 +2887,9 @@
         getValue: getFilterKey,
         setValue: function (r, key) {
           r.dataset.adminFilterKey = key;
+        },
+        isActive: function (r, current) {
+          return current && current !== "all";
         },
         onChange: function (r) {
           refreshCollectionCards(r);
@@ -3630,6 +3770,7 @@
     syncCollectionViewMode(root);
     mountCreateButton(root);
     mountMobileFab(root);
+    mountEditorFab(root);
     renderCustomCollectionCards(root);
     enhanceMediaView(root);
     mountEditorChrome(root);

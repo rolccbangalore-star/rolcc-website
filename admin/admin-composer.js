@@ -512,6 +512,31 @@
 
   function bindShellDropdowns() {
     var switcher = $("admin-view-switcher");
+    var mobileToggle = $("admin-mobile-nav-toggle");
+    var sidebar = $("admin-sidebar");
+
+    if (mobileToggle && mobileToggle.dataset.bound !== "true") {
+      mobileToggle.dataset.bound = "true";
+      mobileToggle.addEventListener("click", function (event) {
+        event.stopPropagation();
+        if (sidebar) {
+          var open = sidebar.classList.toggle("admin-shell-sidebar--open");
+          mobileToggle.setAttribute("aria-expanded", open ? "true" : "false");
+        }
+      });
+    }
+
+    if (sidebar && sidebar.dataset.navBound !== "true") {
+      sidebar.dataset.navBound = "true";
+      sidebar.addEventListener("click", function (event) {
+        var link = event.target.closest("a, button:not(.admin-view-switcher__trigger)");
+        if (link && sidebar.classList.contains("admin-shell-sidebar--open")) {
+          sidebar.classList.remove("admin-shell-sidebar--open");
+          if (mobileToggle) mobileToggle.setAttribute("aria-expanded", "false");
+        }
+      });
+    }
+
     if (!switcher || switcher.dataset.bound === "true") return;
     switcher.dataset.bound = "true";
 
@@ -1295,6 +1320,7 @@
     var publishSlot = $("admin-publish-slot");
     var websiteLink = document.querySelector(".admin-website-link");
     var backBtn = $("admin-editor-back");
+    var mobileToggle = $("admin-mobile-nav-toggle");
 
     if (searchWrap) searchWrap.hidden = onEditor;
     if (titleBlock) titleBlock.hidden = !onEditor;
@@ -1307,6 +1333,7 @@
     }
     if (scheduleBtn) scheduleBtn.hidden = !onEditor;
     if (publishBtn) publishBtn.hidden = !onEditor;
+    if (mobileToggle) mobileToggle.hidden = onEditor;
 
     if (publishSlot) {
       publishSlot.hidden = !onEditor;

@@ -129,6 +129,31 @@
       .replace(/"/g, "&quot;");
   }
 
+  function showToast(message, type) {
+    if (!message) return;
+    type = type || "info";
+    var container = $("admin-toast-container");
+    if (!container) {
+      container = document.createElement("div");
+      container.id = "admin-toast-container";
+      container.className = "admin-toast-container";
+      document.body.appendChild(container);
+    }
+    var toast = document.createElement("div");
+    toast.className = "admin-toast admin-toast--" + type;
+    toast.textContent = message;
+    container.appendChild(toast);
+    window.setTimeout(function () {
+      toast.classList.add("admin-toast--visible");
+    }, 10);
+    window.setTimeout(function () {
+      toast.classList.remove("admin-toast--visible");
+      window.setTimeout(function () {
+        toast.remove();
+      }, 300);
+    }, 4000);
+  }
+
   function isEditorRoute() {
     return /\/entries\/|\/new$/.test(location.hash || "");
   }
@@ -1942,16 +1967,38 @@
     modal.innerHTML =
       '<div class="admin-import-modal__backdrop" data-import-close></div>' +
       '<div class="admin-import-modal__panel" role="dialog" aria-labelledby="admin-import-title">' +
+      '<div class="admin-import-modal__header">' +
       '<h2 id="admin-import-title" class="admin-import-modal__title">Import content</h2>' +
+      '<button type="button" class="admin-import-modal__close-btn" data-import-close aria-label="Close modal">&times;</button>' +
+      '</div>' +
+      '<div class="admin-import-modal__body">' +
+      '<div class="admin-import-modal__source-actions">' +
+      '<button type="button" class="btn-outline admin-import-source-btn" id="admin-import-file-btn">' +
+      '<svg class="admin-topbar-icon-btn__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>Choose JSON file</span>' +
+      '</button>' +
+      '<button type="button" class="btn-outline admin-import-source-btn" id="admin-import-paste-btn">' +
+      '<svg class="admin-topbar-icon-btn__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg><span>Paste from clipboard</span>' +
+      '</button>' +
+      '<input type="file" id="admin-import-file-input" accept=".json,application/json,.txt,text/plain" hidden />' +
+      '</div>' +
+      '<div class="admin-import-modal__paste-box" id="admin-import-paste-box" hidden>' +
+      '<textarea id="admin-import-paste-textarea" class="admin-import-modal__textarea" placeholder="Paste article JSON content here..."></textarea>' +
+      '<div class="admin-import-modal__paste-actions">' +
+      '<button type="button" class="btn-primary" id="admin-import-parse-pasted-btn">Parse Pasted JSON</button>' +
+      '</div>' +
+      '</div>' +
+      '<div class="admin-import-modal__summary-wrap">' +
       '<ul class="admin-import-modal__checklist" id="admin-import-summary"></ul>' +
       '<label class="admin-import-modal__label"><input type="checkbox" id="admin-import-replace" /> Replace fields that already have content</label>' +
       '<p class="admin-import-modal__hint" id="admin-import-hint"></p>' +
+      '</div>' +
       '<details class="admin-import-modal__help"><summary id="admin-import-template-label">Import JSON template</summary><pre id="admin-import-example"></pre></details>' +
+      '</div>' +
       '<div class="admin-import-modal__actions">' +
       '<button type="button" class="btn-outline" data-import-close>Cancel</button>' +
       '<button type="button" class="btn-outline" id="admin-import-download">Download repo JSON</button>' +
       '<button type="button" class="btn-primary" id="admin-import-confirm">Import</button>' +
-      "</div></div>";
+      '</div></div>';
     document.body.appendChild(modal);
 
     modal.querySelectorAll("[data-import-close]").forEach(function (el) {
@@ -1960,11 +2007,96 @@
       });
     });
 
+    var fileBtn = modal.querySelector("#admin-import-file-btn");
+    var fileInput = modal.querySelector("#admin-import-file-input");
+    if (fileBtn && fileInput) {
+      fileBtn.addEventListener("click", function () {
+        fileInput.click();
+      });
+      fileInput.addEventListener("change", function () {
+        if (fileInput.files && fileInput.files[0]) {
+          handleFile(fileInput.files[0], { useModal: true });
+        }
+      });
+    }
+
+    var pasteBtn = modal.querySelector("#admin-import-paste-btn");
+    var pasteBox = modal.querySelector("#admin-import-paste-box");
+    var pasteTextarea = modal.querySelector("#admin-import-paste-textarea");
+    var parsePastedBtn = modal.querySelector("#admin-import-parse-pasted-btn");
+
+    if (pasteBtn) {
+      pasteBtn.addEventListener("click", function () {
+        if (navigator.clipboard && navigator.clipboard.readText) {
+          navigator.clipboard
+            .readText()
+            .then(function (text) {
+              if (text && looksLikeImport(text)) {
+                try {
+                  var entry = parseApi.parseImportFile(text, getCollection());
+                  openImportModal(entry);
+                  showToast("JSON loaded from clipboard", "success");
+                  if (pasteBox) pasteBox.hidden = true;
+                } catch (err) {
+                  showToast("Could not parse clipboard content: " + (err.message || err), "error");
+                  if (pasteBox) {
+                    pasteBox.hidden = false;
+                    if (pasteTextarea) pasteTextarea.value = text;
+                  }
+                }
+              } else {
+                showToast("Clipboard does not contain valid article JSON. Paste below manually.", "info");
+                if (pasteBox) {
+                  pasteBox.hidden = false;
+                  if (pasteTextarea) {
+                    if (text) pasteTextarea.value = text;
+                    pasteTextarea.focus();
+                  }
+                }
+              }
+            })
+            .catch(function () {
+              showToast("Clipboard read blocked. Paste JSON into the box below.", "info");
+              if (pasteBox) {
+                pasteBox.hidden = false;
+                if (pasteTextarea) pasteTextarea.focus();
+              }
+            });
+        } else {
+          if (pasteBox) {
+            pasteBox.hidden = !pasteBox.hidden;
+            if (!pasteBox.hidden && pasteTextarea) pasteTextarea.focus();
+          }
+        }
+      });
+    }
+
+    if (parsePastedBtn && pasteTextarea) {
+      parsePastedBtn.addEventListener("click", function () {
+        var text = pasteTextarea.value;
+        if (!text || !text.trim()) {
+          showToast("Please paste JSON text first.", "error");
+          return;
+        }
+        try {
+          var entry = parseApi.parseImportFile(text, getCollection());
+          openImportModal(entry);
+          showToast("Parsed pasted JSON successfully", "success");
+          if (pasteBox) pasteBox.hidden = true;
+        } catch (err) {
+          showToast("Could not parse JSON: " + (err.message || err), "error");
+        }
+      });
+    }
+
     var confirmBtn = modal.querySelector("#admin-import-confirm");
     if (confirmBtn && confirmBtn.dataset.bound !== "true") {
       confirmBtn.dataset.bound = "true";
       confirmBtn.addEventListener("click", function () {
-        if (!pendingEntry) return;
+        if (!pendingEntry) {
+          showToast("Please choose a JSON file or paste JSON content first.", "error");
+          return;
+        }
         var replace = $("admin-import-replace") && $("admin-import-replace").checked;
         runAutoImport(pendingEntry, { fillEmptyOnly: !replace });
         pendingEntry = null;
@@ -1976,7 +2108,10 @@
     if (downloadBtn && downloadBtn.dataset.bound !== "true") {
       downloadBtn.dataset.bound = "true";
       downloadBtn.addEventListener("click", function () {
-        if (!pendingEntry) return;
+        if (!pendingEntry) {
+          showToast("No JSON loaded to download.", "error");
+          return;
+        }
         var filename = downloadRepoReadyJson(pendingEntry);
         var folder = getRepoImportFolder(getCollection());
         showToast(
@@ -2176,6 +2311,13 @@
 
   function summarizeText(entry) {
     if (!parseApi) return "";
+    if (!entry) {
+      return (
+        '<li class="admin-import-modal__row admin-import-modal__row--placeholder">' +
+        '<span class="admin-import-modal__label-text">Select a JSON file or tap "Paste from clipboard" above.</span>' +
+        '</li>'
+      );
+    }
     var collection = getCollection();
     return buildImportSummaryHtml(entry, collection);
   }
@@ -2198,7 +2340,7 @@
     reader.onload = function () {
       try {
         var entry = parseApi.parseImportFile(reader.result, getCollection(), file.name);
-        handleParsedEntry(entry, options || { fillEmptyOnly: true });
+        handleParsedEntry(entry, options || { fillEmptyOnly: true, useModal: true });
       } catch (err) {
         showToast("Could not parse file: " + (err.message || err), "error");
       }
@@ -2210,7 +2352,8 @@
     if (!parseApi || !looksLikeImport(text)) return false;
     try {
       var entry = parseApi.parseImportFile(text, getCollection());
-      runAutoImport(entry, { fillEmptyOnly: true });
+      openImportModal(entry);
+      showToast("Pasted article JSON loaded into import modal", "success");
       return true;
     } catch (err) {
       showToast("Could not parse pasted content: " + (err.message || err), "error");
@@ -2223,13 +2366,7 @@
     if (importBtn && importBtn.dataset.bound !== "true") {
       importBtn.dataset.bound = "true";
       importBtn.addEventListener("click", function () {
-        var input = document.createElement("input");
-        input.type = "file";
-        input.accept = ".json,.md,.txt,text/plain,application/json";
-        input.addEventListener("change", function () {
-          if (input.files && input.files[0]) handleFile(input.files[0], { useModal: true });
-        });
-        input.click();
+        openImportModal(pendingEntry);
       });
     }
 
@@ -2313,6 +2450,7 @@
   }
 
   window.AdminImport = {
+    showToast: showToast,
     applyEntryImport: applyEntryImport,
     handleFile: handleFile,
     openImportModal: openImportModal,

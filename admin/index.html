@@ -15,11 +15,25 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="/css/articles.css" />
-    <link rel="stylesheet" href="/admin/admin.css?v=20260712quiz1" />
+    <link rel="stylesheet" href="/admin/admin.css?v=20260727mobile2" />
   </head>
   <body class="admin-page">
     <header id="admin-topbar" class="admin-shell-topbar" hidden>
       <div class="admin-topbar__left">
+        <button
+          type="button"
+          class="btn-outline admin-topbar-icon-btn admin-mobile-nav-toggle"
+          id="admin-mobile-nav-toggle"
+          hidden
+          aria-label="Toggle navigation menu"
+          title="Toggle menu"
+        >
+          <svg class="admin-topbar-icon-btn__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
+            <line x1="4" y1="6" x2="20" y2="6" />
+            <line x1="4" y1="12" x2="20" y2="12" />
+            <line x1="4" y1="18" x2="20" y2="18" />
+          </svg>
+        </button>
         <a
           href="#/collections/articles"
           id="admin-editor-back"
@@ -91,15 +105,16 @@
           class="btn-outline admin-topbar-icon-btn admin-import-btn"
           id="admin-import-btn"
           hidden
-          title="Import"
-          data-tooltip="Import"
-          aria-label="Import article"
+          title="Import JSON"
+          data-tooltip="Import JSON"
+          aria-label="Import JSON article"
         >
           <svg class="admin-topbar-icon-btn__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
             <path d="M12 3v10" />
             <path d="m8 9 4-4 4 4" />
             <path d="M4 19h16" />
           </svg>
+          <span class="admin-topbar-icon-btn__label">Import</span>
         </button>
         <button
           type="button"
@@ -206,12 +221,12 @@
     <script>window.CMS_MANUAL_INIT = true;</script>
     <script src="https://unpkg.com/decap-cms@3.3.0/dist/decap-cms.js"></script>
     <script src="https://unpkg.com/immutable@3.8.2/dist/immutable.min.js"></script>
-    <script src="/scripts/article-import-parse.js?v=20260720cite1"></script>
-    <script src="/scripts/article-render.js?v=20260712passage1"></script>
-    <script src="/admin/admin-composer.js?v=20260712schedule1"></script>
-    <script src="/admin/admin-editor-fields.js?v=20260720edit1"></script>
-    <script src="/admin/admin-import.js?v=20260720edit2"></script>
-    <script src="/admin/admin-preview.js?v=20260720edit2"></script>
+    <script src="/scripts/article-import-parse.js?v=20260727mobile2"></script>
+    <script src="/scripts/article-render.js?v=20260727mobile2"></script>
+    <script src="/admin/admin-composer.js?v=20260727mobile2"></script>
+    <script src="/admin/admin-editor-fields.js?v=20260727mobile2"></script>
+    <script src="/admin/admin-import.js?v=20260727mobile2"></script>
+    <script src="/admin/admin-preview.js?v=20260727mobile2"></script>
     <script>
       (function () {
         var errorBox = document.getElementById("cms-error");

@@ -1347,10 +1347,54 @@
     slot.setAttribute("aria-hidden", "false");
   }
 
+  function isMobileComposerViewport() {
+    return typeof window.matchMedia === "function"
+      ? window.matchMedia("(max-width: 640px)").matches
+      : window.innerWidth <= 640;
+  }
+
+  function placeEditorTitleBlock(root) {
+    var titleBlock = $("admin-editor-title-block");
+    if (!titleBlock) return;
+
+    var onEditor = isEditorRoute() && !isLoginView(root);
+    var center = document.querySelector(".admin-topbar__center");
+    var main = root && root.querySelector("main");
+    var searchWrap = $("admin-search-wrap");
+
+    function restoreToTopbar() {
+      titleBlock.classList.remove("admin-editor-title-block--body");
+      if (!center || titleBlock.parentElement === center) return;
+      if (searchWrap && searchWrap.parentElement === center) {
+        center.insertBefore(titleBlock, searchWrap.nextSibling);
+      } else {
+        center.appendChild(titleBlock);
+      }
+    }
+
+    if (!onEditor) {
+      restoreToTopbar();
+      titleBlock.hidden = true;
+      return;
+    }
+
+    titleBlock.hidden = false;
+
+    /* Mobile: title lives in the page body under the top bar, not jammed in chrome. */
+    if (isMobileComposerViewport() && main) {
+      titleBlock.classList.add("admin-editor-title-block--body");
+      if (titleBlock.parentElement !== main || titleBlock !== main.firstChild) {
+        main.insertBefore(titleBlock, main.firstChild);
+      }
+      return;
+    }
+
+    restoreToTopbar();
+  }
+
   function syncEditorTopbar(root) {
     var onEditor = isEditorRoute() && !isLoginView(root);
     var searchWrap = $("admin-search-wrap");
-    var titleBlock = $("admin-editor-title-block");
     var importBtn = $("admin-import-btn");
     var previewBtn = $("admin-preview-btn");
     var saveDraftBtn = $("admin-save-draft-btn");
@@ -1363,7 +1407,7 @@
     var mobileToggle = $("admin-mobile-nav-toggle");
 
     if (searchWrap) searchWrap.hidden = onEditor;
-    if (titleBlock) titleBlock.hidden = !onEditor;
+    placeEditorTitleBlock(root);
     if (importBtn) importBtn.hidden = !onEditor;
     if (previewBtn) previewBtn.hidden = !onEditor;
     if (saveDraftBtn) saveDraftBtn.hidden = !onEditor;
@@ -1456,7 +1500,12 @@
     if (!sub) {
       sub = document.createElement("div");
       sub.className = "admin-editor-subheader";
-      main.insertBefore(sub, main.firstChild);
+      var titleBlock = $("admin-editor-title-block");
+      if (titleBlock && titleBlock.parentElement === main) {
+        main.insertBefore(sub, titleBlock.nextSibling);
+      } else {
+        main.insertBefore(sub, main.firstChild);
+      }
     }
 
     var collection = getActiveCollection() || getPreferredCollection();
@@ -3814,7 +3863,10 @@
       scheduleEnhance(root, enhance);
     });
 
-    window.addEventListener("resize", closeAllDropdowns);
+    window.addEventListener("resize", function () {
+      closeAllDropdowns();
+      placeEditorTitleBlock(root);
+    });
     window.addEventListener(
       "scroll",
       function (event) {

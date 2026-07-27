@@ -15,25 +15,11 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="/css/articles.css" />
-    <link rel="stylesheet" href="/admin/admin.css?v=20260727mobile2" />
+    <link rel="stylesheet" href="/admin/admin.css?v=20260728mobile3" />
   </head>
   <body class="admin-page">
     <header id="admin-topbar" class="admin-shell-topbar" hidden>
       <div class="admin-topbar__left">
-        <button
-          type="button"
-          class="btn-outline admin-topbar-icon-btn admin-mobile-nav-toggle"
-          id="admin-mobile-nav-toggle"
-          hidden
-          aria-label="Toggle navigation menu"
-          title="Toggle menu"
-        >
-          <svg class="admin-topbar-icon-btn__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
-            <line x1="4" y1="6" x2="20" y2="6" />
-            <line x1="4" y1="12" x2="20" y2="12" />
-            <line x1="4" y1="18" x2="20" y2="18" />
-          </svg>
-        </button>
         <a
           href="#/collections/articles"
           id="admin-editor-back"
@@ -56,7 +42,8 @@
           />
           <div class="admin-topbar-brand__text">
             <span class="admin-topbar-brand__name">River of Life Christian Church</span>
-            <p class="admin-topbar-brand__sub">Article Composer</p>
+            <span class="admin-topbar-brand__name-mobile">ROLCC church</span>
+            <p class="admin-topbar-brand__sub">article composer</p>
           </div>
         </a>
       </div>
@@ -166,10 +153,25 @@
         <button type="button" class="btn-primary admin-publish-btn" id="admin-publish-btn" hidden>Publish</button>
         <div id="admin-publish-slot" class="admin-publish-slot" hidden aria-hidden="true"></div>
         <div id="admin-profile-slot" class="admin-profile-slot"></div>
+        <button
+          type="button"
+          class="btn-outline admin-topbar-icon-btn admin-mobile-nav-toggle"
+          id="admin-mobile-nav-toggle"
+          hidden
+          aria-label="Toggle navigation menu"
+          title="Toggle menu"
+        >
+          <svg class="admin-topbar-icon-btn__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
+            <line x1="4" y1="6" x2="20" y2="6" />
+            <line x1="4" y1="12" x2="20" y2="12" />
+            <line x1="4" y1="18" x2="20" y2="18" />
+          </svg>
+        </button>
       </div>
     </header>
 
     <aside id="admin-sidebar" class="admin-shell-sidebar" hidden>
+      <div id="admin-sidebar-search-slot" class="admin-sidebar-search-slot"></div>
       <div id="admin-create-slot" class="admin-sidebar-create"></div>
 
       <div class="admin-view-switcher admin-dropdown" id="admin-view-switcher">
@@ -210,6 +212,23 @@
 
       <p class="admin-sidebar-section-label admin-sidebar-section-label--pages" hidden>Pages</p>
       <nav id="admin-media-pages-nav" class="admin-sidebar-nav admin-sidebar-nav--pages" hidden aria-label="Filter images by page"></nav>
+
+      <div class="admin-sidebar-footer">
+        <a href="https://www.rolcc.in/" class="admin-sidebar-footer-link" target="_blank" rel="noopener noreferrer">
+          <svg class="admin-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
+            <path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+          </svg>
+          <span>Go to website</span>
+        </a>
+        <button type="button" id="admin-mobile-logout-btn" class="admin-sidebar-footer-link admin-sidebar-footer-link--logout">
+          <svg class="admin-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+            <polyline points="16 17 21 12 16 7"/>
+            <line x1="21" y1="12" x2="9" y2="12"/>
+          </svg>
+          <span>Sign out</span>
+        </button>
+      </div>
     </aside>
 
     <div id="admin-media-pane" class="admin-media-pane" hidden></div>
@@ -221,12 +240,12 @@
     <script>window.CMS_MANUAL_INIT = true;</script>
     <script src="https://unpkg.com/decap-cms@3.3.0/dist/decap-cms.js"></script>
     <script src="https://unpkg.com/immutable@3.8.2/dist/immutable.min.js"></script>
-    <script src="/scripts/article-import-parse.js?v=20260727mobile2"></script>
-    <script src="/scripts/article-render.js?v=20260727mobile2"></script>
-    <script src="/admin/admin-composer.js?v=20260727mobile2"></script>
-    <script src="/admin/admin-editor-fields.js?v=20260727mobile2"></script>
-    <script src="/admin/admin-import.js?v=20260727mobile2"></script>
-    <script src="/admin/admin-preview.js?v=20260727mobile2"></script>
+    <script src="/scripts/article-import-parse.js?v=20260728mobile3"></script>
+    <script src="/scripts/article-render.js?v=20260728mobile3"></script>
+    <script src="/admin/admin-composer.js?v=20260728mobile3"></script>
+    <script src="/admin/admin-editor-fields.js?v=20260728mobile3"></script>
+    <script src="/admin/admin-import.js?v=20260728mobile3"></script>
+    <script src="/admin/admin-preview.js?v=20260728mobile3"></script>
     <script>
       (function () {
         var errorBox = document.getElementById("cms-error");

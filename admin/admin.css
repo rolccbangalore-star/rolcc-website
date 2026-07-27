@@ -3753,3 +3753,233 @@ body.admin-preview-modal-open {
     display: grid !important;
   }
 }
+
+/* ——— ROLCC Church Mobile Feedback Styles ——— */
+
+/* Header Branding Polish */
+.admin-topbar-brand__name-mobile {
+  display: none;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--rolcc-slate-900);
+}
+
+.admin-topbar-brand__sub {
+  text-transform: lowercase;
+}
+
+/* Mobile Sidebar Footer & Search Slot */
+.admin-sidebar-search-slot {
+  display: none;
+  margin-bottom: 1rem;
+}
+
+.admin-sidebar-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: auto;
+  padding-top: 1rem;
+  border-top: 1px solid var(--rolcc-slate-200);
+}
+
+.admin-sidebar-footer-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: var(--rolcc-radius-lg);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--rolcc-slate-700);
+  text-decoration: none;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.admin-sidebar-footer-link:hover {
+  background: var(--rolcc-slate-100);
+  color: var(--rolcc-slate-900);
+}
+
+.admin-sidebar-footer-link--logout {
+  color: #b91c1c;
+}
+
+.admin-sidebar-footer-link--logout:hover {
+  background: #fef2f2;
+  color: #991b1b;
+}
+
+/* Floating Action Button (FAB) at Bottom Center */
+.admin-mobile-fab-wrap {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1200;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.admin-mobile-fab-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 3.25rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 2rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  background: var(--rolcc-accent);
+  color: #fff;
+  box-shadow: 0 10px 25px rgba(99, 91, 255, 0.4);
+  border: none;
+  cursor: pointer;
+}
+
+.admin-mobile-fab-btn svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.admin-mobile-fab-menu {
+  position: absolute;
+  bottom: 4rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: max-content;
+  min-width: 15rem;
+  padding: 0.5rem;
+  border-radius: 1rem;
+  background: #fff;
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  border: 1px solid var(--rolcc-slate-200);
+}
+
+.admin-mobile-fab-option {
+  display: block;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: none;
+  border-radius: 0.625rem;
+  background: transparent;
+  text-align: left;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--rolcc-slate-800);
+  cursor: pointer;
+}
+
+.admin-mobile-fab-option:hover {
+  background: var(--rolcc-slate-100);
+  color: var(--rolcc-accent);
+}
+
+/* Active State Badge Indicator for Sort and Filter */
+.admin-sort-wrap,
+.admin-filter-wrap {
+  position: relative;
+}
+
+.admin-sort-wrap.admin-has-active-sort::after,
+.admin-filter-wrap.admin-has-active-filter::after {
+  content: "";
+  position: absolute;
+  top: -0.15rem;
+  right: -0.15rem;
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  background-color: #ef4444;
+  border: 1.5px solid #fff;
+  z-index: 5;
+}
+
+/* Mobile Breakpoint Polish (≤640px) */
+@media (max-width: 640px) {
+  .admin-topbar-brand__name {
+    display: none;
+  }
+
+  .admin-topbar-brand__name-mobile {
+    display: block;
+  }
+
+  /* Right-most Hamburger */
+  .admin-topbar__right {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .admin-mobile-nav-toggle {
+    order: 99;
+  }
+
+  /* Sidebar Drawer Adjustments */
+  .admin-shell-sidebar {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .admin-sidebar-search-slot {
+    display: block;
+  }
+
+  .admin-sidebar-create {
+    display: none !important;
+  }
+
+  /* Single Horizontal Row for Listing Page Controls */
+  #nc-root .admin-collection-toolbar {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 0.5rem;
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+
+  #nc-root .admin-view-toggle {
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--rolcc-slate-200);
+    border-radius: var(--rolcc-radius-lg);
+    background: #fff;
+    overflow: hidden;
+  }
+
+  /* Concise Icon-Only Sort & Filter */
+  .admin-sort-label {
+    display: none !important;
+  }
+
+  .admin-sort-wrap {
+    min-height: 2.5rem;
+    padding: 0 0.5rem;
+    display: flex;
+    align-items: center;
+  }
+
+  /* Hide Page Title in Mobile Editor Topbar */
+  .admin-page--editor #admin-editor-title-block {
+    display: none !important;
+  }
+
+  /* Hide duplicate black create button */
+  main a[href*="/new"],
+  main a[href*="new"].btn {
+    display: none !important;
+  }
+}

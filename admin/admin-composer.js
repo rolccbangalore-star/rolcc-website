@@ -684,6 +684,8 @@
     markActiveNavLinks();
     mountMediaSidebarPages(root);
     if (!onEditor) mountSearch(root);
+    mountMobileDrawerSearch(root);
+    bindMobileLogout();
     mountProfileButton(root);
     mountEditorTopbar(root);
     preserveDecapMediaTab(root);
@@ -1617,6 +1619,100 @@
     }
 
     createSlot.hidden = false;
+  }
+
+  function mountMobileDrawerSearch(root) {
+    var slot = $("admin-sidebar-search-slot");
+    var searchWrap = $("admin-search-wrap");
+    if (!slot || !searchWrap) return;
+
+    if (slot.childElementCount === 0 && searchWrap) {
+      var mobileSearch = searchWrap.cloneNode(true);
+      mobileSearch.id = "admin-mobile-drawer-search";
+      var mobileInput = mobileSearch.querySelector("input");
+      if (mobileInput) {
+        mobileInput.id = "admin-mobile-search-input";
+        var desktopInput = $("admin-search-input");
+        mobileInput.addEventListener("input", function () {
+          if (desktopInput) {
+            desktopInput.value = mobileInput.value;
+            desktopInput.dispatchEvent(new Event("input", { bubbles: true }));
+          }
+        });
+      }
+      slot.appendChild(mobileSearch);
+    }
+  }
+
+  function bindMobileLogout() {
+    var btn = $("admin-mobile-logout-btn");
+    if (!btn || btn.dataset.bound === "true") return;
+    btn.dataset.bound = "true";
+    btn.addEventListener("click", function (event) {
+      event.preventDefault();
+      logoutComposer();
+    });
+  }
+
+  function mountMobileFab(root) {
+    if (!isCollectionRoute() || isLoginView(root)) {
+      var stale = $("admin-mobile-fab-wrap");
+      if (stale) stale.remove();
+      return;
+    }
+
+    var wrap = $("admin-mobile-fab-wrap");
+    if (!wrap) {
+      wrap = document.createElement("div");
+      wrap.id = "admin-mobile-fab-wrap";
+      wrap.className = "admin-mobile-fab-wrap";
+
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.id = "admin-mobile-fab-btn";
+      btn.className = "btn-primary admin-mobile-fab-btn";
+      btn.innerHTML =
+        '<svg class="admin-fab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>' +
+        '<span>Create an article</span>';
+
+      var menu = document.createElement("div");
+      menu.className = "admin-mobile-fab-menu";
+      menu.hidden = true;
+
+      COLLECTIONS.forEach(function (opt) {
+        var item = document.createElement("button");
+        item.type = "button";
+        item.className = "admin-mobile-fab-option";
+        item.textContent = opt.label === "Sermon Summary" ? "Create a sermon summary" : "Create a back to bible";
+        item.addEventListener("click", function (event) {
+          event.preventDefault();
+          event.stopPropagation();
+          menu.hidden = true;
+          wrap.classList.remove("is-open");
+          closeAllDropdowns();
+          var sidebar = $("admin-sidebar");
+          if (sidebar) sidebar.classList.remove("admin-shell-sidebar--open");
+          navigateToNewArticle(opt.id);
+        });
+        menu.appendChild(item);
+      });
+
+      btn.addEventListener("click", function (event) {
+        event.stopPropagation();
+        var open = !menu.hidden;
+        closeAllDropdowns();
+        menu.hidden = open;
+        wrap.classList.toggle("is-open", !open);
+      });
+
+      menu.addEventListener("click", function (event) {
+        event.stopPropagation();
+      });
+
+      wrap.appendChild(menu);
+      wrap.appendChild(btn);
+      document.body.appendChild(wrap);
+    }
   }
 
   function findCreateButton(main) {
@@ -3533,6 +3629,7 @@
     restructureCollectionHeader(root);
     syncCollectionViewMode(root);
     mountCreateButton(root);
+    mountMobileFab(root);
     renderCustomCollectionCards(root);
     enhanceMediaView(root);
     mountEditorChrome(root);

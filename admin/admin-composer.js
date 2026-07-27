@@ -621,9 +621,9 @@
     switcher.querySelector('[data-view="media"]').onclick = function () {
       closeAllDropdowns();
       if (label) label.textContent = "Media";
+      /* Browse custom media pane only — do not open Decap's Media assets modal. */
       if (location.hash !== "#/media") location.hash = "#/media";
-      tabs = getHeaderTabs(root);
-      if (tabs.media) tabs.media.click();
+      dismissDecapMediaBrowseOverlay(root);
       scheduleEnhance(root, enhance);
     };
   }
@@ -691,6 +691,7 @@
             });
           }
           renderMediaWorkspace(root);
+          closeMobileDrawer();
         });
         pagesNav.appendChild(btn);
       });
@@ -1359,7 +1360,7 @@
 
     var onEditor = isEditorRoute() && !isLoginView(root);
     var center = document.querySelector(".admin-topbar__center");
-    var main = root && root.querySelector("main");
+    var main = root && (root.querySelector("main") || ensureMainWorkspace(root));
     var searchWrap = $("admin-search-wrap");
 
     function restoreToTopbar() {
@@ -1613,6 +1614,9 @@
       root.classList.add("admin-view--media");
       body.classList.add("admin-page--media");
       cleanupLegacyEditorShell(root);
+      if (root.dataset.adminMediaUploadOpen !== "true") {
+        dismissDecapMediaBrowseOverlay(root);
+      }
     }
     if (isCollectionRoute() || isEditorRoute()) {
       rememberCollection(getActiveCollection() || getPreferredCollection());
@@ -1833,7 +1837,7 @@
       var importOpt = document.createElement("button");
       importOpt.type = "button";
       importOpt.className = "admin-mobile-fab-option";
-      importOpt.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M12 3v10"/><path d="m8 9 4-4 4 4"/><path d="M4 19h16"/></svg> Import JSON';
+      importOpt.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M12 3v10"/><path d="m8 9 4-4 4 4"/><path d="M4 19h16"/></svg><span>Import JSON</span>';
       importOpt.addEventListener("click", function (event) {
         event.preventDefault();
         event.stopPropagation();
@@ -1848,7 +1852,7 @@
       var saveOpt = document.createElement("button");
       saveOpt.type = "button";
       saveOpt.className = "admin-mobile-fab-option";
-      saveOpt.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z"/><path d="M17 21v-8H7v8"/><path d="M7 3v5h8"/></svg> Save draft';
+      saveOpt.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z"/><path d="M17 21v-8H7v8"/><path d="M7 3v5h8"/></svg><span>Save draft</span>';
       saveOpt.addEventListener("click", function (event) {
         event.preventDefault();
         event.stopPropagation();
@@ -1860,8 +1864,8 @@
 
       var publishOpt = document.createElement("button");
       publishOpt.type = "button";
-      publishOpt.className = "btn-primary admin-mobile-fab-option admin-mobile-fab-option--publish";
-      publishOpt.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> Publish';
+      publishOpt.className = "admin-mobile-fab-option admin-mobile-fab-option--publish";
+      publishOpt.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span>Publish</span>';
       publishOpt.addEventListener("click", function (event) {
         event.preventDefault();
         event.stopPropagation();
@@ -3215,9 +3219,28 @@
     return main;
   }
 
+  function dismissDecapMediaBrowseOverlay(root) {
+    if (!root) return;
+    if (root.dataset.adminMediaUploadOpen === "true") return;
+
+    var overlays = document.querySelectorAll(".ReactModal__Overlay");
+    overlays.forEach(function (overlay) {
+      var closeBtn =
+        overlay.querySelector('[class*="CloseButton"]') ||
+        overlay.querySelector('button[aria-label*="Close"]') ||
+        overlay.querySelector('button[aria-label*="close"]');
+      if (closeBtn) {
+        closeBtn.click();
+        return;
+      }
+      if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+    });
+  }
+
   function ensureMediaLibraryOpen(root) {
     if (!isMediaRoute() && root.dataset.adminMediaUploadOpen !== "true") return;
     if (root.querySelector(".ReactModal__Overlay--after-open")) return;
+    if (document.querySelector(".ReactModal__Overlay--after-open")) return;
 
     preserveDecapMediaTab(root);
     var tabs = getHeaderTabs(root);
@@ -3279,7 +3302,7 @@
 
     ensureMediaLibraryOpen(root);
     var slot = panel.querySelector(".admin-media-upload-panel__slot");
-    var overlay = root.querySelector(".ReactModal__Overlay");
+    var overlay = root.querySelector(".ReactModal__Overlay") || document.querySelector(".ReactModal__Overlay");
     if (!overlay) {
       window.setTimeout(function () {
         ensureMediaLibraryOpen(root);
@@ -3834,7 +3857,9 @@
     if (!root) return;
 
     document.addEventListener("keydown", function (event) {
-      if (event.key === "Escape") closeMediaModal();
+      if (event.key !== "Escape") return;
+      closeMediaModal();
+      closeAllDropdowns();
     });
     document.addEventListener("click", function (event) {
       if (

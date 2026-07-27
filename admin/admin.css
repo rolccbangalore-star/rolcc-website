@@ -3655,10 +3655,14 @@ body.admin-preview-modal-open {
   }
 
   .admin-page--editor .admin-shell-topbar {
-    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-columns: auto 1fr;
     gap: 0.5rem;
     padding-left: 0.75rem;
     padding-right: 0.75rem;
+  }
+
+  .admin-page--editor .admin-topbar__center {
+    display: none !important;
   }
 
   .admin-page--editor .admin-editor-title-input {
@@ -3684,7 +3688,8 @@ body.admin-preview-modal-open {
   }
 
   .admin-shell-sidebar.admin-shell-sidebar--open {
-    display: block !important;
+    display: flex !important;
+    flex-direction: column;
   }
 
   .admin-page--authed .admin-workspace {
@@ -3751,6 +3756,32 @@ body.admin-preview-modal-open {
 
   .admin-media-pane .admin-media-grid {
     display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0.75rem;
+  }
+
+  .admin-page--authed .admin-media-pane {
+    margin-left: 0;
+    width: 100%;
+    padding-left: 0.85rem;
+    padding-right: 0.85rem;
+    padding-bottom: 5rem;
+  }
+
+  .admin-media-pane .admin-media-head {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  .admin-media-pane .admin-media-head__actions {
+    flex-wrap: wrap;
+    width: 100%;
+  }
+
+  .admin-media-pane .admin-media-filters {
+    flex-wrap: wrap;
+    gap: 0.35rem;
   }
 }
 
@@ -3866,8 +3897,15 @@ body.admin-preview-modal-open {
   border: 1px solid var(--rolcc-slate-200);
 }
 
+.admin-mobile-fab-menu[hidden],
+.admin-mobile-editor-fab-menu[hidden] {
+  display: none !important;
+}
+
 .admin-mobile-fab-option {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
   width: 100%;
   padding: 0.75rem 1rem;
   border: none;
@@ -3878,11 +3916,30 @@ body.admin-preview-modal-open {
   font-weight: 600;
   color: var(--rolcc-slate-800);
   cursor: pointer;
+  box-sizing: border-box;
+}
+
+.admin-mobile-fab-option svg {
+  flex-shrink: 0;
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+.admin-mobile-fab-option span {
+  flex: 1;
+  text-align: left;
 }
 
 .admin-mobile-fab-option:hover {
   background: var(--rolcc-slate-100);
   color: var(--rolcc-accent);
+}
+
+.admin-mobile-fab-option--publish {
+  color: var(--rolcc-accent);
+  background: transparent;
+  border: none;
+  box-shadow: none;
 }
 
 /* Active State Badge Indicator for Sort and Filter */
@@ -3949,9 +4006,9 @@ body.admin-preview-modal-open {
     order: 99;
   }
 
-  /* Sidebar Drawer Adjustments */
-  .admin-shell-sidebar {
-    display: flex;
+  /* Sidebar Drawer Adjustments — only flex when open (do not override closed display:none) */
+  .admin-shell-sidebar.admin-shell-sidebar--open {
+    display: flex !important;
     flex-direction: column;
   }
 
@@ -4020,7 +4077,11 @@ body.admin-preview-modal-open {
     z-index: 5;
   }
 
-  /* Article title sits in the editor body under the top bar (moved by JS). */
+  /* Article title: hide while still in topbar; show only when moved into body. */
+  .admin-page--editor #admin-editor-title-block:not(.admin-editor-title-block--body) {
+    display: none !important;
+  }
+
   .admin-page--editor #admin-editor-title-block.admin-editor-title-block--body {
     display: flex !important;
     flex-direction: column;
@@ -4036,6 +4097,8 @@ body.admin-preview-modal-open {
     text-align: left;
     font-size: 1.2rem;
     padding: 0.4rem 0;
+    width: 100%;
+    max-width: none;
   }
 
   /* Hide duplicate black create button */
@@ -4117,11 +4180,19 @@ body.admin-preview-modal-open {
   display: flex;
   align-items: center;
   gap: 0.625rem;
+  width: 100%;
 }
 
 .admin-mobile-editor-fab-menu .admin-mobile-fab-option svg {
   width: 1.125rem;
   height: 1.125rem;
+  flex-shrink: 0;
+}
+
+/* Hide Decap Media assets modal when browsing custom media pane (upload keeps .admin-media-overlay). */
+body.admin-page--media .ReactModal__Overlay:not(.admin-media-overlay) {
+  display: none !important;
+  pointer-events: none !important;
 }
 
 /* Desktop Strict Isolation Rules (≥641px) */

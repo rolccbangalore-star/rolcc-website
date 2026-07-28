@@ -1195,6 +1195,137 @@
     confirmBtn.focus();
   }
 
+  var leaveConfirmState = {
+    bypass: false,
+    pendingTarget: null,
+    installed: false,
+  };
+
+  function isLeaveConfirmMessage(message) {
+    var msg = normalize(message);
+    if (!msg) return false;
+    if (msg.indexOf("delete") !== -1) return false;
+    if (msg.indexOf("publish") !== -1) return false;
+    if (msg.indexOf("featured") !== -1) return false;
+    if (msg.indexOf("leave this page") !== -1) return true;
+    if (msg.indexOf("leave") !== -1 && msg.indexOf("page") !== -1) return true;
+    if (msg.indexOf("unsaved") !== -1 && msg.indexOf("leave") !== -1) return true;
+    if (msg.indexOf("discard") !== -1 && msg.indexOf("change") !== -1) return true;
+    return false;
+  }
+
+  function ensureLeaveConfirmModal() {
+    var modal = $("admin-leave-confirm-modal");
+    if (modal) return modal;
+
+    modal = document.createElement("div");
+    modal.id = "admin-leave-confirm-modal";
+    modal.className = "admin-leave-confirm-modal";
+    modal.hidden = true;
+    modal.innerHTML =
+      '<div class="admin-leave-confirm-modal__backdrop" data-leave-close></div>' +
+      '<div class="admin-leave-confirm-modal__panel" role="alertdialog" aria-modal="true" aria-labelledby="admin-leave-confirm-title">' +
+      '<h2 id="admin-leave-confirm-title" class="admin-leave-confirm-modal__title">Leave this page?</h2>' +
+      '<p class="admin-leave-confirm-modal__message" id="admin-leave-confirm-message"></p>' +
+      '<div class="admin-leave-confirm-modal__actions">' +
+      '<button type="button" class="btn-outline" data-leave-close>Cancel</button>' +
+      '<button type="button" class="btn-primary admin-leave-confirm-modal__confirm" id="admin-leave-confirm-btn">Leave</button>' +
+      "</div></div>";
+    document.body.appendChild(modal);
+
+    modal.querySelectorAll("[data-leave-close]").forEach(function (el) {
+      el.addEventListener("click", closeLeaveConfirmModal);
+    });
+
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape" && modal && !modal.hidden) {
+        closeLeaveConfirmModal();
+      }
+    });
+
+    return modal;
+  }
+
+  function closeLeaveConfirmModal() {
+    var modal = $("admin-leave-confirm-modal");
+    if (!modal) return;
+    modal.hidden = true;
+    document.body.classList.remove("admin-leave-confirm-open");
+    modal._leaveOnConfirm = null;
+  }
+
+  function openLeaveConfirmModal(options) {
+    var modal = ensureLeaveConfirmModal();
+    modal.querySelector("#admin-leave-confirm-title").textContent =
+      options.title || "Leave this page?";
+    modal.querySelector("#admin-leave-confirm-message").textContent =
+      options.message ||
+      "You have unsaved changes. If you leave now, those changes will be lost.";
+    var confirmBtn = modal.querySelector("#admin-leave-confirm-btn");
+    confirmBtn.textContent = options.confirmLabel || "Leave";
+    confirmBtn.onclick = function () {
+      var onConfirm = options.onConfirm;
+      closeLeaveConfirmModal();
+      if (onConfirm) onConfirm();
+    };
+    modal.hidden = false;
+    document.body.classList.add("admin-leave-confirm-open");
+    confirmBtn.focus();
+  }
+
+  function replayLeaveNavigation() {
+    leaveConfirmState.bypass = true;
+    try {
+      var target = leaveConfirmState.pendingTarget;
+      leaveConfirmState.pendingTarget = null;
+      if (target && typeof target.click === "function") {
+        target.click();
+        return;
+      }
+      if (window.history && typeof window.history.back === "function") {
+        window.history.back();
+      }
+    } finally {
+      window.setTimeout(function () {
+        leaveConfirmState.bypass = false;
+      }, 100);
+    }
+  }
+
+  function installThemedLeaveConfirm() {
+    if (leaveConfirmState.installed) return;
+    leaveConfirmState.installed = true;
+
+    document.addEventListener(
+      "click",
+      function (event) {
+        var el = event.target && event.target.closest
+          ? event.target.closest("a[href], button, [role='button'], [role='link']")
+          : null;
+        if (el) leaveConfirmState.pendingTarget = el;
+      },
+      true
+    );
+
+    var originalConfirm = window.confirm;
+    window.confirm = function (message) {
+      if (leaveConfirmState.bypass) return true;
+      if (!isLeaveConfirmMessage(message)) {
+        return originalConfirm.call(window, message);
+      }
+
+      openLeaveConfirmModal({
+        title: "Leave this page?",
+        message:
+          String(message || "").trim() ||
+          "You have unsaved changes. If you leave now, those changes will be lost.",
+        confirmLabel: "Leave",
+        onConfirm: replayLeaveNavigation,
+      });
+      return false;
+    };
+  }
+
   function syncDeleteButtonLabel() {
     var btn = $("admin-delete-btn");
     if (!btn) return;
@@ -1777,17 +1908,58 @@
   }
 
   function mountMobileFab(root) {
-    if (!isCollectionRoute() || isLoginView(root)) {
+    var onCollection = isCollectionRoute() && !isLoginView(root);
+    var onMedia = isMediaRoute() && !isLoginView(root);
+
+    if (!onCollection && !onMedia) {
       var stale = $("admin-mobile-fab-wrap");
       if (stale) stale.remove();
       return;
     }
 
+    var fabKind = onMedia ? "media-upload" : "collection-create";
     var wrap = $("admin-mobile-fab-wrap");
+    if (wrap && wrap.dataset.fabKind !== fabKind) {
+      wrap.remove();
+      wrap = null;
+    }
+
+    if (onMedia) {
+      if (!wrap) {
+        wrap = document.createElement("div");
+        wrap.id = "admin-mobile-fab-wrap";
+        wrap.className = "admin-mobile-fab-wrap";
+        wrap.dataset.fabKind = fabKind;
+
+        var uploadBtn = document.createElement("button");
+        uploadBtn.type = "button";
+        uploadBtn.id = "admin-mobile-fab-btn";
+        uploadBtn.className = "admin-mobile-fab-btn";
+        uploadBtn.setAttribute("aria-label", "Upload image");
+        uploadBtn.innerHTML =
+          UPLOAD_ICON +
+          "<span>Upload image</span>";
+        uploadBtn.addEventListener("click", function (event) {
+          event.preventDefault();
+          event.stopPropagation();
+          closeAllDropdowns();
+          root.dataset.adminMediaUploadOpen = "true";
+          syncMediaPaneLayout(root);
+          renderMediaWorkspace(root);
+        });
+
+        wrap.appendChild(uploadBtn);
+        document.body.appendChild(wrap);
+      }
+      syncFabVisibilityForDrawer();
+      return;
+    }
+
     if (!wrap) {
       wrap = document.createElement("div");
       wrap.id = "admin-mobile-fab-wrap";
       wrap.className = "admin-mobile-fab-wrap";
+      wrap.dataset.fabKind = fabKind;
 
       var btn = document.createElement("button");
       btn.type = "button";
@@ -2135,7 +2307,14 @@
 
   function ensureSortWrapChrome(sortWrap, anchor, options) {
     options = options || {};
-    if (options.showLabel !== false && !sortWrap.querySelector(".admin-sort-label")) {
+    var mobileToolbar =
+      typeof window.matchMedia === "function" &&
+      window.matchMedia("(max-width: 640px)").matches;
+    var showLabel = options.showLabel !== false && !mobileToolbar;
+    var existingLabel = sortWrap.querySelector(".admin-sort-label");
+    if (!showLabel) {
+      if (existingLabel) existingLabel.remove();
+    } else if (!existingLabel) {
       var sortLabel = document.createElement("span");
       sortLabel.className = "admin-sort-label";
       sortLabel.textContent = "Sort by";
@@ -3850,7 +4029,8 @@
         var listBtn = document.createElement("button");
         listBtn.type = "button";
         listBtn.className = "admin-view-btn admin-view-btn--list";
-        listBtn.innerHTML = LIST_VIEW_ICON + '<span class="admin-media-view-label">List</span>';
+        listBtn.innerHTML = LIST_VIEW_ICON;
+        listBtn.setAttribute("aria-label", "List view");
         listBtn.setAttribute("aria-pressed", listView ? "true" : "false");
         listBtn.classList.toggle("admin-view-btn--active", listView);
         setTooltip(listBtn, "List view");
@@ -3863,7 +4043,8 @@
         var gridBtn = document.createElement("button");
         gridBtn.type = "button";
         gridBtn.className = "admin-view-btn admin-view-btn--grid";
-        gridBtn.innerHTML = GRID_VIEW_ICON + '<span class="admin-media-view-label">Grid</span>';
+        gridBtn.innerHTML = GRID_VIEW_ICON;
+        gridBtn.setAttribute("aria-label", "Grid view");
         gridBtn.setAttribute("aria-pressed", listView ? "false" : "true");
         gridBtn.classList.toggle("admin-view-btn--active", !listView);
         setTooltip(gridBtn, "Grid view");
@@ -3967,6 +4148,8 @@
   function watch() {
     var root = $("nc-root");
     if (!root) return;
+
+    installThemedLeaveConfirm();
 
     document.addEventListener("keydown", function (event) {
       if (event.key !== "Escape") return;

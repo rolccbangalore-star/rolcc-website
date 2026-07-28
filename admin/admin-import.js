@@ -309,8 +309,11 @@
 
     var applied = 0;
     items.forEach(function (itemText) {
-      var addBtn = clickButtonMatching(wrap, "add");
-      if (!addBtn) addBtn = clickButtonMatching(wrap, fieldLabel.toLowerCase());
+      var addBtn =
+        clickButtonMatching(wrap, "add") ||
+        clickButtonMatching(wrap, "+ takeaway") ||
+        clickButtonMatching(wrap, "+ content") ||
+        clickButtonMatching(wrap, fieldLabel.toLowerCase());
       if (!addBtn) return;
       addBtn.click();
 
@@ -332,7 +335,11 @@
     var applied = 0;
     blocks.forEach(function (block) {
       if (!block || !block.type) return;
-      var addBtn = clickButtonMatching(wrap, "add article content") || clickButtonMatching(wrap, "add");
+      var addBtn =
+        clickButtonMatching(wrap, "add article content") ||
+        clickButtonMatching(wrap, "+ content") ||
+        clickButtonMatching(wrap, "add content") ||
+        clickButtonMatching(wrap, "add");
       if (!addBtn) return;
       addBtn.click();
 

@@ -1179,9 +1179,58 @@
     wireFeaturedField(root);
     wireHidePublishedField(root);
     wireHideCategoryField(root);
+    polishListAddButtons(root);
+  }
+
+  function polishListAddButtons(root) {
+    if (!root || !isEditorRoute()) return;
+    var mobile =
+      typeof window.matchMedia === "function" &&
+      window.matchMedia("(max-width: 640px)").matches;
+
+    Array.prototype.forEach.call(root.querySelectorAll("button"), function (btn) {
+      var raw = (btn.textContent || "").replace(/\s+/g, " ").trim();
+      var norm = normalize(raw);
+      if (!norm) return;
+
+      var kind = btn.dataset.adminAddKind || "";
+      if (
+        !kind &&
+        (norm === "add article content" ||
+          norm === "+ content" ||
+          norm === "add content")
+      ) {
+        kind = "content";
+      } else if (
+        !kind &&
+        (norm.indexOf("add key takeaway") !== -1 ||
+          norm === "+ takeaways" ||
+          norm === "add takeaways")
+      ) {
+        kind = "takeaways";
+      }
+      if (!kind) return;
+
+      btn.dataset.adminAddKind = kind;
+      if (!btn.dataset.adminAddFull && norm.indexOf("add ") === 0 && norm.indexOf("+") !== 0) {
+        btn.dataset.adminAddFull = raw;
+      }
+
+      var full =
+        btn.dataset.adminAddFull ||
+        (kind === "content" ? "Add article content" : "Add key takeaways");
+      var next = mobile
+        ? kind === "content"
+          ? "+ Content"
+          : "+ Takeaways"
+        : full;
+      if (raw !== next) btn.textContent = next;
+    });
   }
 
   var mountRetryTimer = null;
+  var listLabelResizeBound = false;
+
   function scheduleFieldMounts(root) {
     if (!root) return;
     if (!isEditorRoute()) {
@@ -1203,6 +1252,14 @@
       }
     }
     mountRetryTimer = window.setTimeout(retry, 250);
+
+    if (!listLabelResizeBound) {
+      listLabelResizeBound = true;
+      window.addEventListener("resize", function () {
+        var live = getRoot();
+        if (live) polishListAddButtons(live);
+      });
+    }
   }
 
   window.AdminEditorFields = {

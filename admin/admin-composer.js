@@ -198,13 +198,6 @@
     return parseInt(parts[2], 10) + " " + months[parseInt(parts[1], 10) - 1] + " " + parts[0];
   }
 
-  function parseModifiedHeader(header) {
-    if (!header) return "";
-    var parsed = new Date(header);
-    if (isNaN(parsed.getTime())) return "";
-    return parsed.toISOString().split("T")[0];
-  }
-
   function getIstTodayIso() {
     return new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Kolkata" }).format(new Date());
   }
@@ -239,12 +232,7 @@
     if (isScheduledArticle(data)) return formatDate(data.scheduleDate);
     if (data.publish === false) return "";
     /* Prefer editorial publish date; modified is only a fallback (never CI mtime). */
-    var raw = data.date || data.modified;
-    var formatted = formatDate(raw);
-    // #region agent log
-    fetch('http://127.0.0.1:7663/ingest/a8dab655-487d-4443-a923-c6ebc86b6891',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'62138e'},body:JSON.stringify({sessionId:'62138e',runId:'post-fix',hypothesisId:'A',location:'admin-composer.js:getDisplayDate',message:'display date sources',data:{title:(data.title||'').slice(0,40),date:data.date||null,modified:data.modified||null,picked:raw||null,formatted:formatted,prefersModified:false},timestamp:Date.now()})}).catch(function(){});
-    // #endregion
-    return formatted;
+    return formatDate(data.date || data.modified);
   }
 
   function escapeHtml(value) {
@@ -2330,14 +2318,8 @@
     entryCache[key] = fetch("/data/articles/" + encodeURIComponent(collection) + "/" + encodeURIComponent(slug) + ".json")
       .then(function (res) {
         if (!res.ok) throw new Error("missing");
-        var modified = parseModifiedHeader(res.headers.get("Last-Modified"));
-        return res.json().then(function (data) {
-          // #region agent log
-          fetch('http://127.0.0.1:7663/ingest/a8dab655-487d-4443-a923-c6ebc86b6891',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'62138e'},body:JSON.stringify({sessionId:'62138e',runId:'post-fix',hypothesisId:'C',location:'admin-composer.js:fetchEntry',message:'Last-Modified ignored for display',data:{collection:collection,slug:slug,lastModifiedHeader:res.headers.get('Last-Modified'),parsedModified:modified||null,jsonDate:data.date||null,jsonHadModified:data.modified||null,willOverwrite:false},timestamp:Date.now()})}).catch(function(){});
-          // #endregion
-          /* Do not stamp modified from CDN Last-Modified — that is the deploy time. */
-          return data;
-        });
+        /* Do not stamp modified from CDN Last-Modified — that is the deploy time. */
+        return res.json();
       })
       .catch(function () {
         return null;
@@ -3166,21 +3148,6 @@
 
       var entries = cardManifest && cardManifest[collection];
       if (!entries) return;
-
-      // #region agent log
-      (function () {
-        var sample = Object.keys(entries).slice(0, 8).map(function (slug) {
-          var e = entries[slug] || {};
-          return { slug: slug, date: e.date || null, modified: e.modified || null, display: getDisplayDate(e) };
-        });
-        var modCounts = {};
-        Object.keys(entries).forEach(function (slug) {
-          var m = (entries[slug] && (entries[slug].modified || entries[slug].date)) || "(none)";
-          modCounts[m] = (modCounts[m] || 0) + 1;
-        });
-        fetch('http://127.0.0.1:7663/ingest/a8dab655-487d-4443-a923-c6ebc86b6891',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'62138e'},body:JSON.stringify({sessionId:'62138e',runId:'pre-fix',hypothesisId:'B',location:'admin-composer.js:renderCustomCollectionCards',message:'manifest date summary',data:{collection:collection,entryCount:Object.keys(entries).length,modCounts:modCounts,sample:sample,sortField:getSortField(root)},timestamp:Date.now()})}).catch(function(){});
-      })();
-      // #endregion
 
       var query = getSearchQuery();
       var sortField = getSortField(root);

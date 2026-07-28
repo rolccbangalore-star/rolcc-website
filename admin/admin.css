@@ -3332,6 +3332,14 @@ body.admin-preview-modal-open {
   }
 }
 
+.admin-preview-modal--mobile-only .admin-preview-viewports {
+  display: none;
+}
+
+.admin-preview-modal--mobile-only .admin-preview-modal__hint::after {
+  content: " Mobile width.";
+}
+
 /* ——— Mobile Import & Mobile Responsive Polish ——— */
 
 /* Topbar Mobile Nav Toggle — phones only */
@@ -3985,6 +3993,15 @@ body.admin-drawer-open .admin-mobile-editor-fab-wrap {
   background: transparent;
   border: none;
   box-shadow: none;
+}
+
+.admin-mobile-fab-option--danger {
+  color: #b91c1c;
+}
+
+.admin-mobile-fab-option--danger:hover {
+  background: #fef2f2;
+  color: #991b1b;
 }
 
 /* Active State Badge Indicator for Sort and Filter */

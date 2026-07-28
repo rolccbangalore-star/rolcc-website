@@ -165,19 +165,27 @@
     iframe.srcdoc = buildPreviewHtml();
   }
 
-  function openPreview() {
+  function openPreview(options) {
+    options = options || {};
     if (!isEditorRoute()) return;
     if (!window.AdminImport || !window.AdminImport.readDraftData) return;
 
     ensureModal();
     lastFocused = document.activeElement;
-    currentViewport = "desktop";
 
-    refreshPreview();
-    setViewport("desktop");
+    var viewport =
+      options.viewport === "mobile" || options.viewport === "tablet" || options.viewport === "desktop"
+        ? options.viewport
+        : "desktop";
+    var mobileOnly = !!options.mobileOnly;
+    if (mobileOnly) viewport = "mobile";
 
+    currentViewport = viewport;
+    modal.classList.toggle("admin-preview-modal--mobile-only", mobileOnly);
     modal.hidden = false;
     document.body.classList.add("admin-preview-modal-open");
+    setViewport(viewport);
+    refreshPreview();
 
     var closeBtn = modal.querySelector(".admin-preview-modal__close");
     if (closeBtn) closeBtn.focus();
@@ -186,6 +194,7 @@
   function closePreview() {
     if (!modal) return;
     modal.hidden = true;
+    modal.classList.remove("admin-preview-modal--mobile-only");
     document.body.classList.remove("admin-preview-modal-open");
     if (lastFocused && typeof lastFocused.focus === "function") {
       lastFocused.focus();

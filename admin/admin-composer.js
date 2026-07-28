@@ -1851,11 +1851,18 @@
       return;
     }
 
+    var FAB_ACTIONS_VERSION = "v2-preview-schedule-delete";
     var wrap = $("admin-mobile-editor-fab-wrap");
+    if (wrap && wrap.dataset.fabActions !== FAB_ACTIONS_VERSION) {
+      wrap.remove();
+      wrap = null;
+    }
+
     if (!wrap) {
       wrap = document.createElement("div");
       wrap.id = "admin-mobile-editor-fab-wrap";
       wrap.className = "admin-mobile-editor-fab-wrap";
+      wrap.dataset.fabActions = FAB_ACTIONS_VERSION;
 
       var btn = document.createElement("button");
       btn.type = "button";
@@ -1870,46 +1877,83 @@
       menu.className = "admin-mobile-editor-fab-menu";
       menu.hidden = true;
 
-      var importOpt = document.createElement("button");
-      importOpt.type = "button";
-      importOpt.className = "admin-mobile-fab-option";
-      importOpt.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M12 3v10"/><path d="m8 9 4-4 4 4"/><path d="M4 19h16"/></svg><span>Import JSON</span>';
-      importOpt.addEventListener("click", function (event) {
-        event.preventDefault();
-        event.stopPropagation();
+      function closeEditorFabMenu() {
         menu.hidden = true;
         wrap.classList.remove("is-open");
-        if (window.AdminImport && window.AdminImport.openImportModal) {
-          window.AdminImport.openImportModal(null);
+      }
+
+      function addFabOption(label, iconSvg, className, onClick) {
+        var item = document.createElement("button");
+        item.type = "button";
+        item.className = "admin-mobile-fab-option" + (className ? " " + className : "");
+        item.innerHTML = iconSvg + "<span>" + label + "</span>";
+        item.addEventListener("click", function (event) {
+          event.preventDefault();
+          event.stopPropagation();
+          closeEditorFabMenu();
+          onClick(event);
+        });
+        menu.appendChild(item);
+        return item;
+      }
+
+      addFabOption(
+        "Preview",
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12Z"/><circle cx="12" cy="12" r="3"/></svg>',
+        "",
+        function () {
+          if (window.AdminPreview && window.AdminPreview.open) {
+            window.AdminPreview.open({ viewport: "mobile", mobileOnly: true });
+          }
         }
-      });
-      menu.appendChild(importOpt);
+      );
 
-      var saveOpt = document.createElement("button");
-      saveOpt.type = "button";
-      saveOpt.className = "admin-mobile-fab-option";
-      saveOpt.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z"/><path d="M17 21v-8H7v8"/><path d="M7 3v5h8"/></svg><span>Save draft</span>';
-      saveOpt.addEventListener("click", function (event) {
-        event.preventDefault();
-        event.stopPropagation();
-        menu.hidden = true;
-        wrap.classList.remove("is-open");
-        saveDraftProgress(root);
-      });
-      menu.appendChild(saveOpt);
+      addFabOption(
+        "Import JSON",
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M12 3v10"/><path d="m8 9 4-4 4 4"/><path d="M4 19h16"/></svg>',
+        "",
+        function () {
+          if (window.AdminImport && window.AdminImport.openImportModal) {
+            window.AdminImport.openImportModal(null);
+          }
+        }
+      );
 
-      var publishOpt = document.createElement("button");
-      publishOpt.type = "button";
-      publishOpt.className = "admin-mobile-fab-option admin-mobile-fab-option--publish";
-      publishOpt.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span>Publish</span>';
-      publishOpt.addEventListener("click", function (event) {
-        event.preventDefault();
-        event.stopPropagation();
-        menu.hidden = true;
-        wrap.classList.remove("is-open");
-        publishArticle(root);
-      });
-      menu.appendChild(publishOpt);
+      addFabOption(
+        "Save draft",
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z"/><path d="M17 21v-8H7v8"/><path d="M7 3v5h8"/></svg>',
+        "",
+        function () {
+          saveDraftProgress(root);
+        }
+      );
+
+      addFabOption(
+        "Schedule",
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 11h18"/></svg>',
+        "",
+        function () {
+          openScheduleModal(root, btn);
+        }
+      );
+
+      addFabOption(
+        "Publish",
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>',
+        "admin-mobile-fab-option--publish",
+        function () {
+          publishArticle(root);
+        }
+      );
+
+      addFabOption(
+        "Delete article",
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M10 11v6M14 11v6"/></svg>',
+        "admin-mobile-fab-option--danger",
+        function () {
+          deleteArticle(root);
+        }
+      );
 
       btn.addEventListener("click", function (event) {
         event.stopPropagation();

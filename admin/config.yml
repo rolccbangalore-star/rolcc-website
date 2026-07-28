@@ -22,17 +22,6 @@ editor:
   preview: false
 
 collections:
-  - name: article-tags
-    label: Tags
-    folder: data/tags
-    create: true
-    slug: "{{slug}}"
-    extension: json
-    format: json
-    summary: "{{name}}"
-    fields:
-      - { label: Tag name, name: name, widget: string, hint: "Use Title Case, e.g. Faith & Peace" }
-
   - name: articles
     label: Sermon Summary
     folder: data/articles/everyday-faith
@@ -243,3 +232,15 @@ collections:
       - { label: Published, name: publish, widget: boolean, default: true, hint: "Use the Publish button in the top bar. This toggle is hidden in the editor." }
       - { label: Schedule date, name: scheduleDate, widget: hidden, required: false }
       - { label: Schedule window, name: scheduleWindow, widget: hidden, required: false }
+
+  - name: article-tags
+    label: Tags
+    folder: data/tags
+    create: true
+    slug: "{{slug}}"
+    extension: json
+    format: json
+    summary: "{{name}}"
+    fields:
+      - { label: Tag name, name: name, widget: string, hint: "Use Title Case, e.g. Faith & Peace" }
+

@@ -1648,7 +1648,7 @@ body.admin-page--editor #nc-root main.admin-main {
   display: inline-flex !important;
   visibility: visible !important;
   opacity: 1 !important;
-  flex-direction: row-reverse;
+  flex-direction: row;
   align-items: center;
   gap: 0.65rem;
   flex-shrink: 0;
@@ -1992,7 +1992,15 @@ body.admin-composer-dropdown-open #nc-root .admin-custom-grid {
 }
 
 #nc-root .admin-collection-toolbar {
-  flex-direction: row-reverse;
+  flex-direction: row;
+}
+
+#nc-root .admin-composer-toolbar__tools {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-left: auto;
+  flex-shrink: 0;
 }
 
 #nc-root.admin-view--grid .admin-custom-grid {
@@ -2032,7 +2040,7 @@ body.admin-composer-dropdown-open #nc-root .admin-custom-grid {
 
 #nc-root.admin-view--list .admin-custom-list .admin-list-row__link {
   display: grid;
-  grid-template-columns: minmax(14rem, 2.2fr) 8.5rem 9rem 7rem 5.5rem;
+  grid-template-columns: minmax(14rem, 2.2fr) 9rem 7rem 5.5rem;
   gap: 1rem;
   align-items: center;
   width: 100%;
@@ -2045,7 +2053,7 @@ body.admin-composer-dropdown-open #nc-root .admin-custom-grid {
 
 #nc-root.admin-view--list .admin-custom-entries .admin-list-header {
   display: grid !important;
-  grid-template-columns: minmax(14rem, 2.2fr) 8.5rem 9rem 7rem 5.5rem;
+  grid-template-columns: minmax(14rem, 2.2fr) 9rem 7rem 5.5rem;
   gap: 1rem;
   align-items: center;
   width: 100%;
@@ -2168,7 +2176,7 @@ body.admin-composer-dropdown-open #nc-root .admin-custom-grid {
 #nc-root.admin-view--list .admin-list-header,
 #nc-root.admin-view--list .admin-list-row__link {
   display: grid;
-  grid-template-columns: minmax(14rem, 2.2fr) 8.5rem 9rem 7rem 5.5rem;
+  grid-template-columns: minmax(14rem, 2.2fr) 9rem 7rem 5.5rem;
   gap: 1rem;
   align-items: center;
   width: 100%;
@@ -2459,11 +2467,11 @@ body.admin-schedule-modal-open {
   }
 
   .admin-page--authed .admin-workspace {
-    padding-top: 6.5rem;
+    padding-top: var(--rolcc-header-height, 4.5rem);
   }
 
   .admin-shell-sidebar {
-    top: 6.5rem;
+    top: var(--rolcc-header-height, 4.5rem);
   }
 
   #nc-root .admin-main {
@@ -2480,13 +2488,20 @@ body.admin-schedule-modal-open {
 
 @media (max-width: 640px) {
   #nc-root .admin-collection-head {
-    flex-direction: column;
-    align-items: stretch;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    flex-wrap: nowrap !important;
+    gap: 0.75rem;
+  }
+
+  #nc-root .admin-collection-head > h1 {
+    width: 100%;
+    flex: none;
   }
 
   #nc-root .admin-collection-toolbar {
     justify-content: space-between;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
   }
 }
 
@@ -3683,13 +3698,22 @@ body.admin-preview-modal-open {
     border-right: none;
     border-bottom: 1px solid var(--rolcc-slate-200);
     display: none;
+    overflow-x: hidden;
     overflow-y: auto;
-    padding: 1rem;
+    padding: 0.5rem 0.75rem 1rem;
   }
 
   .admin-shell-sidebar.admin-shell-sidebar--open {
     display: flex !important;
     flex-direction: column;
+  }
+
+  .admin-view-switcher {
+    padding-top: 0.25rem;
+  }
+
+  #admin-view-switcher .admin-view-switcher__menu {
+    z-index: 1200;
   }
 
   .admin-page--authed .admin-workspace {
@@ -3858,6 +3882,13 @@ body.admin-preview-modal-open {
   align-items: center;
 }
 
+.admin-mobile-fab-wrap[hidden],
+.admin-mobile-editor-fab-wrap[hidden],
+body.admin-drawer-open .admin-mobile-fab-wrap,
+body.admin-drawer-open .admin-mobile-editor-fab-wrap {
+  display: none !important;
+}
+
 .admin-mobile-fab-btn {
   display: inline-flex;
   align-items: center;
@@ -3873,6 +3904,20 @@ body.admin-preview-modal-open {
   box-shadow: 0 10px 25px rgba(99, 91, 255, 0.4);
   border: none;
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+}
+
+.admin-mobile-fab-btn:focus:not(:focus-visible),
+.admin-mobile-editor-fab-btn:focus:not(:focus-visible) {
+  outline: none !important;
+  box-shadow: 0 10px 25px rgba(99, 91, 255, 0.4) !important;
+}
+
+.admin-mobile-fab-btn:focus-visible,
+.admin-mobile-editor-fab-btn:focus-visible {
+  outline: 2px solid var(--rolcc-accent);
+  outline-offset: 3px;
 }
 
 .admin-mobile-fab-btn svg {
@@ -4014,21 +4059,31 @@ body.admin-preview-modal-open {
 
   .admin-sidebar-search-slot {
     display: block;
+    margin-bottom: 0.5rem;
   }
 
   .admin-sidebar-create {
     display: none !important;
   }
 
-  /* Single Horizontal Row for Listing Page Controls */
-  #nc-root .admin-collection-toolbar {
+  /* Row 1 = title (from column head); row 2 = list/grid left, sort/filter right */
+  .admin-page--authed #nc-root .admin-collection-toolbar {
     display: flex !important;
     flex-direction: row !important;
     align-items: center !important;
     justify-content: space-between !important;
     gap: 0.5rem;
-    width: 100%;
-    margin-bottom: 1rem;
+    width: 100% !important;
+    max-width: none !important;
+    margin-bottom: 0.75rem;
+  }
+
+  #nc-root .admin-composer-toolbar__tools {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-left: auto;
+    flex-shrink: 0;
   }
 
   #nc-root .admin-view-toggle {
@@ -4038,6 +4093,35 @@ body.admin-preview-modal-open {
     border-radius: var(--rolcc-radius-lg);
     background: #fff;
     overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  /* Tap / focus chrome — no black OS rings */
+  #nc-root .admin-view-btn,
+  #nc-root .admin-composer-menu__trigger,
+  .admin-mobile-fab-btn,
+  .admin-mobile-editor-fab-btn {
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
+  }
+
+  #nc-root .admin-view-btn:focus-visible,
+  #nc-root .admin-composer-menu__trigger:focus-visible,
+  .admin-mobile-fab-btn:focus-visible,
+  .admin-mobile-editor-fab-btn:focus-visible {
+    outline: 2px solid var(--rolcc-accent);
+    outline-offset: 2px;
+  }
+
+  #nc-root .admin-view-btn,
+  #nc-root .admin-composer-menu--sort .admin-composer-menu__trigger,
+  #nc-root .admin-composer-menu--filter .admin-composer-menu__trigger {
+    box-shadow: none;
+  }
+
+  #nc-root .admin-collection-toolbar button:not(.admin-view-btn):not(.admin-sort-trigger) {
+    border-color: var(--rolcc-slate-200);
+    box-shadow: none;
   }
 
   /* Concise Icon-Only Sort & Filter */
@@ -4063,6 +4147,39 @@ body.admin-preview-modal-open {
     position: relative;
   }
 
+  #nc-root .admin-composer-menu--sort .admin-composer-menu__trigger,
+  #nc-root .admin-composer-menu--filter .admin-composer-menu__trigger {
+    width: 2.5rem;
+    height: 2.5rem;
+    min-width: 2.5rem;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--rolcc-slate-200);
+    border-radius: var(--rolcc-radius-lg);
+    background: #fff;
+  }
+
+  #nc-root .admin-composer-menu--sort .admin-composer-menu__trigger-icon,
+  #nc-root .admin-composer-menu--filter .admin-composer-menu__trigger-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+  }
+
+  #nc-root .admin-composer-menu--sort .admin-menu-icon,
+  #nc-root .admin-composer-menu--filter .admin-menu-icon {
+    width: 1.15rem;
+    height: 1.15rem;
+  }
+
+  #nc-root .admin-view-toggle .admin-view-btn {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+
   #nc-root .admin-composer-menu--sort.admin-has-active-sort::after,
   #nc-root .admin-composer-menu--filter.admin-has-active-filter::after {
     content: "";
@@ -4075,6 +4192,24 @@ body.admin-preview-modal-open {
     background-color: #ef4444;
     border: 1.5px solid #fff;
     z-index: 5;
+  }
+
+  /* Mobile list: Title | Date | Status */
+  #nc-root.admin-view--list .admin-list-header,
+  #nc-root.admin-view--list .admin-list-header--compact,
+  #nc-root.admin-view--list .admin-list-row__link,
+  #nc-root.admin-view--list .admin-list-row__link--compact,
+  #nc-root.admin-view--list .admin-custom-list .admin-list-row__link,
+  #nc-root.admin-view--list .admin-custom-entries .admin-list-header {
+    grid-template-columns: minmax(0, 1fr) 5.25rem 4.75rem !important;
+    gap: 0.5rem;
+  }
+
+  #nc-root.admin-view--list .admin-list-header__collection,
+  #nc-root.admin-view--list .admin-list-row__collection,
+  #nc-root.admin-view--list .admin-list-header__author,
+  #nc-root.admin-view--list .admin-list-row__author {
+    display: none !important;
   }
 
   /* Article title: hide while still in topbar; show only when moved into body. */

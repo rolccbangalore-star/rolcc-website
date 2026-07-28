@@ -60,9 +60,12 @@
     return normalizeCollectionId(collection) === "bible-study";
   }
 
+  var INTERNAL_COLLECTIONS = ["article-tags"];
+
   function rememberCollection(collection) {
     collection = normalizeCollectionId(collection);
     if (!collection || !COLLECTION_LABELS[collection]) return;
+    if (INTERNAL_COLLECTIONS.indexOf(collection) !== -1) return;
     try {
       sessionStorage.setItem("rolcc.admin.collection", collection);
     } catch (err) {
@@ -72,19 +75,24 @@
 
   function getPreferredCollection() {
     var active = getActiveCollection();
-    if (active) return active;
+    if (
+      active &&
+      COLLECTION_LABELS[active] &&
+      INTERNAL_COLLECTIONS.indexOf(active) === -1
+    ) {
+      return active;
+    }
     try {
       var stored = sessionStorage.getItem("rolcc.admin.collection");
       if (stored && COLLECTION_LABELS[normalizeCollectionId(stored)]) {
-        return normalizeCollectionId(stored);
+        var normalized = normalizeCollectionId(stored);
+        if (INTERNAL_COLLECTIONS.indexOf(normalized) === -1) return normalized;
       }
     } catch (err) {
       /* ignore */
     }
     return DEFAULT_COLLECTION;
   }
-
-  var INTERNAL_COLLECTIONS = ["article-tags"];
 
   function migrateLegacyCollectionHash() {
     var hash = getHash();
@@ -502,6 +510,8 @@
     if (sidebar) sidebar.classList.remove("admin-shell-sidebar--open");
     if (scrim) scrim.hidden = true;
     if (mobileToggle) mobileToggle.setAttribute("aria-expanded", "false");
+    document.body.classList.remove("admin-drawer-open");
+    syncFabVisibilityForDrawer();
   }
 
   function openMobileDrawer() {
@@ -512,9 +522,23 @@
     if (sidebar) sidebar.classList.add("admin-shell-sidebar--open");
     if (scrim) scrim.hidden = false;
     if (mobileToggle) mobileToggle.setAttribute("aria-expanded", "true");
+    document.body.classList.add("admin-drawer-open");
+    syncFabVisibilityForDrawer();
   }
 
-  function closeAllDropdownsWithoutDrawer() {
+  function syncFabVisibilityForDrawer() {
+    var open = document.body.classList.contains("admin-drawer-open");
+    document.querySelectorAll(".admin-mobile-fab-wrap, .admin-mobile-editor-fab-wrap").forEach(function (wrap) {
+      wrap.hidden = !!open;
+      if (open) {
+        wrap.classList.remove("is-open");
+        var menu = wrap.querySelector(".admin-mobile-fab-menu, .admin-mobile-editor-fab-menu");
+        if (menu) menu.hidden = true;
+      }
+    });
+  }
+
+  function closeComposerMenusOnly() {
     document.querySelectorAll(".admin-composer-menu.is-open").forEach(function (wrap) {
       wrap.classList.remove("is-open");
       var trigger = wrap.querySelector(".admin-composer-menu__trigger");
@@ -525,13 +549,19 @@
       el.classList.remove("is-open");
       var createTrigger = el.querySelector(".admin-create-dropdown__trigger");
       if (createTrigger) createTrigger.setAttribute("aria-expanded", "false");
+      var viewTrigger = el.querySelector(".admin-view-switcher__trigger");
+      if (viewTrigger) viewTrigger.setAttribute("aria-expanded", "false");
     });
+    syncComposerDropdownBodyClass();
+  }
+
+  function closeAllDropdownsWithoutDrawer() {
+    closeComposerMenusOnly();
     document.querySelectorAll(".admin-mobile-fab-wrap, .admin-mobile-editor-fab-wrap").forEach(function (wrap) {
       wrap.classList.remove("is-open");
       var menu = wrap.querySelector(".admin-mobile-fab-menu, .admin-mobile-editor-fab-menu");
       if (menu) menu.hidden = true;
     });
-    syncComposerDropdownBodyClass();
   }
 
   function closeAllDropdowns() {
@@ -584,8 +614,15 @@
     trigger.addEventListener("click", function (event) {
       event.stopPropagation();
       var open = switcher.classList.contains("is-open");
-      closeAllDropdowns();
-      if (!open) switcher.classList.add("is-open");
+      /* Do not close the drawer — close other menus only, then toggle Contents. */
+      closeAllDropdownsWithoutDrawer();
+      if (!open) {
+        switcher.classList.add("is-open");
+        trigger.setAttribute("aria-expanded", "true");
+      } else {
+        switcher.classList.remove("is-open");
+        trigger.setAttribute("aria-expanded", "false");
+      }
     });
 
     menu.addEventListener("click", function (event) {
@@ -1761,7 +1798,7 @@
       var btn = document.createElement("button");
       btn.type = "button";
       btn.id = "admin-mobile-fab-btn";
-      btn.className = "btn-primary admin-mobile-fab-btn";
+      btn.className = "admin-mobile-fab-btn";
       btn.innerHTML =
         '<svg class="admin-fab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>' +
         '<span>Create an article</span>';
@@ -1789,7 +1826,12 @@
       btn.addEventListener("click", function (event) {
         event.stopPropagation();
         var open = !menu.hidden;
-        closeAllDropdownsWithoutDrawer();
+        closeComposerMenusOnly();
+        document.querySelectorAll(".admin-mobile-editor-fab-wrap").forEach(function (editorWrap) {
+          editorWrap.classList.remove("is-open");
+          var editorMenu = editorWrap.querySelector(".admin-mobile-editor-fab-menu");
+          if (editorMenu) editorMenu.hidden = true;
+        });
         menu.hidden = open;
         wrap.classList.toggle("is-open", !open);
       });
@@ -1801,10 +1843,10 @@
       wrap.appendChild(menu);
       wrap.appendChild(btn);
       document.body.appendChild(wrap);
+      syncFabVisibilityForDrawer();
     } else {
-      wrap.classList.remove("is-open");
-      var existingMenu = wrap.querySelector(".admin-mobile-fab-menu");
-      if (existingMenu) existingMenu.hidden = true;
+      /* Keep open state across enhance() remounts; only sync drawer visibility. */
+      syncFabVisibilityForDrawer();
     }
   }
 
@@ -1824,7 +1866,7 @@
       var btn = document.createElement("button");
       btn.type = "button";
       btn.id = "admin-mobile-editor-fab-btn";
-      btn.className = "btn-primary admin-mobile-editor-fab-btn";
+      btn.className = "admin-mobile-editor-fab-btn";
       btn.setAttribute("aria-label", "Editor actions");
       btn.innerHTML =
         '<svg class="admin-fab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>' +
@@ -1878,7 +1920,12 @@
       btn.addEventListener("click", function (event) {
         event.stopPropagation();
         var open = !menu.hidden;
-        closeAllDropdownsWithoutDrawer();
+        closeComposerMenusOnly();
+        document.querySelectorAll(".admin-mobile-fab-wrap").forEach(function (createWrap) {
+          createWrap.classList.remove("is-open");
+          var createMenu = createWrap.querySelector(".admin-mobile-fab-menu");
+          if (createMenu) createMenu.hidden = true;
+        });
         menu.hidden = open;
         wrap.classList.toggle("is-open", !open);
       });
@@ -1890,10 +1937,9 @@
       wrap.appendChild(menu);
       wrap.appendChild(btn);
       document.body.appendChild(wrap);
+      syncFabVisibilityForDrawer();
     } else {
-      wrap.classList.remove("is-open");
-      var existingEditorMenu = wrap.querySelector(".admin-mobile-editor-fab-menu");
-      if (existingEditorMenu) existingEditorMenu.hidden = true;
+      syncFabVisibilityForDrawer();
     }
   }
 
@@ -2401,7 +2447,8 @@
 
   function buildListHeader(root) {
     var header = document.createElement("div");
-    header.className = "admin-list-header";
+    var compact = isMobileComposerViewport();
+    header.className = "admin-list-header" + (compact ? " admin-list-header--compact" : "");
     header.setAttribute("role", "row");
 
     var titleBtn = document.createElement("button");
@@ -2412,12 +2459,16 @@
     titleBtn.setAttribute("aria-label", "Sort by title");
     header.appendChild(titleBtn);
 
-    var collectionCell = document.createElement("span");
-    collectionCell.className = "admin-list-header__cell admin-list-header__collection";
-    collectionCell.textContent = "Collection";
-    header.appendChild(collectionCell);
+    /* Skip Collection — redundant inside a category. Author only on desktop. */
+    var columns = compact
+      ? LIST_SORTABLE_COLUMNS.filter(function (col) {
+          return col.field === "date" || col.field === "status";
+        })
+      : LIST_SORTABLE_COLUMNS.filter(function (col) {
+          return col.field !== "title";
+        });
 
-    LIST_SORTABLE_COLUMNS.slice(1).forEach(function (col) {
+    columns.forEach(function (col) {
       var btn = document.createElement("button");
       btn.type = "button";
       btn.className = "admin-list-header__cell " + col.className + " admin-list-header__cell--sortable";
@@ -2457,24 +2508,28 @@
     '<svg class="admin-list-row__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h8"/></svg>';
 
   function renderListRow(link, data, collection) {
-    var typeLabel = COLLECTION_LABELS[collection] || collection;
     var statusLabel = getArticleStatusLabel(data);
     var isDraft = data.publish === false && !isScheduledArticle(data);
     var isScheduled = isScheduledArticle(data);
+    var compact = isMobileComposerViewport();
     link.textContent = "";
-    link.className = "admin-list-row__link";
-    link.innerHTML =
+    link.className = "admin-list-row__link" + (compact ? " admin-list-row__link--compact" : "");
+
+    var html =
       '<span class="admin-list-row__cell admin-list-row__name">' +
       LIST_DOC_ICON +
       '<span class="admin-list-row__title">' +
       escapeHtml(data.title || "Untitled article") +
-      "</span></span>" +
-      '<span class="admin-list-row__cell admin-list-row__collection">' +
-      escapeHtml(typeLabel) +
-      "</span>" +
-      '<span class="admin-list-row__cell admin-list-row__author">' +
-      escapeHtml(data.author || "ROLCC") +
-      "</span>" +
+      "</span></span>";
+
+    if (!compact) {
+      html +=
+        '<span class="admin-list-row__cell admin-list-row__author">' +
+        escapeHtml(data.author || "ROLCC") +
+        "</span>";
+    }
+
+    html +=
       '<span class="admin-list-row__cell admin-list-row__date">' +
       escapeHtml(getDisplayDate(data) || "—") +
       "</span>" +
@@ -2484,6 +2539,8 @@
       '">' +
       escapeHtml(statusLabel) +
       "</span>";
+
+    link.innerHTML = html;
   }
 
   function renderGridCard(link, data, collection, imageEl) {
@@ -2571,7 +2628,7 @@
     filter:
       '<svg class="admin-menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M4 5h16l-6 7v6l-4 2v-8Z"/></svg>',
     sort:
-      '<svg class="admin-menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="m8 9 4-4 4 4"/><path d="m8 15 4 4 4-4"/></svg>',
+      '<svg class="admin-menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 4v16"/><path d="m3 8 4-4 4 4"/><path d="M17 20V4"/><path d="m13 16 4 4 4-4"/></svg>',
     status:
       '<svg class="admin-menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8 12h8"/></svg>',
     chevron:
@@ -2949,10 +3006,30 @@
         },
       });
 
-      toolbar.appendChild(filterMenu);
-      toolbar.appendChild(sortMenu);
+      var toolsGroup = document.createElement("div");
+      toolsGroup.className = "admin-composer-toolbar__tools";
+      toolsGroup.appendChild(sortMenu);
+      toolsGroup.appendChild(filterMenu);
+
       toolbar.appendChild(viewToggle);
+      toolbar.appendChild(toolsGroup);
       topBlock.appendChild(toolbar);
+    } else {
+      /* Migrate older DOM order (filter/sort before view) to view left, tools right. */
+      var existingView = toolbar.querySelector(".admin-view-toggle");
+      var existingSort = toolbar.querySelector(".admin-composer-menu--sort");
+      var existingFilter = toolbar.querySelector(".admin-composer-menu--filter");
+      var existingTools = toolbar.querySelector(".admin-composer-toolbar__tools");
+      if (!existingTools && existingSort && existingFilter) {
+        existingTools = document.createElement("div");
+        existingTools.className = "admin-composer-toolbar__tools";
+        toolbar.appendChild(existingTools);
+        existingTools.appendChild(existingSort);
+        existingTools.appendChild(existingFilter);
+      }
+      if (existingView && toolbar.firstChild !== existingView) {
+        toolbar.insertBefore(existingView, toolbar.firstChild);
+      }
     }
 
     var sortMenuEl = toolbar.querySelector(".admin-composer-menu--sort");
@@ -3864,7 +3941,7 @@
     document.addEventListener("click", function (event) {
       if (
         event.target.closest(
-          ".admin-composer-menu__menu, .admin-composer-menu__trigger, .admin-composer-menu__option, #admin-view-switcher, .admin-create-dropdown"
+          ".admin-composer-menu__menu, .admin-composer-menu__trigger, .admin-composer-menu__option, #admin-view-switcher, .admin-create-dropdown, #admin-mobile-fab-wrap, #admin-mobile-editor-fab-wrap"
         )
       ) {
         return;
@@ -3898,10 +3975,17 @@
         if (event.target && event.target.closest && event.target.closest(".admin-composer-menu__menu--floating")) {
           return;
         }
-        closeAllDropdowns();
+        /* Scroll should not yank the FAB closed mid-gesture. */
+        closeComposerMenusOnly();
       },
       true
     );
+
+    window.addEventListener("keydown", function (event) {
+      if (event.key === "Escape") {
+        closeAllDropdowns();
+      }
+    });
 
     new MutationObserver(function () {
       scheduleEnhance(root, enhance);

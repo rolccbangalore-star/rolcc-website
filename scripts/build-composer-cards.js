@@ -36,9 +36,13 @@ function cardPreviewFromArticle(data, filePath) {
       preview[field] = data[field];
     }
   });
-  if (filePath) {
-    preview.modified = toDateOnly(fs.statSync(filePath).mtime);
+  /* Never use filesystem mtime — CI/deploy checkouts stamp every file the same day. */
+  if (preview.modified) {
+    preview.modified = toDateOnly(preview.modified);
+  } else if (preview.date) {
+    preview.modified = toDateOnly(preview.date);
   }
+  if (preview.date) preview.date = toDateOnly(preview.date);
   if (preview.publish === undefined) preview.publish = true;
   if (!preview.author) {
     preview.author = data.passage ? "ROLCC Fellowship Team" : "ROLCC Pastoral Team";

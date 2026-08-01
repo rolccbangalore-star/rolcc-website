@@ -15,7 +15,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="/css/articles.css" />
-    <link rel="stylesheet" href="/resources/admin.css?v=20260801a1" />
+    <link rel="stylesheet" href="/resources/admin.css?v=20260801b1" />
   </head>
   <body class="admin-page">
     <header id="admin-topbar" class="admin-shell-topbar" hidden>
@@ -243,10 +243,10 @@
     <script src="https://unpkg.com/immutable@3.8.2/dist/immutable.min.js"></script>
     <script src="/scripts/article-import-parse.js?v=20260729d1"></script>
     <script src="/scripts/article-render.js?v=20260729d1"></script>
-    <script src="/resources/admin-composer.js?v=20260801a1"></script>
-    <script src="/resources/admin-editor-fields.js?v=20260801a1"></script>
-    <script src="/resources/admin-import.js?v=20260801a1"></script>
-    <script src="/resources/admin-preview.js?v=20260801a1"></script>
+    <script src="/resources/admin-composer.js?v=20260801b1"></script>
+    <script src="/resources/admin-editor-fields.js?v=20260801b1"></script>
+    <script src="/resources/admin-import.js?v=20260801b1"></script>
+    <script src="/resources/admin-preview.js?v=20260801b1"></script>
     <script>
       (function () {
         var errorBox = document.getElementById("cms-error");
@@ -271,6 +271,93 @@
           showError("Could not load the composer. Check your connection and refresh.");
           return;
         }
+
+        // Decap's github backend treats tokens as user OAuth tokens and rejects GitHub App
+        // installation tokens (no /user, permissions.push often missing). Patch those checks.
+        (function patchFetchForGithubAppTokens() {
+          var originalFetch = window.fetch;
+          if (!originalFetch || originalFetch.__rolccGithubAppPatch) return;
+
+          function authHeader(init, input) {
+            var headers = (init && init.headers) || (input && input.headers) || {};
+            if (typeof Headers !== "undefined" && headers instanceof Headers) {
+              return headers.get("Authorization") || headers.get("authorization") || "";
+            }
+            if (Array.isArray(headers)) {
+              for (var i = 0; i < headers.length; i++) {
+                if (String(headers[i][0]).toLowerCase() === "authorization") return headers[i][1] || "";
+              }
+              return "";
+            }
+            return headers.Authorization || headers.authorization || "";
+          }
+
+          function isAppToken(auth) {
+            return /(?:^|\s)(ghs_|ghu_)/.test(String(auth || ""));
+          }
+
+          function requestUrl(input) {
+            if (typeof input === "string") return input;
+            if (input && typeof input.url === "string") return input.url;
+            return "";
+          }
+
+          function jsonResponse(data, status) {
+            return new Response(JSON.stringify(data), {
+              status: status || 200,
+              headers: { "Content-Type": "application/json" },
+            });
+          }
+
+          function patchedFetch(input, init) {
+            var url = requestUrl(input).split("?")[0];
+            var auth = authHeader(init, input);
+            var appToken = isAppToken(auth);
+
+            return originalFetch.apply(this, arguments).then(function (res) {
+              if (!appToken) return res;
+
+              // Installation tokens cannot call GET /user — stub a stable identity for Decap.
+              if (/^https:\/\/api\.github\.com\/user$/.test(url) && !res.ok) {
+                return jsonResponse(
+                  {
+                    login: "rolcc-resources",
+                    name: "ROLCC Resources",
+                    avatar_url: "https://www.rolcc.in/images/favicon-96x96.png",
+                    email: null,
+                  },
+                  200
+                );
+              }
+
+              // Ensure permissions.push so Decap's hasWriteAccess() passes.
+              if (
+                /^https:\/\/api\.github\.com\/repos\/[^/]+\/[^/]+$/.test(url) &&
+                res.ok
+              ) {
+                return res
+                  .clone()
+                  .json()
+                  .then(function (data) {
+                    if (!data || typeof data !== "object") return res;
+                    data.permissions = Object.assign({}, data.permissions || {}, {
+                      pull: true,
+                      push: true,
+                    });
+                    return jsonResponse(data, res.status);
+                  })
+                  .catch(function () {
+                    return res;
+                  });
+              }
+
+              return res;
+            });
+          }
+
+          patchedFetch.__rolccGithubAppPatch = true;
+          window.fetch = patchedFetch;
+        })();
 
         CMS.init({ config_url: location.origin + "/resources/config.yml" });
 

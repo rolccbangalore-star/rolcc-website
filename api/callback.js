@@ -43,6 +43,19 @@ module.exports = async function handler(req, res) {
   }
 
   try {
+    // #region agent log
+    console.error(
+      "[debug-da2440]",
+      JSON.stringify({
+        sessionId: "da2440",
+        location: "callback.js:exchange",
+        message: "Starting Google code exchange",
+        data: { host: req.headers.host || null, hasCode: Boolean(code) },
+        hypothesisId: "B",
+        timestamp: Date.now(),
+      })
+    );
+    // #endregion
     const user = await exchangeGoogleCodeForUser(code);
 
     if (!user || !user.email) {
@@ -62,6 +75,20 @@ module.exports = async function handler(req, res) {
         );
     }
 
+    // #region agent log
+    console.error(
+      "[debug-da2440]",
+      JSON.stringify({
+        sessionId: "da2440",
+        location: "callback.js:allowlist",
+        message: "Allowlist passed; minting GitHub App token",
+        data: { emailDomain: String(user.email).split("@")[1] || null },
+        hypothesisId: "A",
+        timestamp: Date.now(),
+      })
+    );
+    // #endregion
+
     const installationToken = await mintGitHubAppInstallationToken();
 
     res.setHeader("Content-Type", "text/html; charset=utf-8");
@@ -69,6 +96,21 @@ module.exports = async function handler(req, res) {
   } catch (err) {
     // Message only — avoid logging API response bodies that may contain secrets.
     console.error("OAuth callback error:", err && err.message ? err.message : "unknown");
+    // #region agent log
+    console.error(
+      "[debug-da2440]",
+      JSON.stringify({
+        sessionId: "da2440",
+        location: "callback.js:catch",
+        message: "Callback failed",
+        data: {
+          errMessage: err && err.message ? String(err.message).slice(0, 160) : "unknown",
+        },
+        hypothesisId: "A",
+        timestamp: Date.now(),
+      })
+    );
+    // #endregion
     res.setHeader("Content-Type", "text/html; charset=utf-8");
     return res
       .status(500)

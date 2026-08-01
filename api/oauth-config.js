@@ -189,19 +189,133 @@ function base64url(input) {
     .replace(/\//g, "_");
 }
 
+function wrapPemBody(body) {
+  const compact = String(body || "").replace(/\s+/g, "");
+  const lines = [];
+  for (let i = 0; i < compact.length; i += 64) {
+    lines.push(compact.slice(i, i + 64));
+  }
+  return lines.join("\n");
+}
+
 function formatPrivateKey(rawKey) {
   if (!rawKey) return "";
-  let key = rawKey.trim();
+  let key = String(rawKey).trim();
+
+  // Vercel / .env paste artifacts
+  if (
+    (key.startsWith('"') && key.endsWith('"')) ||
+    (key.startsWith("'") && key.endsWith("'"))
+  ) {
+    key = key.slice(1, -1).trim();
+  }
+  key = key.replace(/\r\n/g, "\n").replace(/\r/g, "\n");
+  // Literal backslash-n sequences from single-line env values
   if (key.includes("\\n")) {
     key = key.replace(/\\n/g, "\n");
   }
+
+  // Newlines stripped entirely: -----BEGIN …-----MIIE…-----END …-----
+  if (!key.includes("\n") && /-----BEGIN [^-]+-----/.test(key)) {
+    key = key
+      .replace(/(-----BEGIN [^-]+-----)/, "$1\n")
+      .replace(/(-----END [^-]+-----)/, "\n$1");
+  }
+
+  const beginMatch = key.match(/-----BEGIN ([^-]+)-----/);
+  const endMatch = key.match(/-----END ([^-]+)-----/);
+  if (beginMatch && endMatch) {
+    const label = beginMatch[1].trim();
+    const beginIdx = key.indexOf(beginMatch[0]) + beginMatch[0].length;
+    const endIdx = key.indexOf(endMatch[0]);
+    const body = key.slice(beginIdx, endIdx);
+    key = `-----BEGIN ${label}-----\n${wrapPemBody(body)}\n-----END ${label}-----\n`;
+  }
+
   return key;
 }
+
+function privateKeyDiagnostics(rawKey, formattedKey) {
+  const raw = String(rawKey || "");
+  const formatted = String(formattedKey || "");
+  return {
+    rawLen: raw.length,
+    formattedLen: formatted.length,
+    hasBegin: /-----BEGIN [^-]+-----/.test(formatted),
+    hasEnd: /-----END [^-]+-----/.test(formatted),
+    hasRealNewlines: formatted.includes("\n"),
+    hadLiteralSlashN: raw.includes("\\n"),
+    hadQuotes: /^\s*["']/.test(raw),
+    beginLabel: (formatted.match(/-----BEGIN ([^-]+)-----/) || [])[1] || null,
+  };
+}
+
+// #region agent log
+function debugLog(location, message, data, hypothesisId) {
+  const payload = {
+    sessionId: "da2440",
+    location,
+    message,
+    data,
+    hypothesisId,
+    timestamp: Date.now(),
+  };
+  console.error("[debug-da2440]", JSON.stringify(payload));
+  try {
+    fetch("http://127.0.0.1:7431/ingest/56c1586e-2104-4ec7-8975-c7cdaec785b2", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Debug-Session-Id": "da2440",
+      },
+      body: JSON.stringify(payload),
+    }).catch(() => {});
+  } catch (_) {
+    /* ignore — production cannot reach local ingest */
+  }
+}
+// #endregion
 
 async function mintGitHubAppInstallationToken() {
   const { githubAppId, githubAppInstallationId, githubAppPrivateKey } = getOAuthConfig();
 
   const formattedKey = formatPrivateKey(githubAppPrivateKey);
+  // #region agent log
+  const diag = privateKeyDiagnostics(githubAppPrivateKey, formattedKey);
+  debugLog("oauth-config.js:mint", "PEM shape before sign", diag, "A");
+  // #endregion
+
+  let keyObject;
+  try {
+    keyObject = crypto.createPrivateKey(formattedKey);
+    // #region agent log
+    debugLog(
+      "oauth-config.js:mint",
+      "createPrivateKey ok",
+      { ok: true, asymmetricKeyType: keyObject.asymmetricKeyType || null },
+      "A"
+    );
+    // #endregion
+  } catch (err) {
+    // #region agent log
+    debugLog(
+      "oauth-config.js:mint",
+      "createPrivateKey failed",
+      {
+        ok: false,
+        errName: err && err.name,
+        errCode: err && err.code,
+        errMessage: err && err.message ? String(err.message).slice(0, 120) : "unknown",
+        ...diag,
+      },
+      "A"
+    );
+    // #endregion
+    throw new Error(
+      `GitHub App private key could not be parsed (${err && err.message ? err.message : "decode error"})`
+    );
+  }
+
   const header = base64url(JSON.stringify({ alg: "RS256", typ: "JWT" }));
   const now = Math.floor(Date.now() / 1000);
   const payload = base64url(
@@ -214,8 +328,20 @@ async function mintGitHubAppInstallationToken() {
 
   const sign = crypto.createSign("RSA-SHA256");
   sign.update(`${header}.${payload}`);
-  const signature = base64url(sign.sign(formattedKey));
+  const signature = base64url(sign.sign(keyObject));
   const jwt = `${header}.${payload}.${signature}`;
+
+  // #region agent log
+  debugLog(
+    "oauth-config.js:mint",
+    "Requesting installation token",
+    {
+      appIdLen: String(githubAppId || "").length,
+      installationIdLen: String(githubAppInstallationId || "").length,
+    },
+    "C"
+  );
+  // #endregion
 
   const response = await fetch(
     `https://api.github.com/app/installations/${githubAppInstallationId}/access_tokens`,
@@ -230,6 +356,14 @@ async function mintGitHubAppInstallationToken() {
   );
 
   if (!response.ok) {
+    // #region agent log
+    debugLog(
+      "oauth-config.js:mint",
+      "GitHub installation token HTTP error",
+      { status: response.status },
+      "C"
+    );
+    // #endregion
     // Status only — response body may include sensitive details.
     throw new Error(`GitHub App token creation failed (${response.status})`);
   }
@@ -238,6 +372,10 @@ async function mintGitHubAppInstallationToken() {
   if (!data.token) {
     throw new Error("GitHub App installation response missing token");
   }
+
+  // #region agent log
+  debugLog("oauth-config.js:mint", "Installation token minted", { ok: true }, "C");
+  // #endregion
 
   return data.token;
 }

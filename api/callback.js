@@ -83,6 +83,19 @@ module.exports = async function handler(req, res) {
     }
 
     if (!isEmailAllowed(user.email)) {
+      // #region agent log
+      console.error(
+        "[debug-da2440]",
+        JSON.stringify({
+          sessionId: "da2440",
+          location: "callback.js:allowlist",
+          message: "Allowlist rejected",
+          data: { emailDomain: String(user.email).split("@")[1] || null },
+          hypothesisId: "E",
+          timestamp: Date.now(),
+        })
+      );
+      // #endregion
       res.setHeader("Content-Type", "text/html; charset=utf-8");
       return res
         .status(403)
@@ -110,11 +123,26 @@ module.exports = async function handler(req, res) {
 
     const installationToken = await mintGitHubAppInstallationToken();
 
+    // #region agent log
+    console.error(
+      "[debug-da2440]",
+      JSON.stringify({
+        sessionId: "da2440",
+        location: "callback.js:success",
+        message: "Sign-in success page sent",
+        data: { ok: true },
+        hypothesisId: "C",
+        timestamp: Date.now(),
+      })
+    );
+    // #endregion
+
     res.setHeader("Content-Type", "text/html; charset=utf-8");
     return res.status(200).send(authSuccessPage(installationToken, origin));
   } catch (err) {
+    const errMessage = err && err.message ? String(err.message) : "unknown";
     // Message only — avoid logging API response bodies that may contain secrets.
-    console.error("OAuth callback error:", err && err.message ? err.message : "unknown");
+    console.error("OAuth callback error:", errMessage);
     // #region agent log
     console.error(
       "[debug-da2440]",
@@ -122,17 +150,28 @@ module.exports = async function handler(req, res) {
         sessionId: "da2440",
         location: "callback.js:catch",
         message: "Callback failed",
-        data: {
-          errMessage: err && err.message ? String(err.message).slice(0, 160) : "unknown",
-        },
+        data: { errMessage: errMessage.slice(0, 160) },
         hypothesisId: "A",
         timestamp: Date.now(),
       })
     );
     // #endregion
+
+    let userMessage = "Sign-in failed. Please close this window and try again.";
+    if (/GitHub App token creation failed \(401\)/.test(errMessage)) {
+      userMessage =
+        "GitHub App authentication failed (401). Check that GITHUB_APP_ID matches this app and GITHUB_APP_PRIVATE_KEY was generated for the same app, then redeploy.";
+    } else if (/GitHub App token creation failed \(404\)/.test(errMessage)) {
+      userMessage =
+        "GitHub App installation not found (404). Confirm GITHUB_APP_INSTALLATION_ID is 83515162 and the app is installed on rolcc-website.";
+    } else if (/private key could not be parsed/i.test(errMessage)) {
+      userMessage =
+        "GitHub App private key could not be read. Re-paste GITHUB_APP_PRIVATE_KEY from the .pem file and redeploy.";
+    } else if (/INSTALLATION_ID|GITHUB_APP_ID must be/i.test(errMessage)) {
+      userMessage = errMessage;
+    }
+
     res.setHeader("Content-Type", "text/html; charset=utf-8");
-    return res
-      .status(500)
-      .send(authErrorPage("Sign-in failed. Please close this window and try again.", origin));
+    return res.status(500).send(authErrorPage(userMessage, origin));
   }
 };

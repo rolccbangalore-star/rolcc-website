@@ -1515,12 +1515,12 @@
     var cms = window.CMS;
     var backend = cms && typeof cms.getBackend === "function" ? cms.getBackend() : null;
     if (!backend || typeof backend.getToken !== "function") {
-      return Promise.reject(new Error("Not signed in — log in to GitHub and try again"));
+      return Promise.reject(new Error("Not signed in — sign in with Google and try again"));
     }
 
     return backend.getToken().then(function (token) {
       if (!token) {
-        return Promise.reject(new Error("Not signed in — log in to GitHub and try again"));
+        return Promise.reject(new Error("Not signed in — sign in with Google and try again"));
       }
       var readUrl =
         "https://api.github.com/repos/" +

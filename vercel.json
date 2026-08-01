@@ -5,15 +5,15 @@
   "outputDirectory": ".",
   "headers": [
     {
-      "source": "/admin/config.yml",
+      "source": "/resources/config.yml",
       "headers": [{ "key": "Content-Type", "value": "text/yaml; charset=utf-8" }]
     },
     {
-      "source": "/admin/admin.css",
+      "source": "/resources/admin.css",
       "headers": [{ "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }]
     },
     {
-      "source": "/admin/admin-composer.js",
+      "source": "/resources/admin-composer.js",
       "headers": [{ "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }]
     }
   ],
@@ -179,12 +179,16 @@
       "destination": "/articles/back-to-bible/:slug.html"
     },
     {
-      "source": "/admin/config.yml",
-      "destination": "/admin/config.yml"
+      "source": "/resources/config.yml",
+      "destination": "/resources/config.yml"
     },
     {
       "source": "/config.yml",
-      "destination": "/admin/config.yml"
+      "destination": "/resources/config.yml"
+    },
+    {
+      "source": "/resources",
+      "destination": "/resources/index.html"
     }
   ],
   "redirects": [
@@ -196,8 +200,13 @@
     },
     {
       "source": "/admin",
-      "destination": "/admin/index.html",
-      "permanent": false
+      "destination": "/resources",
+      "permanent": true
+    },
+    {
+      "source": "/admin/:path*",
+      "destination": "/resources/:path*",
+      "permanent": true
     },
     {
       "source": "/about.html",

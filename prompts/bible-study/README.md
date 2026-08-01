@@ -10,6 +10,6 @@
 
 ## After import
 
-Open `/admin` → **Back to the Bible** → paste or import JSON → set **date** and **hero image** → publish.
+Open `/resources` → **Back to the Bible** → paste or import JSON → set **date** and **hero image** → publish.
 
 Required fields for publish: title, description, passage, scripture reading (NKJV), sections, discussion questions, 3+ quiz questions, at least 1 tag.

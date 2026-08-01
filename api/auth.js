@@ -1,40 +1,44 @@
-const { getOAuthConfig, missingConfigResponse } = require("./oauth-config");
+const {
+  getOAuthConfig,
+  missingConfigResponse,
+  getGoogleAuthUrl,
+  createOAuthState,
+  oauthStateCookie,
+} = require("./oauth-config");
 
 module.exports = async function handler(req, res) {
   if (req.method !== "GET") {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const { clientId, redirectUri, origin } = getOAuthConfig();
-  if (!clientId) return missingConfigResponse(res);
+  const { isConfigured, origin } = getOAuthConfig();
+  if (!isConfigured) return missingConfigResponse(res);
 
-  const scope = String(req.query.scope || "repo");
-  const params = new URLSearchParams({
-    client_id: clientId,
-    redirect_uri: redirectUri,
-    scope,
-  });
-  const githubUrl = `https://github.com/login/oauth/authorize?${params.toString()}`;
+  // CSRF: bind the Google redirect to an httpOnly state cookie.
+  const state = createOAuthState();
+  const googleUrl = getGoogleAuthUrl(state);
+  res.setHeader("Set-Cookie", oauthStateCookie(state, 600, origin));
 
-  // Decap CMS expects a postMessage handshake before the GitHub redirect.
+  // Decap CMS expects a postMessage handshake before the redirect.
+  // We keep provider string "github" so Decap's github backend accepts the handshake.
   res.setHeader("Content-Type", "text/html; charset=utf-8");
   res.status(200).send(`<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>Signing in with GitHub…</title>
+    <title>Signing in with Google…</title>
   </head>
   <body>
-    <p>Redirecting to GitHub…</p>
+    <p>Redirecting to Google…</p>
     <script>
       (function () {
-        var githubUrl = ${JSON.stringify(githubUrl)};
+        var googleUrl = ${JSON.stringify(googleUrl)};
         var allowedOrigin = ${JSON.stringify(origin)};
+        // Origin-only: never use "*" for auth handshake messages.
         if (window.opener) {
           window.opener.postMessage("authorizing:github", allowedOrigin);
-          window.opener.postMessage("authorizing:github", "*");
         }
-        window.location.replace(githubUrl);
+        window.location.replace(googleUrl);
       })();
     </script>
   </body>

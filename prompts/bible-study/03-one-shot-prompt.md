@@ -48,5 +48,5 @@ You are preparing uploadable JSON for the River of Life Christian Church (ROLCC)
 ## After you get JSON
 
 1. Copy the JSON response
-2. Open `/admin` → **Back to the Bible** → new article → **Import**
+2. Open `/resources` → **Back to the Bible** → new article → **Import**
 3. Set **date** and **hero image** manually → publish

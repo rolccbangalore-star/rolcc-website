@@ -15,6 +15,30 @@
     });
   });
 
+  // One-time cutover: wipe legacy GitHub OAuth / Decap auth so users re-login via Google+allowlist.
+  // Does not touch prefs like rolcc.admin.collection.
+  var AUTH_VERSION_KEY = "rolcc.auth.version";
+  var AUTH_VERSION = "2";
+  function wipeLegacyAuthStorage() {
+    try {
+      if (localStorage.getItem(AUTH_VERSION_KEY) === AUTH_VERSION) return;
+      Object.keys(localStorage).forEach(function (key) {
+        if (/github|netlify|decap|nc-|backstage/i.test(key)) {
+          localStorage.removeItem(key);
+        }
+      });
+      Object.keys(sessionStorage).forEach(function (key) {
+        if (/github|netlify|decap|nc-|backstage/i.test(key)) {
+          sessionStorage.removeItem(key);
+        }
+      });
+      localStorage.setItem(AUTH_VERSION_KEY, AUTH_VERSION);
+    } catch (err) {
+      /* ignore */
+    }
+  }
+  wipeLegacyAuthStorage();
+
   var entryCache = Object.create(null);
   var cardManifest = null;
   var cardManifestPromise = null;
@@ -136,10 +160,20 @@
     return "#/collections/" + (normalizeCollectionId(collection) || getPreferredCollection());
   }
 
+  function ensureLoginButtonCopy(root) {
+    var ncRoot = root || $("nc-root");
+    if (!ncRoot) return;
+    var loginBtn = ncRoot.querySelector('button[class*="LoginButton"]');
+    if (!loginBtn) return;
+    if (loginBtn.textContent && loginBtn.textContent.toLowerCase().indexOf("google") === -1) {
+      loginBtn.textContent = "Sign in with Google";
+    }
+  }
+
   function isLoginView(root) {
     if (!root) return true;
     var loginBtn = root.querySelector('button[class*="LoginButton"]');
-    if (!loginBtn || normalize(loginBtn.textContent).indexOf("github") === -1) return false;
+    if (!loginBtn) return false;
     if (loginBtn.hidden) return false;
     var btnStyle = window.getComputedStyle(loginBtn);
     return btnStyle.display !== "none" && btnStyle.visibility !== "hidden";
@@ -1766,6 +1800,7 @@
 
     if (isLoginView(root)) {
       root.classList.add("admin-view--login");
+      ensureLoginButtonCopy(root);
       return;
     }
     if (isEditorRoute()) {

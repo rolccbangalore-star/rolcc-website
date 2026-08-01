@@ -1,4 +1,4 @@
-# CMS backend — GitHub OAuth (auth work parked: see admin/AUTH-PARKED.md)
+# CMS backend — Google OAuth + allowlist via GitHub App token (see resources/AUTH.md)
 backend:
   name: github
   repo: rolccbangalore-star/rolcc-website

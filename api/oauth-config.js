@@ -91,7 +91,7 @@ function parseCookies(header) {
 
 function oauthStateCookie(value, maxAgeSeconds, origin) {
   const parts = [
-    `rolcc_oauth_state=${value}`,
+    `rolcc_oauth_state=${encodeURIComponent(value)}`,
     "Path=/",
     "HttpOnly",
     "SameSite=Lax",
@@ -99,6 +99,16 @@ function oauthStateCookie(value, maxAgeSeconds, origin) {
   ];
   if (String(origin || "").startsWith("https://")) {
     parts.push("Secure");
+  }
+  // Share state cookie across apex and www so /api/auth on rolcc.in
+  // still validates when Google returns to www.rolcc.in/api/callback.
+  try {
+    const host = new URL(String(origin || "https://www.rolcc.in")).hostname;
+    if (host === "rolcc.in" || host === "www.rolcc.in" || host.endsWith(".rolcc.in")) {
+      parts.push("Domain=.rolcc.in");
+    }
+  } catch (_) {
+    /* keep host-only cookie */
   }
   return parts.join("; ");
 }
@@ -407,6 +417,9 @@ async function mintGitHubAppInstallationToken() {
 function authSuccessPage(token, origin) {
   const authPayload = JSON.stringify({ token, provider: "github" });
   const message = `authorization:github:success:${authPayload}`;
+  const origins = Array.from(
+    new Set([origin, "https://www.rolcc.in", "https://rolcc.in"].filter(Boolean))
+  );
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -419,10 +432,12 @@ function authSuccessPage(token, origin) {
     <script>
       (function () {
         var message = ${JSON.stringify(message)};
-        var allowedOrigin = ${JSON.stringify(origin)};
-        // Origin-only: never post tokens with "*" — any site could listen.
+        var origins = ${JSON.stringify(origins)};
+        // Origin-only list (never "*"). Cover apex + www so Decap receives the token.
         if (window.opener) {
-          window.opener.postMessage(message, allowedOrigin);
+          for (var i = 0; i < origins.length; i++) {
+            try { window.opener.postMessage(message, origins[i]); } catch (e) {}
+          }
         }
         window.close();
       })();

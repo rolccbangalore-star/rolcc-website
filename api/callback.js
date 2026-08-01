@@ -28,6 +28,25 @@ module.exports = async function handler(req, res) {
   const stateQuery = typeof req.query.state === "string" ? req.query.state : "";
 
   if (!stateCookie || !stateQuery || !safeEqual(stateCookie, stateQuery)) {
+    // #region agent log
+    console.error(
+      "[debug-da2440]",
+      JSON.stringify({
+        sessionId: "da2440",
+        location: "callback.js:state",
+        message: "OAuth state mismatch",
+        data: {
+          host: req.headers.host || null,
+          hasStateCookie: Boolean(stateCookie),
+          stateCookieLen: stateCookie.length,
+          stateQueryLen: stateQuery.length,
+          lengthsMatch: stateCookie.length === stateQuery.length,
+        },
+        hypothesisId: "D",
+        timestamp: Date.now(),
+      })
+    );
+    // #endregion
     clearState();
     res.setHeader("Content-Type", "text/html; charset=utf-8");
     return res

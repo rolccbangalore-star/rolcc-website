@@ -1,20 +1,16 @@
-# Admin auth — parked
+# Admin auth — parked (superseded)
 
-GitHub OAuth for the article composer is **paused** while we focus on other features (e.g. article appreciation).
+Auth cutover is **no longer parked for planning**. Implementation instructions for Google AG AI (or any coding agent) are here:
 
-## Current state
+**[`docs/GOOGLE-AG-AI-RESOURCES-AUTH.md`](../docs/GOOGLE-AG-AI-RESOURCES-AUTH.md)**
 
-- Production CMS still uses GitHub OAuth (`admin/config.yml` → `auth_endpoint: api/auth`).
-- Env vars `GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET` must remain set on Vercel for editors who already log in.
+That doc covers: `/admin` → `/resources`, Google OAuth + `ALLOWED_EDITOR_EMAILS`, and GitHub App bot tokens for Decap.
 
-## Parked work (do not pursue until resumed)
+## Current production (until cutover ships)
 
-- GitHub collaborator invites for church staff
-- Post-OAuth email allowlist (`ALLOWED_EDITOR_EMAILS`)
-- Google Sign-In proxy
+- CMS still uses GitHub OAuth (`admin/config.yml` → `auth_endpoint: api/auth`).
+- Env vars `GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET` must remain set on Vercel until the Google cutover is live.
 
-## To resume
+## After cutover
 
-1. Finish collaborator access on `rolccbangalore-star/rolcc-website`.
-2. Optionally add allowlist in `api/callback.js`.
-3. Remove or archive this file when auth work restarts.
+Replace this file with `resources/AUTH.md` (see WP4 in the handoff doc) and remove this parked note.

@@ -279,10 +279,34 @@ function debugLog(location, message, data, hypothesisId) {
 async function mintGitHubAppInstallationToken() {
   const { githubAppId, githubAppInstallationId, githubAppPrivateKey } = getOAuthConfig();
 
+  const appId = String(githubAppId || "").trim();
+  const installationId = String(githubAppInstallationId || "").trim();
+
+  // Installation ID must be a short numeric id from .../installations/12345678 — never the PEM.
+  if (!/^\d+$/.test(appId)) {
+    throw new Error("GITHUB_APP_ID must be a number (App ID on the GitHub App settings page)");
+  }
+  if (!/^\d+$/.test(installationId)) {
+    throw new Error(
+      "GITHUB_APP_INSTALLATION_ID must be a short number from the install URL (.../installations/NUMBER), not the private key PEM"
+    );
+  }
+  if (installationId.length > 20) {
+    throw new Error(
+      "GITHUB_APP_INSTALLATION_ID looks too long — you may have pasted the PEM into the wrong Vercel variable"
+    );
+  }
+
   const formattedKey = formatPrivateKey(githubAppPrivateKey);
   // #region agent log
   const diag = privateKeyDiagnostics(githubAppPrivateKey, formattedKey);
   debugLog("oauth-config.js:mint", "PEM shape before sign", diag, "A");
+  debugLog(
+    "oauth-config.js:mint",
+    "App id fields (lengths only)",
+    { appIdLen: appId.length, installationIdLen: installationId.length, installationIdIsDigits: true },
+    "C"
+  );
   // #endregion
 
   let keyObject;
@@ -322,7 +346,7 @@ async function mintGitHubAppInstallationToken() {
     JSON.stringify({
       iat: now - 60,
       exp: now + 10 * 60,
-      iss: Number(githubAppId) || githubAppId,
+      iss: Number(appId),
     })
   );
 
@@ -336,15 +360,15 @@ async function mintGitHubAppInstallationToken() {
     "oauth-config.js:mint",
     "Requesting installation token",
     {
-      appIdLen: String(githubAppId || "").length,
-      installationIdLen: String(githubAppInstallationId || "").length,
+      appIdLen: appId.length,
+      installationIdLen: installationId.length,
     },
     "C"
   );
   // #endregion
 
   const response = await fetch(
-    `https://api.github.com/app/installations/${githubAppInstallationId}/access_tokens`,
+    `https://api.github.com/app/installations/${installationId}/access_tokens`,
     {
       method: "POST",
       headers: {

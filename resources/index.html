@@ -15,7 +15,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="/css/articles.css" />
-    <link rel="stylesheet" href="/resources/admin.css?v=20260801c1" />
+    <link rel="stylesheet" href="/resources/admin.css?v=20260801e1" />
   </head>
   <body class="admin-page">
     <header id="admin-topbar" class="admin-shell-topbar" hidden>
@@ -243,10 +243,10 @@
     <script src="https://unpkg.com/immutable@3.8.2/dist/immutable.min.js"></script>
     <script src="/scripts/article-import-parse.js?v=20260729d1"></script>
     <script src="/scripts/article-render.js?v=20260729d1"></script>
-    <script src="/resources/admin-composer.js?v=20260801c1"></script>
-    <script src="/resources/admin-editor-fields.js?v=20260801c1"></script>
-    <script src="/resources/admin-import.js?v=20260801c1"></script>
-    <script src="/resources/admin-preview.js?v=20260801c1"></script>
+    <script src="/resources/admin-composer.js?v=20260801e1"></script>
+    <script src="/resources/admin-editor-fields.js?v=20260801e1"></script>
+    <script src="/resources/admin-import.js?v=20260801e1"></script>
+    <script src="/resources/admin-preview.js?v=20260801e1"></script>
     <script>
       (function () {
         var errorBox = document.getElementById("cms-error");
@@ -255,6 +255,14 @@
           if (!errorBox) return;
           errorBox.hidden = false;
           errorBox.textContent = message;
+        }
+
+        function friendlyAuthError(message) {
+          var text = String(message || "");
+          if (/does not have access to this repo/i.test(text) || /Repo ".+" not found/i.test(text)) {
+            return "Sign in with Google using an allowlisted church Gmail. You do not need a GitHub account — if this keeps appearing after Google sign-in, contact the site admin (GitHub App access).";
+          }
+          return text;
         }
 
         if (location.pathname === "/resources" || location.pathname === "/resources/") {
@@ -272,14 +280,25 @@
           return;
         }
 
-        // Decap's github backend treats tokens as user OAuth tokens and rejects GitHub App
-        // installation tokens (no /user, permissions.push often missing). Patch those checks.
-        (function patchFetchForGithubAppTokens() {
+        // Gmail-only editors use a GitHub App installation token (ghs_). Decap's default
+        // github backend still checks "collaborator push" unless we opt out + stub /user.
+        (function enableGithubAppTokenSupport() {
+          try {
+            var GitHubBackend = typeof CMS.getBackend === "function" ? CMS.getBackend("github") : null;
+            if (GitHubBackend && GitHubBackend.prototype) {
+              GitHubBackend.prototype.bypassWriteAccessCheckForAppTokens = true;
+            }
+          } catch (err) {
+            /* continue with fetch patch below */
+          }
+
           var originalFetch = window.fetch;
           if (!originalFetch || originalFetch.__rolccGithubAppPatch) return;
 
           function authHeader(init, input) {
-            var headers = (init && init.headers) || (input && input.headers) || {};
+            var headers = (init && init.headers) || null;
+            if (!headers && input && input.headers) headers = input.headers;
+            if (!headers) return "";
             if (typeof Headers !== "undefined" && headers instanceof Headers) {
               return headers.get("Authorization") || headers.get("authorization") || "";
             }
@@ -309,12 +328,41 @@
             });
           }
 
+          function withBearerAppToken(input, init) {
+            var auth = authHeader(init, input);
+            if (!isAppToken(auth) || /\bBearer\s+(ghs_|ghu_)/i.test(auth)) {
+              return { input: input, init: init };
+            }
+            var tokenMatch = String(auth).match(/(ghs_|ghu_)[A-Za-z0-9_]+/);
+            if (!tokenMatch) return { input: input, init: init };
+            var bearer = "Bearer " + tokenMatch[0];
+            var nextInit = init ? Object.assign({}, init) : {};
+            var headers = nextInit.headers;
+            if (typeof Headers !== "undefined" && headers instanceof Headers) {
+              headers = new Headers(headers);
+              headers.set("Authorization", bearer);
+              nextInit.headers = headers;
+            } else if (Array.isArray(headers)) {
+              nextInit.headers = headers
+                .filter(function (pair) {
+                  return String(pair[0]).toLowerCase() !== "authorization";
+                })
+                .concat([["Authorization", bearer]]);
+            } else {
+              nextInit.headers = Object.assign({}, headers || {}, { Authorization: bearer });
+            }
+            return { input: input, init: nextInit };
+          }
+
           function patchedFetch(input, init) {
+            var rewritten = withBearerAppToken(input, init);
+            input = rewritten.input;
+            init = rewritten.init;
             var url = requestUrl(input).split("?")[0];
             var auth = authHeader(init, input);
             var appToken = isAppToken(auth);
 
-            return originalFetch.apply(this, arguments).then(function (res) {
+            return originalFetch.call(window, input, init).then(function (res) {
               if (!appToken) return res;
 
               // Installation tokens cannot call GET /user — stub a stable identity for Decap.
@@ -330,7 +378,7 @@
                 );
               }
 
-              // Ensure permissions.push so Decap's hasWriteAccess() passes.
+              // Ensure permissions.push so Decap's hasWriteAccess() passes when bypass is unavailable.
               if (
                 /^https:\/\/api\.github\.com\/repos\/[^/]+\/[^/]+$/.test(url) &&
                 res.ok
@@ -341,8 +389,11 @@
                   .then(function (data) {
                     if (!data || typeof data !== "object") return res;
                     data.permissions = Object.assign({}, data.permissions || {}, {
-                      pull: true,
+                      admin: true,
+                      maintain: true,
                       push: true,
+                      triage: true,
+                      pull: true,
                     });
                     return jsonResponse(data, res.status);
                   })
@@ -363,7 +414,7 @@
 
         window.addEventListener("unhandledrejection", function (event) {
           var reason = event.reason && (event.reason.message || String(event.reason));
-          if (reason) showError(reason);
+          if (reason) showError(friendlyAuthError(reason));
         });
       })();
     </script>

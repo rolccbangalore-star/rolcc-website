@@ -2,6 +2,8 @@
 
 This document describes the Google OAuth + GitHub App installation token auth flow for the ROLCC Article Composer (Decap CMS) hosted at `/resources`.
 
+**Editors use Gmail only.** That is why Google OAuth exists. Editors do not need a GitHub account or repo invite. A church-owned GitHub App (admin-maintained secrets on Vercel) writes to the repo on their behalf. Decap may still say “GitHub” in technical errors — that refers to the App token plumbing, not a requirement that editors join GitHub.
+
 ---
 
 ## Overview

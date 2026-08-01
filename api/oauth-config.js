@@ -488,6 +488,9 @@ function authSuccessPage(token, origin) {
 
 function authErrorPage(message, origin) {
   const safeMessage = escapeHtml(message);
+  const origins = Array.from(
+    new Set([origin, "https://www.rolcc.in", "https://rolcc.in"].filter(Boolean))
+  );
   return `<!DOCTYPE html>
 <html lang="en">
   <head>
@@ -512,11 +515,13 @@ function authErrorPage(message, origin) {
     <p>${safeMessage}</p>
     <script>
       (function () {
-        var allowedOrigin = ${JSON.stringify(origin)};
-        // Origin-only: never broadcast auth errors with "*".
+        var origins = ${JSON.stringify(origins)};
+        // Origin-only list (never "*"). Cover apex + www.
         if (window.opener) {
           var errorMessage = "authorization:github:error:" + ${JSON.stringify(String(message))};
-          window.opener.postMessage(errorMessage, allowedOrigin);
+          for (var i = 0; i < origins.length; i++) {
+            try { window.opener.postMessage(errorMessage, origins[i]); } catch (e) {}
+          }
         }
       })();
     </script>

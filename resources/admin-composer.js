@@ -18,17 +18,17 @@
   // One-time cutover: wipe legacy GitHub OAuth / Decap auth so users re-login via Google+allowlist.
   // Does not touch prefs like rolcc.admin.collection.
   var AUTH_VERSION_KEY = "rolcc.auth.version";
-  var AUTH_VERSION = "3";
+  var AUTH_VERSION = "4";
   function wipeLegacyAuthStorage() {
     try {
       if (localStorage.getItem(AUTH_VERSION_KEY) === AUTH_VERSION) return;
       Object.keys(localStorage).forEach(function (key) {
-        if (/github|netlify|decap|nc-|backstage/i.test(key)) {
+        if (/github|netlify|decap|nc-|backstage|decap-cms|netlify-cms/i.test(key)) {
           localStorage.removeItem(key);
         }
       });
       Object.keys(sessionStorage).forEach(function (key) {
-        if (/github|netlify|decap|nc-|backstage/i.test(key)) {
+        if (/github|netlify|decap|nc-|backstage|decap-cms|netlify-cms/i.test(key)) {
           sessionStorage.removeItem(key);
         }
       });
@@ -832,8 +832,11 @@
 
     if (isLoginView(root)) {
       body.classList.remove("admin-page--authed", "admin-page--editor");
-      if (topbar) topbar.hidden = true;
+      if (topbar) topbar.hidden = false;
       if (sidebar) sidebar.hidden = true;
+      ensureLoginButtonCopy(root);
+      ensureLoginSupportLink(root);
+      ensureLoginSiteLink(root);
       return;
     }
 

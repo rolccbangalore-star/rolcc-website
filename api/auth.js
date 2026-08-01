@@ -33,10 +33,14 @@ module.exports = async function handler(req, res) {
     <script>
       (function () {
         var googleUrl = ${JSON.stringify(googleUrl)};
-        var allowedOrigin = ${JSON.stringify(origin)};
-        // Origin-only: never use "*" for auth handshake messages.
+        var origins = ${JSON.stringify(
+          Array.from(new Set([origin, "https://www.rolcc.in", "https://rolcc.in"].filter(Boolean)))
+        )};
+        // Origin-only list (never "*"). Cover apex + www so Decap receives the handshake.
         if (window.opener) {
-          window.opener.postMessage("authorizing:github", allowedOrigin);
+          for (var i = 0; i < origins.length; i++) {
+            try { window.opener.postMessage("authorizing:github", origins[i]); } catch (e) {}
+          }
         }
         window.location.replace(googleUrl);
       })();

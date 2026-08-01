@@ -451,6 +451,28 @@ async function mintGitHubAppInstallationToken() {
   debugLog("oauth-config.js:mint", "Installation token minted", { ok: true }, "C");
   // #endregion
 
+  // Prove the token can open the CMS repo before handing it to Decap (Gmail-only path).
+  const repoCheck = await fetch("https://api.github.com/repos/rolccbangalore-star/rolcc-website", {
+    headers: {
+      Authorization: `Bearer ${data.token}`,
+      Accept: "application/vnd.github+json",
+      "User-Agent": "ROLCC-Resources-Auth",
+    },
+  });
+  // #region agent log
+  debugLog(
+    "oauth-config.js:mint",
+    "Installation token repo access check",
+    { status: repoCheck.status, ok: repoCheck.ok },
+    "C"
+  );
+  // #endregion
+  if (!repoCheck.ok) {
+    throw new Error(
+      `GitHub App token cannot open rolccbangalore-star/rolcc-website (${repoCheck.status}). Editors do not need GitHub accounts — fix App install/permissions on the church App.`
+    );
+  }
+
   return data.token;
 }
 

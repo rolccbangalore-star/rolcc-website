@@ -15,7 +15,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="/css/articles.css" />
-    <link rel="stylesheet" href="/resources/admin.css?v=20260801e2" />
+    <link rel="stylesheet" href="/resources/admin.css?v=20260801f1" />
   </head>
   <body class="admin-page">
     <header id="admin-topbar" class="admin-shell-topbar" hidden>
@@ -243,10 +243,10 @@
     <script src="https://unpkg.com/immutable@3.8.2/dist/immutable.min.js"></script>
     <script src="/scripts/article-import-parse.js?v=20260729d1"></script>
     <script src="/scripts/article-render.js?v=20260729d1"></script>
-    <script src="/resources/admin-composer.js?v=20260801e2"></script>
-    <script src="/resources/admin-editor-fields.js?v=20260801e2"></script>
-    <script src="/resources/admin-import.js?v=20260801e2"></script>
-    <script src="/resources/admin-preview.js?v=20260801e2"></script>
+    <script src="/resources/admin-composer.js?v=20260801f1"></script>
+    <script src="/resources/admin-editor-fields.js?v=20260801f1"></script>
+    <script src="/resources/admin-import.js?v=20260801f1"></script>
+    <script src="/resources/admin-preview.js?v=20260801f1"></script>
     <script>
       (function () {
         var errorBox = document.getElementById("cms-error");
@@ -284,24 +284,39 @@
           return;
         }
 
-        // Gmail-only editors use a GitHub App installation token (ghs_). Decap's default
-        // github backend still checks "collaborator push" unless we opt out + stub /user.
+        // Gmail-only editors receive a GitHub App installation token (ghs_), not a user OAuth token.
+        // Decap's stock github backend assumes user tokens (Authorization: token … + collaborator check).
+        // Mirror Decap's own App proxy backend: Bearer + bypassWriteAccessCheckForAppTokens.
         (function enableGithubAppTokenSupport() {
+          function isAppTokenValue(tokenOrAuth) {
+            return /(?:^|\s)(ghs_|ghu_)/.test(String(tokenOrAuth || ""));
+          }
+
           try {
             var GitHubBackend = typeof CMS.getBackend === "function" ? CMS.getBackend("github") : null;
-            if (GitHubBackend && GitHubBackend.prototype) {
+            if (GitHubBackend && GitHubBackend.prototype && !GitHubBackend.prototype.__rolccAppAuthPatch) {
               GitHubBackend.prototype.bypassWriteAccessCheckForAppTokens = true;
+              var origAuthenticate = GitHubBackend.prototype.authenticate;
+              if (typeof origAuthenticate === "function") {
+                GitHubBackend.prototype.authenticate = function (state) {
+                  var token = state && state.token != null ? String(state.token) : "";
+                  if (isAppTokenValue(token)) {
+                    this.bypassWriteAccessCheckForAppTokens = true;
+                    this.tokenKeyword = "Bearer";
+                  }
+                  return origAuthenticate.call(this, state);
+                };
+              }
+              GitHubBackend.prototype.__rolccAppAuthPatch = true;
             }
           } catch (err) {
-            /* continue with fetch patch below */
+            /* continue with fetch patch */
           }
 
           var originalFetch = window.fetch;
           if (!originalFetch || originalFetch.__rolccGithubAppPatch) return;
 
-          function authHeader(init, input) {
-            var headers = (init && init.headers) || null;
-            if (!headers && input && input.headers) headers = input.headers;
+          function readAuth(headers) {
             if (!headers) return "";
             if (typeof Headers !== "undefined" && headers instanceof Headers) {
               return headers.get("Authorization") || headers.get("authorization") || "";
@@ -315,8 +330,13 @@
             return headers.Authorization || headers.authorization || "";
           }
 
-          function isAppToken(auth) {
-            return /(?:^|\s)(ghs_|ghu_)/.test(String(auth || ""));
+          function authHeader(init, input) {
+            var fromInit = readAuth(init && init.headers);
+            if (fromInit) return fromInit;
+            if (input && typeof Request !== "undefined" && input instanceof Request) {
+              return readAuth(input.headers);
+            }
+            return readAuth(input && input.headers);
           }
 
           function requestUrl(input) {
@@ -332,44 +352,66 @@
             });
           }
 
-          function withBearerAppToken(input, init) {
+          function extractAppToken(auth) {
+            var match = String(auth || "").match(/(ghs_|ghu_)[A-Za-z0-9_]+/);
+            return match ? match[0] : "";
+          }
+
+          // Rebuild as URL + init so Bearer is not stuck inside an immutable Request.
+          function forceBearerRequest(input, init) {
             var auth = authHeader(init, input);
-            if (!isAppToken(auth) || /\bBearer\s+(ghs_|ghu_)/i.test(auth)) {
-              return { input: input, init: init };
+            var appTok = extractAppToken(auth);
+            if (!appTok) return { input: input, init: init, appToken: false };
+            if (/^\s*Bearer\s+(ghs_|ghu_)/i.test(auth) && typeof input === "string") {
+              return { input: input, init: init, appToken: true };
             }
-            var tokenMatch = String(auth).match(/(ghs_|ghu_)[A-Za-z0-9_]+/);
-            if (!tokenMatch) return { input: input, init: init };
-            var bearer = "Bearer " + tokenMatch[0];
-            var nextInit = init ? Object.assign({}, init) : {};
-            var headers = nextInit.headers;
-            if (typeof Headers !== "undefined" && headers instanceof Headers) {
-              headers = new Headers(headers);
-              headers.set("Authorization", bearer);
-              nextInit.headers = headers;
-            } else if (Array.isArray(headers)) {
-              nextInit.headers = headers
-                .filter(function (pair) {
-                  return String(pair[0]).toLowerCase() !== "authorization";
-                })
-                .concat([["Authorization", bearer]]);
-            } else {
-              nextInit.headers = Object.assign({}, headers || {}, { Authorization: bearer });
+
+            var bearer = "Bearer " + appTok;
+            var url = requestUrl(input);
+            var method = (init && init.method) || (input && input.method) || "GET";
+            var headers = new Headers();
+            if (input && typeof Request !== "undefined" && input instanceof Request) {
+              input.headers.forEach(function (value, key) {
+                headers.set(key, value);
+              });
             }
-            return { input: input, init: nextInit };
+            var initHeaders = init && init.headers;
+            if (initHeaders) {
+              if (typeof Headers !== "undefined" && initHeaders instanceof Headers) {
+                initHeaders.forEach(function (value, key) {
+                  headers.set(key, value);
+                });
+              } else if (Array.isArray(initHeaders)) {
+                initHeaders.forEach(function (pair) {
+                  headers.set(pair[0], pair[1]);
+                });
+              } else {
+                Object.keys(initHeaders).forEach(function (key) {
+                  headers.set(key, initHeaders[key]);
+                });
+              }
+            }
+            headers.set("Authorization", bearer);
+
+            var nextInit = Object.assign({}, init || {}, {
+              method: method,
+              headers: headers,
+            });
+            if (input && typeof Request !== "undefined" && input instanceof Request && input.body != null) {
+              nextInit.body = input.body;
+              if (input.duplex) nextInit.duplex = input.duplex;
+            }
+            return { input: url, init: nextInit, appToken: true };
           }
 
           function patchedFetch(input, init) {
-            var rewritten = withBearerAppToken(input, init);
-            input = rewritten.input;
-            init = rewritten.init;
-            var url = requestUrl(input).split("?")[0];
-            var auth = authHeader(init, input);
-            var appToken = isAppToken(auth);
+            var rewritten = forceBearerRequest(input, init);
+            var url = String(rewritten.input || "").split("?")[0];
+            var appToken = rewritten.appToken;
 
-            return originalFetch.call(window, input, init).then(function (res) {
+            return originalFetch.call(window, rewritten.input, rewritten.init).then(function (res) {
               if (!appToken) return res;
 
-              // Installation tokens cannot call GET /user — stub a stable identity for Decap.
               if (/^https:\/\/api\.github\.com\/user$/.test(url) && !res.ok) {
                 return jsonResponse(
                   {
@@ -382,11 +424,7 @@
                 );
               }
 
-              // Ensure permissions.push so Decap's hasWriteAccess() passes when bypass is unavailable.
-              if (
-                /^https:\/\/api\.github\.com\/repos\/[^/]+\/[^/]+$/.test(url) &&
-                res.ok
-              ) {
+              if (/^https:\/\/api\.github\.com\/repos\/[^/]+\/[^/]+$/.test(url) && res.ok) {
                 return res
                   .clone()
                   .json()

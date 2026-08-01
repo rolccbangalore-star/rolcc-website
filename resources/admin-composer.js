@@ -18,7 +18,7 @@
   // One-time cutover: wipe legacy GitHub OAuth / Decap auth so users re-login via Google+allowlist.
   // Does not touch prefs like rolcc.admin.collection.
   var AUTH_VERSION_KEY = "rolcc.auth.version";
-  var AUTH_VERSION = "4";
+  var AUTH_VERSION = "5";
   function wipeLegacyAuthStorage() {
     try {
       if (localStorage.getItem(AUTH_VERSION_KEY) === AUTH_VERSION) return;

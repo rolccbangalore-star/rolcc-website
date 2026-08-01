@@ -22,13 +22,37 @@ Editor → Open /resources → Sign in with Google → /api/callback
 2. `/api/auth` sets an httpOnly `rolcc_oauth_state` cookie and redirects the editor to Google OAuth (`scope=openid email profile`).
 3. Google redirects back to `/api/callback` with an authorization code and `state`.
 4. The server verifies `state` against the cookie, then exchanges the code for the user's identity.
-5. The server requires `email_verified === true` and checks the email against `ALLOWED_EDITOR_EMAILS`.
+5. The server requires `email_verified === true` and checks the email against the allowlist:
+   - Vercel env `ALLOWED_EDITOR_EMAILS` (comma-separated), **and/or**
+   - Repo file `data/resources-editors.json` (`emails` array)
    - **If not allowlisted:** Returns HTTP 403 Forbidden with a clear notification page.
    - **If allowlisted:** Generates a RS256 JWT using `GITHUB_APP_PRIVATE_KEY` and calls GitHub API (`POST /app/installations/{GITHUB_APP_INSTALLATION_ID}/access_tokens`) to mint a short-lived (~1 hour) GitHub App installation token.
 6. The token is sent back to Decap CMS via `postMessage(..., allowedOrigin)` only (never `"*"`).
 7. Decap CMS uses this token to read and write content/media directly via GitHub Contents API.
 
-On first load after cutover, `/resources` wipes Decap/GitHub auth keys in browser storage when `rolcc.auth.version !== "2"`, then sets the version. Collection/view prefs are left alone. Returning users with old GitHub OAuth tokens must sign in again through Google + allowlist.
+On first load after cutover, `/resources` wipes Decap/GitHub auth keys in browser storage when `rolcc.auth.version` mismatches, then sets the version. Collection/view prefs are left alone. Returning users with old GitHub OAuth tokens must sign in again through Google + allowlist.
+
+---
+
+## Adding editors
+
+### Preferred (after Team page ships — see AG handoff)
+
+1. Open `https://www.rolcc.in/resources/team.html` (GitHub login; repo push access required).
+2. Add or remove Gmail addresses; save commits `data/resources-editors.json` on `main`.
+3. After deploy (or next serverless read), the editor signs in at `/resources` with Google.
+
+### Bootstrap / emergency (Vercel)
+
+1. Edit `ALLOWED_EDITOR_EMAILS` (comma-separated, lowercase).
+2. Redeploy Production.
+3. Also keep `data/resources-editors.json` in sync when possible so deploys stay consistent.
+
+### Example — Mercy
+
+Add `mercy.07.john@gmail.com` to `data/resources-editors.json` **and/or** `ALLOWED_EDITOR_EMAILS`, redeploy if only env changed, then she uses **Sign in with Google** on `/resources`.
+
+AG implementation details: [`docs/GOOGLE-AG-AI-RESOURCES-LOGIN-POLISH.md`](../docs/GOOGLE-AG-AI-RESOURCES-LOGIN-POLISH.md).
 
 ---
 

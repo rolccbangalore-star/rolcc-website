@@ -1,10 +1,41 @@
 const crypto = require("crypto");
+const fs = require("fs");
+const path = require("path");
 
 function getSiteOrigin() {
   if (process.env.OAUTH_ORIGIN) return process.env.OAUTH_ORIGIN.replace(/\/$/, "");
   if (process.env.VERCEL_ENV === "production") return "https://www.rolcc.in";
   if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
   return "https://www.rolcc.in";
+}
+
+function readEditorsFileEmails() {
+  try {
+    const candidates = [
+      path.join(process.cwd(), "data", "resources-editors.json"),
+      path.join(__dirname, "..", "data", "resources-editors.json"),
+    ];
+    for (let i = 0; i < candidates.length; i++) {
+      if (!fs.existsSync(candidates[i])) continue;
+      const raw = fs.readFileSync(candidates[i], "utf8");
+      const parsed = JSON.parse(raw);
+      const list = Array.isArray(parsed)
+        ? parsed
+        : parsed && Array.isArray(parsed.emails)
+          ? parsed.emails
+          : [];
+      return list
+        .map(function (e) {
+          return String(e || "")
+            .trim()
+            .toLowerCase();
+        })
+        .filter(Boolean);
+    }
+  } catch (_) {
+    /* missing or invalid file — env-only allowlist */
+  }
+  return [];
 }
 
 function getOAuthConfig() {
@@ -17,10 +48,13 @@ function getOAuthConfig() {
   const origin = getSiteOrigin();
   const redirectUri = `${origin}/api/callback`;
 
+  const hasAllowlist =
+    Boolean(String(allowedEmails || "").trim()) || readEditorsFileEmails().length > 0;
+
   const isConfigured = Boolean(
     googleClientId &&
     googleClientSecret &&
-    allowedEmails &&
+    hasAllowlist &&
     githubAppId &&
     githubAppInstallationId &&
     githubAppPrivateKey
@@ -179,15 +213,21 @@ async function exchangeGoogleCodeForUser(code) {
 }
 
 function isEmailAllowed(email) {
+  if (!email) return false;
+  const normalized = String(email).toLowerCase().trim();
+  if (!normalized) return false;
+
   const { allowedEmails } = getOAuthConfig();
-  if (!allowedEmails || !email) return false;
-
-  const allowlist = allowedEmails
+  const fromEnv = String(allowedEmails || "")
     .split(",")
-    .map((e) => e.trim().toLowerCase())
+    .map(function (e) {
+      return e.trim().toLowerCase();
+    })
     .filter(Boolean);
+  const fromFile = readEditorsFileEmails();
+  const allowlist = fromEnv.concat(fromFile);
 
-  return allowlist.includes(email.toLowerCase().trim());
+  return allowlist.indexOf(normalized) !== -1;
 }
 
 function base64url(input) {

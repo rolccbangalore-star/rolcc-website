@@ -165,8 +165,68 @@
     if (!ncRoot) return;
     var loginBtn = ncRoot.querySelector('button[class*="LoginButton"]');
     if (!loginBtn) return;
-    if (loginBtn.textContent && loginBtn.textContent.toLowerCase().indexOf("google") === -1) {
-      loginBtn.textContent = "Sign in with Google";
+    if (!loginBtn.querySelector(".admin-google-g")) {
+      loginBtn.innerHTML =
+        '<span class="admin-google-g" aria-hidden="true">' +
+        '<svg viewBox="0 0 18 18" width="18" height="18" xmlns="http://www.w3.org/2000/svg">' +
+        '<path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"/>' +
+        '<path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/>' +
+        '<path fill="#FBBC05" d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.997 8.997 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z"/>' +
+        '<path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z"/>' +
+        "</svg></span>" +
+        '<span class="admin-google-label">Sign in with Google</span>';
+    } else {
+      var labelEl = loginBtn.querySelector(".admin-google-label");
+      if (labelEl) labelEl.textContent = "Sign in with Google";
+      else if (loginBtn.textContent && loginBtn.textContent.toLowerCase().indexOf("google") === -1) {
+        loginBtn.textContent = "Sign in with Google";
+      }
+    }
+    loginBtn.classList.add("admin-google-signin-btn");
+  }
+
+  function ensureLoginSupportLink(root) {
+    var ncRoot = root || $("nc-root");
+    if (!ncRoot || !isLoginView(ncRoot)) {
+      var stale = document.getElementById("admin-login-support");
+      if (stale) stale.remove();
+      return;
+    }
+    if (document.getElementById("admin-login-support")) return;
+    var loginBtn = ncRoot.querySelector('button[class*="LoginButton"]');
+    var mount = (loginBtn && loginBtn.parentElement) || ncRoot;
+    var wrap = document.createElement("p");
+    wrap.id = "admin-login-support";
+    wrap.className = "admin-login-support";
+    wrap.innerHTML =
+      'Need help? <a href="mailto:rolccbangalore@gmail.com">Contact admin team</a>';
+    if (loginBtn && loginBtn.nextSibling) {
+      mount.insertBefore(wrap, loginBtn.nextSibling);
+    } else {
+      mount.appendChild(wrap);
+    }
+  }
+
+  function ensureLoginSiteLink(root) {
+    var ncRoot = root || $("nc-root");
+    if (!ncRoot || !isLoginView(ncRoot)) {
+      var stale = document.getElementById("admin-login-site-link");
+      if (stale) stale.remove();
+      return;
+    }
+    if (document.getElementById("admin-login-site-link")) return;
+    var support = document.getElementById("admin-login-support");
+    var loginBtn = ncRoot.querySelector('button[class*="LoginButton"]');
+    var mount = (support && support.parentElement) || (loginBtn && loginBtn.parentElement) || ncRoot;
+    var link = document.createElement("a");
+    link.id = "admin-login-site-link";
+    link.className = "admin-login-site-link";
+    link.href = "https://www.rolcc.in/";
+    link.textContent = "rolcc.in";
+    if (support && support.nextSibling) {
+      mount.insertBefore(link, support.nextSibling);
+    } else {
+      mount.appendChild(link);
     }
   }
 
@@ -1800,9 +1860,15 @@
 
     if (isLoginView(root)) {
       root.classList.add("admin-view--login");
+      body.classList.add("admin-view--login");
       ensureLoginButtonCopy(root);
+      ensureLoginSupportLink(root);
+      ensureLoginSiteLink(root);
       return;
     }
+    body.classList.remove("admin-view--login");
+    ensureLoginSupportLink(root);
+    ensureLoginSiteLink(root);
     if (isEditorRoute()) {
       root.classList.add("admin-view--editor");
       body.classList.add("admin-page--editor");

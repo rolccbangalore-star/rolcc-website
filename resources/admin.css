@@ -272,10 +272,27 @@ body {
   box-shadow: inset 0 0 0 1px var(--rolcc-slate-200);
 }
 
+.admin-website-link {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--rolcc-font);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--rolcc-slate-500);
+  text-decoration: none;
+  padding: 0.35rem 0.5rem;
+  border: none;
+  background: transparent;
+  box-shadow: none;
+}
+
+.admin-website-link:hover {
+  color: var(--rolcc-slate-700);
+  text-decoration: underline;
+}
+
 .admin-website-link__icon {
-  width: 0.95rem;
-  height: 0.95rem;
-  flex-shrink: 0;
+  display: none;
 }
 
 .admin-profile-slot {
@@ -4475,6 +4492,111 @@ body.admin-drawer-open .admin-mobile-editor-fab-wrap {
 body.admin-page--media .ReactModal__Overlay:not(.admin-media-overlay) {
   display: none !important;
   pointer-events: none !important;
+}
+
+/* ——— Login polish (unauthenticated) ——— */
+body.admin-page:not(.admin-page--authed) .admin-topbar__center,
+body.admin-page:not(.admin-page--authed) #admin-search-wrap,
+body.admin-page:not(.admin-page--authed) .admin-import-btn,
+body.admin-page:not(.admin-page--authed) .admin-preview-btn,
+body.admin-page:not(.admin-page--authed) .admin-save-draft-btn,
+body.admin-page:not(.admin-page--authed) .admin-delete-btn,
+body.admin-page:not(.admin-page--authed) .admin-schedule-btn,
+body.admin-page:not(.admin-page--authed) .admin-publish-btn,
+body.admin-page:not(.admin-page--authed) .admin-publish-slot,
+body.admin-page:not(.admin-page--authed) #admin-profile-slot,
+body.admin-page:not(.admin-page--authed) .admin-mobile-nav-toggle {
+  display: none !important;
+}
+
+body.admin-page:not(.admin-page--authed) .admin-shell-topbar {
+  justify-content: space-between;
+}
+
+body.admin-page:not(.admin-page--authed) .admin-website-link {
+  opacity: 0.75;
+}
+
+#nc-root.admin-view--login [class*="AuthenticationPage"] img,
+#nc-root.admin-view--login [class*="Auth"] img,
+#nc-root.admin-view--login svg[class*="Logo"],
+#nc-root.admin-view--login [class*="LoginButton"] + svg,
+body.admin-view--login #nc-root header img {
+  display: none !important;
+}
+
+/* Hide Decap wordmark text near login if present */
+#nc-root.admin-view--login h1,
+#nc-root.admin-view--login [class*="AppHeader"],
+#nc-root.admin-view--login a[href*="decapcms"],
+#nc-root.admin-view--login a[href*="decap"] {
+  display: none !important;
+}
+
+#nc-root.admin-view--login button[class*="LoginButton"],
+#nc-root.admin-view--login .admin-google-signin-btn {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  min-height: 2.75rem;
+  min-width: min(100%, 17.5rem);
+  padding: 0 1rem 0 0.85rem;
+  border: 1px solid #dadce0 !important;
+  border-radius: 0.375rem !important;
+  background: #fff !important;
+  color: #3c4043 !important;
+  font-family: var(--rolcc-font), system-ui, sans-serif !important;
+  font-size: 0.9375rem !important;
+  font-weight: 500 !important;
+  box-shadow: none !important;
+  cursor: pointer;
+}
+
+#nc-root.admin-view--login button[class*="LoginButton"]:hover,
+#nc-root.admin-view--login .admin-google-signin-btn:hover {
+  background: #f8f9fa !important;
+  border-color: #dadce0 !important;
+  box-shadow: 0 1px 2px rgba(60, 64, 67, 0.15) !important;
+}
+
+.admin-google-g {
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+.admin-login-support {
+  margin: 1rem 0 0;
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--rolcc-slate-600);
+}
+
+.admin-login-support a {
+  color: var(--rolcc-accent, #635bff);
+  font-weight: 500;
+}
+
+.admin-login-site-link {
+  display: block;
+  margin: 0.75rem auto 0;
+  text-align: center;
+  font-size: 0.8125rem;
+  color: var(--rolcc-slate-500);
+  text-decoration: none;
+}
+
+.admin-login-site-link:hover {
+  color: var(--rolcc-slate-700);
+  text-decoration: underline;
+}
+
+@media (max-width: 640px) {
+  #nc-root.admin-view--login button[class*="LoginButton"],
+  #nc-root.admin-view--login .admin-google-signin-btn {
+    width: 100%;
+    max-width: 20rem;
+  }
 }
 
 /* Desktop Strict Isolation Rules (≥641px) */

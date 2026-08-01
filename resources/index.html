@@ -15,7 +15,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="/css/articles.css" />
-    <link rel="stylesheet" href="/resources/admin.css?v=20260801e1" />
+    <link rel="stylesheet" href="/resources/admin.css?v=20260801e2" />
   </head>
   <body class="admin-page">
     <header id="admin-topbar" class="admin-shell-topbar" hidden>
@@ -243,10 +243,10 @@
     <script src="https://unpkg.com/immutable@3.8.2/dist/immutable.min.js"></script>
     <script src="/scripts/article-import-parse.js?v=20260729d1"></script>
     <script src="/scripts/article-render.js?v=20260729d1"></script>
-    <script src="/resources/admin-composer.js?v=20260801e1"></script>
-    <script src="/resources/admin-editor-fields.js?v=20260801e1"></script>
-    <script src="/resources/admin-import.js?v=20260801e1"></script>
-    <script src="/resources/admin-preview.js?v=20260801e1"></script>
+    <script src="/resources/admin-composer.js?v=20260801e2"></script>
+    <script src="/resources/admin-editor-fields.js?v=20260801e2"></script>
+    <script src="/resources/admin-import.js?v=20260801e2"></script>
+    <script src="/resources/admin-preview.js?v=20260801e2"></script>
     <script>
       (function () {
         var errorBox = document.getElementById("cms-error");
@@ -259,8 +259,12 @@
 
         function friendlyAuthError(message) {
           var text = String(message || "");
-          if (/does not have access to this repo/i.test(text) || /Repo ".+" not found/i.test(text)) {
-            return "Sign in with Google using an allowlisted church Gmail. You do not need a GitHub account — if this keeps appearing after Google sign-in, contact the site admin (GitHub App access).";
+          if (
+            /does not have access to this repo/i.test(text) ||
+            /Repo ['"].+['"] not found/i.test(text) ||
+            /repo .+ not found/i.test(text)
+          ) {
+            return "Google sign-in worked, but the church GitHub App cannot open the website repo. You do not need a personal GitHub account. Ask the site admin to install the App on rolccbangalore-star/rolcc-website (Contents: Read and write) and match GITHUB_APP_ID, GITHUB_APP_INSTALLATION_ID, and GITHUB_APP_PRIVATE_KEY on Vercel.";
           }
           return text;
         }

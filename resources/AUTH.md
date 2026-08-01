@@ -102,6 +102,20 @@ Set these in the **Vercel Project Settings → Environment Variables** (Producti
    - **Installation ID** from the install URL (`.../settings/installations/<id>`) or the install API → `GITHUB_APP_INSTALLATION_ID`
 6. **Generate a private key**, download the `.pem`, and paste full contents into `GITHUB_APP_PRIVATE_KEY` on Vercel.
 
+### Troubleshoot: “Repo … not found” after Google sign-in
+
+This Decap toast means the **GitHub App installation token** cannot open `rolccbangalore-star/rolcc-website`. It does **not** mean the editor needs a personal GitHub account.
+
+Check, in order:
+
+1. GitHub → the App → **Install App** → installed on account `rolccbangalore-star` with access to **`rolcc-website`** (not “only select repos” missing this one).
+2. App permissions include **Contents: Read and write**; after changing permissions, click **Review request** / accept new permissions on the install.
+3. Vercel `GITHUB_APP_INSTALLATION_ID` is the number in the URL  
+   `https://github.com/settings/installations/THIS_NUMBER`  
+   (short digits — not the App ID, not the PEM).
+4. `GITHUB_APP_ID` matches the App’s **App ID**; `GITHUB_APP_PRIVATE_KEY` is a current PEM for **that same** App.
+5. Redeploy Production after any env change; editor clears site data and signs in with Google again.
+
 ---
 
 ## Adding or Revoking Editors
